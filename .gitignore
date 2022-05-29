@@ -1,7 +1,9 @@
 *.code-workspace
 .ipynb_checkpoints
 .vscode
-fermat  # Esta es la copia local de la librería `fermat` para su estudio,
+# Esta es la copia local de la librería `fermat` para su estudio.
+fermat 
 venv
 drafts
+resources
 
