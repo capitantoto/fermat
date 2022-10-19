@@ -62,7 +62,7 @@ El concepto de \emph{distancia }entre las observaciones disponibles,
 es central a casi cualquier tarea estadística, tanto en descripción
 como inferencia. Consideremos, por caso, un ejercicio de clasificación.
 Sea $\boldsymbol{x}=\left(x_{i}\right)_{i=1}^{N}$una muestra de $N$
-observaciones de vv.aa. i.i.d. ($X_{1},\dots,X_{n}:X\sim\mathcal{L}\left(X\right)\ \forall\ i\in\left[N\right]$),
+observaciones de vv.aa. i.i.d. ($X_{1},\dots,X_{n}:X_i\sim\mathcal{L}\left(X\right)\ \forall\ i\in\left[N\right]$),
 con $x_{i}\in\mathbb{R}^{d_{x}}\ \forall\ i\in\left[N\right]\equiv\left\{ 1,\dots,N\right\} $,
 donde cada observación pertenece a una de $M$ clases $C_{1},\dots,C_{M}$
 mutuamente excluyentes y conjuntamente exhaustivas, codificadas en
@@ -74,10 +74,10 @@ combinar toda la información muestral disponible, ponderando las $N$
 observaciones de manera relativa a su cercanía o similitud con $x$.
 Cuando el dominio de las $x_{i}$ es un espacio euclídeo $\R^{\dimx}$,
 es costumbre tomar la \emph{distancia euclídea} para cuantificar la
-cercanía entre elementos. Así, por ejemplo, k-vecinos más cercanos
-(kNN) asignará la nueva observación $x$ a la clase modal entre las
+cercanía entre elementos. Así, por ejemplo, $k-$vecinos más cercanos
+($k$NN) asignará la nueva observación $x$ a la clase modal entre las
 $k$ observaciones de entrenamiento más cercanas\emph{ }(es decir,
-que minimizan $\left\Vert x-\cdot\right\Vert $.
+que minimizan $\left\Vert x-\cdot\right\Vert )$.
 
 Una dificultad bien conocida con los métodos basados en distancias,
 es la \emph{maldición de la dimensionalidad}: a medida que la dimensión
@@ -88,9 +88,9 @@ de observaciones en el espacio cae exponencialmente con $\dimx$.
 
 En estos casos, es de suponer que el dominio de las $X$ no cubre
 \emph{todo} $\Rd$, sino que éstas se encuentran embebidas en una
-variedad $\M\subset\R^{\dimx}$ cuya dimensión intrínseca $\dim\left(\M\right)=\dimm$,
-donde potencialmente $\dimm\ll\dimx$, y por ende la distancia \emph{en
-la variedad} es más inormativa que la distancia (euclídea) en el espacio
+variedad $\M\subset\R^{\dimx}$ cuya dimensión intrínseca $\dim\left(\M\right)$,
+es potencialmente mucho menor a $\dimx$, y por ende la distancia \emph{en
+la variedad} es más informativa que la distancia (euclídea) en el espacio
 ambiente $\Rd$. A este supuesto se lo suele llamar ``hipótesis de
 la variedad'' (\emph{manifold hypothesis}), y suele ser particularmente
 acertado cuando las observaciones provienen ``del mundo real'' (e.g.,
@@ -106,23 +106,24 @@ variedad, se compensa con la dificultad extra de tener que trabajar
 en una variedad arbitraria $\M$ en lugar de $\Rd$, a priori desconocida
 y que debemos estimar. Pelletier {[}2005{]} describe un estimador
 ``nuclear'' para la función de densidad de vv.aa. i.i.d. en variedades
-compactas de Riemann sin fronteras, junto con resultados de consistencia
+compactas de Riemann sin borde, junto con resultados de consistencia
 y convergencia; Henry y Rodriguez {[}2009{]} los amplían para probar
-la consistencia uniforme fuerte y la distribución asintótica de $f_{N,k}$.
+la consistencia uniforme fuerte y la distribución asintótica de estos estimadores.
 
-Sin embargo, tanto Pelletier Henry y Rodríguez discuten ``un estimador
-de densidad {[}...{]} basado en núcleos que son funciones de \emph{la
-distancia geodésica Riemanniana en la variedad}, cuya expresión es
-consistente con su equivalente en el caso euclídeo''.{[}p. 298 intro,
-Pelletier 2005{]}. Ahora, la distancia euclídea en $\Rdimx$, $\left|\cdot\right|_{\dimx}$
-(que podemos calcular fácilmente) no tiene por qué coincidir con la
-distancia geodésica en $\M,\ dg_{\M}$ (que nos interesa). Entre otros
-factores, tanto la diferencia en dimensiones $\dimx-d_{\M}$ como
-la curvatura de $\M$ afectan drásticamente la relación entre $\left|\cdot\right|_{\dimx}$
-y $dg_{\M}$ .
+Tanto Pelletier como Henry y Rodríguez asumen que la distancia geodésica es conocida.
+% discuten ``un estimador
+% de densidad {[}...{]} basado en núcleos que son funciones de \emph{la
+% distancia geodésica Riemanniana en la variedad}, cuya expresión es
+% consistente con su equivalente en el caso euclídeo''.{[}p. 298 intro,
+% Pelletier 2005{]}. Ahora, la distancia euclídea en $\Rdimx$, $\left|\cdot\right|_{\dimx}$
+% (que podemos calcular fácilmente) no tiene por qué coincidir con la
+% distancia geodésica en $\M,\ dg_{\M}$ (que nos interesa). Entre otros
+% factores, tanto la diferencia en dimensiones $\dimx-d_{\M}$ como
+% la curvatura de $\M$ afectan drásticamente la relación entre $\left|\cdot\right|_{\dimx}$
+% y $dg_{\M}$ .
 
 Trabajos recientes {[}McKenzie 2019, Little 2021, Sapienza 2018, Groisman
-2019{]} proponen aprender la distancia $dg_{\M}$ a partir del del
+2019{]} proponen aprender una distancia geodésica $\mathcal D_{f}$ a partir del
 grafo (aleatorio) completo de la muestra $\mathbb{X}_{n}$, y las
 geodésicas (caminos mínimos) entre sus elementos, que resultan de
 pesar las aristas de acuerdo a cierta potencia $p$ de la distancia
@@ -133,21 +134,18 @@ basada en datos que los autores llaman ``distancia de Fermat'' {[}Groisman
 \section{Naturaleza del aporte original sobre el tema y objetivos}
 
 Uniendo los elementos enunciados anteriormente, nos proponemos una
-comparación sistemáticamente entre el uso de la distancia de Fermat
+comparación sistemática entre el uso de la distancia de Fermat
 $\mathcal{D}_{f}$ {[}McKenzie 2019, Little 2021, Sapienza 2018, Groisman
 2019{]}, aprendiéndola de los datos disponibles, contra la elección
-canónica (la distancia euclídea), para el cómputo de densidades por
-núcleo \emph{en variedades de dimensión desconocida}, $\dimm\leq\dimx$
-según propone {[}Pelletier 2005{]} y expande {[}Henry y Rodriguez
-2009{]}. Como prueba para comparar sus ventajas relativas, aplicaremos
+canónica (la distancia euclídea), para la estimación de densidades por
+núcleos \emph{en variedades desconocidas}. Como prueba para comparar sus ventajas relativas, aplicaremos
 los estimadores de densidad (KDEs, ``kernel density estimator(s)'')
 resultantes, a tareas varias de \emph{clasificación }bajo una amplia
 gama de condiciones:
 \begin{itemize}
 \item datasets ``reales'' y ``sintéticos'',
-\item tanto en relacióna la dimensión $D$ de $X\in\itR^{D}$ , como
-\item las $k$ categorías posibles para $Y\in\left\{ C_{1},\dots,C_{k}\right\} )$
-\item distintas razones entre $d:D$
+\item en relación a la dimensión $D$ del espacio ambiente
+\item en relación a las $k$ categorías posibles para $Y\in\left\{ C_{1},\dots,C_{k}\right\})$
 \end{itemize}
 La KDE con distancia euclídea es un método bastante eficiente en términos
 de cómputo. En cambio, un calculo exacto del estimador muestral de
