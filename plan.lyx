@@ -19,11 +19,11 @@
 
 \include{definiciones}
 \end_preamble
-\use_default_options false
+\use_default_options true
 \maintain_unincluded_children false
 \language english
 \language_package none
-\inputencoding auto
+\inputencoding iso8859-15
 \fontencoding default
 \font_roman "default" "default"
 \font_sans "default" "default"
@@ -57,9 +57,9 @@
 \use_package stackrel 0
 \use_package stmaryrd 0
 \use_package undertilde 0
-\cite_engine basic
-\cite_engine_type default
-\biblio_style plain
+\cite_engine natbib
+\cite_engine_type authoryear
+\biblio_style apalike
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
@@ -94,89 +94,44 @@
 \begin_layout Standard
 \begin_inset FormulaMacro
 \newcommand{\R}{\mathbb{R}}
-{\mathbb{R}}
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
 \begin_inset FormulaMacro
 \newcommand{\dimx}{d_{x}}
-{d_{x}}
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
 \begin_inset FormulaMacro
 \newcommand{\Rdimx}{\mathbb{R}^{\dimx}}
-{\mathbb{R}^{\dimx}}
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
 \begin_inset FormulaMacro
 \newcommand{\Rd}{\Rdimx}
-{\Rdimx}
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
 \begin_inset FormulaMacro
 \newcommand{\M}{\mathcal{M}}
-{\mathcal{M}}
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
 \begin_inset FormulaMacro
 \newcommand{\dimm}{d_{\M}}
-{d_{\M}}
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-A BORRAR
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 \begin_inset FormulaMacro
 \newcommand{\var}{\mathcal{\M}}
-{\M}
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
 \begin_inset FormulaMacro
 \newcommand{\itR}{\mathcal{\R}}
-{\R}
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
 \begin_inset ERT
 status collapsed
 
@@ -191,7 +146,7 @@ pagestyle
 
 
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -243,11 +198,24 @@ status collapsed
 
 \begin_layout Plain Layout
 
-}
+{}
 \end_layout
 
 \end_inset
 
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{}
+\end_layout
+
+\end_inset
+
+
+\size default
  
 \begin_inset ERT
 status collapsed
@@ -262,12 +230,23 @@ baselineskip
 \end_inset
 
 12pt
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 \align center
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -286,7 +265,7 @@ bf Proyecto de tesis}
 
  
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -349,7 +328,7 @@ Aprendizaje de distancia basada en datos para clasificación por densidad
 \begin_inset VSpace 0.3cm
 \end_inset
 
-
+ 
 \series bold
 Lugar de trabajo:
 \series default
@@ -379,7 +358,7 @@ una muestra de
  observaciones de vv.aa.
  i.i.d.
  (
-\begin_inset Formula $X_{1},\dots,X_{n}:X\sim\mathcal{L}\left(X\right)\ \forall\ i\in\left[N\right]$
+\begin_inset Formula $X_{1},\dots,X_{n}:X_{i}\sim\mathcal{L}\left(X\right)\ \forall\ i\in\left[N\right]$
 \end_inset
 
 ), con 
@@ -394,17 +373,7 @@ una muestra de
 \begin_inset Formula $C_{1},\dots,C_{M}$
 \end_inset
 
- mutuamente excluyentes y conjuntamente exhaustivas, codificadas en un vector
- 
-\begin_inset Formula $\boldsymbol{y}=\left(y_{1},\dots,y_{N}\right)$
-\end_inset
-
- donde 
-\begin_inset Formula $y_{i}=j\iff x_{i}\in C_{j}$
-\end_inset
-
-.
- 
+ mutuamente excluyentes y conjuntamente exhaustivas.
 \end_layout
 
 \begin_layout Standard
@@ -436,8 +405,15 @@ Dada una nueva observación
 distancia euclídea
 \emph default
  para cuantificar la cercanía entre elementos.
- Así, por ejemplo, k-vecinos más cercanos (kNN) asignará la nueva observación
- 
+ Así, por ejemplo, 
+\begin_inset Formula $k-$
+\end_inset
+
+vecinos más cercanos (
+\begin_inset Formula $k$
+\end_inset
+
+NN) asignará la nueva observación 
 \begin_inset Formula $x$
 \end_inset
 
@@ -450,7 +426,7 @@ distancia euclídea
  
 \emph default
 (es decir, que minimizan 
-\begin_inset Formula $\left\Vert x-\cdot\right\Vert $
+\begin_inset Formula $\left\Vert x-\cdot\right\Vert )$
 \end_inset
 
 .
@@ -477,7 +453,6 @@ maldición de la dimensionalidad
 \end_inset
 
 .
- 
 \end_layout
 
 \begin_layout Standard
@@ -498,18 +473,18 @@ todo
 \end_inset
 
  cuya dimensión intrínseca 
-\begin_inset Formula $\dim\left(\M\right)=\dimm$
+\begin_inset Formula $\dim\left(\M\right)$
 \end_inset
 
-, donde potencialmente 
-\begin_inset Formula $\dimm\ll\dimx$
+, es potencialmente mucho menor a 
+\begin_inset Formula $\dimx$
 \end_inset
 
 , y por ende la distancia 
 \emph on
 en la variedad
 \emph default
- es más inormativa que la distancia (euclídea) en el espacio ambiente 
+ es más informativa que la distancia (euclídea) en el espacio ambiente 
 \begin_inset Formula $\Rd$
 \end_inset
 
@@ -536,7 +511,15 @@ del mundo real
 \end_inset
 
  (e.g., imágenes, sonido y texto).
- Según Bengio, 
+ Según 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Bengio2013"
+literal "false"
+
+\end_inset
+
+, 
 \emph on
 aprender
 \emph default
@@ -583,7 +566,15 @@ La ganancia en reducción de dimensionalidad con la hipótesis de la variedad,
 \end_inset
 
 , a priori desconocida y que debemos estimar.
- Pelletier [2005] describe un estimador 
+ 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Pelletier2005"
+literal "false"
+
+\end_inset
+
+ describe un estimador 
 \begin_inset Quotes eld
 \end_inset
 
@@ -593,100 +584,120 @@ nuclear
 
  para la función de densidad de vv.aa.
  i.i.d.
- en variedades compactas de Riemann sin fronteras, junto con resultados
- de consistencia y convergencia; Henry y Rodriguez [2009] los amplían para
- probar la consistencia uniforme fuerte y la distribución asintótica de
- 
-\begin_inset Formula $f_{N,k}$
+ en variedades compactas de Riemann sin borde, junto con resultados de consisten
+cia y convergencia; 
+\begin_inset CommandInset citation
+LatexCommand citet*
+key "Henry2009"
+literal "false"
+
 \end_inset
 
-.
+ los amplían para probar la consistencia uniforme fuerte y la distribución
+ asintótica de estos estimadores.
 \end_layout
 
 \begin_layout Standard
-Sin embargo, tanto Pelletier Henry y Rodríguez discuten 
-\begin_inset Quotes eld
-\end_inset
-
-un estimador de densidad [...] basado en núcleos que son funciones de 
-\emph on
-la distancia geodésica Riemanniana en la variedad
-\emph default
-, cuya expresión es consistente con su equivalente en el caso euclídeo
-\begin_inset Quotes erd
-\end_inset
-
-.[p.
- 298 intro, Pelletier 2005].
- Ahora, la distancia euclídea en 
-\begin_inset Formula $\Rdimx$
-\end_inset
-
-, 
-\begin_inset Formula $\left|\cdot\right|_{\dimx}$
-\end_inset
-
- (que podemos calcular fácilmente) no tiene por qué coincidir con la distancia
- geodésica en 
-\begin_inset Formula $\M,\ dg_{\M}$
-\end_inset
-
- (que nos interesa).
- Entre otros factores, tanto la diferencia en dimensiones 
-\begin_inset Formula $\dimx-d_{\M}$
-\end_inset
-
- como la curvatura de 
-\begin_inset Formula $\M$
-\end_inset
-
- afectan drásticamente la relación entre 
-\begin_inset Formula $\left|\cdot\right|_{\dimx}$
-\end_inset
-
- y 
-\begin_inset Formula $dg_{\M}$
-\end_inset
-
- .
-\end_layout
-
-\begin_layout Standard
-Trabajos recientes [McKenzie 2019, Little 2021, Sapienza 2018, Groisman
- 2019] proponen aprender la distancia 
-\begin_inset Formula $dg_{\M}$
-\end_inset
-
- a partir del del grafo (aleatorio) completo 
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-y dan garantías sobre la aproximación con el grafo kNN
-\end_layout
+Tanto 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Pelletier2005"
+literal "false"
 
 \end_inset
 
-de la muestra 
+ como 
+\begin_inset CommandInset citation
+LatexCommand citet*
+key "Henry2009"
+literal "false"
+
+\end_inset
+
+ asumen que la distancia geodésica es conocida.
+ Trabajos recientes (
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Sapienza2018,Groisman2022,Mckenzie2019,Little2022"
+literal "false"
+
+\end_inset
+
+) proponen aprender la distancia geodésica 
+\begin_inset Formula $\mathcal{D}_{f}^{p}$
+\end_inset
+
+ entre los nodos del grafo (aleatorio) completo de la muestra 
 \begin_inset Formula $\mathbb{X}_{n}$
 \end_inset
 
-, y las geodésicas (caminos mínimos) entre sus elementos, que resultan de
- pesar las aristas de acuerdo a cierta potencia 
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+O por simplicidad de cómputo, su aproximación por el grafo de k-vecinos
+ más cercanos
+\end_layout
+
+\end_inset
+
+, con cada arista pesada por una potencia 
 \begin_inset Formula $p$
 \end_inset
 
- de la distancia euclídea entre sus extremos.
- Empíricamente, el uso de esta distancia basada en datos que los autores
- llaman 
+ de la distancia euclídea entre sus
+\emph on
+ 
+\emph default
+extremos.
+ En 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Sapienza2018"
+literal "false"
+
+\end_inset
+
+, el uso de esta distancia - que los autores llaman 
 \begin_inset Quotes eld
 \end_inset
 
-distancia de Fermat
+de Fermat
 \begin_inset Quotes erd
 \end_inset
 
- [Groisman 2019].
+, por su analogía con el fenómeno óptico -, parece rendir considerables
+ mejoras de 
+\emph on
+performance 
+\emph default
+empírica en tareas de clasificación.
+ Cuando 
+\begin_inset Formula $p=1$
+\end_inset
+
+, el estimador de la distancia geodésica 
+\begin_inset Formula $\mathcal{D}_{f}^{1}$
+\end_inset
+
+ resultante es idéntico al que usa 
+\emph on
+Isomap 
+\emph default
+(
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Tenenbaum2000"
+literal "false"
+
+\end_inset
+
+) para construir los 
+\emph on
+embeddings
+\emph default
+ de dimensión reducida.
 \end_layout
 
 \begin_layout Section
@@ -694,40 +705,31 @@ Naturaleza del aporte original sobre el tema y objetivos
 \end_layout
 
 \begin_layout Standard
-Uniendo los elementos enunciados anteriormente, nos proponemos una comparación
- sistemáticamente entre el uso de la distancia de Fermat 
+Uniendo los elementos enunciados anteriormente, nos proponemos estudiar
+ sistemáticamente qué valor aporta el uso de una distancia basada en datos
+ (la distancia de Fermat 
 \begin_inset Formula $\mathcal{D}_{f}$
 \end_inset
 
- [McKenzie 2019, Little 2021, Sapienza 2018, Groisman 2019], aprendiéndola
- de los datos disponibles, contra la elección canónica (la distancia euclídea),
- para el cómputo de densidades por núcleo 
+) frente a la elección canónica (la distancia euclídea
+\begin_inset Formula $\left\Vert x-\cdot\right\Vert $
+\end_inset
+
+), en el aprendizaje de 
 \emph on
-en variedades de dimensión desconocida
+estimadores de densidad nuclear
 \emph default
-, 
-\begin_inset Formula $\dimm\leq\dimx$
-\end_inset
-
- según propone [Pelletier 2005] y expande [Henry y Rodriguez 2009].
- Como prueba para comparar sus ventajas relativas, aplicaremos los estimadores
- de densidad (KDEs, 
-\begin_inset Quotes eld
-\end_inset
-
-kernel density estimator(s)
-\begin_inset Quotes erd
-\end_inset
-
-) resultantes, a tareas varias de 
+ (KDEs, por sus siglas en inglés).
+ Nos proponemos luego comparar comparar sus bondades relativas usándolos
+ en tareas de 
 \emph on
 clasificación 
 \emph default
-bajo una amplia gama de condiciones:
+bajo una amplia gama de condiciones: 
 \end_layout
 
 \begin_layout Itemize
-datasets 
+en datasets 
 \begin_inset Quotes eld
 \end_inset
 
@@ -743,23 +745,19 @@ sintéticos
 \begin_inset Quotes erd
 \end_inset
 
-,
+, 
 \end_layout
 
 \begin_layout Itemize
-tanto en relacióna la dimensión 
+en relación a la dimensión 
 \begin_inset Formula $D$
 \end_inset
 
- de 
-\begin_inset Formula $X\in\itR^{D}$
-\end_inset
-
- , como
+ del espacio ambiente y
 \end_layout
 
 \begin_layout Itemize
-las 
+en relación a las 
 \begin_inset Formula $k$
 \end_inset
 
@@ -767,30 +765,20 @@ las
 \begin_inset Formula $Y\in\left\{ C_{1},\dots,C_{k}\right\} )$
 \end_inset
 
-
-\end_layout
-
-\begin_layout Itemize
-distintas razones entre 
-\begin_inset Formula $d:D$
-\end_inset
-
-
+ 
 \end_layout
 
 \begin_layout Standard
-La KDE con distancia euclídea es un método bastante eficiente en términos
- de cómputo
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-orden?
-\end_layout
+Aprender un clasificador a partir de KDEs con distancia euclídea (
+\begin_inset CommandInset citation
+LatexCommand citet
+before "cap. 6.6,"
+key "Hastie2009"
+literal "false"
 
 \end_inset
 
-.
+) es un método bastante eficiente en términos de cómputo.
  En cambio, un calculo exacto del estimador muestral de 
 \begin_inset Formula $\mathcal{D}_{f}$
 \end_inset
@@ -801,166 +789,95 @@ orden?
 
  pasos.
  La pregunta al respecto de su eficacia, entonces, debe considerar además
- comparativamente los costos computacionales de ambos métodos, que en datasets
- lo suficientemnete grandes podrían no justificar ganancias de 
+ comparativamente los costos computacionales de ambas distancias, que en
+ datasets 
+\begin_inset Quotes eld
+\end_inset
+
+grandes
+\begin_inset Quotes erd
+\end_inset
+
+ podrían ser demasiado altos para obtener ganancias de 
 \emph on
 performance 
 \emph default
 relativamente menores.
- En este aspecto, y para poner en contexto la capacidad predictiva de KDE,
- incluiremos como método de referencia (tanto estadística como computacionalment
-e) a los 
+ Para poner en contexto la capacidad predictiva de estos clasificadores
+ y su costo computacional, incluiremos como métodos de referencias 
+\end_layout
+
+\begin_layout Itemize
+clasificadores de 
 \emph on
-gradient boosting trees
+Naive Bayes 
 \emph default
-, un método reconocido en a actualidad por su simplicidad de uso y escasez
- de requerimientos [ESL Cap.
- 9, Additive Trees and Boosting Methods].
-\end_layout
-
-\begin_layout Standard
-En el orden teórico, nos proponemos ???????
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-label "Gr19"
-key "Groisman 2019"
+(
+\begin_inset CommandInset citation
+LatexCommand citet
+before "cap. 6.6.3,"
+key "Hastie2009"
 literal "false"
 
 \end_inset
 
-NONHOMOGENEOUS EUCLIDEAN FIRST-PASSAGE PERCOLATION AND DISTANCE LEARNING
- P.
- GROISMAN, M.
- JONCKHEERE, AND F.
- SAPIENZA
+), que usan 
+\begin_inset Formula $d$
+\end_inset
+
+ KDEs unidimensionales en lugar de un KDE 
+\begin_inset Formula $d-$
+\end_inset
+
+dimensional por clase),
 \end_layout
 
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-17"
+\begin_layout Itemize
+
+\emph on
+gradient boosting trees
+\emph default
+ (GBTs, 
+\begin_inset CommandInset citation
+LatexCommand citet
+before "cap. 10,"
+key "Hastie2009"
+literal "false"
 
 \end_inset
 
-W EIGHTED G EODESIC D ISTANCE F OLLOWING F ERMAT ’ S P RINCIPLE Pablo Groisman
- IMAS-CONICET, NYU-ECNU IMS at NYU Shanghai, and Universidad de Buenos Aires,
- Argentina.
- pgroisma@dm.uba.ar Facundo Sapienza Aristas SRL, Buenos Aires, Argentina.
- f.sapienza@aristas.com.ar Matthieu Jonckheere
+), un método reconocido en la actualidad por su simplicidad de uso y escasez
+ de requerimientos y
 \end_layout
 
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-9"
+\begin_layout Itemize
+
+\emph on
+random forests
+\emph default
+ 
+\begin_inset CommandInset citation
+LatexCommand citet
+before "cap. 15,"
+key "Hastie2009"
+literal "false"
 
 \end_inset
 
-2019 Power Weighted Shortest Paths for Clustering Euclidean Data Daniel
- Mckenzie 1 ∗1 and Steven Damelin
+, que capturan buena parte de las bondades de los GBTs con una estructura
+ sencilla.
 \end_layout
 
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-10"
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+btprint "btPrintCited"
+bibfiles "bib/references"
+options "plainnat"
 
 \end_inset
 
-Balancing Geometry and Density: Path Distances on High-Dimensional Data
- Anna Little ∗ Daniel McKenzie † James M.
- Murphy ‡ June 9, 2021
-\end_layout
 
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-7"
-
-\end_inset
-
-ESL II
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-8"
-
-\end_inset
-
-2014 Representation Learning: A Review and New Perspectives Yoshua Bengio
- † , Aaron Courville, and Pascal Vincent †
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-13"
-
-\end_inset
-
-Kernel Density Estimation on Riemannian Manifolds: Asymptotic Results Guillermo
- Henry · Daniela Rodriguez Published online: 21 February 2009
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-14"
-
-\end_inset
-
-Kernel density estimation on Riemannian manifolds Bruno Pelletier 2005
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-1"
-
-\end_inset
-
-ACA PRA ABAJO NO SE USARON
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-11"
-
-\end_inset
-
-Data-driven density derivative estimation, with applications to nonparametric
- clustering and bump hunting José E.
- Chacón and Tarn Duong
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-12"
-
-\end_inset
-
-A Comprehensive Approach to Mode Clustering Yen-Chi Chen, and Christopher
- R.
- Genovese, and Larry Wasserman 2015
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-15"
-
-\end_inset
-
-Nonparametric Density Estimation for High-Dimensional Data - Algorithms
- and Applications Zhipeng Wang ∗ and David W.
- Scott †
 \end_layout
 
 \end_body

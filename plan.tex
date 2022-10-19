@@ -2,8 +2,8 @@
 %% Do not edit unless you really know what you are doing.
 \documentclass[11pt]{article}
 \usepackage[latin9]{inputenc}
-\usepackage{textcomp}
 \usepackage{amsmath}
+\usepackage[authoryear]{natbib}
 
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
@@ -24,22 +24,14 @@
 
 \begin{document}
 \global\long\def\R{\mathbb{R}}%
-
 \global\long\def\dimx{d_{x}}%
-
 \global\long\def\Rdimx{\mathbb{R}^{\dimx}}%
-
 \global\long\def\Rd{\Rdimx}%
-
 \global\long\def\M{\mathcal{M}}%
-
 \global\long\def\dimm{d_{\M}}%
-
 \global\long\def\var{\mathcal{\M}}%
-
 \global\long\def\itR{\mathcal{\R}}%
-
-\pagestyle{myheadings} \markboth{}{{\small{}} \baselineskip12pt}{\small\par}
+\pagestyle{myheadings} \markboth{}{{\small{}{}{}} \baselineskip12pt}
 \begin{center}
 \underline{\bf Proyecto de tesis}\\
  \underline{\bf para optar al t\'{\i}tulo de Magister en Estad\'{\i}stica Matem\'atica\rm} 
@@ -54,7 +46,7 @@ en datos para clasificación por densidad de núcleos. // Distancia
 de Fermat en Clasificadores de Densidad Nuclear.
 
 \vspace{0.3cm}
-\textbf{Lugar de trabajo:} Departamento de Matemática
+ \textbf{Lugar de trabajo:} Departamento de Matemática
 
 \section{Antecedentes existentes sobre el tema}
 
@@ -62,11 +54,10 @@ El concepto de \emph{distancia }entre las observaciones disponibles,
 es central a casi cualquier tarea estadística, tanto en descripción
 como inferencia. Consideremos, por caso, un ejercicio de clasificación.
 Sea $\boldsymbol{x}=\left(x_{i}\right)_{i=1}^{N}$una muestra de $N$
-observaciones de vv.aa. i.i.d. ($X_{1},\dots,X_{n}:X_i\sim\mathcal{L}\left(X\right)\ \forall\ i\in\left[N\right]$),
+observaciones de vv.aa. i.i.d. ($X_{1},\dots,X_{n}:X_{i}\sim\mathcal{L}\left(X\right)\ \forall\ i\in\left[N\right]$),
 con $x_{i}\in\mathbb{R}^{d_{x}}\ \forall\ i\in\left[N\right]\equiv\left\{ 1,\dots,N\right\} $,
 donde cada observación pertenece a una de $M$ clases $C_{1},\dots,C_{M}$
-mutuamente excluyentes y conjuntamente exhaustivas, codificadas en
-un vector $\boldsymbol{y}=\left(y_{1},\dots,y_{N}\right)$ donde $y_{i}=j\iff x_{i}\in C_{j}$. 
+mutuamente excluyentes y conjuntamente exhaustivas.
 
 Dada una nueva observación $x$ cuya clase es desconocida: ¿a qué
 clase deberíamos asignarla? Cualquier respuesta a esta pregunta implicará
@@ -75,8 +66,8 @@ observaciones de manera relativa a su cercanía o similitud con $x$.
 Cuando el dominio de las $x_{i}$ es un espacio euclídeo $\R^{\dimx}$,
 es costumbre tomar la \emph{distancia euclídea} para cuantificar la
 cercanía entre elementos. Así, por ejemplo, $k-$vecinos más cercanos
-($k$NN) asignará la nueva observación $x$ a la clase modal entre las
-$k$ observaciones de entrenamiento más cercanas\emph{ }(es decir,
+($k$NN) asignará la nueva observación $x$ a la clase modal entre
+las $k$ observaciones de entrenamiento más cercanas\emph{ }(es decir,
 que minimizan $\left\Vert x-\cdot\right\Vert )$.
 
 Una dificultad bien conocida con los métodos basados en distancias,
@@ -84,125 +75,81 @@ es la \emph{maldición de la dimensionalidad}: a medida que la dimensión
 $\dimx$ del espacio euclídeo en consideración crece, el espacio se
 vuelve tan grande, que todos los elementos de la muestra están indistinguiblemente
 lejos entre sí; o lo que es equivalente, a igual $N,$ la densidad
-de observaciones en el espacio cae exponencialmente con $\dimx$. 
+de observaciones en el espacio cae exponencialmente con $\dimx$.
 
 En estos casos, es de suponer que el dominio de las $X$ no cubre
 \emph{todo} $\Rd$, sino que éstas se encuentran embebidas en una
 variedad $\M\subset\R^{\dimx}$ cuya dimensión intrínseca $\dim\left(\M\right)$,
-es potencialmente mucho menor a $\dimx$, y por ende la distancia \emph{en
-la variedad} es más informativa que la distancia (euclídea) en el espacio
-ambiente $\Rd$. A este supuesto se lo suele llamar ``hipótesis de
-la variedad'' (\emph{manifold hypothesis}), y suele ser particularmente
-acertado cuando las observaciones provienen ``del mundo real'' (e.g.,
-imágenes, sonido y texto). Según Bengio, \emph{aprender} la estructura
-de $\M$ a partir de $\boldsymbol{x}$ es una forma (enre muchas)
-de \emph{aprendizaje de representaciones} (representation learning),
-donde la representación de $x_{i}$ en base a sus coordenadas en $\M$
-(en $\mathbb{R}^{d}$) es tanto o más útil que la representación original
-en $\Rd$ para tareas de descripción e inferencia.
+es potencialmente mucho menor a $\dimx$, y por ende la distancia
+\emph{en la variedad} es más informativa que la distancia (euclídea)
+en el espacio ambiente $\Rd$. A este supuesto se lo suele llamar
+``hipótesis de la variedad'' (\emph{manifold hypothesis}), y suele
+ser particularmente acertado cuando las observaciones provienen ``del
+mundo real'' (e.g., imágenes, sonido y texto). Según \citet{Bengio2013},
+\emph{aprender} la estructura de $\M$ a partir de $\boldsymbol{x}$
+es una forma (enre muchas) de \emph{aprendizaje de representaciones}
+(representation learning), donde la representación de $x_{i}$ en
+base a sus coordenadas en $\M$ (en $\mathbb{R}^{d}$) es tanto o
+más útil que la representación original en $\Rd$ para tareas de descripción
+e inferencia.
 
 La ganancia en reducción de dimensionalidad con la hipótesis de la
 variedad, se compensa con la dificultad extra de tener que trabajar
 en una variedad arbitraria $\M$ en lugar de $\Rd$, a priori desconocida
-y que debemos estimar. Pelletier {[}2005{]} describe un estimador
+y que debemos estimar. \citet{Pelletier2005} describe un estimador
 ``nuclear'' para la función de densidad de vv.aa. i.i.d. en variedades
 compactas de Riemann sin borde, junto con resultados de consistencia
-y convergencia; Henry y Rodriguez {[}2009{]} los amplían para probar
-la consistencia uniforme fuerte y la distribución asintótica de estos estimadores.
+y convergencia; \citet*{Henry2009} los amplían para probar la consistencia
+uniforme fuerte y la distribución asintótica de estos estimadores.
 
-Tanto Pelletier como Henry y Rodríguez asumen que la distancia geodésica es conocida.
-% discuten ``un estimador
-% de densidad {[}...{]} basado en núcleos que son funciones de \emph{la
-% distancia geodésica Riemanniana en la variedad}, cuya expresión es
-% consistente con su equivalente en el caso euclídeo''.{[}p. 298 intro,
-% Pelletier 2005{]}. Ahora, la distancia euclídea en $\Rdimx$, $\left|\cdot\right|_{\dimx}$
-% (que podemos calcular fácilmente) no tiene por qué coincidir con la
-% distancia geodésica en $\M,\ dg_{\M}$ (que nos interesa). Entre otros
-% factores, tanto la diferencia en dimensiones $\dimx-d_{\M}$ como
-% la curvatura de $\M$ afectan drásticamente la relación entre $\left|\cdot\right|_{\dimx}$
-% y $dg_{\M}$ .
-
-Trabajos recientes {[}McKenzie 2019, Little 2021, Sapienza 2018, Groisman
-2019{]} proponen aprender una distancia geodésica $\mathcal D_{f}$ a partir del
-grafo (aleatorio) completo de la muestra $\mathbb{X}_{n}$, y las
-geodésicas (caminos mínimos) entre sus elementos, que resultan de
-pesar las aristas de acuerdo a cierta potencia $p$ de la distancia
-euclídea entre sus extremos. Empíricamente, el uso de esta distancia
-basada en datos que los autores llaman ``distancia de Fermat'' {[}Groisman
-2019{]}.
+Tanto \citet{Pelletier2005} como \citet*{Henry2009} asumen que la
+distancia geodésica es conocida. Trabajos recientes (\citet{Sapienza2018,Groisman2022,Mckenzie2019,Little2022})
+proponen aprender la distancia geodésica $\mathcal{D}_{f}^{p}$ entre
+los nodos del grafo (aleatorio) completo de la muestra $\mathbb{X}_{n}$\footnote{O por simplicidad de cómputo, su aproximación por el grafo de k-vecinos
+más cercanos}, con cada arista pesada por una potencia $p$ de la distancia euclídea
+entre sus\emph{ }extremos. En \citet{Sapienza2018}, el uso de esta
+distancia - que los autores llaman ``de Fermat'', por su analogía
+con el fenómeno óptico -, parece rendir considerables mejoras de \emph{performance
+}empírica en tareas de clasificación. Cuando $p=1$, el estimador
+de la distancia geodésica $\mathcal{D}_{f}^{1}$ resultante es idéntico
+al que usa \emph{Isomap }(\citet{Tenenbaum2000}) para construir los
+\emph{embeddings} de dimensión reducida.
 
 \section{Naturaleza del aporte original sobre el tema y objetivos}
 
-Uniendo los elementos enunciados anteriormente, nos proponemos una
-comparación sistemática entre el uso de la distancia de Fermat
-$\mathcal{D}_{f}$ {[}McKenzie 2019, Little 2021, Sapienza 2018, Groisman
-2019{]}, aprendiéndola de los datos disponibles, contra la elección
-canónica (la distancia euclídea), para la estimación de densidades por
-núcleos \emph{en variedades desconocidas}. Como prueba para comparar sus ventajas relativas, aplicaremos
-los estimadores de densidad (KDEs, ``kernel density estimator(s)'')
-resultantes, a tareas varias de \emph{clasificación }bajo una amplia
-gama de condiciones:
+Uniendo los elementos enunciados anteriormente, nos proponemos estudiar
+sistemáticamente qué valor aporta el uso de una distancia basada en
+datos (la distancia de Fermat $\mathcal{D}_{f}$) frente a la elección
+canónica (la distancia euclídea$\left\Vert x-\cdot\right\Vert $),
+en el aprendizaje de \emph{estimadores de densidad nuclear} (KDEs,
+por sus siglas en inglés). Nos proponemos luego comparar comparar
+sus bondades relativas usándolos en tareas de \emph{clasificación
+}bajo una amplia gama de condiciones: 
 \begin{itemize}
-\item datasets ``reales'' y ``sintéticos'',
-\item en relación a la dimensión $D$ del espacio ambiente
-\item en relación a las $k$ categorías posibles para $Y\in\left\{ C_{1},\dots,C_{k}\right\})$
+\item en datasets ``reales'' y ``sintéticos'', 
+\item en relación a la dimensión $D$ del espacio ambiente y
+\item en relación a las $k$ categorías posibles para $Y\in\left\{ C_{1},\dots,C_{k}\right\} )$ 
 \end{itemize}
-La KDE con distancia euclídea es un método bastante eficiente en términos
-de cómputo. En cambio, un calculo exacto del estimador muestral de
-$\mathcal{D}_{f}$ requiere $n^{3}$ pasos. La pregunta al respecto
-de su eficacia, entonces, debe considerar además comparativamente
-los costos computacionales de ambos métodos, que en datasets lo suficientemnete
-grandes podrían no justificar ganancias de \emph{performance }relativamente
-menores. En este aspecto, y para poner en contexto la capacidad predictiva
-de KDE, incluiremos como método de referencia (tanto estadística como
-computacionalmente) a los \emph{gradient boosting trees}, un método
-reconocido en a actualidad por su simplicidad de uso y escasez de
-requerimientos {[}ESL Cap. 9, Additive Trees and Boosting Methods{]}.
-
-En el orden teórico, nos proponemos ???????
-\begin{thebibliography}{Gr19}
-\bibitem[Gr19]{Groisman 2019}NONHOMOGENEOUS EUCLIDEAN FIRST-PASSAGE
-PERCOLATION AND DISTANCE LEARNING P. GROISMAN, M. JONCKHEERE, AND
-F. SAPIENZA
-
-\bibitem{key-17}W EIGHTED G EODESIC D ISTANCE F OLLOWING F ERMAT
-\textquoteright{} S P RINCIPLE Pablo Groisman IMAS-CONICET, NYU-ECNU
-IMS at NYU Shanghai, and Universidad de Buenos Aires, Argentina. pgroisma@dm.uba.ar
-Facundo Sapienza Aristas SRL, Buenos Aires, Argentina. f.sapienza@aristas.com.ar
-Matthieu Jonckheere
-
-\bibitem{key-9}2019 Power Weighted Shortest Paths for Clustering
-Euclidean Data Daniel Mckenzie 1 \textasteriskcentered 1 and Steven
-Damelin
-
-\bibitem{key-10}Balancing Geometry and Density: Path Distances on
-High-Dimensional Data Anna Little \textasteriskcentered{} Daniel McKenzie
-\dag{} James M. Murphy \ddag{} June 9, 2021
-
-\bibitem{key-7}ESL II
-
-\bibitem{key-8}2014 Representation Learning: A Review and New Perspectives
-Yoshua Bengio \dag{} , Aaron Courville, and Pascal Vincent \dag{}
-
-\bibitem{key-13}Kernel Density Estimation on Riemannian Manifolds:
-Asymptotic Results Guillermo Henry · Daniela Rodriguez Published online:
-21 February 2009
-
-\bibitem{key-14}Kernel density estimation on Riemannian manifolds
-Bruno Pelletier 2005
-
-\bibitem{key-1}ACA PRA ABAJO NO SE USARON
-
-\bibitem{key-11}Data-driven density derivative estimation, with applications
-to nonparametric clustering and bump hunting José E. Chacón and Tarn
-Duong
-
-\bibitem{key-12}A Comprehensive Approach to Mode Clustering Yen-Chi
-Chen, and Christopher R. Genovese, and Larry Wasserman 2015
-
-\bibitem{key-15}Nonparametric Density Estimation for High-Dimensional
-Data - Algorithms and Applications Zhipeng Wang \textasteriskcentered{}
-and David W. Scott \dag{}
-\end{thebibliography}
+Aprender un clasificador a partir de KDEs con distancia euclídea (\citet[cap. 6.6,][]{Hastie2009})
+es un método bastante eficiente en términos de cómputo. En cambio,
+un calculo exacto del estimador muestral de $\mathcal{D}_{f}$ requiere
+$n^{3}$ pasos. La pregunta al respecto de su eficacia, entonces,
+debe considerar además comparativamente los costos computacionales
+de ambas distancias, que en datasets ``grandes'' podrían ser demasiado
+altos para obtener ganancias de \emph{performance }relativamente menores.
+Para poner en contexto la capacidad predictiva de estos clasificadores
+y su costo computacional, incluiremos como métodos de referencias 
+\begin{itemize}
+\item clasificadores de \emph{Naive Bayes }(\citet[cap. 6.6.3,][]{Hastie2009}),
+que usan $d$ KDEs unidimensionales en lugar de un KDE $d-$dimensional
+por clase),
+\item \emph{gradient boosting trees} (GBTs, \citet[cap. 10,][]{Hastie2009}),
+un método reconocido en la actualidad por su simplicidad de uso y
+escasez de requerimientos y
+\item \emph{random forests} \citet[cap. 15,][]{Hastie2009}, que capturan
+buena parte de las bondades de los GBTs con una estructura sencilla.
+\end{itemize}
+\bibliographystyle{plainnat}
+\bibliography{bib/references}
 
 \end{document}
