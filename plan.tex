@@ -11,8 +11,7 @@
 %\usepackage[latin1]{inputenc}
 %\usepackage[spanish,activeacute]{babel}
 
-\usepackage{amsfonts}\usepackage{color}
-\usepackage{url}
+\usepackage{amsfonts}\usepackage{url}
 \setlength{\textwidth}{6.70in}
 \setlength{\oddsidemargin}{-0.2in}
 \topmargin -0.4pt
@@ -31,7 +30,7 @@
 \global\long\def\dimm{d_{\M}}%
 \global\long\def\var{\mathcal{\M}}%
 \global\long\def\itR{\mathcal{\R}}%
-\pagestyle{myheadings} \markboth{}{{\small{}{}{}} \baselineskip12pt}
+\pagestyle{myheadings} \markboth{}{{\small{}{}{}{}} \baselineskip12pt} 
 \begin{center}
 \underline{\bf Proyecto de tesis}\\
  \underline{\bf para optar al t\'{\i}tulo de Magister en Estad\'{\i}stica Matem\'atica\rm} 
@@ -41,12 +40,10 @@
 
 \noindent \textbf{Directora:} Dr. Pablo Groisman
 
-\noindent \textbf{Tema de trabajo: }Aprendizaje de distancia basada
-en datos para clasificación por densidad de núcleos. // Distancia
-de Fermat en Clasificadores de Densidad Nuclear.
+\noindent \textbf{Tema de trabajo:} Distancia de Fermat en Clasificadores
+de Densidad Nuclear 
 
-\vspace{0.3cm}
- \textbf{Lugar de trabajo:} Departamento de Matemática
+\noindent \textbf{Lugar de trabajo:} Departamento de Matemática
 
 \section{Antecedentes existentes sobre el tema}
 
@@ -54,28 +51,28 @@ El concepto de \emph{distancia }entre las observaciones disponibles,
 es central a casi cualquier tarea estadística, tanto en descripción
 como inferencia. Consideremos, por caso, un ejercicio de clasificación.
 Sea $\boldsymbol{x}=\left(x_{i}\right)_{i=1}^{N}$una muestra de $N$
-observaciones de vv.aa. i.i.d. ($X_{1},\dots,X_{n}:X_{i}\sim\mathcal{L}\left(X\right)\ \forall\ i\in\left[N\right]$),
+observaciones de vv.aa. i.i.d. ($X_{1},\dots,X_{N}:X_{i}\sim\mathcal{L}\left(X\right)\ \forall\ i\in\left[N\right]$),
 con $x_{i}\in\mathbb{R}^{d_{x}}\ \forall\ i\in\left[N\right]\equiv\left\{ 1,\dots,N\right\} $,
 donde cada observación pertenece a una de $M$ clases $C_{1},\dots,C_{M}$
 mutuamente excluyentes y conjuntamente exhaustivas.
 
-Dada una nueva observación $x$ cuya clase es desconocida: ¿a qué
-clase deberíamos asignarla? Cualquier respuesta a esta pregunta implicará
+Dada una nueva observación $x$ cuya clase es desconocida ¿a qué clase
+deberíamos asignarla? Cualquier respuesta a esta pregunta implicará
 combinar toda la información muestral disponible, ponderando las $N$
 observaciones de manera relativa a su cercanía o similitud con $x$.
 Cuando el dominio de las $x_{i}$ es un espacio euclídeo $\R^{\dimx}$,
 es costumbre tomar la \emph{distancia euclídea} para cuantificar la
 cercanía entre elementos. Así, por ejemplo, $k-$vecinos más cercanos
-($k$NN) asignará la nueva observación $x$ a la clase modal entre
+($k-$NN) asignará la nueva observación $x$ a la clase modal entre
 las $k$ observaciones de entrenamiento más cercanas\emph{ }(es decir,
 que minimizan $\left\Vert x-\cdot\right\Vert )$.
 
 Una dificultad bien conocida con los métodos basados en distancias,
 es la \emph{maldición de la dimensionalidad}: a medida que la dimensión
 $\dimx$ del espacio euclídeo en consideración crece, el espacio se
-vuelve tan grande, que todos los elementos de la muestra están indistinguiblemente
-lejos entre sí; o lo que es equivalente, a igual $N,$ la densidad
-de observaciones en el espacio cae exponencialmente con $\dimx$.
+vuelve tan grande que todos los elementos de la muestra están indistinguiblemente
+lejos entre sí; o lo que es equivalente, a igual $N$, la densidad
+de observaciones en el espacio decae exponencialmente con $\dimx$.
 
 En estos casos, es de suponer que el dominio de las $X$ no cubre
 \emph{todo} $\Rd$, sino que éstas se encuentran embebidas en una
@@ -94,17 +91,18 @@ más útil que la representación original en $\Rd$ para tareas de descripción
 e inferencia.
 
 La ganancia en reducción de dimensionalidad con la hipótesis de la
-variedad, se compensa con la dificultad extra de tener que trabajar
-en una variedad arbitraria $\M$ en lugar de $\Rd$, a priori desconocida
-y que debemos estimar. \citet{Pelletier2005} describe un estimador
-``nuclear'' para la función de densidad de vv.aa. i.i.d. en variedades
-compactas de Riemann sin borde, junto con resultados de consistencia
-y convergencia; \citet*{Henry2009} los amplían para probar la consistencia
-uniforme fuerte y la distribución asintótica de estos estimadores.
+variedad debe ser contrastada con la dificultad extra de tener que
+trabajar en una variedad arbitraria $\M$ en lugar de $\Rd$, a priori
+desconocida y que debemos estimar. \citet{Pelletier2005} describe
+un estimador ``nuclear'' para la función de densidad de vv.aa. i.i.d.
+en variedades Riemannianas compactas sin borde, junto con resultados
+de consistencia y convergencia; \citet*{Henry2009} los amplían para
+probar la consistencia uniforme fuerte y la distribución asintótica
+de estos estimadores.
 
 Tanto \citet{Pelletier2005} como \citet*{Henry2009} asumen que la
 distancia geodésica es conocida. Trabajos recientes (\citet{Sapienza2018,Groisman2022,Mckenzie2019,Little2022})
-proponen aprender la distancia geodésica $\mathcal{D}_{f}^{p}$ entre
+proponen aprender una distancia geodésica $\mathcal{D}_{f}^{p}$ entre
 los nodos del grafo (aleatorio) completo de la muestra $\mathbb{X}_{n}$\footnote{O por simplicidad de cómputo, su aproximación por el grafo de k-vecinos
 más cercanos}, con cada arista pesada por una potencia $p$ de la distancia euclídea
 entre sus\emph{ }extremos. En \citet{Sapienza2018}, el uso de esta
@@ -119,21 +117,21 @@ al que usa \emph{Isomap }(\citet{Tenenbaum2000}) para construir los
 
 Uniendo los elementos enunciados anteriormente, nos proponemos estudiar
 sistemáticamente qué valor aporta el uso de una distancia basada en
-datos (la distancia de Fermat $\mathcal{D}_{f}$) frente a la elección
-canónica (la distancia euclídea$\left\Vert x-\cdot\right\Vert $),
+datos (la distancia de Fermat $\mathcal{D}_{f}^{p}$) frente a la
+elección canónica (la distancia euclídea$\left\Vert x-\cdot\right\Vert $),
 en el aprendizaje de \emph{estimadores de densidad nuclear} (KDEs,
-por sus siglas en inglés). Nos proponemos luego comparar comparar
-sus bondades relativas usándolos en tareas de \emph{clasificación
-}bajo una amplia gama de condiciones: 
+por sus siglas en inglés). Nos proponemos luego comparar sus bondades
+relativas usándolos en tareas de \emph{clasificación }bajo una amplia
+gama de condiciones: 
 \begin{itemize}
 \item en datasets ``reales'' y ``sintéticos'', 
-\item en relación a la dimensión $D$ del espacio ambiente y
+\item en relación a la dimensión $d_{x}$ del espacio ambiente y 
 \item en relación a las $k$ categorías posibles para $Y\in\left\{ C_{1},\dots,C_{k}\right\} )$ 
 \end{itemize}
 Aprender un clasificador a partir de KDEs con distancia euclídea (\citet[cap. 6.6,][]{Hastie2009})
 es un método bastante eficiente en términos de cómputo. En cambio,
-un calculo exacto del estimador muestral de $\mathcal{D}_{f}$ requiere
-$n^{3}$ pasos. La pregunta al respecto de su eficacia, entonces,
+un calculo exacto del estimador muestral de $\mathcal{D}_{f}^{p}$
+requiere $n^{3}$ pasos. La pregunta al respecto de su eficacia, entonces,
 debe considerar además comparativamente los costos computacionales
 de ambas distancias, que en datasets ``grandes'' podrían ser demasiado
 altos para obtener ganancias de \emph{performance }relativamente menores.
@@ -142,14 +140,18 @@ y su costo computacional, incluiremos como métodos de referencias
 \begin{itemize}
 \item clasificadores de \emph{Naive Bayes }(\citet[cap. 6.6.3,][]{Hastie2009}),
 que usan $d$ KDEs unidimensionales en lugar de un KDE $d-$dimensional
-por clase),
+por clase), 
 \item \emph{gradient boosting trees} (GBTs, \citet[cap. 10,][]{Hastie2009}),
 un método reconocido en la actualidad por su simplicidad de uso y
-escasez de requerimientos y
+escasez de requerimientos y 
 \item \emph{random forests} \citet[cap. 15,][]{Hastie2009}, que capturan
-buena parte de las bondades de los GBTs con una estructura sencilla.
+buena parte de las bondades de los GBTs con una estructura sencilla. 
 \end{itemize}
-\bibliographystyle{plainnat}
+Además, nos proponemos dar argumentos teóricos que garanticen la consistencia
+de la estimación de la densidad en el estilo de Pelletier, cuando
+se reemplaza la distancia geodésica por una estimación empírica (plug-in).
+
+\bibliographystyle{plainnat-es}
 \bibliography{bib/references}
 
 \end{document}

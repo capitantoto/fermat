@@ -10,8 +10,7 @@
 %\usepackage[latin1]{inputenc}
 %\usepackage[spanish,activeacute]{babel}
 
-\usepackage{amsfonts}\usepackage{color}
-\usepackage{url}
+\usepackage{amsfonts}\usepackage{url}
 \setlength{\textwidth}{6.70in}
 \setlength{\oddsidemargin}{-0.2in}
 \topmargin -0.4pt
@@ -19,7 +18,7 @@
 
 \include{definiciones}
 \end_preamble
-\use_default_options true
+\use_default_options false
 \maintain_unincluded_children false
 \language english
 \language_package none
@@ -59,7 +58,7 @@
 \use_package undertilde 0
 \cite_engine natbib
 \cite_engine_type authoryear
-\biblio_style apalike
+\biblio_style plainnat
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
@@ -133,7 +132,7 @@
 
 
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -215,6 +214,17 @@ status collapsed
 \end_inset
 
 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{}
+\end_layout
+
+\end_inset
+
+
 \size default
  
 \begin_inset ERT
@@ -240,7 +250,7 @@ status collapsed
 
 \end_inset
 
-
+ 
 \end_layout
 
 \begin_layout Standard
@@ -317,18 +327,14 @@ Directora:
 \noindent
 
 \series bold
-Tema de trabajo: 
+Tema de trabajo:
 \series default
-Aprendizaje de distancia basada en datos para clasificación por densidad
- de núcleos.
- // Distancia de Fermat en Clasificadores de Densidad Nuclear.
+ Distancia de Fermat en Clasificadores de Densidad Nuclear 
 \end_layout
 
 \begin_layout Standard
-\begin_inset VSpace 0.3cm
-\end_inset
+\noindent
 
- 
 \series bold
 Lugar de trabajo:
 \series default
@@ -358,7 +364,7 @@ una muestra de
  observaciones de vv.aa.
  i.i.d.
  (
-\begin_inset Formula $X_{1},\dots,X_{n}:X_{i}\sim\mathcal{L}\left(X\right)\ \forall\ i\in\left[N\right]$
+\begin_inset Formula $X_{1},\dots,X_{N}:X_{i}\sim\mathcal{L}\left(X\right)\ \forall\ i\in\left[N\right]$
 \end_inset
 
 ), con 
@@ -381,7 +387,7 @@ Dada una nueva observación
 \begin_inset Formula $x$
 \end_inset
 
- cuya clase es desconocida: ¿a qué clase deberíamos asignarla? Cualquier
+ cuya clase es desconocida ¿a qué clase deberíamos asignarla? Cualquier
  respuesta a esta pregunta implicará combinar toda la información muestral
  disponible, ponderando las 
 \begin_inset Formula $N$
@@ -410,7 +416,7 @@ distancia euclídea
 \end_inset
 
 vecinos más cercanos (
-\begin_inset Formula $k$
+\begin_inset Formula $k-$
 \end_inset
 
 NN) asignará la nueva observación 
@@ -442,13 +448,14 @@ maldición de la dimensionalidad
 \begin_inset Formula $\dimx$
 \end_inset
 
- del espacio euclídeo en consideración crece, el espacio se vuelve tan grande,
+ del espacio euclídeo en consideración crece, el espacio se vuelve tan grande
  que todos los elementos de la muestra están indistinguiblemente lejos entre
  sí; o lo que es equivalente, a igual 
-\begin_inset Formula $N,$
+\begin_inset Formula $N$
 \end_inset
 
- la densidad de observaciones en el espacio cae exponencialmente con 
+, la densidad de observaciones en el espacio decae exponencialmente con
+ 
 \begin_inset Formula $\dimx$
 \end_inset
 
@@ -555,9 +562,9 @@ aprendizaje de representaciones
 \end_layout
 
 \begin_layout Standard
-La ganancia en reducción de dimensionalidad con la hipótesis de la variedad,
- se compensa con la dificultad extra de tener que trabajar en una variedad
- arbitraria 
+La ganancia en reducción de dimensionalidad con la hipótesis de la variedad
+ debe ser contrastada con la dificultad extra de tener que trabajar en una
+ variedad arbitraria 
 \begin_inset Formula $\M$
 \end_inset
 
@@ -584,8 +591,8 @@ nuclear
 
  para la función de densidad de vv.aa.
  i.i.d.
- en variedades compactas de Riemann sin borde, junto con resultados de consisten
-cia y convergencia; 
+ en variedades Riemannianas compactas sin borde, junto con resultados de
+ consistencia y convergencia; 
 \begin_inset CommandInset citation
 LatexCommand citet*
 key "Henry2009"
@@ -623,7 +630,7 @@ literal "false"
 
 \end_inset
 
-) proponen aprender la distancia geodésica 
+) proponen aprender una distancia geodésica 
 \begin_inset Formula $\mathcal{D}_{f}^{p}$
 \end_inset
 
@@ -633,7 +640,7 @@ literal "false"
 
 
 \begin_inset Foot
-status open
+status collapsed
 
 \begin_layout Plain Layout
 O por simplicidad de cómputo, su aproximación por el grafo de k-vecinos
@@ -708,7 +715,7 @@ Naturaleza del aporte original sobre el tema y objetivos
 Uniendo los elementos enunciados anteriormente, nos proponemos estudiar
  sistemáticamente qué valor aporta el uso de una distancia basada en datos
  (la distancia de Fermat 
-\begin_inset Formula $\mathcal{D}_{f}$
+\begin_inset Formula $\mathcal{D}_{f}^{p}$
 \end_inset
 
 ) frente a la elección canónica (la distancia euclídea
@@ -720,8 +727,8 @@ Uniendo los elementos enunciados anteriormente, nos proponemos estudiar
 estimadores de densidad nuclear
 \emph default
  (KDEs, por sus siglas en inglés).
- Nos proponemos luego comparar comparar sus bondades relativas usándolos
- en tareas de 
+ Nos proponemos luego comparar sus bondades relativas usándolos en tareas
+ de 
 \emph on
 clasificación 
 \emph default
@@ -750,10 +757,10 @@ sintéticos
 
 \begin_layout Itemize
 en relación a la dimensión 
-\begin_inset Formula $D$
+\begin_inset Formula $d_{x}$
 \end_inset
 
- del espacio ambiente y
+ del espacio ambiente y 
 \end_layout
 
 \begin_layout Itemize
@@ -780,7 +787,7 @@ literal "false"
 
 ) es un método bastante eficiente en términos de cómputo.
  En cambio, un calculo exacto del estimador muestral de 
-\begin_inset Formula $\mathcal{D}_{f}$
+\begin_inset Formula $\mathcal{D}_{f}^{p}$
 \end_inset
 
  requiere 
@@ -829,7 +836,7 @@ literal "false"
 \begin_inset Formula $d-$
 \end_inset
 
-dimensional por clase),
+dimensional por clase), 
 \end_layout
 
 \begin_layout Itemize
@@ -847,7 +854,7 @@ literal "false"
 \end_inset
 
 ), un método reconocido en la actualidad por su simplicidad de uso y escasez
- de requerimientos y
+ de requerimientos y 
 \end_layout
 
 \begin_layout Itemize
@@ -866,6 +873,13 @@ literal "false"
 
 , que capturan buena parte de las bondades de los GBTs con una estructura
  sencilla.
+ 
+\end_layout
+
+\begin_layout Standard
+Además, nos proponemos dar argumentos teóricos que garanticen la consistencia
+ de la estimación de la densidad en el estilo de Pelletier, cuando se reemplaza
+ la distancia geodésica por una estimación empírica (plug-in).
 \end_layout
 
 \begin_layout Standard
@@ -873,7 +887,7 @@ literal "false"
 LatexCommand bibtex
 btprint "btPrintCited"
 bibfiles "bib/references"
-options "plainnat"
+options "plainnat-es"
 
 \end_inset
 
