@@ -1,6 +1,7 @@
 # Distancia de Fermat en Clasificadores de Densidad Nuclear 
-Gonzalo Barrera Borla
-Dir.: Pablo Groisman
+Lic. Gonzalo Barrera Borla
+
+Dir.: Dr. Pablo Groisman
 
 Tesis en progreso para la Maestría en Estadística Matemática, IC, FCEN-UBA
 2022, ningún derecho reservado
