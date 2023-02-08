@@ -1,0 +1,372 @@
+%% LyX 2.3.7 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+\theoremstyle{plain}
+\newtheorem{thm}{\protect\theoremname}
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{\protect\definitionname}
+\newenvironment{lyxlist}[1]
+	{\begin{list}{}
+		{\settowidth{\labelwidth}{#1}
+		 \setlength{\leftmargin}{\labelwidth}
+		 \addtolength{\leftmargin}{\labelsep}
+		 \renewcommand{\makelabel}[1]{##1\hfil}}}
+	{\end{list}}
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{\protect\remarkname}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usepackage{babel}
+
+\makeatother
+
+\usepackage{babel}
+\providecommand{\definitionname}{Definition}
+\providecommand{\remarkname}{Remark}
+\providecommand{\theoremname}{Theorem}
+
+\begin{document}
+\noindent 
+\global\long\def\R{\mathbb{R}}%
+\global\long\def\dimx{d_{x}}%
+\global\long\def\Rdimx{\mathbb{R}^{\dimx}}%
+\global\long\def\Rd{\Rdimx}%
+\global\long\def\M{\mathcal{M}}%
+\global\long\def\dimm{d_{\M}}%
+\global\long\def\var{\mathcal{\M}}%
+\global\long\def\itR{\mathcal{\R}}%
+\global\long\def\Lj{\mathcal{L}_{j}}%
+\global\long\def\H{\mathbf{H}}%
+
+\title{Distancia de Fermat en Clasificadores de Densidad Nuclear }
+\author{Lic. Gonzalo Barrera Borla}
+\date{Buenos Aires, 02/01/23}
+
+\maketitle
+ 
+\begin{center}
+\includegraphics[scale=0.3]{logofac} 
+\par\end{center}
+
+\begin{center}
+\medskip{}
+ UNIVERSIDAD DE BUENOS AIRES 
+\par\end{center}
+
+\begin{center}
+Facultad de Ciencias Exactas y Naturales 
+\par\end{center}
+
+\begin{center}
+Instituto del Cálculo 
+\par\end{center}
+
+\begin{center}
+\vspace{1cm}
+ 
+\par\end{center}
+
+\begin{center}
+Tesis presentada para optar al título de Magíster en Estadística Matemática
+de la Universidad de Buenos Aires 
+\par\end{center}
+
+\begin{center}
+\vspace{1cm}
+ 
+\par\end{center}
+
+\begin{center}
+Director: Dr. Pablo Groisman 
+\par\end{center}
+
+\pagebreak{} 
+\begin{abstract}
+TODO 
+\end{abstract}
+\pagebreak{}
+
+\tableofcontents{}
+
+\pagebreak{}
+
+\section{Introduccion}
+
+\subsection{El problema de clasificacion}
+
+Consideremos el problema de clasificación: 
+\begin{defn}
+\label{def:prob-clf}(Problema de clasificación). Sea $\boldsymbol{x}=\left(x_{i}\right)_{i=1}^{N}$
+una muestra de $N$ observaciones, repartidas en $M$ clases $C_{1},\dots,C_{M}$
+mutuamente excluyentes y conjntamente exhaustivas (es decir, $\forall\ i\in\left[N\right]\equiv\left\{ 1,\dots,N\right\} ,x_{i}\in C_{j}\iff x_{i}\notin C_{k},k\in\text{\ensuremath{\left[M\right]}},k\neq j$).
+Asumamos además que la muestra está compuesta de observaciones independientes
+entre sí, y en particular, cada clase tiene su propia ley: si $\Vert C_{j}\Vert=N_{j}$
+y $x_{i}^{\left(j\right)}$representa la i-ésima observación de la
+clase $j$, resulta que $X_{i}^{(j)}\sim\mathcal{L}_{j}\left(X\right)\ \forall\ j\in\text{\ensuremath{\left[M\right]}},i\in\left[N_{j}\right]$.
+
+Dada una nueva observación $x_{0}$ cuya clase es desconocida, 
+\begin{enumerate}
+\item (clasificación dura) ¿a qué clase deberíamos asignarla? 
+\item (clasificación suave) ¿qué probabilidad tiene de pertenecer a cada
+clase $C_{j},j\in\left[M\right]$ ? 
+\end{enumerate}
+\end{defn}
+
+Todo método o algoritmo que pretenda responder el problema de clasificación,
+prescribe un modo u otro de combinar toda la información muestral
+disponible, ponderando las $N$ observaciones de manera relativa a
+su cercanía o similitud con $x_{0}$. Por caso, $k-$vecinos más cercanos
+($k-$NN) asignará la nueva observación $x_{0}$ a la clase modal
+entre las $k$ observaciones de entrenamiento más cercanas\emph{ }(es
+decir, que minimizan la distancia euclídea $\left\Vert x_{0}-\cdot\right\Vert )$.
+$k-$NN no hace ninguna mención explícita de las leyes de clase $\mathcal{L}_{j}$,
+lo cual lo mantiene sencillo a costa de ignorar la estructura del
+problema.
+
+\subsection{Estimación de densidad}
+
+Una familia bastante genérica de métodos para resolver el problema
+de calsificación, consisten aproximadamente de los siguientes pasos: 
+\begin{enumerate}
+\item Hacer algunos supuestos sobre la forma de las leyes $\Lj$ 
+\item Hallar estimadores $\hat{\Lj}$ de cada ley $\Lj$ usando las muestras
+de cada clase, $\boldsymbol{x}^{\left(j\right)}=\left(x_{i}^{\left(j\right)}\right)_{i=1}^{N_{j}}$
+y algún procedimiento estándar (e.g.: máxima verosimilitud) 
+\item Definir una regla de decisión $\mathcal{R}\left(\cdot\vert\hat{\Lj},j\in\left[M\right]\right):\Rdimx\rightarrow\left[M\right]$
+que dados los estimadores de (2), asigne la observación $x_{0}$ a
+la clase $\mathcal{R}\left(x_{0}\right)$. 
+\end{enumerate}
+Esta familia de clasificadores, se distinguen por una explícita \emph{estimación
+de densidades} que más tarde se utilizarán para la tarea de clasificación
+en sí. Por ejemplo, al considerar el problema de clasificación binaria,
+el análisis de discriminante lineal (LDA) de Fisher\footnote{https://en.wikipedia.org/wiki/Linear\_discriminant\_analysis}
+queda encuadrado en esta familia de la siguiene manera:
+
+En (1), asumimos que las las leyes $\Lj$ 
+\begin{lyxlist}{00.00.0000}
+\item [{(a)}] son todas distribuciones normales con media $\mu_{j}$ y 
+\item [{(b)}] homocedásticas: $\Sigma_{j}=\Sigma\ \forall\ j\in\text{\ensuremath{\left[M\right]})}$. 
+\end{lyxlist}
+En (2), estimamos $\hat{\mu_{j}},\hat{\Sigma}$ por máxima verosimilitud,
+
+$\hat{\mu_{j}}=N_{j}^{-1}\sum_{i=1}^{N_{j}}x_{i}^{(j)}$
+
+$\hat{\Sigma}=N^{-1}\sum_{j=1}^{M}\sum_{{i=1}}^{N_{j}}(x_{i}^{(j)}-\hat{\mu_{j}})(x_{i}^{(j)}-\hat{\mu_{j}}).$
+
+Y la regla de (3) es la indicadora $1\left(\cdot\right)$ del discriminante
+lineal
+
+\begin{align*}
+\mathcal{R}\left(x\right) & =1\left(w\cdot x>c\right)\\
+w= & \Sigma^{-1}({\mu}_{1}-{\mu}_{0})\\
+c= & {\displaystyle w\cdot{\frac{1}{2}}(\mu_{1}+\mu_{0})}
+\end{align*}
+
+con los parámetros $\mu_{j},\Sigma$ reemplazados por las estimaciones
+de (2).
+
+Inevitablemente, existe un \emph{trade-off} entre lo restrictivo de
+los supuestos de (1), y la generalidad del clasificador resultante.
+En el caso de LDA, los supuestos (leyes normales y homocedasticidad)
+son inverosímiles en casi cualquier escenario real, pero el clasificador
+resultante es muy sencillo de computar. En general, este será el caso
+para todos los métodos\emph{ paramétricos} de estimación de densidad,
+en que de todas las posibles funciones de densidad%
+\begin{comment}
+que cardinalidad tienen? versus la familia normal?
+\end{comment}
+, quedan acotadas a aquellas que se pueden expresar de forma cerrada
+con una expresión predefinida (en este caso, la densidad normal),
+y $Q$ parámetros (aquí, $\mu$ y $\Sigma$).
+
+Alternativamente, existen métodos en que los supuestos de (1) se obvian
+del todo, o al menos son lo suficientemente generales como para representar
+todas salvo las más patológicas leyes (e.g.: asumir que la media y
+dispersión son finitas). A estos se los conoce, naturalmente, como
+métodos \emph{no paramétricos} de estimación de densidad.
+
+\subsection*{Estimación de densidad por núcleos}
+
+La estimación de densidad por núcleos (o KDE, por sus siglas en inglés),
+es uno de los métodos mejor estudiados dentro del amplio universo
+no-paramétrico\footnote{Algo sobre NNs, otros metodos nopa}. Introducidos
+hacia 1960 (Rosenblatt 1958, Parzen 1962) para variables aleatorias
+unidimensionales, han sido ampliamente desarrollados y adaptados a
+espacios mucho más generales. El objetivo es encontrar un estimador
+\emph{suave} de la densidad poblacional $f$ de una v.a. $X$ a partir
+de una muestra discreta, usando una función no-negativa $K$ llamada
+\emph{núcleo} (``kernel'') y un parámetro de suavización $h$, el
+\emph{ancho de banda} (``bandwith'').
+\begin{defn}
+(función núcleo) Una función $K$ es un \emph{núcleo} (``kernel''),
+si
+\begin{itemize}
+\item toma únicamente valores reales no-negativos: $K\left(x\right)\geq0\forall x$,
+\item está normalizada: $\int_{-\infty}^{+\infty}K\left(u\right)du=1$ y
+\item es simétrica: $K\left(u\right)=K\left(-u\right)\forall u$
+\end{itemize}
+\end{defn}
+
+\begin{rem}
+Si $K$ es un núcleo, entonces $K_{\lambda}\text{\ensuremath{\left(u\right)}}=\lambda K\left(\lambda u\right)$
+también lo es, lo cual permite construir un núcleo adecuadamente escalado
+a los datos.
+\end{rem}
+
+\begin{defn}
+\label{def:kde-univ}(KDE univariado) Sea $\left(x_{1},\dots,x_{N}\right)$
+una muestra de elementos i.i.d. tomada de cierta distribución univariada
+con densidad desconocida $f$, cuya forma deseamos conocer. Su estimador
+de densidad por núcleos (su ``KDE'') es
+
+${\displaystyle {\widehat{f}}_{h}(x)={\frac{1}{n}}\sum_{i=1}^{n}K_{h}(x-x_{i})={\frac{1}{nh}}\sum_{i=1}^{n}K{\Big(}{\frac{x-x_{i}}{h}}{\Big)}}$
+\end{defn}
+
+Dejando por un momento de lado qué par $\left(K,h\right)$ usar, podemos
+derivar un clasificador ``duro'' de manera bastante directa para
+la versión univariada del problema \ref{def:prob-clf}:
+\begin{defn}
+\label{def:clf-kde-univ}(clasificador KDE univariado). Sea $C:\Rdimx\rightarrow\left[M\right]$
+la ``función de clase'', tal que $\forall x\in\Rdimx,\ C\left(x\right)=j\iff x\in C_{j}$.
+Sean además $\hat{f}_{h}^{(1)},\dots,\hat{f}_{h}^{(M)}$ los estimadores
+de densidad obtenidos según \ref{def:kde-univ}. El ``clasificador
+por estimación de densidad nuclear'' correspondiente será:
+\begin{align*}
+\hat{C}\left(x\right) & =\mathrm{\arg\max_{j\in\left[M\right]}\ }\hat{f}_{h}^{(j)}\left(x\right)
+\end{align*}
+
+asignando cada observación a la clase en la que maximiza la densidad
+estimada.%
+\begin{comment}
+Debería estar ya incluyendo para hard clf las proporciones muestrales
+$p_{j}=N_{j}/N$ como probabilidades de clase \emph{a priori}?
+\end{comment}
+\end{defn}
+
+Cuando las clases de las cuales se compone la población se encuentran
+muy ``separadas'' entre sí (es decir, $\exists k\in\left[M\right]:f_{h}^{(k)}\text{\ensuremath{\left(x_{0}\right)}\ensuremath{\ensuremath{\gg}}0\ },\ f_{h}^{(j)}\simeq0\ \forall\ j\in\left[M\right]/k$),
+la clasificación ``dura'' de \ref{def:clf-kde-univ} será suficiente.
+Ahora bien, ¿cómo hacemos para cuantificar la incertidumbre asociada
+a la clasificación, cuando existe más de una clase con densidad estimada
+no despreciable? Como las $\hat{f}_{h}^{(j)}$ estimadas identifican
+distribuciones, es razonable decir que $p\left(C\text{\ensuremath{\left(x\right)}}=j\right)\propto f_{h}^{(j)}\left(x\right)$.
+Usando la regla de Bayes y un \emph{a priori} sobre las probabilidades
+de clase basado en las proporciones muestrales $\hat{p}\left(C_{j}\right)=N_{j}/N$,
+podemos conseguir una regla \emph{suave} de clasificación:
+\begin{defn}
+(clasificador KDE univariado suave) Sea el problema \ref{def:prob-clf}
+y los estimadores de densidad de \ref{def:kde-univ}. Por la regla
+de bayes, 
+\[
+p\left(C\left(x\right)=j\right)=\frac{f^{(j)}\left(x\right)\cdot p\text{\ensuremath{\left(C_{j}\right)}}}{p\text{\ensuremath{\left(x\right)}}}
+\]
+
+Reemplazando el a priori $p\text{\ensuremath{\left(C_{j}\right)}}$
+por su estimación muestral, las densidades $f^{(j)}$ por sus estimadores
+y usando la ley de la probabilidad total para expandir $p\left(x\right)$,
+obtenemos:
+\[
+\hat{p}\left(C\left(x\right)=j\right)=\frac{\hat{f}_{h}^{(j)}\left(x\right)\cdot N_{j}}{\sum_{i\in\text{\ensuremath{\left[M\right]}}}\hat{f}_{h}^{(i)}\left(x\right)\cdot N_{i}}
+\]
+\end{defn}
+
+
+\subsection{La noción de distancia en KDE}
+
+Como mencionamos en un principio, toda propuesta de solución al problema
+de clasificación \ref{def:prob-clf} para una nueva observación $x_{0}$,
+lo hará ponderando su cercanía a los elementos muestrales de cada
+clase. En la estimación de densidad nuclear univariada, el peso de
+cada elemento muestral está determinado por $K_{h}\left(x_{0}-x_{i}\right)$,
+y como $K_{h}$ es simétrica respecto del 0, $K_{h}\left(x_{0}-x_{i}\right)=K_{h}\left(\left|x_{0}-x_{i}\right|\right)=K_{h}\left(\Vert x_{0}-x_{i}\Vert\right)$.
+Es decir, que el operador núcleo pondera directamente la distancia
+euclídea entre la nueva observación y cada elemento muestral.
+
+Esto se vuelve más evidente cuando hemos de expresar un KDE para elementos
+aleatorios multivariados. 
+\begin{defn}
+(KDE multivariado, Wand \& Jones 1993) Sea $\left(x_{1},\dots,x_{N}\right)$
+una muestra de elementos i.i.d. tomada de cierta distribución $d-$dimensional
+con densidad desconocida $f$, cuya forma deseamos conocer. Su estimador
+de densidad por núcleos (su ``KDE'') es
+
+${\displaystyle {\widehat{f}}_{h}(x)={\frac{1}{n}}\sum_{i=1}^{n}K_{\H}(x-x_{i})}$
+
+donde $K$ misma es una función de densidad $d-$variada, $\mathbf{H}$
+es una matrix $d\times d$ positiva simétrica definida, y para todo
+$x\in\R^{d},\ K_{\mathbf{\H}}\left(x\right)=\det\left(\H\right)^{-1/2}K\left(\H^{-1/2}x\right)$. 
+\end{defn}
+
+Tomemos por caso el núcleo gaussiano, $K\left(x\right)=\left(2\pi\right)^{-d/2}\exp\left(-\frac{1}{2}x^{T}x\right).$
+Luego,
+\begin{align*}
+K_{\H}(x-x_{i}) & =K_{\mathbf{\H}}\left(x-x_{i}\right)\\
+ & =\det\left(\H\right)^{-1/2}K\left(\H^{-1/2}\left(x-x_{i}\right)\right)\\
+ & =\left(2\pi\right)^{-d/2}\det\left(\H\right)^{-1/2}\exp\left(-\frac{1}{2}\left\Vert \H^{-1/2}\left(x-x_{i}\right)\right\Vert ^{2}\right)
+\end{align*}
+
+es decir, que el peso de la i-ésima observación muestral en la estimación
+de densidad del punto $x$, depende directamente de su distancia de
+Mahalanobis a una distrubución normal centrada en $x_{i}$ con matrix
+de covarianza $\H$. Cuando $\H=\mathbf{I_{d}},$ la distancia de
+Mahalanobis es igual a la euclídea.
+\begin{itemize}
+\item Distancia dist en kde 
+\begin{itemize}
+\item Por omisión: dist euclidea: OK en low dim 
+\begin{itemize}
+\item (¿Es lo mismo que la geodésica en R\textasciicircum d\_x? Creo que
+sí) 
+\end{itemize}
+\item Euclidea inutil en alta dim: Malediction de la dimensionalidad d\_x
+(Bengio?) 
+\begin{itemize}
+\item Hipótesis de la variedad mu , d\_mu <\textcompwordmark < d\_x (Bengio) 
+\end{itemize}
+\end{itemize}
+\item KDE en variedad (pelletier) 
+\item Distancia en la variedad (de Riemann) 
+\begin{itemize}
+\item Si se sabe, geodésica H\&R (H \& Rodríguez?) 
+\item Si no se sabe, se estima a partir de los datos 
+\begin{itemize}
+\item Aprendizaje de distancia, de representaciones (Bengio) 
+\end{itemize}
+\end{itemize}
+\item Isomap (shortest-path en grafo completo) 
+\item Distancia de Fermat 
+\item Estimador de fermat en grafo completo 
+\begin{itemize}
+\item Isomap como caso particular (p=1) de estimador de dist Fermat (fde) 
+\end{itemize}
+\item Pendientes:
+\begin{itemize}
+\item isomap
+\item soft clf chen
+\end{itemize}
+\end{itemize}
+
+\section{Propuesta}
+\begin{itemize}
+\item estimador distancia de fermat del grafo de los datos según Groisman
+et al, 
+\item usar la la distancia estimada como plug-in en kde pelletier 
+\item Check clf acc \& perf 
+\end{itemize}
+
+\section{Análisis experimental}
+
+\section{Cuentita}
+
+\section{Conclusiones}
+\end{document}

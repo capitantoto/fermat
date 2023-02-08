@@ -1,0 +1,1232 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+\usepackage{babel}
+\end_preamble
+\use_default_options false
+\begin_modules
+theorems-ams
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding iso8859-15
+\fontencoding T1
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 2
+\use_package amssymb 2
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 0
+\use_package mathtools 0
+\use_package mhchem 0
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\noindent
+\begin_inset FormulaMacro
+\newcommand{\R}{\mathbb{R}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\dimx}{d_{x}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\Rdimx}{\mathbb{R}^{\dimx}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\Rd}{\Rdimx}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\M}{\mathcal{M}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\dimm}{d_{\M}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\var}{\mathcal{\M}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\itR}{\mathcal{\R}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\Lj}{\mathcal{L}_{j}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\H}{\mathbf{H}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Title
+Distancia de Fermat en Clasificadores de Densidad Nuclear 
+\end_layout
+
+\begin_layout Author
+Lic.
+ Gonzalo Barrera Borla
+\end_layout
+
+\begin_layout Date
+Buenos Aires, 02/01/23
+\end_layout
+
+\begin_layout Standard
+ 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename logofac.jpg
+	lyxscale 20
+	scale 30
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset VSpace medskip
+\end_inset
+
+ UNIVERSIDAD DE BUENOS AIRES 
+\end_layout
+
+\begin_layout Standard
+\align center
+Facultad de Ciencias Exactas y Naturales 
+\end_layout
+
+\begin_layout Standard
+\align center
+Instituto del Cálculo 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset VSpace 1cm
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\align center
+Tesis presentada para optar al título de Magíster en Estadística Matemática
+ de la Universidad de Buenos Aires 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset VSpace 1cm
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\align center
+Director: Dr.
+ Pablo Groisman 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Abstract
+TODO 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduccion
+\end_layout
+
+\begin_layout Subsection
+El problema de clasificacion
+\end_layout
+
+\begin_layout Standard
+Consideremos el problema de clasificación: 
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset label
+LatexCommand label
+name "def:prob-clf"
+
+\end_inset
+
+(Problema de clasificación).
+ Sea 
+\begin_inset Formula $\boldsymbol{x}=\left(x_{i}\right)_{i=1}^{N}$
+\end_inset
+
+ una muestra de 
+\begin_inset Formula $N$
+\end_inset
+
+ observaciones, repartidas en 
+\begin_inset Formula $M$
+\end_inset
+
+ clases 
+\begin_inset Formula $C_{1},\dots,C_{M}$
+\end_inset
+
+ mutuamente excluyentes y conjntamente exhaustivas (es decir, 
+\begin_inset Formula $\forall\ i\in\left[N\right]\equiv\left\{ 1,\dots,N\right\} ,x_{i}\in C_{j}\iff x_{i}\notin C_{k},k\in\text{\ensuremath{\left[M\right]}},k\neq j$
+\end_inset
+
+).
+ Asumamos además que la muestra está compuesta de observaciones independientes
+ entre sí, y en particular, cada clase tiene su propia ley: si 
+\begin_inset Formula $\Vert C_{j}\Vert=N_{j}$
+\end_inset
+
+ y 
+\begin_inset Formula $x_{i}^{\left(j\right)}$
+\end_inset
+
+representa la i-ésima observación de la clase 
+\begin_inset Formula $j$
+\end_inset
+
+, resulta que 
+\begin_inset Formula $X_{i}^{(j)}\sim\mathcal{L}_{j}\left(X\right)\ \forall\ j\in\text{\ensuremath{\left[M\right]}},i\in\left[N_{j}\right]$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+Dada una nueva observación 
+\begin_inset Formula $x_{0}$
+\end_inset
+
+ cuya clase es desconocida, 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+(clasificación dura) ¿a qué clase deberíamos asignarla? 
+\end_layout
+
+\begin_layout Enumerate
+(clasificación suave) ¿qué probabilidad tiene de pertenecer a cada clase
+ 
+\begin_inset Formula $C_{j},j\in\left[M\right]$
+\end_inset
+
+ ? 
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Todo método o algoritmo que pretenda responder el problema de clasificación,
+ prescribe un modo u otro de combinar toda la información muestral disponible,
+ ponderando las 
+\begin_inset Formula $N$
+\end_inset
+
+ observaciones de manera relativa a su cercanía o similitud con 
+\begin_inset Formula $x_{0}$
+\end_inset
+
+.
+ Por caso, 
+\begin_inset Formula $k-$
+\end_inset
+
+vecinos más cercanos (
+\begin_inset Formula $k-$
+\end_inset
+
+NN) asignará la nueva observación 
+\begin_inset Formula $x_{0}$
+\end_inset
+
+ a la clase modal entre las 
+\begin_inset Formula $k$
+\end_inset
+
+ observaciones de entrenamiento más cercanas
+\emph on
+ 
+\emph default
+(es decir, que minimizan la distancia euclídea 
+\begin_inset Formula $\left\Vert x_{0}-\cdot\right\Vert )$
+\end_inset
+
+.
+ 
+\begin_inset Formula $k-$
+\end_inset
+
+NN no hace ninguna mención explícita de las leyes de clase 
+\begin_inset Formula $\mathcal{L}_{j}$
+\end_inset
+
+, lo cual lo mantiene sencillo a costa de ignorar la estructura del problema.
+\end_layout
+
+\begin_layout Subsection
+Estimación de densidad
+\end_layout
+
+\begin_layout Standard
+Una familia bastante genérica de métodos para resolver el problema de calsificac
+ión, consisten aproximadamente de los siguientes pasos: 
+\end_layout
+
+\begin_layout Enumerate
+Hacer algunos supuestos sobre la forma de las leyes 
+\begin_inset Formula $\Lj$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Enumerate
+Hallar estimadores 
+\begin_inset Formula $\hat{\Lj}$
+\end_inset
+
+ de cada ley 
+\begin_inset Formula $\Lj$
+\end_inset
+
+ usando las muestras de cada clase, 
+\begin_inset Formula $\boldsymbol{x}^{\left(j\right)}=\left(x_{i}^{\left(j\right)}\right)_{i=1}^{N_{j}}$
+\end_inset
+
+ y algún procedimiento estándar (e.g.: máxima verosimilitud) 
+\end_layout
+
+\begin_layout Enumerate
+Definir una regla de decisión 
+\begin_inset Formula $\mathcal{R}\left(\cdot\vert\hat{\Lj},j\in\left[M\right]\right):\Rdimx\rightarrow\left[M\right]$
+\end_inset
+
+ que dados los estimadores de (2), asigne la observación 
+\begin_inset Formula $x_{0}$
+\end_inset
+
+ a la clase 
+\begin_inset Formula $\mathcal{R}\left(x_{0}\right)$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Esta familia de clasificadores, se distinguen por una explícita 
+\emph on
+estimación de densidades
+\emph default
+ que más tarde se utilizarán para la tarea de clasificación en sí.
+ Por ejemplo, al considerar el problema de clasificación binaria, el análisis
+ de discriminante lineal (LDA) de Fisher
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+https://en.wikipedia.org/wiki/Linear_discriminant_analysis
+\end_layout
+
+\end_inset
+
+ queda encuadrado en esta familia de la siguiene manera:
+\end_layout
+
+\begin_layout Standard
+En (1), asumimos que las las leyes 
+\begin_inset Formula $\Lj$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+(a) son todas distribuciones normales con media 
+\begin_inset Formula $\mu_{j}$
+\end_inset
+
+ y 
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+(b) homocedásticas: 
+\begin_inset Formula $\Sigma_{j}=\Sigma\ \forall\ j\in\text{\ensuremath{\left[M\right]})}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+En (2), estimamos 
+\begin_inset Formula $\hat{\mu_{j}},\hat{\Sigma}$
+\end_inset
+
+ por máxima verosimilitud,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\hat{\mu_{j}}=N_{j}^{-1}\sum_{i=1}^{N_{j}}x_{i}^{(j)}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\hat{\Sigma}=N^{-1}\sum_{j=1}^{M}\sum_{{i=1}}^{N_{j}}(x_{i}^{(j)}-\hat{\mu_{j}})(x_{i}^{(j)}-\hat{\mu_{j}}).$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Y la regla de (3) es la indicadora 
+\begin_inset Formula $1\left(\cdot\right)$
+\end_inset
+
+ del discriminante lineal
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\mathcal{R}\left(x\right) & =1\left(w\cdot x>c\right)\\
+w= & \Sigma^{-1}({\mu}_{1}-{\mu}_{0})\\
+c= & {\displaystyle w\cdot{\frac{1}{2}}(\mu_{1}+\mu_{0})}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+con los parámetros 
+\begin_inset Formula $\mu_{j},\Sigma$
+\end_inset
+
+ reemplazados por las estimaciones de (2).
+\end_layout
+
+\begin_layout Standard
+Inevitablemente, existe un 
+\emph on
+trade-off
+\emph default
+ entre lo restrictivo de los supuestos de (1), y la generalidad del clasificador
+ resultante.
+ En el caso de LDA, los supuestos (leyes normales y homocedasticidad) son
+ inverosímiles en casi cualquier escenario real, pero el clasificador resultante
+ es muy sencillo de computar.
+ En general, este será el caso para todos los métodos
+\emph on
+ paramétricos
+\emph default
+ de estimación de densidad, en que de todas las posibles funciones de densidad
+\begin_inset Note Comment
+status open
+
+\begin_layout Plain Layout
+que cardinalidad tienen? versus la familia normal?
+\end_layout
+
+\end_inset
+
+, quedan acotadas a aquellas que se pueden expresar de forma cerrada con
+ una expresión predefinida (en este caso, la densidad normal), y 
+\begin_inset Formula $Q$
+\end_inset
+
+ parámetros (aquí, 
+\begin_inset Formula $\mu$
+\end_inset
+
+ y 
+\begin_inset Formula $\Sigma$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+Alternativamente, existen métodos en que los supuestos de (1) se obvian
+ del todo, o al menos son lo suficientemente generales como para representar
+ todas salvo las más patológicas leyes (e.g.: asumir que la media y dispersión
+ son finitas).
+ A estos se los conoce, naturalmente, como métodos 
+\emph on
+no paramétricos
+\emph default
+ de estimación de densidad.
+\end_layout
+
+\begin_layout Subsection*
+Estimación de densidad por núcleos
+\end_layout
+
+\begin_layout Standard
+La estimación de densidad por núcleos (o KDE, por sus siglas en inglés),
+ es uno de los métodos mejor estudiados dentro del amplio universo no-paramétric
+o
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Algo sobre NNs, otros metodos nopa
+\end_layout
+
+\end_inset
+
+.
+ Introducidos hacia 1960 (Rosenblatt 1958, Parzen 1962) para variables aleatoria
+s unidimensionales, han sido ampliamente desarrollados y adaptados a espacios
+ mucho más generales.
+ El objetivo es encontrar un estimador 
+\emph on
+suave
+\emph default
+ de la densidad poblacional 
+\begin_inset Formula $f$
+\end_inset
+
+ de una v.a.
+ 
+\begin_inset Formula $X$
+\end_inset
+
+ a partir de una muestra discreta, usando una función no-negativa 
+\begin_inset Formula $K$
+\end_inset
+
+ llamada 
+\emph on
+núcleo
+\emph default
+ (
+\begin_inset Quotes eld
+\end_inset
+
+kernel
+\begin_inset Quotes erd
+\end_inset
+
+) y un parámetro de suavización 
+\begin_inset Formula $h$
+\end_inset
+
+, el 
+\emph on
+ancho de banda
+\emph default
+ (
+\begin_inset Quotes eld
+\end_inset
+
+bandwith
+\begin_inset Quotes erd
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Definition
+(función núcleo) Una función 
+\begin_inset Formula $K$
+\end_inset
+
+ es un 
+\emph on
+núcleo
+\emph default
+ (
+\begin_inset Quotes eld
+\end_inset
+
+kernel
+\begin_inset Quotes erd
+\end_inset
+
+), si
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+toma únicamente valores reales no-negativos: 
+\begin_inset Formula $K\left(x\right)\geq0\forall x$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+está normalizada: 
+\begin_inset Formula $\int_{-\infty}^{+\infty}K\left(u\right)du=1$
+\end_inset
+
+ y
+\end_layout
+
+\begin_layout Itemize
+es simétrica: 
+\begin_inset Formula $K\left(u\right)=K\left(-u\right)\forall u$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Remark
+Si 
+\begin_inset Formula $K$
+\end_inset
+
+ es un núcleo, entonces 
+\begin_inset Formula $K_{\lambda}\text{\left(u\right)}=\lambda K\left(\lambda u\right)$
+\end_inset
+
+ también lo es, lo cual permite construir un núcleo adecuadamente escalado
+ a los datos.
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset label
+LatexCommand label
+name "def:kde-univ"
+
+\end_inset
+
+(KDE univariado) Sea 
+\begin_inset Formula $\left(x_{1},\dots,x_{N}\right)$
+\end_inset
+
+ una muestra de elementos i.i.d.
+ tomada de cierta distribución univariada con densidad desconocida 
+\begin_inset Formula $f$
+\end_inset
+
+, cuya forma deseamos conocer.
+ Su estimador de densidad por núcleos (su 
+\begin_inset Quotes eld
+\end_inset
+
+KDE
+\begin_inset Quotes erd
+\end_inset
+
+) es
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula ${\displaystyle {\widehat{f}}_{h}(x)={\frac{1}{n}}\sum_{i=1}^{n}K_{h}(x-x_{i})={\frac{1}{nh}}\sum_{i=1}^{n}K{\Big(}{\frac{x-x_{i}}{h}}{\Big)}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Dejando por un momento de lado qué par 
+\begin_inset Formula $\left(K,h\right)$
+\end_inset
+
+ usar, podemos derivar un clasificador 
+\begin_inset Quotes eld
+\end_inset
+
+duro
+\begin_inset Quotes erd
+\end_inset
+
+ de manera bastante directa para la versión univariada del problema 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:prob-clf"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset label
+LatexCommand label
+name "def:clf-kde-univ"
+
+\end_inset
+
+(clasificador KDE univariado).
+ Sea 
+\begin_inset Formula $C:\Rdimx\rightarrow\left[M\right]$
+\end_inset
+
+ la 
+\begin_inset Quotes eld
+\end_inset
+
+función de clase
+\begin_inset Quotes erd
+\end_inset
+
+, tal que 
+\begin_inset Formula $\forall x\in\Rdimx,\ C\left(x\right)=j\iff x\in C_{j}$
+\end_inset
+
+.
+ Sean además 
+\begin_inset Formula $\hat{f}_{h}^{(1)},\dots,\hat{f}_{h}^{(M)}$
+\end_inset
+
+ los estimadores de densidad obtenidos según 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:kde-univ"
+
+\end_inset
+
+.
+ El 
+\begin_inset Quotes eld
+\end_inset
+
+clasificador por estimación de densidad nuclear
+\begin_inset Quotes erd
+\end_inset
+
+ correspondiente será:
+\begin_inset Formula 
+\begin{align*}
+\hat{C}\left(x\right) & =\mathrm{\arg\max_{j\in\left[M\right]}\ }\hat{f}_{h}^{(j)}\left(x\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+asignando cada observación a la clase en la que maximiza la densidad estimada.
+\begin_inset Note Comment
+status open
+
+\begin_layout Plain Layout
+Debería estar ya incluyendo para hard clf las proporciones muestrales 
+\begin_inset Formula $p_{j}=N_{j}/N$
+\end_inset
+
+ como probabilidades de clase 
+\emph on
+a priori
+\emph default
+?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Cuando las clases de las cuales se compone la población se encuentran muy
+ 
+\begin_inset Quotes eld
+\end_inset
+
+separadas
+\begin_inset Quotes erd
+\end_inset
+
+ entre sí (es decir, 
+\begin_inset Formula $\exists k\in\left[M\right]:f_{h}^{(k)}\text{\left(x_{0}\right)\ensuremath{\gg}0\ },\ f_{h}^{(j)}\simeq0\ \forall\ j\in\left[M\right]/k$
+\end_inset
+
+), la clasificación 
+\begin_inset Quotes eld
+\end_inset
+
+dura
+\begin_inset Quotes erd
+\end_inset
+
+ de 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:clf-kde-univ"
+
+\end_inset
+
+ será suficiente.
+ Ahora bien, ¿cómo hacemos para cuantificar la incertidumbre asociada a
+ la clasificación, cuando existe más de una clase con densidad estimada
+ no despreciable? Como las 
+\begin_inset Formula $\hat{f}_{h}^{(j)}$
+\end_inset
+
+ estimadas identifican distribuciones, es razonable decir que 
+\begin_inset Formula $p\left(C\text{\left(x\right)}=j\right)\propto f_{h}^{(j)}\left(x\right)$
+\end_inset
+
+.
+ Usando la regla de Bayes y un 
+\emph on
+a priori
+\emph default
+ sobre las probabilidades de clase basado en las proporciones muestrales
+ 
+\begin_inset Formula $\hat{p}\left(C_{j}\right)=N_{j}/N$
+\end_inset
+
+, podemos conseguir una regla 
+\emph on
+suave
+\emph default
+ de clasificación:
+\end_layout
+
+\begin_layout Definition
+(clasificador KDE univariado suave) Sea el problema 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:prob-clf"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ y los estimadores de densidad de 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:kde-univ"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Por la regla de bayes, 
+\begin_inset Formula 
+\[
+p\left(C\left(x\right)=j\right)=\frac{f^{(j)}\left(x\right)\cdot p\text{\left(C_{j}\right)}}{p\text{\left(x\right)}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+Reemplazando el a priori 
+\begin_inset Formula $p\text{\left(C_{j}\right)}$
+\end_inset
+
+ por su estimación muestral, las densidades 
+\begin_inset Formula $f^{(j)}$
+\end_inset
+
+ por sus estimadores y usando la ley de la probabilidad total para expandir
+ 
+\begin_inset Formula $p\left(x\right)$
+\end_inset
+
+, obtenemos:
+\begin_inset Formula 
+\[
+\hat{p}\left(C\left(x\right)=j\right)=\frac{\hat{f}_{h}^{(j)}\left(x\right)\cdot N_{j}}{\sum_{i\in\text{\left[M\right]}}\hat{f}_{h}^{(i)}\left(x\right)\cdot N_{i}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+La noción de distancia en KDE
+\end_layout
+
+\begin_layout Standard
+Como mencionamos en un principio, toda propuesta de solución al problema
+ de clasificación 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:prob-clf"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ para una nueva observación 
+\begin_inset Formula $x_{0}$
+\end_inset
+
+, lo hará ponderando su cercanía a los elementos muestrales de cada clase.
+ En la estimación de densidad nuclear univariada, el peso de cada elemento
+ muestral está determinado por 
+\begin_inset Formula $K_{h}\left(x_{0}-x_{i}\right)$
+\end_inset
+
+, y como 
+\begin_inset Formula $K_{h}$
+\end_inset
+
+ es simétrica respecto del 0, 
+\begin_inset Formula $K_{h}\left(x_{0}-x_{i}\right)=K_{h}\left(\left|x_{0}-x_{i}\right|\right)=K_{h}\left(\Vert x_{0}-x_{i}\Vert\right)$
+\end_inset
+
+.
+ Es decir, que el operador núcleo pondera directamente la distancia euclídea
+ entre la nueva observación y cada elemento muestral.
+\end_layout
+
+\begin_layout Standard
+Esto se vuelve más evidente cuando hemos de expresar un KDE para elementos
+ aleatorios multivariados.
+ 
+\end_layout
+
+\begin_layout Definition
+(KDE multivariado, Wand & Jones 1993) Sea 
+\begin_inset Formula $\left(x_{1},\dots,x_{N}\right)$
+\end_inset
+
+ una muestra de elementos i.i.d.
+ tomada de cierta distribución 
+\begin_inset Formula $d-$
+\end_inset
+
+dimensional con densidad desconocida 
+\begin_inset Formula $f$
+\end_inset
+
+, cuya forma deseamos conocer.
+ Su estimador de densidad por núcleos (su 
+\begin_inset Quotes eld
+\end_inset
+
+KDE
+\begin_inset Quotes erd
+\end_inset
+
+) es
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula ${\displaystyle {\widehat{f}}_{h}(x)={\frac{1}{n}}\sum_{i=1}^{n}K_{\H}(x-x_{i})}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+donde 
+\begin_inset Formula $K$
+\end_inset
+
+ misma es una función de densidad 
+\begin_inset Formula $d-$
+\end_inset
+
+variada, 
+\begin_inset Formula $\mathbf{H}$
+\end_inset
+
+ es una matrix 
+\begin_inset Formula $d\times d$
+\end_inset
+
+ positiva simétrica definida, y para todo 
+\begin_inset Formula $x\in\R^{d},\ K_{\mathbf{\H}}\left(x\right)=\det\left(\H\right)^{-1/2}K\left(\H^{-1/2}x\right)$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Tomemos por caso el núcleo gaussiano, 
+\begin_inset Formula $K\left(x\right)=\left(2\pi\right)^{-d/2}\exp\left(-\frac{1}{2}x^{T}x\right).$
+\end_inset
+
+ Luego,
+\begin_inset Formula 
+\begin{align*}
+K_{\H}(x-x_{i}) & =K_{\mathbf{\H}}\left(x-x_{i}\right)\\
+ & =\det\left(\H\right)^{-1/2}K\left(\H^{-1/2}\left(x-x_{i}\right)\right)\\
+ & =\left(2\pi\right)^{-d/2}\det\left(\H\right)^{-1/2}\exp\left(-\frac{1}{2}\left\Vert \H^{-1/2}\left(x-x_{i}\right)\right\Vert ^{2}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+es decir, que el peso de la i-ésima observación muestral en la estimación
+ de densidad del punto 
+\begin_inset Formula $x$
+\end_inset
+
+, depende directamente de su distancia de Mahalanobis a una distrubución
+ normal centrada en 
+\begin_inset Formula $x_{i}$
+\end_inset
+
+ con matrix de covarianza 
+\begin_inset Formula $\H$
+\end_inset
+
+.
+ Cuando 
+\begin_inset Formula $\H=\mathbf{I_{d}},$
+\end_inset
+
+ la distancia de Mahalanobis es igual a la euclídea.
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Itemize
+Distancia dist en kde 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Por omisión: dist euclidea: OK en low dim 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+(¿Es lo mismo que la geodésica en R^d_x? Creo que sí) 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Euclidea inutil en alta dim: Malediction de la dimensionalidad d_x (Bengio?)
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Hipótesis de la variedad mu , d_mu <\SpecialChar ligaturebreak
+< d_x (Bengio) 
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+KDE en variedad (pelletier) 
+\end_layout
+
+\begin_layout Itemize
+Distancia en la variedad (de Riemann) 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Si se sabe, geodésica H&R (H & Rodríguez?) 
+\end_layout
+
+\begin_layout Itemize
+Si no se sabe, se estima a partir de los datos 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Aprendizaje de distancia, de representaciones (Bengio) 
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+Isomap (shortest-path en grafo completo) 
+\end_layout
+
+\begin_layout Itemize
+Distancia de Fermat 
+\end_layout
+
+\begin_layout Itemize
+Estimador de fermat en grafo completo 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Isomap como caso particular (p=1) de estimador de dist Fermat (fde) 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Pendientes:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+isomap
+\end_layout
+
+\begin_layout Itemize
+soft clf chen
+\end_layout
+
+\end_deeper
+\begin_layout Section
+Propuesta
+\end_layout
+
+\begin_layout Itemize
+estimador distancia de fermat del grafo de los datos según Groisman et al,
+ 
+\end_layout
+
+\begin_layout Itemize
+usar la la distancia estimada como plug-in en kde pelletier 
+\end_layout
+
+\begin_layout Itemize
+Check clf acc & perf 
+\end_layout
+
+\begin_layout Section
+Análisis experimental
+\end_layout
+
+\begin_layout Section
+Cuentita
+\end_layout
+
+\begin_layout Section
+Conclusiones
+\end_layout
+
+\end_body
+\end_document
