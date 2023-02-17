@@ -137,6 +137,14 @@ theorems-ams
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\norm}[1]{\left\Vert #1\right\Vert }
+\end_inset
+
+
+\end_layout
+
 \begin_layout Title
 Distancia de Fermat en Clasificadores de Densidad Nuclear 
 \end_layout
@@ -151,7 +159,7 @@ Buenos Aires, 02/01/23
 \end_layout
 
 \begin_layout Standard
- 
+
 \end_layout
 
 \begin_layout Standard
@@ -649,7 +657,7 @@ bandwith
 
 \begin_layout Definition
 (función núcleo) Una función 
-\begin_inset Formula $K$
+\begin_inset Formula $\phi$
 \end_inset
 
  es un 
@@ -670,7 +678,7 @@ kernel
 \begin_deeper
 \begin_layout Itemize
 toma únicamente valores reales no-negativos: 
-\begin_inset Formula $K\left(x\right)\geq0\forall x$
+\begin_inset Formula $\phi\left(x\right)\geq0\forall x$
 \end_inset
 
 ,
@@ -678,7 +686,7 @@ toma únicamente valores reales no-negativos:
 
 \begin_layout Itemize
 está normalizada: 
-\begin_inset Formula $\int_{-\infty}^{+\infty}K\left(u\right)du=1$
+\begin_inset Formula $\int_{-\infty}^{+\infty}\phi\left(u\right)du=1$
 \end_inset
 
  y
@@ -686,7 +694,7 @@ está normalizada:
 
 \begin_layout Itemize
 es simétrica: 
-\begin_inset Formula $K\left(u\right)=K\left(-u\right)\forall u$
+\begin_inset Formula $K\left(u\right)=\phi\left(-u\right)\forall u$
 \end_inset
 
 
@@ -735,7 +743,7 @@ KDE
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula ${\displaystyle {\widehat{f}}_{h}(x)={\frac{1}{n}}\sum_{i=1}^{n}K_{h}(x-x_{i})={\frac{1}{nh}}\sum_{i=1}^{n}K{\Big(}{\frac{x-x_{i}}{h}}{\Big)}}$
+\begin_inset Formula ${\displaystyle {\widehat{f}}_{h}(x)={\frac{1}{n}}\sum_{i=1}^{n}\phi_{h}(x-x_{i})={\frac{1}{nh}}\sum_{i=1}^{n}\phi{\Big(}{\frac{x-x_{i}}{h}}{\Big)}}$
 \end_inset
 
 
@@ -972,49 +980,74 @@ La noción de distancia en KDE
 \end_layout
 
 \begin_layout Standard
-Como mencionamos en un principio, toda propuesta de solución al problema
- de clasificación 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "def:prob-clf"
-plural "false"
-caps "false"
-noprefix "false"
-
+El peso de cada 
+\begin_inset Formula $x_{i}$
 \end_inset
 
- para una nueva observación 
-\begin_inset Formula $x_{0}$
+ en 
+\begin_inset Formula $\hat{f}\left(x_{0}\right)$
 \end_inset
 
-, lo hará ponderando su cercanía a los elementos muestrales de cada clase.
- En la estimación de densidad nuclear univariada, el peso de cada elemento
- muestral está determinado por 
-\begin_inset Formula $K_{h}\left(x_{0}-x_{i}\right)$
+ es 
+\begin_inset Formula $\phi\left(x_{0}-x_{i}\right)$
 \end_inset
 
 , y como 
-\begin_inset Formula $K_{h}$
+\begin_inset Formula $\phi$
 \end_inset
 
- es simétrica respecto del 0, 
-\begin_inset Formula $K_{h}\left(x_{0}-x_{i}\right)=K_{h}\left(\left|x_{0}-x_{i}\right|\right)=K_{h}\left(\Vert x_{0}-x_{i}\Vert\right)$
+ es simétrica respecto al 0, sólo importa la 
+\emph on
+distancia
+\emph default
+ entre el nuevo punto y cada muestra, 
+\begin_inset Formula $x_{0},x_{i};$
 \end_inset
 
+ no así la 
+\emph on
+dirección
+\emph default
 .
- Es decir, que el operador núcleo pondera directamente la distancia euclídea
- entre la nueva observación y cada elemento muestral.
+ En una dimensión al menos, el núcleo 
+\begin_inset Formula $\phi$
+\end_inset
+
+ pondera - escalando por 
+\begin_inset Formula $h$
+\end_inset
+
+ - la distancia (euclídea) entre el punto a clasificar y cada datum:
 \end_layout
 
 \begin_layout Standard
-Esto se vuelve más evidente cuando hemos de expresar un KDE para elementos
- aleatorios multivariados.
- 
+\begin_inset Formula 
+\[
+\phi_{h}\left(x_{0}-x_{i}\right)=\phi_{h}\left(\left|x_{0}-x_{i}\right|\right)=\frac{1}{h}\phi\left(\frac{\left|x_{0}-x_{i}\right|}{h}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+En mayore dimensiones, la situación es más compleja, pero análoga
 \end_layout
 
 \begin_layout Definition
-(KDE multivariado, Wand & Jones 1993) Sea 
-\begin_inset Formula $\left(x_{1},\dots,x_{N}\right)$
+\begin_inset CommandInset label
+LatexCommand label
+name "def:kde-multiv"
+
+\end_inset
+
+(KDE multivariado, Hwang 1994) Sea 
+\begin_inset Formula $\left\{ \mathbf{x}\right\} =$
+\end_inset
+
+
+\begin_inset Formula $\left\{ x_{1},\dots,x_{N}\right\} $
 \end_inset
 
  una muestra de elementos i.i.d.
@@ -1035,52 +1068,128 @@ KDE
 \begin_inset Quotes erd
 \end_inset
 
-) es
+) será
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula ${\displaystyle {\widehat{f}}_{h}(x)={\frac{1}{n}}\sum_{i=1}^{n}K_{\H}(x-x_{i})}$
+\begin_inset Formula ${\displaystyle {\widehat{f}_{h}}(x)={\frac{1}{Nh^{d}}}\sum_{i=1}^{N}\phi\left(\frac{1}{h}\left(x-x_{i}\right)\right)}$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Definition
-donde 
-\begin_inset Formula $K$
+donde el núcleo 
+\begin_inset Formula $\phi$
 \end_inset
 
- misma es una función de densidad 
-\begin_inset Formula $d-$
+ debe satisfacer
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\phi\left(x\right)\geq,0,$
 \end_inset
 
-variada, 
-\begin_inset Formula $\mathbf{H}$
+ y 
+\begin_inset Formula $\int_{\Rd}$
 \end_inset
 
- es una matrix 
-\begin_inset Formula $d\times d$
+
+\begin_inset Formula $\left(x\right)dx=1$
 \end_inset
 
- positiva simétrica definida, y para todo 
-\begin_inset Formula $x\in\R^{d},\ K_{\mathbf{\H}}\left(x\right)=\det\left(\H\right)^{-1/2}K\left(\H^{-1/2}x\right)$
-\end_inset
 
-.
- 
 \end_layout
 
 \begin_layout Standard
-Tomemos por caso el núcleo gaussiano, 
-\begin_inset Formula $K\left(x\right)=\left(2\pi\right)^{-d/2}\exp\left(-\frac{1}{2}x^{T}x\right).$
+\begin_inset Separator plain
 \end_inset
 
- Luego,
+
+\end_layout
+
+\begin_layout Standard
+Un núcleo muy popular es el gaussiano 
+\begin_inset Formula $\phi\left(x\right)=\left(2\pi\right)^{-d/2}\exp\left(-\frac{\norm x^{2}}{2}\right)$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Standard
+un núcleo simétrico con su valor decayendo suavemente a medida que se aleja
+ del centro.
+\end_layout
+
+\begin_layout Standard
+Usualmente los datos no se encontrarán distribuidos uniformemente en todas
+ las direcciones, y será deseable pre-escalarlos para evitar diferencias
+ extremas en su dispersión y locación.
+ Un enfoque atractivo, es primero 
+\begin_inset Quotes eld
+\end_inset
+
+esferar
+\begin_inset Quotes erd
+\end_inset
+
+ o 
+\begin_inset Quotes eld
+\end_inset
+
+blanquear
+\begin_inset Quotes erd
+\end_inset
+
+ los datos mediante una transformación afín que devuelva data con media
+ cero y matriz de covarianza unitaria; y luego aplicar 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:kde-multiv"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Más específicamente, dada una muesta 
+\begin_inset Formula $\left\{ x\right\} ,$
+\end_inset
+
+podemos definir su versión 
+\begin_inset Quotes eld
+\end_inset
+
+esférica
+\begin_inset Quotes erd
+\end_inset
+
+ como
+\begin_inset Formula 
+\[
+z=\mathbf{S}^{-1/2}\left(x-Ex\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+donde la esperanza 
+\begin_inset Formula $E$
+\end_inset
+
+ es evaluada a través de la media muestral, y 
+\begin_inset Formula $\mathbf{S}\in\R^{d\times d}$
+\end_inset
+
+es la matriz de covarianza de los datos:
 \begin_inset Formula 
 \begin{align*}
-K_{\H}(x-x_{i}) & =K_{\mathbf{\H}}\left(x-x_{i}\right)\\
- & =\det\left(\H\right)^{-1/2}K\left(\H^{-1/2}\left(x-x_{i}\right)\right)\\
- & =\left(2\pi\right)^{-d/2}\det\left(\H\right)^{-1/2}\exp\left(-\frac{1}{2}\left\Vert \H^{-1/2}\left(x-x_{i}\right)\right\Vert ^{2}\right)
+\mathbf{S} & =E\left[\left(x-Ex\right)\left(x-Ex\right)^{T}\right]=\mathbf{UDU}^{T}\\
+\mathbf{S}^{-1/2} & =\mathbf{UD}^{-1/2}\mathbf{U}^{T}
 \end{align*}
 
 \end_inset
@@ -1089,60 +1198,1760 @@ K_{\H}(x-x_{i}) & =K_{\mathbf{\H}}\left(x-x_{i}\right)\\
 \end_layout
 
 \begin_layout Standard
-es decir, que el peso de la i-ésima observación muestral en la estimación
- de densidad del punto 
-\begin_inset Formula $x$
+Donde 
+\begin_inset Formula $\mathbf{U}$
 \end_inset
 
-, depende directamente de su distancia de Mahalanobis a una distrubución
- normal centrada en 
-\begin_inset Formula $x_{i}$
+ es una matriz ortonormal y 
+\begin_inset Formula $\mathbf{D}$
 \end_inset
 
- con matrix de covarianza 
-\begin_inset Formula $\H$
+ es una matriz diagonal.
+ De preocuparse por la influencia de 
+\emph on
+outliers
+\emph default
+ en los datos, existen métodos robustos para su derivación (Huber 1981).
+\end_layout
+
+\begin_layout Standard
+Se puede mostrar fácilment que luego del 
+\begin_inset Quotes eld
+\end_inset
+
+blanqueo
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Formula $Ez=0$
+\end_inset
+
+ y 
+\begin_inset Formula $E\left[zz^{T}\right]=\mathbf{I_{d}}$
 \end_inset
 
 .
- Cuando 
-\begin_inset Formula $\H=\mathbf{I_{d}},$
+ El estimador resultante para los datos esféricos realiza un estimación
+ de densidad más sofisticada
+\begin_inset CommandInset label
+LatexCommand label
+name "def:kde-multiv-blanco"
+
 \end_inset
 
- la distancia de Mahalanobis es igual a la euclídea.
+
 \end_layout
 
 \begin_layout Standard
 
+\color red
+Acá sigo a Hwang, que hace una presentación algo distinta a Wikipedia/Wand&Jones
+, primero blanquea y luego usa núcleo con 
+\begin_inset Formula $\H=\mathbf{I_{d}}$
+\end_inset
+
+; W&J no recomienda blanquear porque luego usa 
+\begin_inset Formula $\mathbf{H}$
+\end_inset
+
+ arbitraria.
+ Debería revisar bien la equivalencia, qué conviene más.
+\color inherit
+:
+\begin_inset Formula 
+\begin{align*}
+\hat{f}\left(z\right) & =\frac{1}{Nh^{d}}\sum_{i=1}^{N}\phi\left(\frac{1}{h}\left(z-z_{i}\right)\right)\\
+\hat{f}\left(x\right) & =\frac{\left(\det\text{\ensuremath{\mathbf{S}}}\right)^{-1/2}}{Nh^{d}}\sum_{i=1}^{N}\phi\left(\frac{1}{h}\mathbf{S}^{-1/2}\left(x-x_{i}\right)\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark
+\begin_inset CommandInset label
+LatexCommand label
+name "rem:mahalanobis-dist"
+
+\end_inset
+
+Dada una distribución de probabilidad 
+\begin_inset Formula $Q$
+\end_inset
+
+ en 
+\begin_inset Formula $\R^{d},$
+\end_inset
+
+ con media 
+\begin_inset Formula $\mu\in\R^{d}$
+\end_inset
+
+ y matriz de covarianza positiva definida 
+\begin_inset Formula $\mathbf{S}\in\R^{d\times d}$
+\end_inset
+
+, la 
+\emph on
+distancia de Mahalanobis
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+https://en.wikipedia.org/wiki/Mahalanobis_distance
+\end_layout
+
+\end_inset
+
+
+\emph default
+ de un punto 
+\begin_inset Formula $x$
+\end_inset
+
+ a 
+\begin_inset Formula $Q$
+\end_inset
+
+ es
+\begin_inset Formula 
+\[
+d_{M}\text{\left(x,Q\right)=\ensuremath{\sqrt{\left(x-\mu\right)^{T}\mathbf{S}^{-1}\left(x-\mu\right)}}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark
+Dados dos puntos 
+\begin_inset Formula $x,y$
+\end_inset
+
+ en 
+\begin_inset Formula $\R^{n}$
+\end_inset
+
+, la distancia de Mahalanobis 
+\emph on
+entre si
+\emph default
+ con respecto a 
+\begin_inset Formula $Q$
+\end_inset
+
+ es
+\begin_inset Formula 
+\[
+d_{M}\text{\left(x,Q\right)}=d_{M}\left(x,\mu;Q\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark
+Como 
+\begin_inset Formula $\mathbf{S}$
+\end_inset
+
+ es definida positiva, también lo es 
+\begin_inset Formula $S^{-1}$
+\end_inset
+
+, con lo que las raíces cuadradas están bien definidas.
+ Por el teorema espectral, 
+\begin_inset Formula $S^{-1}$
+\end_inset
+
+ se puede descomponer en 
+\begin_inset Formula $S^{-1}=\left(S^{-1/2}\right)^{T}S^{^{-1/2}}$
+\end_inset
+
+ para alguna matriz real 
+\begin_inset Formula $d\times d$
+\end_inset
+
+, lo cual sugiere una definición equivalente
+\end_layout
+
+\begin_layout Remark
+\begin_inset Formula $d_{M}\left(x,y;Q\right)=\norm{S^{^{-1/2}}\left(x-y\right)}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark
+donde 
+\begin_inset Formula $\norm{\cdot}$
+\end_inset
+
+ es la norma euclídea.
+ Es decir, la distancia de Mahalanobis es la distancia euclídea luego de
+ una transformación de blanqueo.
+\end_layout
+
+\begin_layout Remark
+Reemplazando 
+\begin_inset Formula $W=S^{-1/2},\mu=x_{1},\dots,x_{N}$
+\end_inset
+
+, podemos redefinir el estimador de 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:kde-multiv-blanco"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ para 
+\begin_inset Formula $f\left(x\right)$
+\end_inset
+
+ como un estimador de núcleos basado en la distancia de Mahalanobis de 
+\begin_inset Formula $x$
+\end_inset
+
+ a cada observación de 
+\begin_inset Formula $\left\{ \mathbf{x}\right\} $
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Remark
+La relativa sencillez para el cómputo del método hasta aquí descrito lo
+ hace un perenne favorito entre los estimadores de densidad no paramétricos.
+ Quedará a criterio del investigador considerar si sus bondades vuelven
+ tolerables las limitaciones impuestas o no.
+ A saber,
+\end_layout
+
+\begin_layout Enumerate
+Salvo en casos excepcionalmente bien portados, la dirección y dispersión
+ 
+\emph on
+local
+\emph default
+ de la muestra alrededor de un cierto punto 
+\begin_inset Formula $x_{i}$
+\end_inset
+
+ típicamente no coincidirá con la dirección 
+\series bold
+
+\begin_inset Formula $\mathbf{U}$
+\end_inset
+
+
+\series default
+ y dispersión 
+\series bold
+\emph on
+
+\begin_inset Formula $\mathbf{D}$
+\end_inset
+
+
+\series default
+ global
+\emph default
+ que se obtienen de computar 
+\begin_inset Formula $\mathbf{S}=\mathbf{UDU}^{T}$
+\end_inset
+
+ en la muestra completa.
+\end_layout
+
+\begin_layout Enumerate
+Aún cuando la estimación global de 
+\begin_inset Formula $\mathbf{S}$
+\end_inset
+
+ sea localmente adecuada, no resulta inmediatamente obvio que la suavización
+ 
+\begin_inset Formula $\mathbf{H=S}$
+\end_inset
+
+ inducida por la muestra sea óptima en términos de representación de la
+ densidad, super- y sub-suavizando
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+oversmoothing y undersmoothing
+\end_layout
+
+\end_inset
+
+ regiones de alta densidad y 
+\emph on
+outliers
+\emph default
+, respectivamente.
+\end_layout
+
+\begin_layout Enumerate
+Al ubicar una 
+\begin_inset Quotes eld
+\end_inset
+
+montañita
+\begin_inset Quotes erd
+\end_inset
+
+ de densidad en 
+\emph on
+cada
+\emph default
+ dato de la muestra, el cómputo del estimador hasta aquí expuesto se vuelve
+ prohibitamente costoso para 
+\begin_inset Formula $N$
+\end_inset
+
+ relativamente grande.
+\end_layout
+
+\begin_layout Standard
+Wand & Jones (1993) realiza un estudio exhaustivo de las consecuencias de
+ distintas parametrizaciones de 
+\begin_inset Formula $\mathbf{H}$
+\end_inset
+
+ para el caso multivariado más sencillo, 
+\begin_inset Formula $d=2$
+\end_inset
+
+, considerando familias de creciente complejidad para 
+\begin_inset Formula $\mathbf{H}$
+\end_inset
+
+, siempre positivas definidas:
+\end_layout
+
+\begin_layout Itemize
+en términos generales,
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+productos escalares de la identidad: 
+\begin_inset Formula $\mathcal{H}_{1}\coloneqq\left\{ h_{1}^{2}\mathbf{I};h_{1}>0\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+matrices diagonales con distintas escalas en cada eje: 
+\begin_inset Formula $\mathcal{H}_{2}\coloneqq\left(\text{diag}\left(h_{1}^{2},h_{2}^{2}\right);h_{1},h_{2}>0\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+matrices completas: 
+\begin_inset Formula 
+\[
+\mathcal{H}_{3}\coloneqq\left\{ \left[\begin{array}{cc}
+h_{1}^{2} & h_{12}\\
+h_{12} & h_{2}^{2}
+\end{array}\right];h_{1},h_{2}>0,\left|h_{12}\right|<h_{1}h_{2}\right\} 
+\]
+
+\end_inset
+
+,
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+basadas en una 
+\begin_inset Quotes eld
+\end_inset
+
+esferización
+\begin_inset Quotes erd
+\end_inset
+
+ de los datos vía matriz de covarianza 
+\begin_inset Formula $\mathbf{C}=\left[\begin{array}{cc}
+c_{11} & c_{12}\\
+c_{12} & c_{22}
+\end{array}\right]$
+\end_inset
+
+ de la densidad objetivo 
+\begin_inset Formula $f$
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+ignorando la correlación 
+\begin_inset Formula $\mathcal{C}_{2}\coloneqq\left\{ h^{2}\mathbf{D};h^{2}>0\right\} $
+\end_inset
+
+, con 
+\begin_inset Formula $\mathbf{D}=\text{diag}\left(c_{11,}c_{22}\right)$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+completa 
+\begin_inset Formula $\mathcal{C}_{3}\coloneqq\left\{ h^{2}\mathbf{C};h^{2}>0\right\} $
+\end_inset
+
+ e
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+híbridas
+\emph default
+, con suavizado independiente en cada dirección 
+\begin_inset Formula 
+\[
+\mathcal{Y}\coloneqq\left\{ \left[\begin{array}{cc}
+h_{1}^{2} & \rho_{12}h_{1}h_{2}\\
+\rho_{12}h_{1}h_{2} & h_{2}^{2}
+\end{array}\right];h_{1},h_{2}>0\right\} 
+\]
+
+\end_inset
+
+ y coeficiente de correlación 
+\begin_inset Formula $\rho_{12}=c_{12}/\sqrt{c_{11}c_{22}}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Nótese que 
+\begin_inset Formula $\mathcal{H}_{1}\subseteq\mathcal{H}_{2}\subseteq\mathcal{H}_{3},\ \ \mathcal{C}_{2}\subseteq\mathcal{H}_{2},\ \ \mathcal{C}_{3}\subseteq\mathcal{H}_{3},\ \ \mathcal{Y}\subseteq\mathcal{H}_{3}$
+\end_inset
+
+.
+ Wand & Jones se 
+\begin_inset Quotes eld
+\end_inset
+
+desembarazan
+\begin_inset Quotes erd
+\end_inset
+
+ del problema de 
+\emph on
+selección
+\emph default
+ de anchos de banda, eligiendo enfocarse en la 
+\emph on
+eficiencia relativa asintótica
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+burdamente, la relación entre los tamaños muestrales necesarios para conseguir
+ el mismo error asintótico restringiendo 
+\begin_inset Formula $\mathbf{H}$
+\end_inset
+
+ a cierto par de las clases aquí descritas 
+\end_layout
+
+\end_inset
+
+
+\emph default
+ de cada clase con respecto a la más general 
+\begin_inset Formula $\mathcal{H}_{3}$
+\end_inset
+
+.
+ A tal fin, toman como medida del error global incurrido por cierto estimador
+ 
+\begin_inset Formula $\hat{f}_{\mathbf{H}}$
+\end_inset
+
+ el error cuadrático medio integrado (MISE, por sus siglas en inglés)
+\begin_inset Formula 
+\[
+MISE\left(\mathbf{H}\right)=MISE\left(\hat{f}_{\mathbf{H}},f\right)=E\int_{\R^{d}}\left(\hat{f}_{\mathbf{H}}\left(y\right)-f\left(y\right)\right)^{2}dy
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+y su aproximación asintótica.
+\end_layout
+
+\begin_layout Standard
+Los autores notan una dificultad cualitativamente nueva en el caso multivariado
+ en comparación al univariado: definir la 
+\emph on
+orientación
+\emph default
+ de 
+\begin_inset Formula $\text{\textbf{H}}$
+\end_inset
+
+.
+ Aún en el relativamente sencillo contexto bivariado, muestran cómo la estrategi
+a 
+\begin_inset Quotes eld
+\end_inset
+
+ingenua
+\begin_inset Quotes erd
+\end_inset
+
+ de depender para ello de la covarianza muestral conlleva enormes pérdidas
+ de eficiencia, aún para la familia 
+\begin_inset Formula $\mathcal{Y}$
+\end_inset
+
+, sobre todo para densidades multimodales y otras que se alejan de la normalidad.
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+W&J (1993) tiene un lindo ejemplo 
+\begin_inset Quotes eld
+\end_inset
+
+(F) Bimodal II
+\begin_inset Quotes erd
+\end_inset
+
+ de cómo la covarianza estimada para una mezcla de dos gausianas con diferencias
+ en la locación sobre el eje x, y mayor dispersión en el eje y, termina
+ dando una estimación de la covarianza inútil para suavizado.
+ Podría reproducirlo con scipy+matplotlib para ilustrar.
+\end_layout
+
+\end_inset
+
+ En su recomendación final, los autores sugieren que en general 
+\begin_inset Quotes eld
+\end_inset
+
+hay mucho para ganar incluyendo parámetros de orientación
+\begin_inset Quotes erd
+\end_inset
+
+ (es decir, elementos no-diagonales) en la parametrización de 
+\begin_inset Formula $\mathbf{H}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Autores posteriores han tomado el desafío y considerado métodos para la
+ elección de un suavizador 
+\begin_inset Formula $\mathbf{H}\in\mathcal{H}_{3}$
+\end_inset
+
+ para el caso general 
+\begin_inset Formula $d-$
+\end_inset
+
+dimensional.
+ Los mismos autores en un trabajo posterior (WandJones94) proponen un estimador
+ 
+\begin_inset Quotes eld
+\end_inset
+
+plug-in
+\begin_inset Quotes erd
+\end_inset
+
+ del 
+\begin_inset Formula $\mathbf{H}$
+\end_inset
+
+ óptimo que se puede aplicar a 
+\begin_inset Formula $\mathcal{H}_{3}$
+\end_inset
+
+, pero luego se limitan a la familia diagonal 
+\begin_inset Formula $\mathcal{H}_{2}$
+\end_inset
+
+ para su aplicación concreta.
+ Duong2005 sintetiza sus aportes propios y otros precedentes alrededor de
+ la estimación de 
+\series bold
+
+\begin_inset Formula $\mathbf{H}$
+\end_inset
+
+
+\series default
+ completa según tres métodos de validación cruzada
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset Quotes eld
+\end_inset
+
+cross-validation
+\begin_inset Quotes erd
+\end_inset
+
+, o CV, por sus siglas en inglés.
+\end_layout
+
+\end_inset
+
+: CV sesgada (BCV), CV insesgada (UCV), y CV 
+\begin_inset Quotes eld
+\end_inset
+
+suavizada
+\begin_inset Quotes erd
+\end_inset
+
+ (SCV).
+ Todos los métodos propuestos buscan minimizar un error cuadrático (UCV
+ usa MISE; BCV el asintótico AMISE y SCV una combinación lineal de ambos),
+ en el contexto de validación cruzada 
+\begin_inset Quotes eld
+\end_inset
+
+dejar-uno-afuera
+\begin_inset Quotes erd
+\end_inset
+
+.
+ El método con el que mejores resultados obtienen, SCV, es también el más
+ complejo en su implementación, pues requiere considerar un 
+\begin_inset Quotes eld
+\end_inset
+
+suavizador piloto
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset Formula $\mathbf{G}\in\R^{d\times d}$
+\end_inset
+
+ cuya elección no es transparente.
+\end_layout
+
+\begin_layout Standard
+Hall2005, por su parte, motivado por la aplicación concreta de estimación
+ de densidad al problema de clasificación, toma un camino distinto para
+ la optimización: en lugar de elegir 
+\begin_inset Formula $\mathbf{H}$
+\end_inset
+
+ minimizando (A)MISE, se propone elegir 
+\begin_inset Formula $\mathbf{H}$
+\end_inset
+
+ de manera que minimice una función relacionada directamente con la tarea
+ propuesta: el riesgo de Bayes.
+ Sea 
+\begin_inset Formula $\mathcal{R}$
+\end_inset
+
+ una regla de decisión como se planteó en 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:prob-clf"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, diremos que el 
+\emph on
+riesgo de Bayes
+\emph default
+ en una región 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+ es 
+\begin_inset Formula 
+\begin{align*}
+\text{err}_{\mathcal{R}}\text{\left(f_{1},\dots,f_{K}\vert\gamma\right)}\\
+= & \sum_{j=1}^{K}p_{j}\int_{\Gamma}Pr\left(x\text{\textbf{ no }sea clasificado por \ensuremath{\mathcal{R}} como \ensuremath{\in C_{j}}}\right)f_{j}\left(x\right)dx
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+En este sentido, el clasificador de 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:clf-kde-univ"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ es óptimo, y por ende es razonable argumentar que elegir 
+\begin_inset Formula $\mathbf{H}$
+\end_inset
+
+ como Hall propone es superador a optimizar 
+\begin_inset Formula $\mathbf{H}$
+\end_inset
+
+ para el 
+\begin_inset Quotes eld
+\end_inset
+
+resultado intermedio
+\begin_inset Quotes erd
+\end_inset
+
+ de estimar las densidades de cada clase.
+ En efecto, para el caso más sencillo 
+\begin_inset Formula $K=2,d=1$
+\end_inset
+
+ y las densidades se 
+\begin_inset Quotes eld
+\end_inset
+
+cruzan
+\begin_inset Quotes erd
+\end_inset
+
+ en un solo punto con un mismo signo, los anchos de banda encontrados por
+ minimización del riesgo de Bayes son un orden de magnitud distintos de
+ los ya cubiertos.
+ Sin embargo, para 
+\begin_inset Formula $d>1,K\geq2$
+\end_inset
+
+ , resulta ser el caso que el ancho de banda óptimo según el error de Bayes
+ es el mismo que via (A)MISE.
+\end_layout
+
+\begin_layout Standard
+Hwang (1994) comienza estudiando explícitamente cómo elegir 
+\begin_inset Formula $h$
+\end_inset
+
+ para datos esferizados (la familia 
+\begin_inset Formula $\mathcal{C}_{3}$
+\end_inset
+
+ en Wand&Jones93), luego nota las dificultades (2) y (3) previamente mencionadas
+, y compara varios algoritmos superadores en algún sentido al KDE con ancho
+ de banda fijo (FKDE):
+\end_layout
+
+\begin_layout Itemize
+KDE adaptativo (AKDE), similar a FKDE esferizado pero con un factor de ancho
+ local 
+\begin_inset Formula $\lambda_{n}$
+\end_inset
+
+ para cada núcleo
+\begin_inset Formula 
+\[
+\hat{f}_{AKDE}\left(z\right)=\frac{1}{Nh^{d}}\sum_{i=1}^{N}\lambda_{i}^{-d}\phi\left(\frac{1}{h\lambda_{i}}\left(z-z_{i}\right)\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+El cómputo de los factores 
+\begin_inset Formula $\lambda_{i}$
+\end_inset
+
+ ha de resolverse iterativamente, comenzando por el caso FKDE, 
+\begin_inset Formula $\lambda_{i}=1\forall i\in\left[N\right]$
+\end_inset
+
+, con lo cual el costo computacional será aún más alto que en el caso base.
+\end_layout
+
+\begin_layout Itemize
+Aunque cada núcleo estará mejor escalado a su contexto local, el enfoque
+ sigue utilizando una misma orientación global para todos los núcleos.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+KDE de base funcional radial (RBF): para minimizar la cantidad de núcleos
+ a ajustar a los datos, divide el proceso de estimación de densidad en dos
+ partes: (i) agrupar los datos en clusters según cierto algoritmo no-supervisado
+, y luego (ii) ajustar un núcleo gaussiano, su altura y su ancho a cada
+ cluster de (i).
+ Por esto, también se lo conoce com 
+\begin_inset Quotes eld
+\end_inset
+
+modelado de mezclas gaussianas
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Aunque el estimador final se puede expresar con muy pocos términos, el procedimi
+ento completo es considerablemente más complejo que el de FKDE, dependiendo
+ críticamente de la esferización y remoción de 
+\emph on
+outliers
+\emph default
+ para la detección de clusters.
+\end_layout
+
+\begin_layout Itemize
+Dependiendo del tamaño muestral, la dimensionalidad de los datos y la cantidad
+ de bases utilizadas, ciertos clusters pueden resultar en núcleos demasiado
+ 
+\begin_inset Quotes eld
+\end_inset
+
+empinados
+\begin_inset Quotes erd
+\end_inset
+
+ o demasiado 
+\begin_inset Quotes eld
+\end_inset
+
+planos
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Así, una de las principales ventajas de este método - la posibilidad de
+ ajustar una matriz de covarianza distinta a cada cluster de datos - implicará
+ una minuciosa inspección de los datos para saber qué escala y orientación
+ es razonable para cada base.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+KDE por 
+\begin_inset Quotes eld
+\end_inset
+
+persecución de la proyección
+\begin_inset Quotes erd
+\end_inset
+
+ (PPDE): El espíritu de este método, está basado en buscar iterativamente
+ proyecciones 
+\begin_inset Quotes eld
+\end_inset
+
+interesantes
+\begin_inset Quotes erd
+\end_inset
+
+ de los datos en bajas dimensiones (típicamente 1-D), modificar la muestra
+ original 
+\begin_inset Formula $\left\{ \mathbf{x}\right\} ^{\left(0\right)}$
+\end_inset
+
+ para remover la estructura encontrada en la proyección, y repetir el proceso
+ en los datos resultantes.
+ Siguiendo a Huber 85, la distribución normal se considera la 
+\begin_inset Quotes eld
+\end_inset
+
+menos interesante
+\begin_inset Quotes erd
+\end_inset
+
+, y será 
+\begin_inset Quotes eld
+\end_inset
+
+más interesante
+\begin_inset Quotes erd
+\end_inset
+
+ aquella proyección de los datos que más se le aleje.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Para evitar confundir la dirección y escala de la muestra con proyecciones
+ verdaderamente interesante, el método de PPDE requiere también esferizar
+ los datos e ignorar 
+\emph on
+outliers 
+\emph default
+juiciosamente (p.
+ 29 Huber85).
+\end_layout
+
+\begin_layout Itemize
+Un problema específico a PPDE, es que no puede lidiar satisfactoriamente
+ con estructuras 
+\begin_inset Quotes eld
+\end_inset
+
+escondidas
+\begin_inset Quotes erd
+\end_inset
+
+ detrás de otras.
+ E.g., las proyecciones de una densidad 2-D con forma de dona a 1-D no dan
+ cuenta fehaciente de la estructura original.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+En resumen:
+\end_layout
+
+\begin_layout Itemize
+Wand, Jones y Duong, entre tantos otros, pretenden buscar selectores basados
+ en MISE para 
+\begin_inset Formula $\mathbf{H}$
+\end_inset
+
+ completa, pero terminan encontrando dificultades que los restringen, en
+ la práctica, a matrices diagonales, o los enriedan en la selección de parámetro
+s auxiliares con complejidad propia.
+\end_layout
+
+\begin_layout Itemize
+Hall, motivado por el problema que nos compete, intenta un selector basado
+ en el riesgo de Bayes, pero el método resulta tan complejo en su propio
+ derecho, que aún al tratar muestras multivariadas, lo hace con un suavizador
+ escalar 
+\begin_inset Formula $h,\ \mathbf{H}\in\mathcal{H}_{1}$
+\end_inset
+
+, y nota que los resultados no difieren significativamente de los obtenidos
+ minimizando el error cuadrático integrado.
+\end_layout
+
+\begin_layout Itemize
+Hwang explora todo tipo de anchos de banda escalares (fijos, adaptativos,
+ clusterizados), y por último 
+\begin_inset Quotes eld
+\end_inset
+
+abandona
+\begin_inset Quotes erd
+\end_inset
+
+ esta línea y considera un método que no requiere definir explícitamente
+ un suavizador 
+\series bold
+H
+\series default
+: PPDE.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+La maldición de la dimensionalidad
+\end_layout
+
+\begin_layout Standard
+Hasta aquí, pareciera ser que el enfoque de estimación de densidad por núcleos
+ para el caso multivariado está irremediablemente condenado al fracaso,
+ o al menos a una agotadora complejidad.
+ Sin embargo, antes de claudicar, vale la pena entender algunas de las razones
+ de tamaña complejidad.
+\end_layout
+
+\begin_layout Standard
+Una dificultad obvia es que aún considerando un único suavizador global
+ 
+\series bold
+H
+\series default
+, en 
+\begin_inset Formula $d$
+\end_inset
+
+ dimensiones hacen falta estimar 
+\begin_inset Formula $\tbinom{d}{1}+\tbinom{d}{2}=\text{\left(d^{2}+d\right)/2}$
+\end_inset
+
+ varianzas y covarianzas, respectivamente.
+ El crecimiento cuadrático en la cantidad de parámetros implicará que el
+ tamaño muestral 
+\begin_inset Formula $N$
+\end_inset
+
+ necesario para obtener estimaciones razonables crezca insosteniblemente.
+ El fenómeno, conocido como 
+\begin_inset Quotes eld
+\end_inset
+
+maldición de la dimensionalidad
+\begin_inset Quotes erd
+\end_inset
+
+, se puede entender intuitivamente considerando el siguiente escenario:
+\end_layout
+
+\begin_layout Remark
+\begin_inset CommandInset label
+LatexCommand label
+name "rem:curse-dim"
+
+\end_inset
+
+Sea 
+\begin_inset Formula $B\left(x,r,d\right)$
+\end_inset
+
+ la bola 
+\begin_inset Formula $d-$
+\end_inset
+
+dimensional de radio 
+\begin_inset Formula $r$
+\end_inset
+
+ centrada en 
+\begin_inset Formula $x\in\R^{d}$
+\end_inset
+
+, y consideremos una v.a.
+ uniformemente distribuida dentro de ella (por volumen), 
+\begin_inset Formula $X\sim Unif\left(B\left(0,r,d\right)\right)$
+\end_inset
+
+.
+ Sea 
+\begin_inset Formula $\epsilon>0$
+\end_inset
+
+; cuál es la probabilidad de que 
+\begin_inset Formula $X$
+\end_inset
+
+ se encuentre al 
+\begin_inset Quotes eld
+\end_inset
+
+interior
+\begin_inset Quotes erd
+\end_inset
+
+ de la bola (sustrayendo un 
+\begin_inset Quotes eld
+\end_inset
+
+cascarón
+\begin_inset Quotes erd
+\end_inset
+
+ externo de espesor 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+) 
+\begin_inset Formula $Pr\text{\left(X\in B\left(0,r-\epsilon,d\right)\right)}$
+\end_inset
+
+?
+\end_layout
+
+\begin_layout Remark
+Como la distribución de 
+\begin_inset Formula $X$
+\end_inset
+
+ es uniforme en volumen, y 
+\begin_inset Formula $B\left(x,r-\epsilon,d\right)\subset B\left(x,r,d\right)$
+\end_inset
+
+, basta con comparar los volúmenes de de ambas 
+\begin_inset Formula $d-$
+\end_inset
+
+esferas para encontrar la solución.
+ El volumen
+\begin_inset Formula $d-$
+\end_inset
+
+dimensional de una bola es
+\end_layout
+
+\begin_layout Remark
+\begin_inset Formula 
+\[
+{\displaystyle Vol\left(B\left(x,r,d\right)\right)=Vol_{B}\left(r,d\right)={\frac{\pi^{d/2}}{\Gamma\left(\tfrac{d}{2}+1\right)}}r^{d}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark
+donde 
+\begin_inset Formula ${\displaystyle \Gamma\left(z\right)=\int_{0}^{\infty}t^{z-1}e^{-t}\,dt}$
+\end_inset
+
+ es la función gamma.
+ Luego,
+\begin_inset Formula 
+\[
+Pr\text{\ensuremath{\left(X\in B\left(0,r-\epsilon,d\right)\right)}}=\frac{Vol\left(B\left(0,r-\epsilon,d\right)\right)}{Vol\left(B\left(0,r,d\right)\right)}=\left(\frac{r-\epsilon}{r}\right)^{d}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark
+Como 
+\begin_inset Formula $\left(\frac{r-\epsilon}{r}\right)<1$
+\end_inset
+
+, 
+\begin_inset Formula $\lim_{d\rightarrow\infty}Pr\text{\ensuremath{\left(X\in B\left(0,r-\epsilon,d\right)\right)}}\rightarrow0$
+\end_inset
+
+.
+ Es decir, a medida que crece la dimensión del soporte de 
+\begin_inset Formula $X$
+\end_inset
+
+, el 
+\begin_inset Quotes eld
+\end_inset
+
+interior
+\begin_inset Quotes erd
+\end_inset
+
+ de la bola esta (casi) vacío, y la distribución de 
+\begin_inset Formula $X$
+\end_inset
+
+ se concentra en el 
+\begin_inset Quotes eld
+\end_inset
+
+cascarón
+\begin_inset Quotes erd
+\end_inset
+
+ exterior.
+ Aún para valores moderados de 
+\begin_inset Formula $d,\epsilon$
+\end_inset
+
+ el efecto es pronunciado.
+ Por ejemplo, en 20 dimensiones, un cascarón de 2% de espesor (
+\begin_inset Formula $\epsilon=0.02r$
+\end_inset
+
+) concentrará 
+\begin_inset Formula $1-\text{\left(\tfrac{r-\epsilon}{r}\right)}^{d}=1-0.98^{20}=0.6676\dots\approx\text{¡}2/3$
+\end_inset
+
+ de la masa de probabilidad de 
+\begin_inset Formula $X$
+\end_inset
+
+! 
+\end_layout
+
+\begin_layout Remark
+Este enorme 
+\begin_inset Quotes eld
+\end_inset
+
+vacío
+\begin_inset Quotes erd
+\end_inset
+
+ en el espacio de alta dimensión, se traduce en una irrelevancia de las
+ métricas 
+\begin_inset Quotes eld
+\end_inset
+
+ingenuas
+\begin_inset Quotes erd
+\end_inset
+
+ de distancia.
+ Como 
+\begin_inset Formula $x\in B\left(0,r,d\right)\iff\norm x\leq r\sqrt{d}$
+\end_inset
+
+, y similarmente 
+\begin_inset Formula $x\notin B\left(0,r-\epsilon,d\right)\iff\norm x>\left(r-\epsilon\right)\sqrt{d}$
+\end_inset
+
+, podemos escribir 
+\begin_inset Formula 
+\begin{align*}
+Pr\text{\ensuremath{\left(X\notin B\left(0,r-\epsilon,d\right)\right)}} & =Pr\text{\ensuremath{\left(X\notin B\left(0,r-\epsilon,d\right),X\in B\left(0,r,d\right)\right)}}\\
+1-\left(\frac{r-\epsilon}{r}\right)^{d} & =Pr\left(\left(r-\epsilon\right)\sqrt{d}<\norm X\leq r\sqrt{d}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark
+De manera que 
+\begin_inset Formula $\lim_{d\rightarrow\infty}Pr\left(\left(r-\epsilon\right)\sqrt{d}<\norm X\leq r\sqrt{d}\right)\rightarrow1$
+\end_inset
+
+.
+ Es decir, a medida que 
+\begin_inset Formula $d\rightarrow\infty$
+\end_inset
+
+ y para 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ arbitrariamente pequeño, la distancia euclídea de (casi) toda la distribución
+ al centro de la esfera tiende a ser aproximadamente 
+\begin_inset Formula $r\sqrt{d}$
+\end_inset
+
+, lo cual hace que esta distancia euclídea sea inútil para diferenciar entre
+ elementos de la muestra.
+\end_layout
+
+\begin_layout Subsection
+Reducción de dimensionalidad y la hipótesis de la variedad
+\end_layout
+
+\begin_layout Standard
+A pesar de lo sorprendente del resultado, vale notar que descansa sobre
+ el hecho de que la distribución de 
+\begin_inset Formula $X$
+\end_inset
+
+ sobre su soporte 
+\begin_inset Formula $\text{supp}\left(X\right)=B\left(0,r,d\right)\subset\R^{d}$
+\end_inset
+
+ es uniforme, e independiente en todas las dimensiones.
+ En casi cualquier contexto material, este supuesto no es sostenible.
+ Por poner un ejemplo, podemos representar todas las posibles imágenes en
+ escala de grises de 1 megapixel como puntos 
+\begin_inset Formula $X$
+\end_inset
+
+ pertenecientes al espacio 
+\begin_inset Formula $\R^{1024\times1024}$
+\end_inset
+
+, pero la basta mayoría de ellas consistirían en 
+\begin_inset Quotes eld
+\end_inset
+
+puro ruido blanco
+\begin_inset Quotes erd
+\end_inset
+
+ y no significarían nada para un observador.
+ Las imágenes que sí tiene sentido reconocer y clasificar (un gato, una
+ bicicleta, etc.) son un conjunto muchísimo más restringido - aún teniendo
+ en cuenta todo tipo de posiciones y contrastes posibles -, y sus diferentes
+ elementos (como la posición de los ojos y las orejas del gato) guardan
+ relaciones específicas entre sí.
+ Es decir, están 
+\emph on
+correlacionados
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+Si nos suponemos en esta situación, el camino más directo para aliviarla,
+ es 
+\emph on
+reducir la dimensionalidad
+\emph default
+ del problema.
+ Al fin y al cabo, es el crecimiento en 
+\begin_inset Formula $d$
+\end_inset
+
+ lo que nos embrolló en un principio.
+ Dadas 
+\begin_inset Formula $\left\{ \mathbf{x}\right\} =\left\{ x_{i}\vert x_{i}\in\Rdimx,\ i\in\text{\left[N\right]}\right\} $
+\end_inset
+
+, buscaremos una 
+\emph on
+representación
+\emph default
+ 
+\begin_inset Formula $f:\Rdimx\rightarrow\R^{d_{y}}$
+\end_inset
+
+, que preserve fielmente los atributos más relevantes de 
+\begin_inset Formula $x\in\Rdimx$
+\end_inset
+
+, en la menor cantidad de dimensiones 
+\begin_inset Formula $d_{y}$
+\end_inset
+
+.
+ Encontrar compromisos ideales entre la 
+\begin_inset Quotes eld
+\end_inset
+
+fidelidad
+\begin_inset Quotes erd
+\end_inset
+
+ y la dimensionalidad de estas representaciones, dió lugar al campo de 
+\emph on
+aprendizaje de representaciones, 
+\emph default
+del cual Bengio2012 hace un excelente censo.
+ El autor relaciona la tarea del área con la noción geométrica de una 
+\emph on
+variedad.
+\end_layout
+
+\begin_layout Remark
+A nuestros fines, una variedad 
+\begin_inset Formula $\mathcal{\M}$
+\end_inset
+
+ es un espacio de dimensión 
+\begin_inset Formula $d_{\M}$
+\end_inset
+
+ que 
+\emph on
+localmente
+\emph default
+, se asemeja a 
+\begin_inset Formula $\R^{d_{\M}}$
+\end_inset
+
+.
+ En efecto, una variedad puede ser vista como un objeto compuesto de parches
+ 
+\begin_inset Formula $d_{\M}$
+\end_inset
+
+-dimensionales pegados.
+ Una variedad se llama 
+\emph on
+cerrada
+\emph default
+ si no tiene borde y es compacta.
+\end_layout
+
+\begin_layout Standard
+La 
+\emph on
+hipótesis de la variedad
+\emph default
+ (
+\begin_inset Quotes eld
+\end_inset
+
+manifold hypothesis
+\begin_inset Quotes erd
+\end_inset
+
+) postula que los datos 
+\series bold
+
+\begin_inset Formula $x$
+\end_inset
+
+
+\series default
+ obtenidos del mundo real con alta dimensionalidad 
+\begin_inset Formula $d_{x}$
+\end_inset
+
+ habrían de concentrarse en una variedad 
+\begin_inset Formula $\M$
+\end_inset
+
+ de -potencialmente - mucha menor dimensionalidad 
+\begin_inset Formula $d_{\M}\ll d_{x}$
+\end_inset
+
+, embebido en el espacio original 
+\begin_inset Formula $\R^{d_{x}}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Quotation
+Esta asunción parece particularmente adecuada en tareas de aprendizaje para
+ las cuales las configuraciones muestreadas aleatoriamente no son como las
+ que ocurren naturalmente: ya mencionamos imágenes, pero esperamos lo mismo
+ de sonidos, texto, secuencias genómicas y hasta aún las respuestas a algunos
+ cuestionarios inverosímilmente exhaustivos de los departamentos estatales
+ de estadística.
+ 
+\end_layout
+
+\begin_layout Quotation
+Ni bien tenemos una 
+\emph on
+representación,
+\emph default
+ uno piensa en una variedad considerando las variaciones en el dominio original
+ que están bien capturadas o reflejadas (por correspondientes cambios) en
+ la representación aprendida.
+ A 
+\emph on
+grosso modo
+\emph default
+, algunas direcciones estarán bien preservadas (las direcciones 
+\emph on
+localmente tangentes
+\emph default
+ a cada punto en la variedad), mientras que otras se perderán - las ortogonales
+ a 
+\begin_inset Formula $\M$
+\end_inset
+
+ .
+ Desde esta perspectiva, la principal tarea del aprendizaje no-supervisado,
+ puede ser vista como el modelado de la estructura de la variedad que soporta
+ los datos observados.
+ La representación que se aprenda, puede asociarse a un sistema intrínseco
+ de coordenadas en la variedad embebida.
+ El algoritmo arquetípico de modelado de variedades es, oh sorpresa, también
+ el algoritmo arquetípico de aprendizaje de representaciones de baja dimensional
+idad: Análisis de Componenetes Principales (PCA).
+\end_layout
+
+\begin_layout Quotation
+PCA modela una 
+\emph on
+variedad lineal.
+ 
+\emph default
+Fue inicialmente diseñado con el objetivo de encontrar la variedad lineal
+ más cercana a una nube de puntos.
+ Las componentes principales, i.e., la representación 
+\begin_inset Formula $f_{\theta}\left(x\right)$
+\end_inset
+
+ que devuelve PCA para un input 
+\begin_inset Formula $x$
+\end_inset
+
+, ubica unívocamente su proyección en esa variedad: se corresponde con coordenad
+as intrínsecas de la variedad.
+ Las variedad que soportan dominios complejos del mundo real, sin embargo,
+ se esperan que sean fuertemente no-lineales.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Más que una propiamente dicha hipótesis falsificable al respecto de la distribuc
+ión de los datos, mencionamos la 
+\emph on
+hipótesis de la variedad
+\emph default
+ en tanto resulta modelo mental útil para entender cómo estimar la densidad
+ generadora de los datos en altas dimensiones.
+ Ya mencionamos que a medida que 
+\begin_inset Formula $d_{x}$
+\end_inset
+
+ crece, la distancia euclídea en 
+\begin_inset Formula $\R^{\dimx}$
+\end_inset
+
+ se vuelve menos informativa.
+ Trabajar dentro de 
+\begin_inset Formula $\M$
+\end_inset
+
+, con dimensión 
+\begin_inset Formula $d_{\M}$
+\end_inset
+
+ puede aliviar la situación sobre todo cuando 
+\begin_inset Formula $d_{\M}\ll d_{x}$
+\end_inset
+
+, pero hay una ventaja más escondida en el hecho de que una variedad es
+ sólo localmente semejante al espacio euclídeo - es decir, 
+\emph on
+lineal
+\emph default
+ -, pero puede 
+\begin_inset Quotes eld
+\end_inset
+
+arrugarse
+\begin_inset Quotes erd
+\end_inset
+
+ en el espacio ambiente.
+\end_layout
+
+\begin_layout Standard
+Imaginemos un conjunto de datos 
+\begin_inset Formula $\left\{ \mathbf{u}\right\} =\left\{ u_{i},i\in\left[N\right],u_{i}\in\mathcal{U}\subseteq\R^{2}\right\} $
+\end_inset
+
+, con forma de letra 
+\begin_inset Quotes eld
+\end_inset
+
+U
+\begin_inset Quotes erd
+\end_inset
+
+, justamente.
+ 
+\begin_inset Formula $\mathcal{U}$
+\end_inset
+
+ es una variedad 1-dimensional - una curva - embebida en el espacio cartesiano
+ - 
+\begin_inset Formula $\R^{2},$
+\end_inset
+
+ una variedad 2-dimensional., Llamemos 
+\begin_inset Formula $u_{\alpha},u_{\omega}$
+\end_inset
+
+ a los dos puntos que se encuentran más cerca de los extremos superiores
+ del dibujo de la 
+\begin_inset Quotes eld
+\end_inset
+
+U
+\begin_inset Quotes erd
+\end_inset
+
+.
+ En la variedad latente, estos dos puntos están tan separados entre sí como
+ es posible; sin embargo, si medimos la distancia entre ambos en el espacio
+ ambiente - 
+\begin_inset Formula $\R^{2}$
+\end_inset
+
+ - obtendremos que están mucho más cerca entre sí que, por ejemplo, el punto
+ medio donde la 
+\begin_inset Quotes eld
+\end_inset
+
+U
+\begin_inset Quotes erd
+\end_inset
+
+ corta su eje de simetría axial.
+ La razón de tal insensatez, es simplemente, que hemos tomado una medida
+ de distancia que no se ajusta bien al espacio latente.
+\end_layout
+
+\begin_layout Subsection
+KDE en variedades
+\end_layout
+
+\begin_layout Standard
+¡Excelente! Fieles a la hipótesis de la variedad, podemos sugerir un camino
+ alternativo a los complejos derroteros por los que nos llevó de paseo KDE
+ multivariado en alta dimensión: en lugar de calcular un KDE en el espacio
+ ambiente 
+\begin_inset Formula $\R^{d_{x}},$
+\end_inset
+
+ hipotetizamos que 
+\begin_inset Formula $X\in\M\subseteq\R^{d_{x}},\dim\M=d_{\M}\ll d_{x}$
+\end_inset
+
+, y por lo tanto podemos restringir la definición de su densidad 
+\begin_inset Formula $f:\M\rightarrow\left(0,\infty\right)$
+\end_inset
+
+ para obtener una mejor representación.
+ Pero: ¿cómo se construye una función de densidad 
+\emph on
+en una variedad
+\emph default
+? Algunos casos canónicos (como el círculo 
+\begin_inset Formula $S^{1}$
+\end_inset
+
+ y la esfera 
+\begin_inset Formula $S^{2}$
+\end_inset
+
+) Pues resulta que convenientemente, Pelletier2005 hace exactamente eso:
+ adaptar las técnicas del KDE multivariado en el espacio euclídeo, 
+\end_layout
+
+\begin_layout Standard
+En 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:kde-multiv"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, consideramos la siguiente forma para nuestro estimador de densidad nuclear:
+\begin_inset Formula 
+\[
+{\displaystyle {\widehat{f}_{h}}(x)={\frac{1}{Nh^{d}}}\sum_{i=1}^{N}\phi_{\mathbf{H}}\left(\frac{1}{h}\left(x-x_{i}\right)\right)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+e hicimos hincapié en dos parámetros claves: la función núcleo 
+\begin_inset Formula $\phi$
+\end_inset
+
+, y el ancho de banda.
+ Vimos además, que en el contexto multivariado, para toda transformación
+ lineal 
+\begin_inset Formula $\mathbf{H}$
+\end_inset
+
+, el núcleo 
+\begin_inset Formula $\phi_{\mathbf{H}}\left(x\right)=\left(\det\mathbf{H}\right)^{-1/2}\phi\left(\mathbf{H}^{-1/2}x\right)$
+\end_inset
+
+ se valúa en función de la distancia de Mahalanobis de 
+\begin_inset Formula $x$
+\end_inset
+
+ a una distribución 
+\begin_inset Formula $Q$
+\end_inset
+
+ con matriz de covarianza 
+\series bold
+H
+\series default
+ .
+ Una versión ligeramente más general de este estimador de densidad, entonces,
+ será
+\begin_inset Formula 
+\[
+{\displaystyle {\widehat{f}}(x\vert h,\phi,d)={\frac{c\left(\phi,d\right)}{Nh^{d}}}\sum_{i=1}^{N}\phi\left(\frac{d\text{\left(x,x_{i}\right)}}{h}\right)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+donde 
+\begin_inset Formula $d\left(x,y\right)$
+\end_inset
+
+ es la función de 
+\emph on
+distancia
+\emph default
+ entre dos puntos 
+\begin_inset Formula $x,y$
+\end_inset
+
+ con la que ponderamos cada observación, y 
+\begin_inset Formula $c\left(\phi,d\right)$
+\end_inset
+
+ es un constante que depende del núcleo y la distancia elegidos.
+ Hasta ahora hemos visto 3 encarnaciones de distancias 
+\begin_inset Formula $d$
+\end_inset
+
+: el módulo 
+\begin_inset Formula $\vert\cdot\vert$
+\end_inset
+
+ (en 
+\begin_inset Formula $\R$
+\end_inset
+
+), la distancia euclídea 
+\begin_inset Formula $\norm{\cdot}$
+\end_inset
+
+ y su generalización a transformaciones afines, la distancia de Mahalanobis
+ 
+\begin_inset Formula $d_{M}\left(x,y;Q\right)$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Section
+Qué me falta
 \end_layout
 
 \begin_layout Itemize
 Distancia dist en kde 
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
-Por omisión: dist euclidea: OK en low dim 
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-(¿Es lo mismo que la geodésica en R^d_x? Creo que sí) 
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Euclidea inutil en alta dim: Malediction de la dimensionalidad d_x (Bengio?)
- 
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Hipótesis de la variedad mu , d_mu <\SpecialChar ligaturebreak
-< d_x (Bengio) 
-\end_layout
-
-\end_deeper
-\end_deeper
 \begin_layout Itemize
 KDE en variedad (pelletier) 
 \end_layout
@@ -1198,6 +3007,14 @@ isomap
 soft clf chen
 \end_layout
 
+\begin_layout Itemize
+(¿Es lo mismo 
+\begin_inset Formula $\norm{\cdot}$
+\end_inset
+
+ que la geodésica en R^d_x? Creo que sí)
+\end_layout
+
 \end_deeper
 \begin_layout Section
 Propuesta
@@ -1214,6 +3031,10 @@ usar la la distancia estimada como plug-in en kde pelletier
 
 \begin_layout Itemize
 Check clf acc & perf 
+\end_layout
+
+\begin_layout Itemize
+usar proj pursuit para density est
 \end_layout
 
 \begin_layout Section
