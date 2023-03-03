@@ -2,12 +2,16 @@
 %% Do not edit unless you really know what you are doing.
 \documentclass[english]{article}
 \usepackage[T1]{fontenc}
-\usepackage[latin9]{inputenc}
+\usepackage[utf8]{inputenc}
+\usepackage{color}
 \usepackage{verbatim}
+\usepackage{textcomp}
+\usepackage{mathtools}
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{graphicx}
+\usepackage{wasysym}
 
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
@@ -45,15 +49,19 @@
 \global\long\def\dimm{d_{\M}}%
 \global\long\def\var{\mathcal{\M}}%
 \global\long\def\itR{\mathcal{\R}}%
+\global\long\def\calR{\mathcal{R}}%
 \global\long\def\Lj{\mathcal{L}_{j}}%
 \global\long\def\H{\mathbf{H}}%
 
+\global\long\def\norm#1{\left\Vert #1\right\Vert }%
+\global\long\def\t#1{\text{#1}}%
+
 \title{Distancia de Fermat en Clasificadores de Densidad Nuclear }
 \author{Lic. Gonzalo Barrera Borla}
-\date{Buenos Aires, 02/01/23}
+\date{Buenos Aires, 02/03/23}
 
 \maketitle
- 
+
 \begin{center}
 \includegraphics[scale=0.3]{logofac} 
 \par\end{center}
@@ -68,7 +76,7 @@ Facultad de Ciencias Exactas y Naturales
 \par\end{center}
 
 \begin{center}
-Instituto del C�lculo 
+Instituto del Cálculo 
 \par\end{center}
 
 \begin{center}
@@ -77,7 +85,7 @@ Instituto del C�lculo
 \par\end{center}
 
 \begin{center}
-Tesis presentada para optar al t�tulo de Mag�ster en Estad�stica Matem�tica
+Tesis presentada para optar al título de Magíster en Estadística Matemática
 de la Universidad de Buenos Aires 
 \par\end{center}
 
@@ -100,64 +108,64 @@ TODO
 
 \pagebreak{}
 
-\section{Introduccion}
+\section{Introducción}
 
 \subsection{El problema de clasificacion}
 
-Consideremos el problema de clasificaci�n: 
+Consideremos el problema de clasificación: 
 \begin{defn}
-\label{def:prob-clf}(Problema de clasificaci�n). Sea $\boldsymbol{x}=\left(x_{i}\right)_{i=1}^{N}$
+\label{def:prob-clf}(Problema de clasificación). Sea $\boldsymbol{x}=\left(x_{i}\right)_{i=1}^{N}$
 una muestra de $N$ observaciones, repartidas en $M$ clases $C_{1},\dots,C_{M}$
 mutuamente excluyentes y conjntamente exhaustivas (es decir, $\forall\ i\in\left[N\right]\equiv\left\{ 1,\dots,N\right\} ,x_{i}\in C_{j}\iff x_{i}\notin C_{k},k\in\text{\ensuremath{\left[M\right]}},k\neq j$).
-Asumamos adem�s que la muestra est� compuesta de observaciones independientes
-entre s�, y en particular, cada clase tiene su propia ley: si $\Vert C_{j}\Vert=N_{j}$
-y $x_{i}^{\left(j\right)}$representa la i-�sima observaci�n de la
+Asumamos además que la muestra está compuesta de observaciones independientes
+entre sí, y en particular, cada clase tiene su propia ley: si $\Vert C_{j}\Vert=N_{j}$
+y $x_{i}^{\left(j\right)}$representa la i-ésima observación de la
 clase $j$, resulta que $X_{i}^{(j)}\sim\mathcal{L}_{j}\left(X\right)\ \forall\ j\in\text{\ensuremath{\left[M\right]}},i\in\left[N_{j}\right]$.
 
-Dada una nueva observaci�n $x_{0}$ cuya clase es desconocida, 
+Dada una nueva observación $x_{0}$ cuya clase es desconocida, 
 \begin{enumerate}
-\item (clasificaci�n dura) �a qu� clase deber�amos asignarla? 
-\item (clasificaci�n suave) �qu� probabilidad tiene de pertenecer a cada
+\item (clasificación dura) ¿a qué clase deberíamos asignarla? 
+\item (clasificación suave) ¿qué probabilidad tiene de pertenecer a cada
 clase $C_{j},j\in\left[M\right]$ ? 
 \end{enumerate}
 \end{defn}
 
-Todo m�todo o algoritmo que pretenda responder el problema de clasificaci�n,
-prescribe un modo u otro de combinar toda la informaci�n muestral
+Todo método o algoritmo que pretenda responder el problema de clasificación,
+prescribe un modo u otro de combinar toda la información muestral
 disponible, ponderando las $N$ observaciones de manera relativa a
-su cercan�a o similitud con $x_{0}$. Por caso, $k-$vecinos m�s cercanos
-($k-$NN) asignar� la nueva observaci�n $x_{0}$ a la clase modal
-entre las $k$ observaciones de entrenamiento m�s cercanas\emph{ }(es
-decir, que minimizan la distancia eucl�dea $\left\Vert x_{0}-\cdot\right\Vert )$.
-$k-$NN no hace ninguna menci�n expl�cita de las leyes de clase $\mathcal{L}_{j}$,
+su cercanía o similitud con $x_{0}$. Por caso, $k-$vecinos más cercanos
+($k-$NN) asignará la nueva observación $x_{0}$ a la clase modal
+entre las $k$ observaciones de entrenamiento más cercanas\emph{ }(es
+decir, que minimizan la distancia euclídea $\left\Vert x_{0}-\cdot\right\Vert )$.
+$k-$NN no hace ninguna mención explícita de las leyes de clase $\mathcal{L}_{j}$,
 lo cual lo mantiene sencillo a costa de ignorar la estructura del
 problema.
 
-\subsection{Estimaci�n de densidad}
+\subsection{Estimación de densidad}
 
-Una familia bastante gen�rica de m�todos para resolver el problema
-de calsificaci�n, consisten aproximadamente de los siguientes pasos: 
+Una familia bastante genérica de métodos para resolver el problema
+de calsificación, consisten aproximadamente de los siguientes pasos: 
 \begin{enumerate}
 \item Hacer algunos supuestos sobre la forma de las leyes $\Lj$ 
 \item Hallar estimadores $\hat{\Lj}$ de cada ley $\Lj$ usando las muestras
 de cada clase, $\boldsymbol{x}^{\left(j\right)}=\left(x_{i}^{\left(j\right)}\right)_{i=1}^{N_{j}}$
-y alg�n procedimiento est�ndar (e.g.: m�xima verosimilitud) 
-\item Definir una regla de decisi�n $\mathcal{R}\left(\cdot\vert\hat{\Lj},j\in\left[M\right]\right):\Rdimx\rightarrow\left[M\right]$
-que dados los estimadores de (2), asigne la observaci�n $x_{0}$ a
+y algún procedimiento estándar (e.g.: máxima verosimilitud) 
+\item Definir una regla de decisión $\mathcal{R}\left(\cdot\vert\hat{\Lj},j\in\left[M\right]\right):\Rdimx\rightarrow\left[M\right]$
+que dados los estimadores de (2), asigne la observación $x_{0}$ a
 la clase $\mathcal{R}\left(x_{0}\right)$. 
 \end{enumerate}
-Esta familia de clasificadores, se distinguen por una expl�cita \emph{estimaci�n
-de densidades} que m�s tarde se utilizar�n para la tarea de clasificaci�n
-en s�. Por ejemplo, al considerar el problema de clasificaci�n binaria,
-el an�lisis de discriminante lineal (LDA) de Fisher\footnote{https://en.wikipedia.org/wiki/Linear\_discriminant\_analysis}
+Esta familia de clasificadores, se distinguen por una explícita \emph{estimación
+de densidades} que más tarde se utilizarán para la tarea de clasificación
+en sí. Por ejemplo, al considerar el problema de clasificación binaria,
+el análisis de discriminante lineal (LDA) de Fisher\footnote{https://en.wikipedia.org/wiki/Linear\_discriminant\_analysis}
 queda encuadrado en esta familia de la siguiene manera:
 
 En (1), asumimos que las las leyes $\Lj$ 
 \begin{lyxlist}{00.00.0000}
 \item [{(a)}] son todas distribuciones normales con media $\mu_{j}$ y 
-\item [{(b)}] homoced�sticas: $\Sigma_{j}=\Sigma\ \forall\ j\in\text{\ensuremath{\left[M\right]})}$. 
+\item [{(b)}] homocedásticas: $\Sigma_{j}=\Sigma\ \forall\ j\in\text{\ensuremath{\left[M\right]})}$. 
 \end{lyxlist}
-En (2), estimamos $\hat{\mu_{j}},\hat{\Sigma}$ por m�xima verosimilitud,
+En (2), estimamos $\hat{\mu_{j}},\hat{\Sigma}$ por máxima verosimilitud,
 
 $\hat{\mu_{j}}=N_{j}^{-1}\sum_{i=1}^{N_{j}}x_{i}^{(j)}$
 
@@ -172,107 +180,108 @@ w= & \Sigma^{-1}({\mu}_{1}-{\mu}_{0})\\
 c= & {\displaystyle w\cdot{\frac{1}{2}}(\mu_{1}+\mu_{0})}
 \end{align*}
 
-con los par�metros $\mu_{j},\Sigma$ reemplazados por las estimaciones
+con los parámetros $\mu_{j},\Sigma$ reemplazados por las estimaciones
 de (2).
 
 Inevitablemente, existe un \emph{trade-off} entre lo restrictivo de
 los supuestos de (1), y la generalidad del clasificador resultante.
 En el caso de LDA, los supuestos (leyes normales y homocedasticidad)
-son inveros�miles en casi cualquier escenario real, pero el clasificador
-resultante es muy sencillo de computar. En general, este ser� el caso
-para todos los m�todos\emph{ param�tricos} de estimaci�n de densidad,
+son inverosímiles en casi cualquier escenario real, pero el clasificador
+resultante es muy sencillo de computar. En general, este será el caso
+para todos los métodos\emph{ paramétricos} de estimación de densidad,
 en que de todas las posibles funciones de densidad%
 \begin{comment}
 que cardinalidad tienen? versus la familia normal?
 \end{comment}
 , quedan acotadas a aquellas que se pueden expresar de forma cerrada
-con una expresi�n predefinida (en este caso, la densidad normal),
-y $Q$ par�metros (aqu�, $\mu$ y $\Sigma$).
+con una expresión predefinida (en este caso, la densidad normal),
+y $Q$ parámetros (aquí, $\mu$ y $\Sigma$).
 
-Alternativamente, existen m�todos en que los supuestos de (1) se obvian
+Alternativamente, existen métodos en que los supuestos de (1) se obvian
 del todo, o al menos son lo suficientemente generales como para representar
-todas salvo las m�s patol�gicas leyes (e.g.: asumir que la media y
-dispersi�n son finitas). A estos se los conoce, naturalmente, como
-m�todos \emph{no param�tricos} de estimaci�n de densidad.
+todas salvo las más patológicas leyes (e.g.: asumir que la media y
+dispersión son finitas). A estos se los conoce, naturalmente, como
+métodos \emph{no paramétricos} de estimación de densidad.
 
-\subsection*{Estimaci�n de densidad por n�cleos}
+\subsection*{Estimación de densidad por núcleos}
 
-La estimaci�n de densidad por n�cleos (o KDE, por sus siglas en ingl�s),
-es uno de los m�todos mejor estudiados dentro del amplio universo
-no-param�trico\footnote{Algo sobre NNs, otros metodos nopa}. Introducidos
+La estimación de densidad por núcleos (o KDE, por sus siglas en inglés),
+es uno de los métodos mejor estudiados dentro del amplio universo
+no-paramétrico\footnote{Algo sobre NNs, otros metodos nopa}. Introducidos
 hacia 1960 (Rosenblatt 1958, Parzen 1962) para variables aleatorias
 unidimensionales, han sido ampliamente desarrollados y adaptados a
-espacios mucho m�s generales. El objetivo es encontrar un estimador
+espacios mucho más generales. El objetivo es encontrar un estimador
 \emph{suave} de la densidad poblacional $f$ de una v.a. $X$ a partir
-de una muestra discreta, usando una funci�n no-negativa $K$ llamada
-\emph{n�cleo} (``kernel'') y un par�metro de suavizaci�n $h$, el
+de una muestra discreta, usando una función no-negativa $K$ llamada
+\emph{núcleo} (``kernel'') y un parámetro de suavización $h$, el
 \emph{ancho de banda} (``bandwith'').
 \begin{defn}
-(funci�n n�cleo) Una funci�n $K$ es un \emph{n�cleo} (``kernel''),
+(función núcleo) Una función $\phi$ es un \emph{núcleo} (``kernel''),
 si
 \begin{itemize}
-\item toma �nicamente valores reales no-negativos: $K\left(x\right)\geq0\forall x$,
-\item est� normalizada: $\int_{-\infty}^{+\infty}K\left(u\right)du=1$ y
-\item es sim�trica: $K\left(u\right)=K\left(-u\right)\forall u$
+\item toma únicamente valores reales no-negativos: $\phi\left(x\right)\geq0\forall x$,
+\item está normalizada: $\int_{-\infty}^{+\infty}\phi\left(u\right)du=1$
+y
+\item es simétrica: $K\left(u\right)=\phi\left(-u\right)\forall u$
 \end{itemize}
 \end{defn}
 
 \begin{rem}
-Si $K$ es un n�cleo, entonces $K_{\lambda}\text{\ensuremath{\left(u\right)}}=\lambda K\left(\lambda u\right)$
-tambi�n lo es, lo cual permite construir un n�cleo adecuadamente escalado
+Si $K$ es un núcleo, entonces $K_{\lambda}\text{\ensuremath{\left(u\right)}}=\lambda K\left(\lambda u\right)$
+también lo es, lo cual permite construir un núcleo adecuadamente escalado
 a los datos.
 \end{rem}
 
 \begin{defn}
 \label{def:kde-univ}(KDE univariado) Sea $\left(x_{1},\dots,x_{N}\right)$
-una muestra de elementos i.i.d. tomada de cierta distribuci�n univariada
+una muestra de elementos i.i.d. tomada de cierta distribución univariada
 con densidad desconocida $f$, cuya forma deseamos conocer. Su estimador
-de densidad por n�cleos (su ``KDE'') es
+de densidad por núcleos (su ``KDE'') es
 
-${\displaystyle {\widehat{f}}_{h}(x)={\frac{1}{n}}\sum_{i=1}^{n}K_{h}(x-x_{i})={\frac{1}{nh}}\sum_{i=1}^{n}K{\Big(}{\frac{x-x_{i}}{h}}{\Big)}}$
+${\displaystyle {\widehat{f}}_{h}(x)={\frac{1}{n}}\sum_{i=1}^{n}\phi_{h}(x-x_{i})={\frac{1}{nh}}\sum_{i=1}^{n}\phi{\Big(}{\frac{x-x_{i}}{h}}{\Big)}}$
 \end{defn}
 
-Dejando por un momento de lado qu� par $\left(K,h\right)$ usar, podemos
+Dejando por un momento de lado qué par $\left(K,h\right)$ usar, podemos
 derivar un clasificador ``duro'' de manera bastante directa para
-la versi�n univariada del problema \ref{def:prob-clf}:
+la versión univariada del problema \ref{def:prob-clf}:
 \begin{defn}
 \label{def:clf-kde-univ}(clasificador KDE univariado). Sea $C:\Rdimx\rightarrow\left[M\right]$
-la ``funci�n de clase'', tal que $\forall x\in\Rdimx,\ C\left(x\right)=j\iff x\in C_{j}$.
-Sean adem�s $\hat{f}_{h}^{(1)},\dots,\hat{f}_{h}^{(M)}$ los estimadores
-de densidad obtenidos seg�n \ref{def:kde-univ}. El ``clasificador
-por estimaci�n de densidad nuclear'' correspondiente ser�:
+la ``función de clase'', tal que $\forall x\in\Rdimx,\ C\left(x\right)=j\iff x\in C_{j}$.
+Sean además $\hat{f}_{h}^{(1)},\dots,\hat{f}_{h}^{(M)}$ los estimadores
+de densidad obtenidos según \ref{def:kde-univ}. El ``clasificador
+por estimación de densidad nuclear'' correspondiente será:
 \begin{align*}
 \hat{C}\left(x\right) & =\mathrm{\arg\max_{j\in\left[M\right]}\ }\hat{f}_{h}^{(j)}\left(x\right)
 \end{align*}
 
-asignando cada observaci�n a la clase en la que maximiza la densidad
+asignando cada observación a la clase en la que maximiza la densidad
 estimada.%
 \begin{comment}
-Deber�a estar ya incluyendo para hard clf las proporciones muestrales
+Debería estar ya incluyendo para hard clf las proporciones muestrales
 $p_{j}=N_{j}/N$ como probabilidades de clase \emph{a priori}?
 \end{comment}
 \end{defn}
 
-Cuando las clases de las cuales se compone la poblaci�n se encuentran
-muy ``separadas'' entre s� (es decir, $\exists k\in\left[M\right]:f_{h}^{(k)}\text{\ensuremath{\left(x_{0}\right)}\ensuremath{\ensuremath{\gg}}0\ },\ f_{h}^{(j)}\simeq0\ \forall\ j\in\left[M\right]/k$),
-la clasificaci�n ``dura'' de \ref{def:clf-kde-univ} ser� suficiente.
-Ahora bien, �c�mo hacemos para cuantificar la incertidumbre asociada
-a la clasificaci�n, cuando existe m�s de una clase con densidad estimada
+Cuando las clases de las cuales se compone la población se encuentran
+muy ``separadas'' entre sí (es decir, $\exists k\in\left[M\right]:f_{h}^{(k)}\text{\ensuremath{\left(x_{0}\right)}\ensuremath{\ensuremath{\gg}}0\ },\ f_{h}^{(j)}\simeq0\ \forall\ j\in\left[M\right]/k$),
+la clasificación ``dura'' de \ref{def:clf-kde-univ} será suficiente.
+Ahora bien, ¿cómo hacemos para cuantificar la incertidumbre asociada
+a la clasificación, cuando existe más de una clase con densidad estimada
 no despreciable? Como las $\hat{f}_{h}^{(j)}$ estimadas identifican
 distribuciones, es razonable decir que $p\left(C\text{\ensuremath{\left(x\right)}}=j\right)\propto f_{h}^{(j)}\left(x\right)$.
 Usando la regla de Bayes y un \emph{a priori} sobre las probabilidades
 de clase basado en las proporciones muestrales $\hat{p}\left(C_{j}\right)=N_{j}/N$,
-podemos conseguir una regla \emph{suave} de clasificaci�n:
+podemos conseguir una regla \emph{suave} de clasificación:
 \begin{defn}
-(clasificador KDE univariado suave) Sea el problema \ref{def:prob-clf}
-y los estimadores de densidad de \ref{def:kde-univ}. Por la regla
-de bayes, 
+\label{def:soft-clf-kde}(clasificador KDE univariado suave) Sea el
+problema \ref{def:prob-clf} y los estimadores de densidad de \ref{def:kde-univ}.
+Por la regla de bayes, 
 \[
 p\left(C\left(x\right)=j\right)=\frac{f^{(j)}\left(x\right)\cdot p\text{\ensuremath{\left(C_{j}\right)}}}{p\text{\ensuremath{\left(x\right)}}}
 \]
 
 Reemplazando el a priori $p\text{\ensuremath{\left(C_{j}\right)}}$
-por su estimaci�n muestral, las densidades $f^{(j)}$ por sus estimadores
+por su estimación muestral, las densidades $f^{(j)}$ por sus estimadores
 y usando la ley de la probabilidad total para expandir $p\left(x\right)$,
 obtenemos:
 \[
@@ -281,92 +290,1035 @@ obtenemos:
 \end{defn}
 
 
-\subsection{La noci�n de distancia en KDE}
+\subsection{La noción de distancia en KDE}
 
-Como mencionamos en un principio, toda propuesta de soluci�n al problema
-de clasificaci�n \ref{def:prob-clf} para una nueva observaci�n $x_{0}$,
-lo har� ponderando su cercan�a a los elementos muestrales de cada
-clase. En la estimaci�n de densidad nuclear univariada, el peso de
-cada elemento muestral est� determinado por $K_{h}\left(x_{0}-x_{i}\right)$,
-y como $K_{h}$ es sim�trica respecto del 0, $K_{h}\left(x_{0}-x_{i}\right)=K_{h}\left(\left|x_{0}-x_{i}\right|\right)=K_{h}\left(\Vert x_{0}-x_{i}\Vert\right)$.
-Es decir, que el operador n�cleo pondera directamente la distancia
-eucl�dea entre la nueva observaci�n y cada elemento muestral.
+El peso de cada $x_{i}$ en $\hat{f}\left(x_{0}\right)$ es $\phi\left(x_{0}-x_{i}\right)$,
+y como $\phi$ es simétrica respecto al 0, sólo importa la \emph{distancia}
+entre el nuevo punto y cada muestra, $x_{0},x_{i};$ no así la \emph{dirección}.
+En una dimensión al menos, el núcleo $\phi$ pondera - escalando por
+$h$ - la distancia (euclídea) entre el punto a clasificar y cada
+datum:
 
-Esto se vuelve m�s evidente cuando hemos de expresar un KDE para elementos
-aleatorios multivariados. 
+\[
+\phi_{h}\left(x_{0}-x_{i}\right)=\phi_{h}\left(\left|x_{0}-x_{i}\right|\right)=\frac{1}{h}\phi\left(\frac{\left|x_{0}-x_{i}\right|}{h}\right)
+\]
+
+En mayore dimensiones, la situación es más compleja, pero análoga
 \begin{defn}
-(KDE multivariado, Wand \& Jones 1993) Sea $\left(x_{1},\dots,x_{N}\right)$
-una muestra de elementos i.i.d. tomada de cierta distribuci�n $d-$dimensional
+\label{def:kde-multiv}(KDE multivariado, Hwang 1994) Sea $\left\{ \mathbf{x}\right\} =$$\left\{ x_{1},\dots,x_{N}\right\} $
+una muestra de elementos i.i.d. tomada de cierta distribución $d-$dimensional
 con densidad desconocida $f$, cuya forma deseamos conocer. Su estimador
-de densidad por n�cleos (su ``KDE'') es
+de densidad por núcleos (su ``KDE'') será
 
-${\displaystyle {\widehat{f}}_{h}(x)={\frac{1}{n}}\sum_{i=1}^{n}K_{\H}(x-x_{i})}$
+${\displaystyle {\widehat{f}_{h}}(x)={\frac{1}{Nh^{d}}}\sum_{i=1}^{N}\phi\left(\frac{1}{h}\left(x-x_{i}\right)\right)}$
 
-donde $K$ misma es una funci�n de densidad $d-$variada, $\mathbf{H}$
-es una matrix $d\times d$ positiva sim�trica definida, y para todo
-$x\in\R^{d},\ K_{\mathbf{\H}}\left(x\right)=\det\left(\H\right)^{-1/2}K\left(\H^{-1/2}x\right)$. 
+donde el núcleo $\phi$ debe satisfacer
+
+$\phi\left(x\right)\geq,0,$ y $\int_{\Rd}$$\left(x\right)dx=1$
 \end{defn}
 
-Tomemos por caso el n�cleo gaussiano, $K\left(x\right)=\left(2\pi\right)^{-d/2}\exp\left(-\frac{1}{2}x^{T}x\right).$
-Luego,
+Un núcleo muy popular es el gaussiano $\phi\left(x\right)=\left(2\pi\right)^{-d/2}\exp\left(-\frac{\norm x^{2}}{2}\right)$,
+
+un núcleo simétrico con su valor decayendo suavemente a medida que
+se aleja del centro.
+
+Usualmente los datos no se encontrarán distribuidos uniformemente
+en todas las direcciones, y será deseable pre-escalarlos para evitar
+diferencias extremas en su dispersión y locación. Un enfoque atractivo,
+es primero ``esferar'' o ``blanquear'' los datos mediante una
+transformación afín que devuelva data con media cero y matriz de covarianza
+unitaria; y luego aplicar \ref{def:kde-multiv}. Más específicamente,
+dada una muesta $\left\{ x\right\} ,$podemos definir su versión ``esférica''
+como
+\[
+z=\mathbf{S}^{-1/2}\left(x-Ex\right)
+\]
+
+donde la esperanza $E$ es evaluada a través de la media muestral,
+y $\mathbf{S}\in\R^{d\times d}$es la matriz de covarianza de los
+datos:
 \begin{align*}
-K_{\H}(x-x_{i}) & =K_{\mathbf{\H}}\left(x-x_{i}\right)\\
- & =\det\left(\H\right)^{-1/2}K\left(\H^{-1/2}\left(x-x_{i}\right)\right)\\
- & =\left(2\pi\right)^{-d/2}\det\left(\H\right)^{-1/2}\exp\left(-\frac{1}{2}\left\Vert \H^{-1/2}\left(x-x_{i}\right)\right\Vert ^{2}\right)
+\mathbf{S} & =E\left[\left(x-Ex\right)\left(x-Ex\right)^{T}\right]=\mathbf{UDU}^{T}\\
+\mathbf{S}^{-1/2} & =\mathbf{UD}^{-1/2}\mathbf{U}^{T}
 \end{align*}
 
-es decir, que el peso de la i-�sima observaci�n muestral en la estimaci�n
-de densidad del punto $x$, depende directamente de su distancia de
-Mahalanobis a una distrubuci�n normal centrada en $x_{i}$ con matrix
-de covarianza $\H$. Cuando $\H=\mathbf{I_{d}},$ la distancia de
-Mahalanobis es igual a la eucl�dea.
+Donde $\mathbf{U}$ es una matriz ortonormal y $\mathbf{D}$ es una
+matriz diagonal. De preocuparse por la influencia de \emph{outliers}
+en los datos, existen métodos robustos para su derivación (Huber 1981).
+
+Se puede mostrar fácilment que luego del ``blanqueo'', $Ez=0$ y
+$E\left[zz^{T}\right]=\mathbf{I_{d}}$. El estimador resultante para
+los datos esféricos realiza un estimación de densidad más sofisticada\label{def:kde-multiv-blanco}
+
+\textcolor{red}{Acá sigo a Hwang, que hace una presentación algo distinta
+a Wikipedia/Wand\&Jones, primero blanquea y luego usa núcleo con $\H=\mathbf{I_{d}}$;
+W\&J no recomienda blanquear porque luego usa $\mathbf{H}$ arbitraria.
+Debería revisar bien la equivalencia, qué conviene más.}:
+\begin{align*}
+\hat{f}\left(z\right) & =\frac{1}{Nh^{d}}\sum_{i=1}^{N}\phi\left(\frac{1}{h}\left(z-z_{i}\right)\right)\\
+\hat{f}\left(x\right) & =\frac{\left(\det\text{\ensuremath{\mathbf{S}}}\right)^{-1/2}}{Nh^{d}}\sum_{i=1}^{N}\phi\left(\frac{1}{h}\mathbf{S}^{-1/2}\left(x-x_{i}\right)\right)
+\end{align*}
+
+\begin{rem}
+\label{rem:mahalanobis-dist}Dada una distribución de probabilidad
+$Q$ en $\R^{d},$ con media $\mu\in\R^{d}$ y matriz de covarianza
+positiva definida $\mathbf{S}\in\R^{d\times d}$, la \emph{distancia
+de Mahalanobis}\footnote{https://en.wikipedia.org/wiki/Mahalanobis\_distance}
+de un punto $x$ a $Q$ es
+\[
+d_{M}\text{\ensuremath{\left(x,Q\right)}=\ensuremath{\sqrt{\left(x-\mu\right)^{T}\mathbf{S}^{-1}\left(x-\mu\right)}}}
+\]
+
+Dados dos puntos $x,y$ en $\R^{n}$, la distancia de Mahalanobis
+\emph{entre si} con respecto a $Q$ es
+\[
+d_{M}\text{\ensuremath{\left(x,Q\right)}}=d_{M}\left(x,\mu;Q\right)
+\]
+
+Como $\mathbf{S}$ es definida positiva, también lo es $S^{-1}$,
+con lo que las raíces cuadradas están bien definidas. Por el teorema
+espectral, $S^{-1}$ se puede descomponer en $S^{-1}=\left(S^{-1/2}\right)^{T}S^{^{-1/2}}$
+para alguna matriz real $d\times d$, lo cual sugiere una definición
+equivalente
+
+$d_{M}\left(x,y;Q\right)=\norm{S^{^{-1/2}}\left(x-y\right)}$
+
+donde $\norm{\cdot}$ es la norma euclídea. Es decir, la distancia
+de Mahalanobis es la distancia euclídea luego de una transformación
+de blanqueo.
+
+Reemplazando $W=S^{-1/2},\mu=x_{1},\dots,x_{N}$, podemos redefinir
+el estimador de \ref{def:kde-multiv-blanco} para $f\left(x\right)$
+como un estimador de núcleos basado en la distancia de Mahalanobis
+de $x$ a cada observación de $\left\{ \mathbf{x}\right\} $.
+
+La relativa sencillez para el cómputo del método hasta aquí descrito
+lo hace un perenne favorito entre los estimadores de densidad no paramétricos.
+Quedará a criterio del investigador considerar si sus bondades vuelven
+tolerables las limitaciones impuestas o no. A saber,
+\end{rem}
+
+\begin{enumerate}
+\item Salvo en casos excepcionalmente bien portados, la dirección y dispersión
+\emph{local} de la muestra alrededor de un cierto punto $x_{i}$ típicamente
+no coincidirá con la dirección \textbf{$\mathbf{U}$} y dispersión
+\textbf{\emph{$\mathbf{D}$}}\emph{ global} que se obtienen de computar
+$\mathbf{S}=\mathbf{UDU}^{T}$ en la muestra completa.
+\item Aún cuando la estimación global de $\mathbf{S}$ sea localmente adecuada,
+no resulta inmediatamente obvio que la suavización $\mathbf{H=S}$
+inducida por la muestra sea óptima en términos de representación de
+la densidad, super- y sub-suavizando\footnote{oversmoothing y undersmoothing}
+regiones de alta densidad y \emph{outliers}, respectivamente.
+\item Al ubicar una ``montañita'' de densidad en \emph{cada} dato de la
+muestra, el cómputo del estimador hasta aquí expuesto se vuelve prohibitamente
+costoso para $N$ relativamente grande.
+\end{enumerate}
+Wand \& Jones (1993) realiza un estudio exhaustivo de las consecuencias
+de distintas parametrizaciones de $\mathbf{H}$ para el caso multivariado
+más sencillo, $d=2$, considerando familias de creciente complejidad
+para $\mathbf{H}$, siempre positivas definidas:
 \begin{itemize}
-\item Distancia dist en kde 
+\item en términos generales,
 \begin{itemize}
-\item Por omisi�n: dist euclidea: OK en low dim 
+\item productos escalares de la identidad: $\mathcal{H}_{1}\coloneqq\left\{ h_{1}^{2}\mathbf{I};h_{1}>0\right\} $
+\item matrices diagonales con distintas escalas en cada eje: $\mathcal{H}_{2}\coloneqq\left(\text{diag}\left(h_{1}^{2},h_{2}^{2}\right);h_{1},h_{2}>0\right)$
+\item matrices completas: 
+\[
+\mathcal{H}_{3}\coloneqq\left\{ \left[\begin{array}{cc}
+h_{1}^{2} & h_{12}\\
+h_{12} & h_{2}^{2}
+\end{array}\right];h_{1},h_{2}>0,\left|h_{12}\right|<h_{1}h_{2}\right\} 
+\]
+,
+\end{itemize}
+\item basadas en una ``esferización'' de los datos vía matriz de covarianza
+$\mathbf{C}=\left[\begin{array}{cc}
+c_{11} & c_{12}\\
+c_{12} & c_{22}
+\end{array}\right]$ de la densidad objetivo $f$:
 \begin{itemize}
-\item (�Es lo mismo que la geod�sica en R\textasciicircum d\_x? Creo que
-s�) 
+\item ignorando la correlación $\mathcal{C}_{2}\coloneqq\left\{ h^{2}\mathbf{D};h^{2}>0\right\} $,
+con $\mathbf{D}=\text{diag}\left(c_{11,}c_{22}\right)$,
+\item completa $\mathcal{C}_{3}\coloneqq\left\{ h^{2}\mathbf{C};h^{2}>0\right\} $
+e
+\item \emph{híbridas}, con suavizado independiente en cada dirección 
+\[
+\mathcal{Y}\coloneqq\left\{ \left[\begin{array}{cc}
+h_{1}^{2} & \rho_{12}h_{1}h_{2}\\
+\rho_{12}h_{1}h_{2} & h_{2}^{2}
+\end{array}\right];h_{1},h_{2}>0\right\} 
+\]
+ y coeficiente de correlación $\rho_{12}=c_{12}/\sqrt{c_{11}c_{22}}$
 \end{itemize}
-\item Euclidea inutil en alta dim: Malediction de la dimensionalidad d\_x
-(Bengio?) 
+\end{itemize}
+Nótese que $\mathcal{H}_{1}\subseteq\mathcal{H}_{2}\subseteq\mathcal{H}_{3},\ \ \mathcal{C}_{2}\subseteq\mathcal{H}_{2},\ \ \mathcal{C}_{3}\subseteq\mathcal{H}_{3},\ \ \mathcal{Y}\subseteq\mathcal{H}_{3}$.
+Wand \& Jones se ``desembarazan'' del problema de \emph{selección}
+de anchos de banda, eligiendo enfocarse en la \emph{eficiencia relativa
+asintótica}\footnote{burdamente, la relación entre los tamaños muestrales necesarios para
+conseguir el mismo error asintótico restringiendo $\mathbf{H}$ a
+cierto par de las clases aquí descritas } de cada clase con respecto a la más general $\mathcal{H}_{3}$. A
+tal fin, toman como medida del error global incurrido por cierto estimador
+$\hat{f}_{\mathbf{H}}$ el error cuadrático medio integrado (MISE,
+por sus siglas en inglés)
+\[
+MISE\left(\mathbf{H}\right)=MISE\left(\hat{f}_{\mathbf{H}},f\right)=E\int_{\R^{d}}\left(\hat{f}_{\mathbf{H}}\left(y\right)-f\left(y\right)\right)^{2}dy
+\]
+
+y su aproximación asintótica.
+
+Los autores notan una dificultad cualitativamente nueva en el caso
+multivariado en comparación al univariado: definir la \emph{orientación}
+de $\text{\textbf{H}}$. Aún en el relativamente sencillo contexto
+bivariado, muestran cómo la estrategia ``ingenua'' de depender para
+ello de la covarianza muestral conlleva enormes pérdidas de eficiencia,
+aún para la familia $\mathcal{Y}$, sobre todo para densidades multimodales
+y otras que se alejan de la normalidad.%
+\begin{comment}
+W\&J (1993) tiene un lindo ejemplo ``(F) Bimodal II'' de cómo la
+covarianza estimada para una mezcla de dos gausianas con diferencias
+en la locación sobre el eje x, y mayor dispersión en el eje y, termina
+dando una estimación de la covarianza inútil para suavizado. Podría
+reproducirlo con scipy+matplotlib para ilustrar.
+\end{comment}
+{} En su recomendación final, los autores sugieren que en general ``hay
+mucho para ganar incluyendo parámetros de orientación'' (es decir,
+elementos no-diagonales) en la parametrización de $\mathbf{H}$.
+
+Autores posteriores han tomado el desafío y considerado métodos para
+la elección de un suavizador $\mathbf{H}\in\mathcal{H}_{3}$ para
+el caso general $d-$dimensional. Los mismos autores en un trabajo
+posterior (WandJones94) proponen un estimador ``plug-in'' del $\mathbf{H}$
+óptimo que se puede aplicar a $\mathcal{H}_{3}$, pero luego se limitan
+a la familia diagonal $\mathcal{H}_{2}$ para su aplicación concreta.
+Duong2005 sintetiza sus aportes propios y otros precedentes alrededor
+de la estimación de \textbf{$\mathbf{H}$} completa según tres métodos
+de validación cruzada\footnote{``cross-validation'', o CV, por sus siglas en inglés.}:
+CV sesgada (BCV), CV insesgada (UCV), y CV ``suavizada'' (SCV).
+Todos los métodos propuestos buscan minimizar un error cuadrático
+(UCV usa MISE; BCV el asintótico AMISE y SCV una combinación lineal
+de ambos), en el contexto de validación cruzada ``dejar-uno-afuera''.
+El método con el que mejores resultados obtienen, SCV, es también
+el más complejo en su implementación, pues requiere considerar un
+``suavizador piloto'' $\mathbf{G}\in\R^{d\times d}$ cuya elección
+no es transparente.
+
+Hall2005, por su parte, motivado por la aplicación concreta de estimación
+de densidad al problema de clasificación, toma un camino distinto
+para la optimización: en lugar de elegir $\mathbf{H}$ minimizando
+(A)MISE, se propone elegir $\mathbf{H}$ de manera que minimice una
+función relacionada directamente con la tarea propuesta: el riesgo
+de Bayes. Sea $\mathcal{R}$ una regla de decisión como se planteó
+en \ref{def:prob-clf}, diremos que el \emph{riesgo de Bayes} en una
+región $\Gamma$ es 
+\begin{align*}
+\text{err}_{\mathcal{R}}\text{\ensuremath{\left(f_{1},\dots,f_{K}\vert\gamma\right)}}\\
+= & \sum_{j=1}^{K}p_{j}\int_{\Gamma}Pr\left(x\text{\textbf{ no }sea clasificado por \ensuremath{\mathcal{R}} como \ensuremath{\in C_{j}}}\right)f_{j}\left(x\right)dx
+\end{align*}
+
+En este sentido, el clasificador de \ref{def:clf-kde-univ} es óptimo,
+y por ende es razonable argumentar que elegir $\mathbf{H}$ como Hall
+propone es superador a optimizar $\mathbf{H}$ para el ``resultado
+intermedio'' de estimar las densidades de cada clase. En efecto,
+para el caso más sencillo $K=2,d=1$ y las densidades se ``cruzan''
+en un solo punto con un mismo signo, los anchos de banda encontrados
+por minimización del riesgo de Bayes son un orden de magnitud distintos
+de los ya cubiertos. Sin embargo, para $d>1,K\geq2$ , resulta ser
+el caso que el ancho de banda óptimo según el error de Bayes es el
+mismo que via (A)MISE.
+
+Hwang (1994) comienza estudiando explícitamente cómo elegir $h$ para
+datos esferizados (la familia $\mathcal{C}_{3}$ en Wand\&Jones93),
+luego nota las dificultades (2) y (3) previamente mencionadas, y compara
+varios algoritmos superadores en algún sentido al KDE con ancho de
+banda fijo (FKDE):
 \begin{itemize}
-\item Hip�tesis de la variedad mu , d\_mu <\textcompwordmark < d\_x (Bengio) 
-\end{itemize}
-\end{itemize}
-\item KDE en variedad (pelletier) 
-\item Distancia en la variedad (de Riemann) 
+\item KDE adaptativo (AKDE), similar a FKDE esferizado pero con un factor
+de ancho local $\lambda_{n}$ para cada núcleo
+\[
+\hat{f}_{AKDE}\left(z\right)=\frac{1}{Nh^{d}}\sum_{i=1}^{N}\lambda_{i}^{-d}\phi\left(\frac{1}{h\lambda_{i}}\left(z-z_{i}\right)\right)
+\]
+
 \begin{itemize}
-\item Si se sabe, geod�sica H\&R (H \& Rodr�guez?) 
-\item Si no se sabe, se estima a partir de los datos 
+\item El cómputo de los factores $\lambda_{i}$ ha de resolverse iterativamente,
+comenzando por el caso FKDE, $\lambda_{i}=1\forall i\in\left[N\right]$,
+con lo cual el costo computacional será aún más alto que en el caso
+base.
+\item Aunque cada núcleo estará mejor escalado a su contexto local, el enfoque
+sigue utilizando una misma orientación global para todos los núcleos.
+\end{itemize}
+\item KDE de base funcional radial (RBF): para minimizar la cantidad de
+núcleos a ajustar a los datos, divide el proceso de estimación de
+densidad en dos partes: (i) agrupar los datos en clusters según cierto
+algoritmo no-supervisado, y luego (ii) ajustar un núcleo gaussiano,
+su altura y su ancho a cada cluster de (i). Por esto, también se lo
+conoce com ``modelado de mezclas gaussianas''.
 \begin{itemize}
-\item Aprendizaje de distancia, de representaciones (Bengio) 
+\item Aunque el estimador final se puede expresar con muy pocos términos,
+el procedimiento completo es considerablemente más complejo que el
+de FKDE, dependiendo críticamente de la esferización y remoción de
+\emph{outliers} para la detección de clusters.
+\item Dependiendo del tamaño muestral, la dimensionalidad de los datos y
+la cantidad de bases utilizadas, ciertos clusters pueden resultar
+en núcleos demasiado ``empinados'' o demasiado ``planos''. Así,
+una de las principales ventajas de este método - la posibilidad de
+ajustar una matriz de covarianza distinta a cada cluster de datos
+- implicará una minuciosa inspección de los datos para saber qué escala
+y orientación es razonable para cada base.
 \end{itemize}
-\end{itemize}
-\item Isomap (shortest-path en grafo completo) 
-\item Distancia de Fermat 
-\item Estimador de fermat en grafo completo 
+\item KDE por ``persecución de la proyección'' (PPDE): El espíritu de
+este método, está basado en buscar iterativamente proyecciones ``interesantes''
+de los datos en bajas dimensiones (típicamente 1-D), modificar la
+muestra original $\left\{ \mathbf{x}\right\} ^{\left(0\right)}$ para
+remover la estructura encontrada en la proyección, y repetir el proceso
+en los datos resultantes. Siguiendo a Huber 85, la distribución normal
+se considera la ``menos interesante'', y será ``más interesante''
+aquella proyección de los datos que más se le aleje.
 \begin{itemize}
-\item Isomap como caso particular (p=1) de estimador de dist Fermat (fde) 
+\item Para evitar confundir la dirección y escala de la muestra con proyecciones
+verdaderamente interesante, el método de PPDE requiere también esferizar
+los datos e ignorar \emph{outliers }juiciosamente (p. 29 Huber85).
+\item Un problema específico a PPDE, es que no puede lidiar satisfactoriamente
+con estructuras ``escondidas'' detrás de otras. E.g., las proyecciones
+de una densidad 2-D con forma de dona a 1-D no dan cuenta fehaciente
+de la estructura original.
 \end{itemize}
-\item Pendientes:
+\end{itemize}
+En resumen:
 \begin{itemize}
-\item isomap
-\item soft clf chen
+\item Wand, Jones y Duong, entre tantos otros, pretenden buscar selectores
+basados en MISE para $\mathbf{H}$ completa, pero terminan encontrando
+dificultades que los restringen, en la práctica, a matrices diagonales,
+o los enriedan en la selección de parámetros auxiliares con complejidad
+propia.
+\item Hall, motivado por el problema que nos compete, intenta un selector
+basado en el riesgo de Bayes, pero el método resulta tan complejo
+en su propio derecho, que aún al tratar muestras multivariadas, lo
+hace con un suavizador escalar $h,\ \mathbf{H}\in\mathcal{H}_{1}$,
+y nota que los resultados no difieren significativamente de los obtenidos
+minimizando el error cuadrático integrado.
+\item Hwang explora todo tipo de anchos de banda escalares (fijos, adaptativos,
+clusterizados), y por último ``abandona'' esta línea y considera
+un método que no requiere definir explícitamente un suavizador \textbf{H}:
+PPDE.
 \end{itemize}
-\end{itemize}
+%
+
+\subsection{La maldición de la dimensionalidad}
+
+Hasta aquí, pareciera ser que el enfoque de estimación de densidad
+por núcleos para el caso multivariado está irremediablemente condenado
+al fracaso, o al menos a una agotadora complejidad. Sin embargo, antes
+de claudicar, vale la pena entender algunas de las razones de tamaña
+complejidad.
+
+Una dificultad obvia es que aún considerando un único suavizador global
+\textbf{H}, en $d$ dimensiones hacen falta estimar $\tbinom{d}{1}+\tbinom{d}{2}=\text{\ensuremath{\left(d^{2}+d\right)}/2}$
+varianzas y covarianzas, respectivamente. El crecimiento cuadrático
+en la cantidad de parámetros implicará que el tamaño muestral $N$
+necesario para obtener estimaciones razonables crezca insosteniblemente.
+El fenómeno, conocido como ``maldición de la dimensionalidad'',
+se puede entender intuitivamente considerando el siguiente escenario:
+\begin{rem}
+\label{rem:curse-dim}Sea $B\left(x,r,d\right)$ la bola $d-$dimensional
+de radio $r$ centrada en $x\in\R^{d}$, y consideremos una v.a. uniformemente
+distribuida dentro de ella (por volumen), $X\sim Unif\left(B\left(0,r,d\right)\right)$.
+Sea $\epsilon>0$; cuál es la probabilidad de que $X$ se encuentre
+al ``interior'' de la bola (sustrayendo un ``cascarón'' externo
+de espesor $\epsilon$) $Pr\text{\ensuremath{\left(X\in B\left(0,r-\epsilon,d\right)\right)}}$?
+
+Como la distribución de $X$ es uniforme en volumen, y $B\left(x,r-\epsilon,d\right)\subset B\left(x,r,d\right)$,
+basta con comparar los volúmenes de de ambas $d-$esferas para encontrar
+la solución. El volumen$d-$dimensional de una bola es
+
+\[
+{\displaystyle Vol\left(B\left(x,r,d\right)\right)=Vol_{B}\left(r,d\right)={\frac{\pi^{d/2}}{\Gamma\left(\tfrac{d}{2}+1\right)}}r^{d}}
+\]
+
+donde ${\displaystyle \Gamma\left(z\right)=\int_{0}^{\infty}t^{z-1}e^{-t}\,dt}$
+es la función gamma. Luego,
+\[
+Pr\text{\ensuremath{\left(X\in B\left(0,r-\epsilon,d\right)\right)}}=\frac{Vol\left(B\left(0,r-\epsilon,d\right)\right)}{Vol\left(B\left(0,r,d\right)\right)}=\left(\frac{r-\epsilon}{r}\right)^{d}
+\]
+
+Como $\left(\frac{r-\epsilon}{r}\right)<1$, $\lim_{d\rightarrow\infty}Pr\text{\ensuremath{\left(X\in B\left(0,r-\epsilon,d\right)\right)}}\rightarrow0$.
+Es decir, a medida que crece la dimensión del soporte de $X$, el
+``interior'' de la bola esta (casi) vacío, y la distribución de
+$X$ se concentra en el ``cascarón'' exterior. Aún para valores
+moderados de $d,\epsilon$ el efecto es pronunciado. Por ejemplo,
+en 20 dimensiones, un cascarón de 2\% de espesor ($\epsilon=0.02r$)
+concentrará $1-\text{\ensuremath{\left(\tfrac{r-\epsilon}{r}\right)}}^{d}=1-0.98^{20}=0.6676\dots\approx\text{¡}2/3$
+de la masa de probabilidad de $X$! 
+
+Este enorme ``vacío'' en el espacio de alta dimensión, se traduce
+en una irrelevancia de las métricas ``ingenuas'' de distancia. Como
+$x\in B\left(0,r,d\right)\iff\norm x\leq r\sqrt{d}$, y similarmente
+$x\notin B\left(0,r-\epsilon,d\right)\iff\norm x>\left(r-\epsilon\right)\sqrt{d}$,
+podemos escribir 
+\begin{align*}
+Pr\text{\ensuremath{\left(X\notin B\left(0,r-\epsilon,d\right)\right)}} & =Pr\text{\ensuremath{\left(X\notin B\left(0,r-\epsilon,d\right),X\in B\left(0,r,d\right)\right)}}\\
+1-\left(\frac{r-\epsilon}{r}\right)^{d} & =Pr\left(\left(r-\epsilon\right)\sqrt{d}<\norm X\leq r\sqrt{d}\right)
+\end{align*}
+
+De manera que $\lim_{d\rightarrow\infty}Pr\left(\left(r-\epsilon\right)\sqrt{d}<\norm X\leq r\sqrt{d}\right)\rightarrow1$.
+Es decir, a medida que $d\rightarrow\infty$ y para $\epsilon$ arbitrariamente
+pequeño, la distancia euclídea de (casi) toda la distribución al centro
+de la esfera tiende a ser aproximadamente $r\sqrt{d}$, lo cual hace
+que esta distancia euclídea sea inútil para diferenciar entre elementos
+de la muestra.
+\end{rem}
+
+
+\subsection{Reducción de dimensionalidad y la hipótesis de la variedad}
+
+A pesar de lo sorprendente del resultado, vale notar que descansa
+sobre el hecho de que la distribución de $X$ sobre su soporte $\text{supp}\left(X\right)=B\left(0,r,d\right)\subset\R^{d}$
+es uniforme, e independiente en todas las dimensiones. En casi cualquier
+contexto material, este supuesto no es sostenible. Por poner un ejemplo,
+podemos representar todas las posibles imágenes en escala de grises
+de 1 megapixel como puntos $X$ pertenecientes al espacio $\R^{1024\times1024}$,
+pero la basta mayoría de ellas consistirían en ``puro ruido blanco''
+y no significarían nada para un observador. Las imágenes que sí tiene
+sentido reconocer y clasificar (un gato, una bicicleta, etc.) son
+un conjunto muchísimo más restringido - aún teniendo en cuenta todo
+tipo de posiciones y contrastes posibles -, y sus diferentes elementos
+(como la posición de los ojos y las orejas del gato) guardan relaciones
+específicas entre sí. Es decir, están \emph{correlacionados}.
+
+Si nos suponemos en esta situación, el camino más directo para aliviarla,
+es \emph{reducir la dimensionalidad} del problema. Al fin y al cabo,
+es el crecimiento en $d$ lo que nos embrolló en un principio. Dadas
+$\left\{ \mathbf{x}\right\} =\left\{ x_{i}\vert x_{i}\in\Rdimx,\ i\in\text{\ensuremath{\left[N\right]}}\right\} $,
+buscaremos una \emph{representación} $f:\Rdimx\rightarrow\R^{d_{y}}$,
+que preserve fielmente los atributos más relevantes de $x\in\Rdimx$,
+en la menor cantidad de dimensiones $d_{y}$. Encontrar compromisos
+ideales entre la ``fidelidad'' y la dimensionalidad de estas representaciones,
+dió lugar al campo de \emph{aprendizaje de representaciones, }del
+cual Bengio2012\footnote{https://www.reddit.com/r/MachineLearning/comments/mzjshl/comment/gwq8szw/?utm\_source=share\&utm\_medium=web2x\&context=3
+Bengio himself sobre el origen del término.} hace un excelente censo. El autor relaciona la tarea del área con
+la noción geométrica de una \emph{variedad.}
+\begin{rem}
+A nuestros fines, una variedad $\mathcal{\M}$ es un espacio de dimensión
+$d_{\M}$ que \emph{localmente}, se asemeja a $\R^{d_{\M}}$. En efecto,
+una variedad puede ser vista como un objeto compuesto de parches $d_{\M}$-dimensionales
+pegados. Una variedad se llama \emph{cerrada} si no tiene borde y
+es compacta.
+\end{rem}
+
+La \emph{hipótesis de la variedad} (``manifold hypothesis'') postula
+que los datos \textbf{$x$} obtenidos del mundo real con alta dimensionalidad
+$d_{x}$ habrían de concentrarse en una variedad $\M$ de -potencialmente
+- mucha menor dimensionalidad $d_{\M}\ll d_{x}$, embebido en el espacio
+original $\R^{d_{x}}$. 
+\begin{quotation}
+Esta asunción parece particularmente adecuada en tareas de aprendizaje
+para las cuales las configuraciones muestreadas aleatoriamente no
+son como las que ocurren naturalmente: ya mencionamos imágenes, pero
+esperamos lo mismo de sonidos, texto, secuencias genómicas y hasta
+aún las respuestas a algunos cuestionarios inverosímilmente exhaustivos
+de los departamentos estatales de estadística. 
+
+Ni bien tenemos una \emph{representación,} uno piensa en una variedad
+considerando las variaciones en el dominio original que están bien
+capturadas o reflejadas (por correspondientes cambios) en la representación
+aprendida. A \emph{grosso modo}, algunas direcciones estarán bien
+preservadas (las direcciones \emph{localmente tangentes} a cada punto
+en la variedad), mientras que otras se perderán - las ortogonales
+a $\M$ . Desde esta perspectiva, la principal tarea del aprendizaje
+no-supervisado, puede ser vista como el modelado de la estructura
+de la variedad que soporta los datos observados. La representación
+que se aprenda, puede asociarse a un sistema intrínseco de coordenadas
+en la variedad embebida. El algoritmo arquetípico de modelado de variedades
+es, oh sorpresa, también el algoritmo arquetípico de aprendizaje de
+representaciones de baja dimensionalidad: Análisis de Componenetes
+Principales (PCA).
+
+PCA modela una \emph{variedad lineal. }Fue inicialmente diseñado con
+el objetivo de encontrar la variedad lineal más cercana a una nube
+de puntos. Las componentes principales, i.e., la representación $f_{\theta}\left(x\right)$
+que devuelve PCA para un input $x$, ubica unívocamente su proyección
+en esa variedad: se corresponde con coordenadas intrínsecas de la
+variedad. Las variedad que soportan dominios complejos del mundo real,
+sin embargo, se esperan que sean fuertemente no-lineales.
+\end{quotation}
+%
+Más que una propiamente dicha hipótesis falsificable al respecto de
+la distribución de los datos, mencionamos la \emph{hipótesis de la
+variedad} en tanto resulta modelo mental útil para entender cómo estimar
+la densidad generadora de los datos en altas dimensiones. Ya mencionamos
+que a medida que $d_{x}$ crece, la distancia euclídea en $\R^{\dimx}$
+se vuelve menos informativa. Trabajar dentro de $\M$, con dimensión
+$d_{\M}$ puede aliviar la situación sobre todo cuando $d_{\M}\ll d_{x}$,
+pero hay una ventaja más escondida en el hecho de que una variedad
+es sólo localmente semejante al espacio euclídeo - es decir, \emph{lineal}
+-, pero puede ``arrugarse'' en el espacio ambiente.
+
+Imaginemos un conjunto de datos $\left\{ \mathbf{u}\right\} =\left\{ u_{i},i\in\left[N\right],u_{i}\in\mathcal{U}\subseteq\R^{2}\right\} $,
+con forma de letra ``U'', justamente. $\mathcal{U}$ es una variedad
+1-dimensional - una curva - embebida en el espacio cartesiano - $\R^{2},$
+una variedad 2-dimensional., Llamemos $u_{\alpha},u_{\omega}$ a los
+dos puntos que se encuentran más cerca de los extremos superiores
+del dibujo de la ``U''. En la variedad latente, estos dos puntos
+están tan separados entre sí como es posible; sin embargo, si medimos
+la distancia entre ambos en el espacio ambiente - $\R^{2}$ - obtendremos
+que están mucho más cerca entre sí que, por ejemplo, el punto medio
+donde la ``U'' corta su eje de simetría axial. La razón de tal insensatez,
+es simplemente, que hemos tomado una medida de distancia que no se
+ajusta bien al espacio latente.
+
+\subsection{KDE en variedades}
+
+¡Excelente! Fieles a la hipótesis de la variedad, podemos sugerir
+un camino alternativo a los complejos derroteros por los que nos llevó
+de paseo KDE multivariado en alta dimensión: en lugar de calcular
+un KDE en el espacio ambiente $\R^{d_{x}},$ hipotetizamos que $X\in\M\subseteq\R^{d_{x}},\dim\M=d_{\M}\ll d_{x}$,
+y por lo tanto podemos restringir la definición de su densidad $f:\M\rightarrow\left(0,\infty\right)$
+para obtener una mejor representación. Pero: ¿cómo se construye una
+función de densidad \emph{en una variedad}? Algunas variedades particularmente
+interesantes, como el círculo $S^{1}$ y la esfera $S^{2}$, fueron
+estudiadas temprano en el siglo XX (Rao, Fisher, citar bien), pero
+la estimación de densidad en variedades arbitrarias no parece haber
+sido tratado antes que en Pelletier2005, quien - convenientemente
+- hizo exactamente eso, ``Kernel density estimation on Riemannian
+Manifolds''. En lo que sigue, (intentamos) ser fieles a lo que entendimos
+de la exposición de Bruno. 
+\begin{defn}
+\label{def:manif-kde}(estimación de densidad por núcleos en variedades,
+Pelletier2005, seccion 2; Muñoz2011 en su tesis de lic. con directores
+Henry y Rodriguez)
+
+Sea $\left(\M,g\right)$ una variedad Riemanniana compacta sin frontera
+de dimensión $d$. Asumiremos que $\left(\M,g\right)$ es completo,
+es decir, $\left(\M,d_{g}\right)$ es un espacio métrico completo,
+donde $d_{g}$ denota la distancia de Riemann.
+
+Sea X un elemento aleatorio en $\M$\footnote{i.e., un mapa medible en un espacio de probabilidad $\left(\Omega,\mathcal{A},P\right)$
+que toma valores en $\left(\M,\mathcal{B}\right),$donde $\mathcal{B}$
+representa el $\sigma$-campo de Borel de $\M$. Asumiremos que la
+medida imagen de $P$ por $X$ es absolutamente continua con respecto
+a la medida Riemanniana de volumen - que notaremos $v_{g}$ -, admitiendo
+una densidad $f$ continua en c.t.p. sobre $\M$.} con densidad $f$ continua en casi todo punto. Sea $\text{\ensuremath{\left\{  \mathbf{X}\right\} } }$
+un conjunto de $N$ elementos aleatorios i.i.d. a X. Sea $K:\R_{+}\rightarrow\R$
+un mapa no-negativo tal que
+\begin{enumerate}
+\item $\int_{\R^{d}}K\text{\ensuremath{\left(\norm x\right)}d\ensuremath{\lambda\left(x\right)}}=1$
+($K$ es una función de densidad)
+\item $\int_{\R^{d}}xK\text{\ensuremath{\left(\norm x\right)}d\ensuremath{\lambda\left(x\right)}}=0$
+($EX=0$, $K$ es simétrica),
+\item $\int_{\R^{d}}\norm x^{2}K\text{\ensuremath{\left(\norm x\right)}d\ensuremath{\lambda\left(x\right)}}<\infty$
+($VarX<\infty),$
+\item $\text{sop}K=\text{\ensuremath{\left[0,1\right]}}$,
+\item $\sup K\text{\ensuremath{\left(x\right)}}=K\left(0\right)$,
+\end{enumerate}
+donde $\lambda$ es la medida de Lebesgue en $R^{d}.$ Luego, el mapa
+$\R^{d}\ni x\rightarrow K\left(\norm x\right)\in\R$ es un núcleo
+isotrópico en $\R^{d}$ con soporte en la bola unitaria.
+
+Sean $p,q$ dos puntos de $\M$. Sea $\theta_{p}\left(q\right)$ la
+\emph{función de densidad volumétrica} en $\M$\footnote{Besse 1978 (p. 154) lo define aproximadamente como
+\[
+\theta_{p}:q\rightarrow\theta_{p}\left(q\right)=\frac{\mu_{\exp_{p}^{*}g}}{\mu_{g_{p}}}\left(\exp_{p}^{-1}\left(q\right)\right)
+\]
+
+i.e., el cociente entre la medida canónica de la métrica Riemanniana
+$\exp_{p}^{*}g$ en espacio tangente $T_{p}\left(M\right)$, y la
+medida de Lebesgue en la estructura euclídea $g_{p}$en $T_{p}\left(M\right).$
+La función de densidad volumétrica está ciertamente definida para
+$q$ en un vecindario de $p$. En términos de coordenadas normales
+geod´sicas en $p$, $\theta_{p}\left(q\right)$ es igual al determinante
+de la métrica $g$ expresado dichas estas coordenadas en $\exp_{P}^{-1}\left(q\right)$.}. Definimos el estimador de densidad de $f$ como el mapa $f_{N,K}:\M\rightarrow\R$
+que a cada $p\in\M$ le asocia el valor $f_{N,K}\left(p\right)$ definido
+como
+\[
+f_{N,K}\left(p\right)=N^{-1}\sum_{i=1}^{N}\frac{1}{h^{d}}\frac{1}{\theta_{X_{i}}\left(p\right)}K\left(\frac{d_{g}\left(p,X_{i}\right)}{h}\right)
+\]
+\end{defn}
+
+\begin{rem}
+(concordancia con espacios euclídeos) Sea $\M=\R^{d}$ con su típica
+métrica euclídea. Luego, $\theta_{p}\left(q\right)=1\ \forall\ p,q\in\M$
+y $f_{N,K}$ se puede escribir como $f_{N,K}=N^{-1}\sum_{i=1}^{N}r^{-d}K\left(\norm{p-X_{i}}/r\right)$.
+La expresión de $f_{N,K}$ es consistente con la expresión de KDEs
+en el caso euclídeo.
+\end{rem}
+
+Para asegurarse de que $f_{N,K}$ sea integrable sobre $\M$, habremos
+de imponer una restricción más sobre el ancho de banda: \label{constr:inj-radius}
+\[
+h_{n}<h_{0}<\text{inj}_{g}\M
+\]
+, donde $\text{inj}_{g}\M$ es el \emph{radio de inyectividad} de
+$\M$ (Chavel1993, p. 108; Muñoz2011, p. 23)\footnote{\begin{defn}
+(Muñoz2011, p. 23, definición 3.3.16) Sea $(\M,g)$ una variedad Riemanniana
+de dimensión $d$. Llamamos \emph{\small{}radio de inyectividad} a
+\[
+\text{inj}_{g}\M=\inf_{p\in\M}\sup\left\{ s\in\R>0:B\left(p,s\right)\t{es\ una\ bola\ normal}\right\} 
+\]
+\end{defn}
+
+Burdamente, diremos que $B$ es una \emph{\small{}bola normal} centrada
+en \emph{p} si existe una bola $V$ en $T_{p}(\M)$ (un vecindario
+de $p$) en el que las coordenadas de cada punto $q\in V$ se pueden
+mapear biyectivamente a coordenadas en $\R^{d}$: por ejemplo, si
+$\M_{1}=\R^{d}$ con la métrica canónica ($\norm{\cdot}$) entonces
+$\t{inj}_{g}\M_{1}=\infty$, pues todo el espacio comparte un único
+mapa de coordenadas global. Si le quitamos un punto, $\M_{2}=\M_{1}-\left\{ p\right\} $
+entonces $\t{inj}_{g}\M_{2}=0$ (para un punto ``muy cercano a $p$'',
+$q\in\M,q\approx p$, no habrá bola normal posible) . Si $\M=S^{1}\times\R$
+(un cilindro vacío en $\R^{3}$)  con la métrica inducida de $\R^{3}$,
+el radio de inyectividad es $\pi$. REPASAR.}. Sin entrar en demasiados detalles, siempre y cuando $\M$ sea compacta
+este radio de inyectividad será $>0$, y al menos para los resultados
+asintóticos (cuando el tamaño muestral es lo suficientemente grande
+como para que $h\rightarrow0$), $0<h<h_{0}$.
+
+Pelletier2005 avanza algunas propiedades elementales de este estimador:
+adapta el concepto de ``media'' para elementos aleatorios en $\R^{d}$
+a e.a. en variedades Riemannianas compactas sin frontera $\M$ (Proposición
+II, ``media intrínseca''), y prueba que $f_{N,K}$ es un estimador
+consistente \footnote{Pelletier considera la convergencia en $L^{2}\left(\M\right),$ ¿esto
+sería consistencia débil? ¿Qué diferencia hay con la que estudian
+Henry\&Rodríguez2009?} de $f$ (Teorema 5), en el siguiente sentido
+\begin{thm}
+(Teorema 5, Pelletier 2005) \emph{Sea $f$ una densidad de probabilidad
+dos veces diferenciable en $\M$ con segunda derivada covariante acotada.
+Sea $f_{N,K}$ su estimador definido en \ref{def:manif-kde} con ancho
+de banda $h$ que satisface la condición \ref{constr:inj-radius}.
+Luego, existe una constante $C_{f}$ tal que }
+
+\[
+E_{f}\norm{f_{N,K}-f}_{L^{2}\left(\M\right)}^{2}\leq C_{f}\left(\frac{1}{Nh^{d}}+h^{4}\right)
+\]
+
+\emph{En consecuencia, para $h\sim N^{\frac{-1}{d+4}}$, }
+\[
+E_{f}\norm{f_{N,K}-f}_{L^{2}\left(\M\right)}^{2}\leq\text{O}\left(N^{\frac{-4}{d+4}}\right)
+\]
+\end{thm}
+
+Henry \& Rodríguez2009 continúan el estudio de este estimador, probando
+\begin{enumerate}
+\item bajo ciertas condiciones de regularidad sobre conjuntos compactos
+$\M_{0}\subseteq\M$ - la consistencia fuerte
+\[
+\sup_{p\in\M_{0}}\vert f_{n,K}\left(p\right)-f\left(p\right)\vert\xrightarrow{c.t.p.}0
+\]
+\item bajo condiciones extras sobre $f$ y la serie $h_{n}$, $f-f_{N,K}$
+converge en distribución a ciert ley normal, con tasa $\sqrt{nh^{d}}$
+\[
+\sqrt{nh^{d}}\left(f\left(p\right)-f_{n,K}\left(p\right)\right)\xrightarrow{\mathcal{D}}\mathcal{N}\left(\mu,\Sigma\right)
+\]
+\end{enumerate}
+%
+Loubes y Pelletier (2010) extienden el trabajo de Pelletier 2005,
+proponiendo un clasificador binario basado en núcleos, para e.a. soportados
+sobre variedades compactas y cerradas de Riemann. Recordemos que en
+\ref{def:soft-clf-kde} propusimos un clasificador suave que asignase
+a cada clase, una probabilidad de pertenencia 
+\[
+p\left(C\left(x\right)=j\right)=\frac{f^{(j)}\left(x\right)\cdot p\text{\ensuremath{\left(C_{j}\right)}}}{p\text{\ensuremath{\left(x\right)}}}
+\]
+
+de manera que podemos describir una reglas de clasificación dura,
+como
+\begin{align*}
+\mathcal{R}\left(x\vert f_{1},\dots,f_{K}\right) & =\arg\max_{j\in\left[K\right]}p\left(C\left(x\right)=j\right)\\
+ & =\arg\max_{j\in\left[K\right]}\frac{f^{(j)}\left(x\right)\cdot p\text{\ensuremath{\left(C_{j}\right)}}}{\sum_{j\in\left[K\right]}f^{(j)}\left(x\right)\cdot p\text{\ensuremath{\left(C_{j}\right)}}}\\
+ & \arg\max_{j\in\left[K\right]}f^{(j)}\left(x\right)\cdot p\text{\ensuremath{\left(C_{j}\right)}}
+\end{align*}
+
+y su estimador muestral\label{def:manif-clf-kde}
+\begin{align*}
+\mathcal{\hat{R}}\left(x\vert\hat{f}_{1},\dots,\hat{f}_{K}\right) & =\arg\max_{j\in\left[K\right]}\hat{f}^{(j)}\left(x\right)\cdot\hat{p}\left(C_{j}\right)\\
+ & =\arg\max_{j\in\left[K\right]}N_{j}^{-1}\sum_{i=1}^{N}\frac{1}{h^{d}}\frac{1}{\theta_{X_{i}}\left(p\right)}K\left(\frac{d_{g}\left(p,X_{i}\right)}{h}\right)\cdot\frac{N_{j}}{N}\\
+ & =\arg\max_{j\in\left[K\right]}\sum_{i=1}^{N}\mathbf{1}\left\{ C\left(X_{i}\right)=j\right\} K_{h}\left(p,X_{i}\right)
+\end{align*}
+
+donde 
+\[
+K_{h}\left(p,X_{i}\right)=\frac{1}{h^{d}}\frac{1}{\theta_{X_{i}}\left(p\right)}K\left(\frac{d_{g}\left(p,X_{i}\right)}{h}\right)
+\]
+
+Este es, precisamente, el clasificador que Loubes y Pelletier proponen.
+Considerando como función objetivo a minimizar la misma probabilidad
+de error de clasificación que vimos con Hall2005, 
+\[
+L\left(\mathcal{R}\right)=Pr\left(\mathcal{R}\left(X\right)=C\left(X\right)\right)
+\]
+
+los autores muestran que el clasificador propuesto $\mathcal{\hat{R}}$
+alcanza asintóticamente la misma pérdida que el clasificador óptimo
+de bayes, $\mathcal{R}^{*}$
+\[
+\lim_{n\rightarrow\infty}Pr\left(\hat{L\left(\mathcal{R}_{n}\right)}=L\left(\mathcal{R^{*}}\right)\right)=1
+\]
+con 
+\[
+\text{\ensuremath{\calR}}^{*}\left(x\right)=\arg\max_{j\in\left[K\right]}Pr\left(C\left(X\right)=j\vert X=x\right)
+\]
+
+Siguiendo a Drevoye1996, diremos que el clasificador es \emph{fuertemente
+consistente}, en tanto alcanza el error de Bayes cuando $n\rightarrow\infty$.
+Los autores dejan las consideraciones prácticas de su funcionamiento
+fuera del trabajo.
+
+Los resultados combinados de Pelletier, Henry, Rodríguez y Loubes
+nos dejan bastante cerca de lo que venimos buscando - construir un
+clasificador basado en densidades -, con una diferencia fatal: estos
+trabajos consideran variedades \emph{conocidas}, mientras que nosotros
+trabajamos bajo la \emph{hipótesis de la variedad}, pero en principio
+no conocemos la variedad en sí. Crucialmente, desconocer la variedad
+implica desconocer dos cosas: la distancia geodésica $d_{g}$ y la
+función de densidad de volumen $\theta_{p}$, que tendremos que \emph{aprender
+de los datos} de alguna manera, junto con la densidad $f$.
+
+\subsubsection{Isomap}
+
+Consideraremos brevemente uno de los algoritmos más famosos de aprendizaje
+de variedades no-lineales: Isomap\footnote{\textbf{Iso}metric feature \textbf{map}ping, en inglés}.
+Según Tenenbaum2000, el objetivo explícito de su algoritmo es ``aprender
+la geometría global subyacente de un dataset, usando información métrica
+local fácilmente medible'', para un conjunto amplio de variedades
+no-lineales. La tarea central, consiste en aproximar adecuadamente
+las distancias geodésicas en la variedad $d_{g}\left(x,y\right)$
+entre puntos alejados, conociendo únicamente las distancias euclídeas
+en la muestra $\norm{x-y}$.
+
+Dada la naturaleza localmente euclídea de las variedades, para puntos
+``vecinos'' entre sí, la distancia en $\R^{d_{x}}$ (en el espacio
+de las $X$) será una aproximación razonable a la distancia geodésica
+en la variedad. Luego, para puntos alejados entre sí, podemos aproximar
+$d_{g}$ como la suma de una secuencia de ``pequeños saltos'' entre
+puntos vecinos en el grafo de la muestra.
+
+El algoritmo completo, consta de tres pasos principales (Tabla 1,
+Tenenbaum2000):
+\begin{enumerate}
+\item \textbf{Constrúyase un grafo de vecinos muestrales} $G=\text{\ensuremath{\left(X,E\right)}}$
+sobre el dataset completo, donde la arista $x\leftrightarrow y$ está
+incluida si $\norm{x-y}_{d_{x}}<\epsilon$ (``$\epsilon$-Isomap''),
+o si $y$ es uno de los $K$ vecinos más cercanos de $x$ . Tómese
+$\norm{x-y}$ como el valor de la arista $x\leftrightarrow y$.
+\item \textbf{Compútense los caminos mínimos}, usando - según convenga -
+el algoritmo de Floyd-Warshall o Dijsktra en el grafo $G$. Los costos
+de los caminos mínimos $d_{G}\left(x,y\right)$ constituyen una aproximación
+de las distnacias geodésicas $d_{\M}\left(x,y\right)$ .
+\item \textbf{Constrúyase un }\textbf{\emph{embedding}}\textbf{ $\mathbf{d-}$dimensional.
+}Utilizando escalamiento multidimensional (MDS, MultiDimensional Scaling,
+un algoritmo de reducción de dimensionalidad), crear una representación
+(embedding) en el espacio euclídeo $\R^{d}$ que minimice una métrica
+de discrepancia entre las distancias computadas en (2), con las distancias
+en la representación a construir, llamada ``stress'' o ``strain''.
+\end{enumerate}
+Los resultados de este algoritmo - que han sido bastante espectaculares
+para lo relativamente sencillo de su estructura, descansan en una
+prueba de la convergencia asintótica, a medida que $N$ crece, de
+que las distancias en el grafo $d_{G}$ proveen aproximaciones incrementalmente
+mejores a las distancias geodésicas intrínsecas $d_{\M}$, volviéndose
+arbitrariamente precisas en el límite de $N\rightarrow\infty$. La
+tasa a la que esta convergencia sucede, depende de ciertos parámetros
+de la variedad (su dimensión $d_{\M}$, la función de volumen $\theta_{p}$),
+de cómo esta yace en el espacio ambiente (radio de curvatura $r_{0}$
+y separación de ramas$s_{0}$) y de la densidad $f:\M\rightarrow\R>0$
+de la que estamos sampleando.
+
+Allende los costos computacionales, hay dos parámetros a fijar en
+este algoritmo: el parámetro de ``vecindad'' $\epsilon$ ó $K$
+en (1), y la dimensión $d$ en (3). Inspeccionando el gráfico de ``estrés''
+de MDS como función de la dimensión $d$ escogida, se pueden buscar
+un punto de inflexión (``codo'') en que seguir aumentando $d$ no
+aliviana significativamente la tensión del algoritmo, y son por tanto
+candidatos naturales a la dimensión intrínseca de la variedad $d_{\M}$.
+
+Por su parte, el valor óptimo de $\epsilon$ ó $K$ no cuenta con
+una regla inmediata para su determinación. Consideremos $\epsilon-$Isomap:
+valores demasiado pequeños de $\epsilon$ podrían dejar muchos vértices
+de $G$ - muchas observaciones muestrales - desconectadas de la componente
+gigante - la componente conexa de mayor tamaño - de $G;$valores demasiado
+grandes de $\epsilon$ podrían llevar a incluir en $G$ aristas $e\in E$
+que cruzan el espacio ambiente $\R^{d_{x}}$ completamente por fuera
+de $\M$, ``cortocircuitando'' la representación. Consideraciones
+análogas complican la elección de cantidad de vecinos en $K-$Isomap.
+
+\subsection{Distancia de Fermat}
+
+La idea central en Isomap, es \emph{primero} aprender/computar una
+distancia (en el grafo de vecinos más cercanos) y \emph{luego} construir
+un \emph{embedding }- una representación - en cierta dimensión dada,
+en lugar de usar una distancia dada, para aprender una representación
+de menor dimensión. Sin embargo, por cómo está definido el algoritmo,
+lo que Isomap aproxima es la distancia euclídea en la dimensión intrínseca
+de la variedad subyacente. A nuestros fines, será necesario también
+considerar la \emph{densidad $f$ en la variedad $\M$.}
+
+Por ejemplo, si $f$ fuese una mezcla con iguales pesos de dos leyes
+gaussianas unidimensionales, $\mathcal{N}\left(0,1\right)$ y $\mathcal{N}\left(10,2\right)$,
+quisiéramos que el punto $x=5$ - euclídeamente equidistante de ambas
+- estuviese más cerca de $\mathcal{N}\left(10,2\right)$ que de $\mathcal{N}\left(0,1\right)$
+- exactamente como sucedería en $\R^{d}$ si consideramos la distancia
+de Mahalanobis \ref{rem:mahalanobis-dist}.
+
+En casos reales, ni $f$ ni $\M$ se conocerán de antemano, así que
+pareciera conveniente tratar de aprender una distancia que considere
+ambas a la vez. Es exactamente en ese sentido que Groisman et al.
+(2019) proponen la ``distancia de Fermat'', una distancia basada
+en densidades aplicable a variedades que, de alguna manera, generaliza
+el trabajo de Tenenbaum2000.
+\begin{defn}
+(distancia de Fermat muestral, adaptado de Definición 2.1 en Groisman2019)
+
+Sea $Q$ un conjunto no-vacío, localmente finito, contenido en $\R^{d}$.
+Para $\alpha\geq1$%
+\begin{comment}
+hace falta el ``>=1''? o con >= 0 alcanzaria? Tiene algun valor
+la generalizacion?
+\end{comment}
+{} y $s,t\in Q,$ definimos la \emph{distancia de Fermat muestral} como
+\[
+D_{Q,\alpha}\left(s,t\right)=\inf\left\{ \sum_{j=1}^{K-1}\norm{x_{i_{j}+1}-x_{i_{j}}}^{\alpha}:\left(q_{1},\dots,q_{K}\right)\text{es un camino de \ensuremath{s} a \ensuremath{t}},q_{i}\in Q\forall i\in\left[K\right],K\geq1\right\} 
+\]
+\end{defn}
+
+Los autores definen esta distancia muestral para conjuntos arbitrarios
+$Q$, pero de aquí en más consideraremos $Q=\left\{ \mathbf{x}\right\} $,
+la muestra $d_{x}$-dimensional de interés. Nótese que $D_{Q,\alpha}$
+satisface la desigualdad triangular, y define una métrica sobre $Q$.
+Cuando no sea estrictamente necesario, omitiremos en la notación la
+dependencia en $Q,\alpha$.
+\begin{rem}
+La distancia de Fermat muestral es el costo del camino mínimo en el
+grafo \emph{completo }de $Q$, con las aristas pesadas por una potencia
+$\alpha$ de la distancia euclídea. Cuando $Q=\left\{ \mathbf{x}\right\} ,\ K=N,\ \alpha=1$,
+la distancia del paso (1) en Isomap es idéntica a la distancia muestral
+de Fermat.
+
+A continuación, definen la versión macroscópica de la distancia de
+Fermat muestral,
+\end{rem}
+
+\begin{defn}
+(distancia de Fermat, definicion 2.2) Sea $\M$ una variedad de Riemann,
+$f:\M\rightarrow\R_{+}$ una función continua y positiva en $\M$,
+$\beta\geq0$ y $s,t\in\M$. Definimos la \emph{distancia de Fermat
+$\mathcal{D}_{f,\beta}\left(s,t\right)$ }como
+\[
+\mathcal{T}_{f,\beta}\left(\gamma\right)=\int_{\gamma}f^{-\beta},\quad\mathcal{D}_{f,\beta}\left(s,t\right)=\inf_{\gamma\in\Gamma}\mathcal{T}_{f,\beta}\left(\gamma\right)
+\]
+
+donde el ínfimo esta tomado sobre el conjunto de todos los caminos
+continuos y rectificables contenidos en $\bar{\M}$ (la clausura de
+$\M$) que comienzan en $s$ y terminan en $t$, y la integral es
+respecto de la longitud de arco dada por la distancia euclídea.
+\end{defn}
+
+Se omitirán las dependencias de $f,\beta$ cuando no haya confusión
+posible. 
+
+Uniendo las dos definiciones previas, el teorema central del trabajo
+es el siguiente:
+\begin{thm}
+\emph{(Teorema 2.7, Groisman2019) Sea $\M$ una variedad $d$-dimensional,
+isométrica y $C^{1}$ embebida en $\R^{D}$}\footnote{Es decir, existe un conjunto abierto y conexo $S\subset\R^{d}$ y
+$\phi:\bar{S}\rightarrow\R^{D}$ una transformación isométrica tal
+que \textbackslash phi$\phi\left(\bar{S}\right)=\M$. En aplicaciones
+reales se espera que $d\ll D$, pero no es necesario.}\emph{. Sea $Q_{n}=\left\{ q_{1},\dots,q_{n}\right\} $ puntos independientes
+con densidad común $f$. Luego, para $\alpha>1$ y $x,y\in\M$ se
+tiene
+\[
+\lim_{n\rightarrow\infty}n^{\beta}D_{Q_{n},\alpha}\text{\ensuremath{\left(x,y\right)}=\ensuremath{\mu\mathcal{D}_{f,\beta}}\ensuremath{\left(x,y\right)\ }casi seguramente}.
+\]
+Aquí, $\beta=\left(\alpha-1\right)/d$ y $\mu$ es una constante que
+depende únicamente de $\alpha$ y la dimensión de la variedad $d$.}
+\end{thm}
+
+En otras palabras, correctamente escalada, la distancia muestral de
+Fermat converge a la distancia ``poblacional'' de Fermat, y $D_{Q_{n},\alpha}$
+es un estimador consistente de $\mathcal{D}_{f,\beta}$. Los autores
+prueban el caso en que $f$ corresponde a un proceso puntual de Poisson
+homogéneo en $\M$, y conjeturan que es cierto para $f$ arbitraria%
+\begin{comment}
+Es así? O en realidad la prueba es más fuerte?
+\end{comment}
+.
 
 \section{Propuesta}
+
+En la Introducción hemos repasado en detalle un método eficiente y
+lo sumamente estudiado para responder al problema de clasificación
+en dominios de alta dimensionalidad: la estimación de densidad por
+núcleos (KDE), específicamente en variedades de Riemann. Notamos que
+de los tres parámetros a elegir - el núcleo, el ancho de banda y la
+distancia - tanto el ancho de banda como la distancia son problemáticos
+en HD, aunque para el ancho de banda el tratamiento encontrado en
+la literatura es mucho más extenso. Nos proponemos investigar si es
+posible mejorar la performance de los métodos descritos hasta ahora,
+con una noción de distancia aprendida de los datos, la distancia muestral
+de Fermat propuesta por Groisman2019. Más específicamente, aplicaremos
 \begin{itemize}
-\item estimador distancia de fermat del grafo de los datos seg�n Groisman
-et al, 
-\item usar la la distancia estimada como plug-in en kde pelletier 
-\item Check clf acc \& perf 
+\item un clasificador basado en estimaciones de densidad por núcleos (gaussianos)
+en variedades según Loubes2010
+\item con matriz de suavización \textbf{H} individualmente orientada en
+cada elemento muestral según Vincent2003
+\item y distancia varietal aprendida según Groisman2019
+\end{itemize}
+%
+Evaluaremos al clasificador resultante en un conjunto de datasets
+sintéticos y naturales que representen un espectro amplio de casos
+de alta dimensionalidad, a través de un estudio de ablación, para
+entender cuál es la ventaja marginal de utilizar una distancia aprendida
+por sobre el clasificador equivalente con distancia euclídea.
+
+Los métodos de estimación por núcleos, aunque simples en su concepción,
+tienen altos requerimientos computacionales, y el aprendizaje de distancias
+basadas en grafos, más aún. Por ello, en el estudio ablativo comparado,
+incluiremos como referencia de precisión:
+\begin{itemize}
+\item un clasificador KNN con distancia euclídea - la versión más sencilla
+posible de un clasificador KDE, y
+\item un clasificador por GBT - gradient boosting trees -, uno de los métodos
+más ``plug \& play'' disponibles hoy en día.
+\end{itemize}
+Incluiremos algunos comentarios sobre el costo computacional de cada
+método, comparando la expectativa teórica con los resultados de nuestras
+- sencillas y caseras - implementaciones.
+
+Finalmente, nos proponemos dar algunas garantías teóricas sobre el
+comportamiento asintótico de la distancia muestral de Fermat como
+estimador de la distancia (macroscópica / poblacional) homónima.
+
+\section{Otros papers}
+
+Hay varios papers con ideas muy piolas sobre como aprender una variedad,
+y como usar la info (las cartas generadas) para clasificar. Se aleja
+de nuestro interes principal, pero tal vez ameriten mención?
+
+\subsubsection{Manifold Tangent Classifier (+TangentProp)}
+
+Incluye un buen detalle de 3 versiones interreleacionadas de la hipotesis
+de la variedad.
+
+Usa una NN para encontrar en cada punto, direcciones tangentes en
+las que la funcion de activacion no cambia significativamente. Luego,
+usa tangentprop (una forma de gradient backpropagatiojn con restricciones
+sobre las derivadas primeras) para incluir esa info en la optimizacion
+y mejorar los resultados de clasificacion.
+
+\subsubsection{Shell Theory}
+
+Por la maldicion de la dimensionalidad, debería ser directamente imposible
+ML en alta dimension, pero en la practica se ve que funciona. Propone
+una teoría general pero accesible de ``generadores jerárquicos'',
+``shell theory'', que imita las clasificaciones jerárquicas semánticas
+que buscamos entender (gato siamés $\subset$ gato $\subset$ animal). 
+
+\subsubsection{Brand2003 - Charting a Manifold}
+
+Menciona una especie de hipotesis de la variedad antes que otros cuantos,
+aunque no la llama así.
+
+Ofrece una idea empírica de cómo estimar la dimensión de la variedad
+mirando cómo crece la función de conteo de puntos $c\left(r,y\right)=\sum_{i=1}^{N}\mathbf{1}\left\{ x_{i}\in B\left(y,r,d_{x}\right)\right\} $
+en relación al radio de la bola considerada.
+
+Aplica el método propuesto al trefoil que consideramos recientemente.
+
+\subsubsection{Vincent, Bengio 2003 - Manifold Parzen Windows}
+
+Esencialmente MVKDE con $\mathbf{H}_{i}$definida para \emph{cada}
+obserbvación en un vecindario ``suave'' (usando kernels sobre la
+distancia a c/otra obs) o duro (KNN) alrededor de la obs. Usa algunos
+``trucos'' para evitar $\mathbf{H}_{i}$ mal condicionadas.
+
+Considera ``negative conditional log likhelihood'' como medida de
+bondad del clasificador, como alernativa continua al error de clasificación
+y otras.
+
+\subsubsection{The Curse of Highly Variable Functions for Local Kernel Machines}
+
+Muestra cómo todos los métodos basados en núcleos (KNN,m KDE, hasta
+isomap) comparten la necesidad de un tamaño muestral enorme cuando
+la función objetivo a aprender tiene muchas variaciones, por depender
+de entornos locales a cada observacion para mapear la variedad. Aún
+funciones de baja ``complejidad de Kolmogorov'' (paridad, seno)
+son muy difíciles de aprender con kernels, y sin info global.
+
+\subsubsection{Learning Eigenfunctions Links Spectral Embedding and Kernel PCA }
+
+Une un monton monton de metodos de estimacion de densidad / embeddings
+demtro de un marco unificado de funciones basadas en nucleos. En particular,
+Isomap (y landmark-Isomap) se pueden ampliar a puntos out-of-sample
+computando la aproximacion a la distancia geodésica en el grafo de
+kNN, a traves de los puntos de entrenamiento, basicamente como estamos
+por proponer nosotros para extender distancia de fermat a out-of-sample.
+Duro pero interesante.
+
+\subsubsection{Chu2018 - Exploration of a Graph-based Density-Sensitive Metric}
+
+\emph{We consider a simple graph-based metric on points in Euclidean
+space known as the edge-squared metric. This metric is defined by
+squaring the Euclidean distance between points, and taking the shortest
+paths on the resulting graph. This metric has been studied before
+in wireless networks and machine learning, and has the density- sensitive
+property: distances between two points in the same cluster are short,
+even if their Euclidean distance is long. This property is desirable
+in machine learning.}
+
+\subsubsection{Biijral2012 - Semi-supervised Learning with Density Based Distances}
+
+Denoting the probability density function in R d by f (x), we can
+define a path length measure through R d that assigns short lengths
+to paths through highly den- sity regions and longer lengths to paths
+through low density regions. We can express such a path length measure
+as
+
+\[
+J_{f}\left(x_{1}\stackrel{\gamma}{\leadsto}x_{2}\right)=\int_{0}^{1}g(f(\gamma(t)))\left\Vert \gamma^{\prime}(t)\right\Vert _{p}dt,
+\]
+
+where $\gamma:[0,1]\rightarrow\R$ d is a continuous path from $\gamma(0)=x_{1}$
+$\gamma(1)=x_{2}$ and $g:\R^{+}\rightarrow\R$ is monotonically decreasing
+(e.g. $g(u)=1/u$). Using Equation 1 as a density-based measure of
+path length, we can now define the density based distance (DBD) between
+any two points $x_{1},x_{2}\in\R$ d as the density-based length of
+a shortest path between the two points 
+\[
+D_{f}(x_{1},x_{2})=\inf_{\gamma}J_{f}(x_{1}\stackrel{\gamma}{\leadsto}x_{2})
+\]
+
+Alternatively, a simple heuristic was suggested by Vincent and Bengio
+(2003) in the context of clustering, and is based on constructing
+a weighted graph over the data set, with weights equal to the squared
+dis- tances between the endpoints and calculating shortest paths on
+this graph.
+
+N.delA.: El paper de Vincent y Bengio que mencionan no está disponible
+en internet, sólo aparece citado en otros trabajos: ``\emph{Vincent,
+P., \& Bengio, Y. (2003). Density sensitive metrics and kernels. Proceedings
+of the Snowbird Workshop.''}, pero todo indica que la formulación
+es como la de Groisman2019, con \textbf{$\beta=2$}
+
+Más adelante, considera funciones $g=f^{-r}$ y pareciera llegar a
+una formulación idéntica a la de Groisman2019.
+
+\section{Notas sueltas}
+\begin{itemize}
+\item soft clf chen
+\item (¿Es lo mismo $\norm{\cdot}$ que la geodésica en R\textasciicircum d\_x?
+Creo que sí)
+\item mencion a t-SNE? como esta basada en distancia euclidea, no parece
+que vaya a ayudar mucho
+\item RKHS - reproducing kernel hilbert spaces -: alguito para entender
+a que cuernos ser refieren?
+\item biblio: No subirla, pero esconder script ligeramente disimulado que
+la baje por uno?
 \end{itemize}
 
-\section{An�lisis experimental}
+\section{Análisis experimental}
 
 \section{Cuentita}
 
 \section{Conclusiones}
+
+\bibliographystyle{plain}
+\addcontentsline{toc}{section}{\refname}\nocite{*}
+\bibliography{bib/references}
+
 \end{document}
