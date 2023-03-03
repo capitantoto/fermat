@@ -6,4 +6,7 @@ fermat
 venv
 drafts
 resources
-
+# No publicar PDFs de bibliografía
+bib/*.pdf# No publicar PDFs de bibliografía
+bib/*.pdf# No publicar PDFs de bibliografía
+bib/*.pdf
