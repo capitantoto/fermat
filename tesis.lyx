@@ -7,13 +7,16 @@
 \textclass article
 \begin_preamble
 \usepackage{babel}
+\usepackage{enotez}      % <-- instead of \usepackage{endnotes}
+\setenotez{backref=true}
+\let\footnote=\endnote
 \end_preamble
 \use_default_options false
 \begin_modules
 theorems-ams
 \end_modules
 \maintain_unincluded_children false
-\language english
+\language spanish
 \language_package default
 \inputencoding utf8
 \fontencoding T1
@@ -36,7 +39,16 @@ theorems-ams
 \index_command default
 \paperfontsize default
 \spacing single
-\use_hyperref false
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
 \papersize default
 \use_geometry false
 \use_package amsmath 2
@@ -69,7 +81,7 @@ theorems-ams
 \paragraph_indentation default
 \is_math_indent 0
 \math_numbering_side default
-\quotes_style english
+\quotes_style french
 \dynamic_quotes 0
 \papercolumns 1
 \papersides 1
@@ -121,11 +133,6 @@ theorems-ams
 
 
 \begin_inset FormulaMacro
-\newcommand{\itR}{\mathcal{\R}}
-\end_inset
-
-
-\begin_inset FormulaMacro
 \newcommand{\calR}{\mathcal{R}}
 \end_inset
 
@@ -153,10 +160,30 @@ theorems-ams
 \end_inset
 
 
+\begin_inset FormulaMacro
+\newcommand{\X}{\left\{  \mathbf{X}\right\}  }
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\card}[1]{\left|#1\right|}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\ind}[1]{\mathbb{\mathbf{1}}\left\{  #1\right\}  }
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\prob}[1]{Pr\left(#1\right)}
+\end_inset
+
+
 \end_layout
 
 \begin_layout Title
-Distancia de Fermat en Clasificadores de Densidad Nuclear 
+Distancia de Fermat en Clasificadores de Densidad Nuclear
 \end_layout
 
 \begin_layout Author
@@ -277,22 +304,36 @@ Consideremos el problema de clasificación:
 \end_layout
 
 \begin_layout Definition
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[problema de clasificación]
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset label
 LatexCommand label
 name "def:prob-clf"
 
 \end_inset
 
-(Problema de clasificación).
  Sea 
-\begin_inset Formula $\boldsymbol{x}=\left(x_{i}\right)_{i=1}^{N}$
+\begin_inset Formula $\X=\left\{ X_{1},\dots,X_{N}\right\} ,\ X_{i}\in\R^{\dimx}\ \forall i\in\left[N\right]$
 \end_inset
 
  una muestra de 
 \begin_inset Formula $N$
 \end_inset
 
- observaciones, repartidas en 
+ observaciones aleatorias 
+\begin_inset Formula $\dimx-$
+\end_inset
+
+dimensionales, repartidas en 
 \begin_inset Formula $M$
 \end_inset
 
@@ -300,18 +341,29 @@ name "def:prob-clf"
 \begin_inset Formula $C_{1},\dots,C_{M}$
 \end_inset
 
- mutuamente excluyentes y conjntamente exhaustivas (es decir, 
-\begin_inset Formula $\forall\ i\in\left[N\right]\equiv\left\{ 1,\dots,N\right\} ,x_{i}\in C_{j}\iff x_{i}\notin C_{k},k\in\text{\ensuremath{\left[M\right]}},k\neq j$
+ mutuamente excluyentes y conjuntamente exhaustivas
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+es decir, 
+\begin_inset Formula $\forall\ i\in\left[N\right]\equiv\left\{ 1,\dots,N\right\} ,X_{i}\in C_{j}\iff X_{i}\notin C_{k},k\in\text{\ensuremath{\left[M\right]}},k\neq j$
 \end_inset
 
-).
+
+\end_layout
+
+\end_inset
+
+.
  Asumamos además que la muestra está compuesta de observaciones independientes
- entre sí, y en particular, cada clase tiene su propia ley: si 
-\begin_inset Formula $\Vert C_{j}\Vert=N_{j}$
+ entre sí, y las observaciones de cada clase están idénticamente distribuidas
+ según su propia ley: si 
+\begin_inset Formula $\card{C_{j}}=N_{j}$
 \end_inset
 
  y 
-\begin_inset Formula $x_{i}^{\left(j\right)}$
+\begin_inset Formula $X_{i}^{\left(j\right)}$
 \end_inset
 
 representa la i-ésima observación de la clase 
@@ -349,13 +401,13 @@ Dada una nueva observación
 
 \end_deeper
 \begin_layout Standard
-Todo método o algoritmo que pretenda responder el problema de clasificación,
- prescribe un modo u otro de combinar toda la información muestral disponible,
+Cualquier método o algoritmo que pretenda responder el problema de clasificación
+, prescribe un modo u otro de combinar toda la información muestral disponible,
  ponderando las 
 \begin_inset Formula $N$
 \end_inset
 
- observaciones de manera relativa a su cercanía o similitud con 
+ observaciones relativamente a su cercanía o similitud con 
 \begin_inset Formula $x_{0}$
 \end_inset
 
@@ -372,7 +424,7 @@ NN) asignará la nueva observación
 \begin_inset Formula $x_{0}$
 \end_inset
 
- a la clase modal entre las 
+ a la clase modal - la más frecuente - entre las 
 \begin_inset Formula $k$
 \end_inset
 
@@ -380,8 +432,8 @@ NN) asignará la nueva observación
 \emph on
  
 \emph default
-(es decir, que minimizan la distancia euclídea 
-\begin_inset Formula $\left\Vert x_{0}-\cdot\right\Vert )$
+en distancia euclídea 
+\begin_inset Formula $\norm{x_{0}-\cdot}$
 \end_inset
 
 .
@@ -389,7 +441,7 @@ NN) asignará la nueva observación
 \begin_inset Formula $k-$
 \end_inset
 
-NN no hace ninguna mención explícita de las leyes de clase 
+NN no menciona explícitamente las leyes de clase 
 \begin_inset Formula $\mathcal{L}_{j}$
 \end_inset
 
@@ -397,7 +449,7 @@ NN no hace ninguna mención explícita de las leyes de clase
 \end_layout
 
 \begin_layout Subsection
-Estimación de densidad
+Clasificadores de densidad
 \end_layout
 
 \begin_layout Standard
@@ -422,16 +474,47 @@ Hallar estimadores
 \begin_inset Formula $\Lj$
 \end_inset
 
- usando las muestras de cada clase, 
-\begin_inset Formula $\boldsymbol{x}^{\left(j\right)}=\left(x_{i}^{\left(j\right)}\right)_{i=1}^{N_{j}}$
+ usando las muestras de cada clase 
+\begin_inset Formula $\X^{\text{\left(j\right)}}=\left\{ X_{1}^{\left(j\right)},\dots,X_{N_{j}}^{\left(j\right)}\right\} $
 \end_inset
 
- y algún procedimiento estándar (e.g.: máxima verosimilitud) 
+ y algún procedimiento estándar 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+e.g.: máxima verosimilitud, método de momentos, et cetera
+\end_layout
+
+\end_inset
+
+ 
 \end_layout
 
 \begin_layout Enumerate
-Definir una regla de decisión 
-\begin_inset Formula $\mathcal{R}\left(\cdot\vert\hat{\Lj},j\in\left[M\right]\right):\Rdimx\rightarrow\left[M\right]$
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[clasificador]
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:regla-clf"
+
+\end_inset
+
+ Definir una regla de decisión - un 
+\emph on
+clasificador
+\emph default
+ - 
+\begin_inset Formula $\mathcal{R}\left(x\vert\hat{\Lj},j\in\left[M\right]\right):x\in S\rightarrow\left[M\right]\ni j$
 \end_inset
 
  que dados los estimadores de (2), asigne la observación 
@@ -447,45 +530,60 @@ Definir una regla de decisión
 \end_layout
 
 \begin_layout Standard
-Esta familia de clasificadores, se distinguen por una explícita 
+Esta familia de clasificadores, se distingue por una explícita 
 \emph on
 estimación de densidades
 \emph default
  que más tarde se utilizarán para la tarea de clasificación en sí.
- Por ejemplo, al considerar el problema de clasificación binaria, el análisis
- de discriminante lineal (LDA) de Fisher
-\begin_inset Foot
-status open
-
-\begin_layout Plain Layout
-https://en.wikipedia.org/wiki/Linear_discriminant_analysis
+ 
 \end_layout
+
+\begin_layout Example
+\begin_inset CommandInset label
+LatexCommand label
+name "exa:lda"
 
 \end_inset
 
- queda encuadrado en esta familia de la siguiene manera:
+El análisis de discriminante lineal (LDA) de Fisher
+\begin_inset CommandInset citation
+LatexCommand cite
+key "LinearDiscriminantAnalysis2022"
+literal "false"
+
+\end_inset
+
+ para clasificación binaria (
+\begin_inset Formula $j\in\text{}$
+\end_inset
+
+
+\begin_inset Formula $\left\{ 0,1\right\} $
+\end_inset
+
+) se encuadra en esta familia de la siguiene manera:
 \end_layout
 
-\begin_layout Standard
-En (1), asumimos que las las leyes 
+\begin_deeper
+\begin_layout Enumerate
+Las las leyes 
 \begin_inset Formula $\Lj$
 \end_inset
 
  
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-(a) son todas distribuciones normales con media 
+\begin_deeper
+\begin_layout Enumerate
+son todas distribuciones normales con media 
 \begin_inset Formula $\mu_{j}$
 \end_inset
 
  y 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-(b) homocedásticas: 
+\begin_layout Enumerate
+homocedásticas: 
 \begin_inset Formula $\Sigma_{j}=\Sigma\ \forall\ j\in\text{\ensuremath{\left[M\right]})}$
 \end_inset
 
@@ -493,42 +591,18 @@ En (1), asumimos que las las leyes
  
 \end_layout
 
-\begin_layout Standard
-En (2), estimamos 
-\begin_inset Formula $\hat{\mu_{j}},\hat{\Sigma}$
+\end_deeper
+\begin_layout Enumerate
+Estimamos 
+\begin_inset Formula $\hat{\Lj}=N\left(\hat{\mu_{j}},\hat{\Sigma}\right)$
 \end_inset
 
- por máxima verosimilitud,
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $\hat{\mu_{j}}=N_{j}^{-1}\sum_{i=1}^{N_{j}}x_{i}^{(j)}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $\hat{\Sigma}=N^{-1}\sum_{j=1}^{M}\sum_{{i=1}}^{N_{j}}(x_{i}^{(j)}-\hat{\mu_{j}})(x_{i}^{(j)}-\hat{\mu_{j}}).$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Y la regla de (3) es la indicadora 
-\begin_inset Formula $1\left(\cdot\right)$
-\end_inset
-
- del discriminante lineal
-\end_layout
-
-\begin_layout Standard
+ como normales de medias independientes y varianza única por máxima verosimilitu
+d,
 \begin_inset Formula 
 \begin{align*}
-\mathcal{R}\left(x\right) & =1\left(w\cdot x>c\right)\\
-w= & \Sigma^{-1}({\mu}_{1}-{\mu}_{0})\\
-c= & {\displaystyle w\cdot{\frac{1}{2}}(\mu_{1}+\mu_{0})}
+\hat{\mu_{j}} & =N_{j}^{-1}\sum_{i=1}^{N_{j}}x_{i}^{(j)},\ \forall j\in\left\{ 0,1\right\} \\
+\hat{\Sigma} & =N^{-1}\sum_{j=1}^{M}\sum_{{i=1}}^{N_{j}}(x_{i}^{(j)}-\hat{\mu_{j}})(x_{i}^{(j)}-\hat{\mu_{j}}).
 \end{align*}
 
 \end_inset
@@ -536,49 +610,84 @@ c= & {\displaystyle w\cdot{\frac{1}{2}}(\mu_{1}+\mu_{0})}
 
 \end_layout
 
-\begin_layout Standard
-con los parámetros 
-\begin_inset Formula $\mu_{j},\Sigma$
+\begin_layout Enumerate
+El clasificador es simplemente la función indicadora 
+\begin_inset Formula $\ind{\cdot}$
 \end_inset
 
- reemplazados por las estimaciones de (2).
+del discriminante lineal
+\begin_inset Formula 
+\[
+\mathcal{R}\left(x\right)=\ind{w\cdot x>c},\ \t{donde}\ w=\hat{\Sigma}^{-1}(\hat{\mu_{1}}-\hat{\mu_{0}})\ \t y\ c={\displaystyle w\cdot{\frac{1}{2}}(\hat{\mu_{1}}+\hat{\mu_{0}})}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Generalmente, mientras más restrictivos sean los supuestos de (1), más sencilla
+ de computar será la regla (3), y viceversa.
+ y la generalidad del clasificador resultante: el trabajo del buen científico
+ será encontrar el compromiso óptimo.
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+N.
+ del A.: En las famosas palabras de George Box, 
+\end_layout
+
+\begin_layout Quotation
+Todos los modelos son incorrectos, pero algunos son útiles.
+\end_layout
+
+\begin_layout Plain Layout
+El modelado estadístico es, aún hoy, más arte que técnica, y en palabras
+ de Picasso,
+\end_layout
+
+\begin_layout Quotation
+Todos sabemos que el arte no es la verdad.
+ El arte es una mentira que nos acerca a la verdad, al menos aquella que
+ no es dado comprender.
+ El artista debe saber el modo de convencer a los demás de la verdad de
+ sus mentiras.
+\end_layout
+
+\end_inset
+
+ 
 \end_layout
 
 \begin_layout Standard
-Inevitablemente, existe un 
-\emph on
-trade-off
-\emph default
- entre lo restrictivo de los supuestos de (1), y la generalidad del clasificador
- resultante.
- En el caso de LDA, los supuestos (leyes normales y homocedasticidad) son
- inverosímiles en casi cualquier escenario real, pero el clasificador resultante
- es muy sencillo de computar.
+En el ejemplo de 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:lda"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, los supuestos (leyes normales y homocedasticidad) son inverosímiles en
+ casi cualquier escenario real, pero el clasificador resultante es muy sencillo
+ de computar.
  En general, este será el caso para todos los métodos
 \emph on
  paramétricos
 \emph default
- de estimación de densidad, en que de todas las posibles funciones de densidad
-\begin_inset Note Comment
-status open
-
-\begin_layout Plain Layout
-que cardinalidad tienen? versus la familia normal?
-\end_layout
-
-\end_inset
-
-, quedan acotadas a aquellas que se pueden expresar de forma cerrada con
- una expresión predefinida (en este caso, la densidad normal), y 
+ de estimación de densidad, que acotan el espacio de densidades posibles
+ a aquellas que se pueden expresar de forma cerrada con una expresión predefinid
+a (en este caso, la densidad normal), y 
 \begin_inset Formula $Q$
 \end_inset
 
  parámetros (aquí, 
-\begin_inset Formula $\mu$
-\end_inset
-
- y 
-\begin_inset Formula $\Sigma$
+\begin_inset Formula $\mu_{0},\mu_{1},\Sigma$
 \end_inset
 
 ).
@@ -587,36 +696,51 @@ que cardinalidad tienen? versus la familia normal?
 \begin_layout Standard
 Alternativamente, existen métodos en que los supuestos de (1) se obvian
  del todo, o al menos son lo suficientemente generales como para representar
- todas salvo las más patológicas leyes (e.g.: asumir que la media y dispersión
- son finitas).
- A estos se los conoce, naturalmente, como métodos 
+ todas salvo las más patológicas leyes de probabilidad
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+e.g.: asumir que la media y dispersión son finitas
+\end_layout
+
+\end_inset
+
+.
+ A estos se los conoce como métodos 
 \emph on
 no paramétricos
 \emph default
  de estimación de densidad.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsection
 Estimación de densidad por núcleos
 \end_layout
 
 \begin_layout Standard
-La estimación de densidad por núcleos (o KDE, por sus siglas en inglés),
- es uno de los métodos mejor estudiados dentro del amplio universo no-paramétric
-o
+La estimación de densidad por núcleos (KDE
 \begin_inset Foot
 status open
 
 \begin_layout Plain Layout
-Algo sobre NNs, otros metodos nopa
+Kernel Density Estimation
 \end_layout
 
 \end_inset
 
-.
- Introducidos hacia 1960 (Rosenblatt 1958, Parzen 1962) para variables aleatoria
-s unidimensionales, han sido ampliamente desarrollados y adaptados a espacios
- mucho más generales.
+, por sus siglas en inglés), es uno de los métodos mejor estudiados dentro
+ del amplio universo no-paramétrico.
+ Introducidos hacia 1960
+\begin_inset CommandInset citation
+LatexCommand cite
+key "parzenEstimationProbabilityDensity1962,rosenblattRemarksNonparametricEstimates1956"
+literal "false"
+
+\end_inset
+
+ para variables aleatorias unidimensionales, han sido ampliamente desarrollados
+ y adaptados a espacios mucho más generales.
  El objetivo es encontrar un estimador 
 \emph on
 suave
@@ -663,11 +787,38 @@ bandwith
 \end_inset
 
 ).
+ La notación y nomenclatura para KDE es heterogénea; en la exposición que
+ sigue, tomaremos de referencia el abarcador tratado de 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wandKernelSmoothing1995"
+literal "false"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Definition
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[función núcleo]
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:kern-univ"
+
+\end_inset
+
 (función núcleo) Una función 
-\begin_inset Formula $\phi$
+\begin_inset Formula $K:\R\rightarrow\R$
 \end_inset
 
  es un 
@@ -688,7 +839,7 @@ kernel
 \begin_deeper
 \begin_layout Itemize
 toma únicamente valores reales no-negativos: 
-\begin_inset Formula $\phi\left(x\right)\geq0\forall x$
+\begin_inset Formula $K\left(u\right)\geq0\ \forall\ u\in\t{sop}K$
 \end_inset
 
 ,
@@ -696,7 +847,7 @@ toma únicamente valores reales no-negativos:
 
 \begin_layout Itemize
 está normalizada: 
-\begin_inset Formula $\int_{-\infty}^{+\infty}\phi\left(u\right)du=1$
+\begin_inset Formula $\int_{-\infty}^{+\infty}K\left(u\right)du=1$
 \end_inset
 
  y
@@ -704,43 +855,85 @@ está normalizada:
 
 \begin_layout Itemize
 es simétrica: 
-\begin_inset Formula $K\left(u\right)=\phi\left(-u\right)\forall u$
+\begin_inset Formula $K\left(u\right)=K\left(-u\right)\ \forall\ u\in\t{sop}K$
 \end_inset
 
 
 \end_layout
 
 \end_deeper
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
 \begin_layout Remark
-Si 
+La no-negatividad y simetría no son forzosamente necesarias, pero van a
+ otorgarles propiedades muy convenientes al estimador resultante.
+ Cualquier función de densidad univariada cumple con la no-negatividad y
+ normalización, y muchas, como la ley uniforme y la gaussiana, son además
+ simétricas, convierti´ndolas en núcleos bastante populares.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark
+Para todo núcleo 
 \begin_inset Formula $K$
 \end_inset
 
- es un núcleo, entonces 
-\begin_inset Formula $K_{\lambda}\text{\left(u\right)}=\lambda K\left(\lambda u\right)$
+ y 
+\begin_inset Formula $\lambda\in\R,\ J\text{\left(u\right)}=\lambda K\left(\lambda u\right)$
 \end_inset
 
- también lo es, lo cual permite construir un núcleo adecuadamente escalado
+ también es un núcleo, lo cual permite construir núcleos adecuadamente escalados
  a los datos.
+ Usaremos la notación 
+\begin_inset Formula $K_{h}\text{\left(u\right)}=h^{-1}K\left(u/h\right)$
+\end_inset
+
+ para referirnos a estos núcleos escalados.
 \end_layout
 
 \begin_layout Definition
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[KDE univariado]
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset label
 LatexCommand label
 name "def:kde-univ"
 
 \end_inset
 
-(KDE univariado) Sea 
-\begin_inset Formula $\left(x_{1},\dots,x_{N}\right)$
+ Sea 
+\begin_inset Formula $\X$
 \end_inset
 
- una muestra de elementos i.i.d.
+ una muestra de 
+\begin_inset Formula $N$
+\end_inset
+
+ elementos aleatorios i.i.d.
  tomada de cierta distribución univariada con densidad desconocida 
 \begin_inset Formula $f$
 \end_inset
 
-, cuya forma deseamos conocer.
+.
  Su estimador de densidad por núcleos (su 
 \begin_inset Quotes eld
 \end_inset
@@ -753,7 +946,7 @@ KDE
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula ${\displaystyle {\widehat{f}}_{h}(x)={\frac{1}{n}}\sum_{i=1}^{n}\phi_{h}(x-x_{i})={\frac{1}{nh}}\sum_{i=1}^{n}\phi{\Big(}{\frac{x-x_{i}}{h}}{\Big)}}$
+\begin_inset Formula ${\displaystyle \widehat{f}(x;h)=\frac{1}{n}\sum_{i=1}^{n}K_{h}(x-X_{i})=\frac{1}{nh}\sum_{i=1}^{n}K\Big(\frac{x-X_{i}}{h}\Big)}$
 \end_inset
 
 
@@ -779,9 +972,9 @@ duro
 \begin_inset Quotes erd
 \end_inset
 
- de manera bastante directa para la versión univariada del problema 
+ de manera directa para la versión univariada del 
 \begin_inset CommandInset ref
-LatexCommand ref
+LatexCommand nameref
 reference "def:prob-clf"
 plural "false"
 caps "false"
@@ -793,13 +986,24 @@ noprefix "false"
 \end_layout
 
 \begin_layout Definition
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[clasificador KDE univariado]
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset label
 LatexCommand label
 name "def:clf-kde-univ"
 
 \end_inset
 
-(clasificador KDE univariado).
+.
  Sea 
 \begin_inset Formula $C:\Rdimx\rightarrow\left[M\right]$
 \end_inset
@@ -813,18 +1017,25 @@ función de clase
 \end_inset
 
 , tal que 
-\begin_inset Formula $\forall x\in\Rdimx,\ C\left(x\right)=j\iff x\in C_{j}$
+\begin_inset Formula $\forall\ x\in\Rdimx,\ C\left(x\right)=j\iff x\in C_{j}$
 \end_inset
 
 .
  Sean además 
-\begin_inset Formula $\hat{f}_{h}^{(1)},\dots,\hat{f}_{h}^{(M)}$
+\begin_inset Formula $\hat{f}^{(1)},\dots,\hat{f}^{(M)}$
 \end_inset
 
- los estimadores de densidad obtenidos según 
+ los 
+\begin_inset Formula $M$
+\end_inset
+
+ estimadores de densidad de cada clase obtenidos obtenidos según 
 \begin_inset CommandInset ref
-LatexCommand ref
+LatexCommand nameref
 reference "def:kde-univ"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -850,24 +1061,6 @@ clasificador por estimación de densidad nuclear
 
 \begin_layout Definition
 asignando cada observación a la clase en la que maximiza la densidad estimada.
-\begin_inset Note Comment
-status open
-
-\begin_layout Plain Layout
-Debería estar ya incluyendo para hard clf las proporciones muestrales 
-\begin_inset Formula $p_{j}=N_{j}/N$
-\end_inset
-
- como probabilidades de clase 
-\emph on
-a priori
-\emph default
-?
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -880,11 +1073,21 @@ separadas
 \begin_inset Quotes erd
 \end_inset
 
- entre sí (es decir, 
+ entre sí 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+i.e., 
 \begin_inset Formula $\exists k\in\left[M\right]:f_{h}^{(k)}\text{\left(x_{0}\right)\ensuremath{\gg}0\ },\ f_{h}^{(j)}\simeq0\ \forall\ j\in\left[M\right]/k$
 \end_inset
 
-), la clasificación 
+
+\end_layout
+
+\end_inset
+
+, la clasificación 
 \begin_inset Quotes eld
 \end_inset
 
@@ -902,41 +1105,67 @@ reference "def:clf-kde-univ"
  será suficiente.
  Ahora bien, ¿cómo hacemos para cuantificar la incertidumbre asociada a
  la clasificación, cuando existe más de una clase con densidad estimada
- no despreciable? Como las 
+ no despreciable? ¿Y si creemos que las clases no son equiprobables a priori?
+ Como las 
 \begin_inset Formula $\hat{f}_{h}^{(j)}$
 \end_inset
 
- estimadas identifican distribuciones, es razonable decir que 
-\begin_inset Formula $p\left(C\text{\left(x\right)}=j\right)\propto f_{h}^{(j)}\left(x\right)$
+ estimadas identifican distribuciones, podemos utilizar la regla de Bayes
+ para construir un 
+\begin_inset Quotes fld
+\end_inset
+
+clasificador suave
+\begin_inset Quotes frd
 \end_inset
 
 .
- Usando la regla de Bayes y un 
+ Sea 
+\begin_inset Formula $p\left(A\right)$
+\end_inset
+
+ la probabilidad de 
+\begin_inset Formula $A$
+\end_inset
+
+, y consideremos que la proporción muestral de cada clase es una distribución
+ 
 \emph on
 a priori
 \emph default
- sobre las probabilidades de clase basado en las proporciones muestrales
- 
+ razonable para las clases bajo consideración (es decir, 
 \begin_inset Formula $\hat{p}\left(C_{j}\right)=N_{j}/N$
 \end_inset
 
-, podemos conseguir una regla 
-\emph on
-suave
-\emph default
- de clasificación:
+ es un estimador insesgado de 
+\begin_inset Formula $p\left(C_{j}\right)$
+\end_inset
+
+).
+ Luego, 
 \end_layout
 
 \begin_layout Definition
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[clasificador KDE univariado suave]
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset label
 LatexCommand label
 name "def:soft-clf-kde"
 
 \end_inset
 
-(clasificador KDE univariado suave) Sea el problema 
+ Sea el 
 \begin_inset CommandInset ref
-LatexCommand ref
+LatexCommand nameref
 reference "def:prob-clf"
 plural "false"
 caps "false"
@@ -944,9 +1173,9 @@ noprefix "false"
 
 \end_inset
 
- y los estimadores de densidad de 
+ y los estimadores 
 \begin_inset CommandInset ref
-LatexCommand ref
+LatexCommand nameref
 reference "def:kde-univ"
 plural "false"
 caps "false"
@@ -958,7 +1187,7 @@ noprefix "false"
  Por la regla de bayes, 
 \begin_inset Formula 
 \[
-p\left(C\left(x\right)=j\right)=\frac{f^{(j)}\left(x\right)\cdot p\text{\left(C_{j}\right)}}{p\text{\left(x\right)}}
+\prob{C\left(x\right)=j}=\frac{f^{(j)}\left(x\right)\cdot\prob{C_{j}}}{\prob x}
 \]
 
 \end_inset
@@ -983,7 +1212,7 @@ Reemplazando el a priori
 , obtenemos:
 \begin_inset Formula 
 \[
-\hat{p}\left(C\left(x\right)=j\right)=\frac{\hat{f}_{h}^{(j)}\left(x\right)\cdot N_{j}}{\sum_{i\in\text{\left[M\right]}}\hat{f}_{h}^{(i)}\left(x\right)\cdot N_{i}}
+\hat{p}_{j}=\hat{p}\left(C\left(x\right)=j\right)=\frac{\hat{f}_{h}^{(j)}\left(x\right)\cdot N_{j}}{\sum_{i\in\text{\left[M\right]}}\hat{f}_{h}^{(i)}\left(x\right)\cdot N_{i}}
 \]
 
 \end_inset
@@ -991,42 +1220,68 @@ Reemplazando el a priori
 
 \end_layout
 
+\begin_layout Definition
+El vector 
+\begin_inset Formula $M-$
+\end_inset
+
+dimensional 
+\begin_inset Formula $\left(\hat{p}_{1},\dots,\hat{p}_{M}\right)$
+\end_inset
+
+ es una 
+\begin_inset Quotes fld
+\end_inset
+
+clasificación suave
+\begin_inset Quotes frd
+\end_inset
+
+ de 
+\begin_inset Formula $x$
+\end_inset
+
+ en las 
+\begin_inset Formula $M$
+\end_inset
+
+ posibles clases disponibles.
+\end_layout
+
 \begin_layout Subsection
-La noción de distancia en KDE
+KDE multivariado
 \end_layout
 
 \begin_layout Standard
-El peso de cada 
-\begin_inset Formula $x_{i}$
+En el contexto univariado, no hay direcciones en el espacio, sólo sentido,
+ positivo o negativo.
+ Más aún, el peso de cada 
+\begin_inset Formula $X_{i}$
 \end_inset
 
  en 
-\begin_inset Formula $\hat{f}\left(x_{0}\right)$
+\begin_inset Formula $\hat{f}\left(x\right)$
 \end_inset
 
  es 
-\begin_inset Formula $\phi\left(x_{0}-x_{i}\right)$
+\begin_inset Formula $K\left(x-X_{i}\right)$
 \end_inset
 
 , y como 
-\begin_inset Formula $\phi$
+\begin_inset Formula $K$
 \end_inset
 
- es simétrica respecto al 0, sólo importa la 
+ es simétrica respecto al 0, sólo importa el 
 \emph on
-distancia
+valor absoluto 
 \emph default
- entre el nuevo punto y cada muestra, 
-\begin_inset Formula $x_{0},x_{i};$
-\end_inset
-
- no así la 
+- la 
 \emph on
-dirección
+distancia -
 \emph default
-.
+ entre el nuevo punto y cada observación.
  En una dimensión al menos, el núcleo 
-\begin_inset Formula $\phi$
+\begin_inset Formula $K$
 \end_inset
 
  pondera - escalando por 
@@ -1039,7 +1294,7 @@ dirección
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\phi_{h}\left(x_{0}-x_{i}\right)=\phi_{h}\left(\left|x_{0}-x_{i}\right|\right)=\frac{1}{h}\phi\left(\frac{\left|x_{0}-x_{i}\right|}{h}\right)
+K_{h}\left(x_{0}-x_{i}\right)=K_{h}\left(\left|x_{0}-x_{i}\right|\right)=\frac{1}{h}K\left(\frac{\norm{x_{0}-x_{i}}}{h}\right)
 \]
 
 \end_inset
@@ -1048,70 +1303,95 @@ dirección
 \end_layout
 
 \begin_layout Standard
-En mayore dimensiones, la situación es más compleja, pero análoga
+En mayore dimensiones, la situación es más compleja, pero directamente análoga.
 \end_layout
 
 \begin_layout Definition
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[KDE multivariado]
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset label
 LatexCommand label
 name "def:kde-multiv"
 
 \end_inset
 
-(KDE multivariado, Hwang 1994) Sea 
-\begin_inset Formula $\left\{ \mathbf{x}\right\} =$
+(Sección 4.2 en 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wandKernelSmoothing1995"
+literal "false"
+
 \end_inset
 
-
-\begin_inset Formula $\left\{ x_{1},\dots,x_{N}\right\} $
-\end_inset
-
- una muestra de elementos i.i.d.
- tomada de cierta distribución 
+) En su forma más general, el estimador de densidad nuclear 
 \begin_inset Formula $d-$
 \end_inset
 
-dimensional con densidad desconocida 
-\begin_inset Formula $f$
-\end_inset
-
-, cuya forma deseamos conocer.
- Su estimador de densidad por núcleos (su 
-\begin_inset Quotes eld
-\end_inset
-
-KDE
-\begin_inset Quotes erd
-\end_inset
-
-) será
+dimensional es 
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula ${\displaystyle {\widehat{f}_{h}}(x)={\frac{1}{Nh^{d}}}\sum_{i=1}^{N}\phi\left(\frac{1}{h}\left(x-x_{i}\right)\right)}$
+\begin_inset Formula 
+\[
+{\displaystyle \widehat{f}(x;\H)=N^{-1}\sum_{i=1}^{N}K_{\H}\left(x-X_{i}\right)}
+\]
+
 \end_inset
 
 
 \end_layout
 
 \begin_layout Definition
-donde el núcleo 
-\begin_inset Formula $\phi$
+donde 
+\begin_inset Formula $\H$
 \end_inset
 
- debe satisfacer
+ es una matriz 
+\begin_inset Formula $d\times d$
+\end_inset
+
+ simétrica positiva definida, análoga al 
+\emph on
+ancho de banda
+\emph default
+ unidimensional 
+\begin_inset Formula $h$
+\end_inset
+
+,
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\phi\left(x\right)\geq,0,$
+\begin_inset Formula 
+\[
+K_{\H}\left(x\right)=\left|\det\H\right|^{-1/2}K\left(\H^{-1/2}x\right)
+\]
+
 \end_inset
 
- y 
-\begin_inset Formula $\int_{\Rd}$
+
+\end_layout
+
+\begin_layout Definition
+y 
+\begin_inset Formula $K:\R^{d}\rightarrow\R_{0}^{+}$
 \end_inset
 
+ es una función núcleo que satisface
+\begin_inset Formula 
+\[
+\int_{\R^{d}}K\left(u\right)du=1
+\]
 
-\begin_inset Formula $\left(x\right)dx=1$
 \end_inset
 
 
@@ -1125,160 +1405,62 @@ donde el núcleo
 \end_layout
 
 \begin_layout Standard
-Un núcleo muy popular es el gaussiano 
-\begin_inset Formula $\phi\left(x\right)=\left(2\pi\right)^{-d/2}\exp\left(-\frac{\norm x^{2}}{2}\right)$
+Como en el contexto escalar, el núcleo suele ser una funciones de densidad
+ aleatoria 
+\begin_inset Formula $d-$
+\end_inset
+
+variada.
+
+\emph on
+ 
+\emph default
+Un núcleo muy popular es el la densidad normal estándar 
+\begin_inset Formula 
+\[
+K\left(x\right)=\left(2\pi\right)^{-d/2}\exp\left(-\frac{\norm x^{2}}{2}\right)
+\]
+
 \end_inset
 
 ,
 \end_layout
 
 \begin_layout Standard
-un núcleo simétrico con su valor decayendo suavemente a medida que se aleja
- del centro.
-\end_layout
-
-\begin_layout Standard
-Usualmente los datos no se encontrarán distribuidos uniformemente en todas
- las direcciones, y será deseable pre-escalarlos para evitar diferencias
- extremas en su dispersión y locación.
- Un enfoque atractivo, es primero 
-\begin_inset Quotes eld
-\end_inset
-
-esferar
-\begin_inset Quotes erd
-\end_inset
-
- o 
-\begin_inset Quotes eld
-\end_inset
-
-blanquear
-\begin_inset Quotes erd
-\end_inset
-
- los datos mediante una transformación afín que devuelva data con media
- cero y matriz de covarianza unitaria; y luego aplicar 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "def:kde-multiv"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- Más específicamente, dada una muesta 
-\begin_inset Formula $\left\{ x\right\} ,$
-\end_inset
-
-podemos definir su versión 
-\begin_inset Quotes eld
-\end_inset
-
-esférica
-\begin_inset Quotes erd
-\end_inset
-
- como
-\begin_inset Formula 
-\[
-z=\mathbf{S}^{-1/2}\left(x-Ex\right)
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-donde la esperanza 
-\begin_inset Formula $E$
-\end_inset
-
- es evaluada a través de la media muestral, y 
-\begin_inset Formula $\mathbf{S}\in\R^{d\times d}$
-\end_inset
-
-es la matriz de covarianza de los datos:
-\begin_inset Formula 
-\begin{align*}
-\mathbf{S} & =E\left[\left(x-Ex\right)\left(x-Ex\right)^{T}\right]=\mathbf{UDU}^{T}\\
-\mathbf{S}^{-1/2} & =\mathbf{UD}^{-1/2}\mathbf{U}^{T}
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Donde 
-\begin_inset Formula $\mathbf{U}$
-\end_inset
-
- es una matriz ortonormal y 
-\begin_inset Formula $\mathbf{D}$
-\end_inset
-
- es una matriz diagonal.
- De preocuparse por la influencia de 
+un núcleo 
 \emph on
-outliers
+esférico 
 \emph default
- en los datos, existen métodos robustos para su derivación (Huber 1981).
-\end_layout
-
-\begin_layout Standard
-Se puede mostrar fácilment que luego del 
-\begin_inset Quotes eld
+o 
+\emph on
+radialmente simétrico
+\emph default
+.
+ En este caso, 
+\begin_inset Formula $K_{\H}\left(x-X_{i}\right)$
 \end_inset
 
-blanqueo
-\begin_inset Quotes erd
+ es equivalente a la densidad 
+\begin_inset Formula $\mathcal{N}\left(X_{i},\H\right)$
 \end_inset
 
-, 
-\begin_inset Formula $Ez=0$
-\end_inset
-
- y 
-\begin_inset Formula $E\left[zz^{T}\right]=\mathbf{I_{d}}$
+ en el vector 
+\begin_inset Formula $x$
 \end_inset
 
 .
- El estimador resultante para los datos esféricos realiza un estimación
- de densidad más sofisticada
-\begin_inset CommandInset label
-LatexCommand label
-name "def:kde-multiv-blanco"
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
-
-\color red
-Acá sigo a Hwang, que hace una presentación algo distinta a Wikipedia/Wand&Jones
-, primero blanquea y luego usa núcleo con 
-\begin_inset Formula $\H=\mathbf{I_{d}}$
+Cuando 
+\begin_inset Formula $\H=h^{2}\mathbf{I}$
 \end_inset
 
-; W&J no recomienda blanquear porque luego usa 
-\begin_inset Formula $\mathbf{H}$
-\end_inset
-
- arbitraria.
- Debería revisar bien la equivalencia, qué conviene más.
-\color inherit
-:
+, el estimador resultante es consistente con el caso unidimensional:
 \begin_inset Formula 
 \begin{align*}
-\hat{f}\left(z\right) & =\frac{1}{Nh^{d}}\sum_{i=1}^{N}\phi\left(\frac{1}{h}\left(z-z_{i}\right)\right)\\
-\hat{f}\left(x\right) & =\frac{\left(\det\text{\ensuremath{\mathbf{S}}}\right)^{-1/2}}{Nh^{d}}\sum_{i=1}^{N}\phi\left(\frac{1}{h}\mathbf{S}^{-1/2}\left(x-x_{i}\right)\right)
+{\displaystyle \widehat{f}(x;h^{2}\mathbf{I})} & =N^{-1}\sum_{i=1}^{N}\left|\det h^{2}\mathbf{I}\right|^{-1/2}K\left(\left(h^{2}\mathbf{I}\right)^{-1/2}\left(x-X_{i}\right)\right)\\
+ & =N^{-1}h^{-d}\sum_{i=1}^{N}K\left(\left(x-X_{i}\right)/h\right)
 \end{align*}
 
 \end_inset
@@ -1287,6 +1469,17 @@ Acá sigo a Hwang, que hace una presentación algo distinta a Wikipedia/Wand&Jon
 \end_layout
 
 \begin_layout Remark
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[distancia de Mahalanobis]
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset label
 LatexCommand label
 name "rem:mahalanobis-dist"
@@ -1306,7 +1499,7 @@ Dada una distribución de probabilidad
 \end_inset
 
  y matriz de covarianza positiva definida 
-\begin_inset Formula $\mathbf{S}\in\R^{d\times d}$
+\begin_inset Formula $\mathbf{\Sigma}\in\R^{d\times d}$
 \end_inset
 
 , la 
@@ -1334,7 +1527,7 @@ https://en.wikipedia.org/wiki/Mahalanobis_distance
  es
 \begin_inset Formula 
 \[
-d_{M}\text{\left(x,Q\right)=\ensuremath{\sqrt{\left(x-\mu\right)^{T}\mathbf{S}^{-1}\left(x-\mu\right)}}}
+d_{M}\text{\left(x,Q\right)=\ensuremath{\sqrt{\left(x-\mu\right)^{T}\mathbf{\Sigma}^{-1}\left(x-\mu\right)}}}
 \]
 
 \end_inset
@@ -1372,20 +1565,20 @@ d_{M}\text{\left(x,Q\right)}=d_{M}\left(x,\mu;Q\right)
 
 \begin_layout Remark
 Como 
-\begin_inset Formula $\mathbf{S}$
+\begin_inset Formula $\mathbf{\Sigma}$
 \end_inset
 
  es definida positiva, también lo es 
-\begin_inset Formula $S^{-1}$
+\begin_inset Formula $\mathbf{\Sigma}^{-1}$
 \end_inset
 
 , con lo que las raíces cuadradas están bien definidas.
  Por el teorema espectral, 
-\begin_inset Formula $S^{-1}$
+\begin_inset Formula $\mathbf{\Sigma}^{-1}$
 \end_inset
 
  se puede descomponer en 
-\begin_inset Formula $S^{-1}=\left(S^{-1/2}\right)^{T}S^{^{-1/2}}$
+\begin_inset Formula $\mathbf{\Sigma}^{-1}=W^{T}W$
 \end_inset
 
  para alguna matriz real 
@@ -1396,7 +1589,7 @@ Como
 \end_layout
 
 \begin_layout Remark
-\begin_inset Formula $d_{M}\left(x,y;Q\right)=\norm{S^{^{-1/2}}\left(x-y\right)}$
+\begin_inset Formula $d_{M}\left(x,y;Q\right)=\norm{W\left(x-y\right)}$
 \end_inset
 
 
@@ -1414,43 +1607,71 @@ donde
 
 \begin_layout Remark
 Reemplazando 
-\begin_inset Formula $W=S^{-1/2},\mu=x_{1},\dots,x_{N}$
+\begin_inset Formula $W=\H,\ \mu=X_{1},\dots,X_{N}$
 \end_inset
 
-, podemos redefinir el estimador de 
+, podemos redefinir el estimador 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "def:kde-multiv-blanco"
+LatexCommand nameref
+reference "def:kde-multiv"
 plural "false"
 caps "false"
 noprefix "false"
 
 \end_inset
 
- para 
-\begin_inset Formula $f\left(x\right)$
-\end_inset
-
  como un estimador de núcleos basado en la distancia de Mahalanobis de 
 \begin_inset Formula $x$
 \end_inset
 
- a cada observación de 
-\begin_inset Formula $\left\{ \mathbf{x}\right\} $
+ a las distribuciones 
+\begin_inset Formula $\mathcal{N}\left(X_{i},\H\right)$
 \end_inset
 
 .
 \end_layout
 
-\begin_layout Remark
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 La relativa sencillez para el cómputo del método hasta aquí descrito lo
- hace un perenne favorito entre los estimadores de densidad no paramétricos.
- Quedará a criterio del investigador considerar si sus bondades vuelven
- tolerables las limitaciones impuestas o no.
- A saber,
+ hace un perenne favorito entre los estimadores de densidad no paramétricos,
+ en particular cuando tomamos 
+\begin_inset Formula $\H=\text{\textbf{C}}$
+\end_inset
+
+, donde 
+\series bold
+C
+\series default
+ es el estimador muestral de la covarianza de 
+\begin_inset Formula $\X$
+\end_inset
+
+, lo cual simplifica radicalmente la cantidad de parámetros a ajustar.
+ Sin embargo, el método posee algunas conocidas desventajas 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "jenq-nenghwangNonparametricMultivariateDensity1994"
+literal "false"
+
+\end_inset
+
+:
 \end_layout
 
 \begin_layout Enumerate
+\begin_inset CommandInset label
+LatexCommand label
+name "enu:dif-kde-esf"
+
+\end_inset
+
 Salvo en casos excepcionalmente bien portados, la dirección y dispersión
  
 \emph on
@@ -1460,58 +1681,60 @@ local
 \begin_inset Formula $x_{i}$
 \end_inset
 
- típicamente no coincidirá con la dirección 
-\series bold
-
-\begin_inset Formula $\mathbf{U}$
-\end_inset
-
-
-\series default
- y dispersión 
-\series bold
+ típicamente no coincidirá con la dirección y dispersión
 \emph on
-
-\begin_inset Formula $\mathbf{D}$
-\end_inset
-
-
-\series default
  global
 \emph default
- que se obtienen de computar 
-\begin_inset Formula $\mathbf{S}=\mathbf{UDU}^{T}$
-\end_inset
-
- en la muestra completa.
+ 
+\series bold
+C 
+\series default
+computada en la muestra completa.
 \end_layout
 
 \begin_layout Enumerate
 Aún cuando la estimación global de 
-\begin_inset Formula $\mathbf{S}$
+\begin_inset Formula $\mathbf{C}$
 \end_inset
 
  sea localmente adecuada, no resulta inmediatamente obvio que la suavización
  
-\begin_inset Formula $\mathbf{H=S}$
+\begin_inset Formula $\mathbf{H=C}$
 \end_inset
 
  inducida por la muestra sea óptima en términos de representación de la
- densidad, super- y sub-suavizando
+ densidad para regiones de alta densidad y outliers a la vez.
+ Los estimadores por densidad nuclear así construidos suelen suavizar de
+ más
 \begin_inset Foot
 status open
 
 \begin_layout Plain Layout
-oversmoothing y undersmoothing
+
+\emph on
+oversmooth
 \end_layout
 
 \end_inset
 
- regiones de alta densidad y 
+ en regiones de alta densidad, y de menos
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+
+\size normal
+\emph on
+undersmooth
+\end_layout
+
+\end_inset
+
+ alrededor de los 
 \emph on
 outliers
 \emph default
-, respectivamente.
+ en la muestra.
 \end_layout
 
 \begin_layout Enumerate
@@ -1536,16 +1759,292 @@ cada
 \end_layout
 
 \begin_layout Standard
-Wand & Jones (1993) realiza un estudio exhaustivo de las consecuencias de
- distintas parametrizaciones de 
-\begin_inset Formula $\mathbf{H}$
+Distintos autores han intentado solucionar estas dificultades con éxito
+ mixto.
+\end_layout
+
+\begin_layout Subsubsection
+Funciones de pérdida alternativas
+\end_layout
+
+\begin_layout Standard
+Minimizar el (A)MISE como criterio de bondad en la evaluación de 
+\begin_inset Formula $\hat{f}$
 \end_inset
 
- para el caso multivariado más sencillo, 
+ responde antes que nada a conveniencias para la manipulación algebraica
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+todos sabemos qué bien se portan los cuadrados
+\end_layout
+
+\end_inset
+
+.
+ La diferencia 
+\emph on
+absoluta
+\series bold
+ 
+\series default
+\emph default
+del error integrado medio
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $MIAE\left(\hat{f}_{\mathbf{H}},f\right)=E\int_{\R^{d}}\left|\hat{f}_{\mathbf{H}}\left(y\right)-f\left(y\right)\right|dy$
+\end_inset
+
+, y AMIAE análogo a AMISE
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fn:amise"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ es una alternativa atractiva: a diferencia del error 
+\emph on
+cuadrático
+\emph default
+, el error absoluto es invariante con respecto a transformaciones monótonas
+ de los datos
+\begin_inset CommandInset citation
+LatexCommand cite
+key "garcia-portuguesShortCourseNonparametric2022"
+literal "false"
+
+\end_inset
+
+.
+ A pesar de esta deseable propiedad, el tratamiento es arduo en 
+\begin_inset Formula $d=1$
+\end_inset
+
+ y excruciante en dimensiones mayores.
+\end_layout
+
+\begin_layout Standard
+Motivado por la aplicación concreta de estimación de densidad al problema
+ de clasificación, 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "hallBandwidthChoiceNonparametric2005"
+literal "false"
+
+\end_inset
+
+ toma un camino más directo: minimiza el 
+\emph on
+riesgo de Bayes
+\emph default
+ de 
+\begin_inset Formula $\hat{f}\left(x;h\right),$
+\end_inset
+
+
+\begin_inset Formula $h\in\R$
+\end_inset
+
+ , que tiene una interpretación inmediata en el 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:prob-clf"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[riesgo de Bayes]
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:riesgo-bayes"
+
+\end_inset
+
+.
+ Sea 
+\begin_inset Formula $\mathcal{R}\left(\cdot|f_{1},\dots,f_{K}\right)$
+\end_inset
+
+ un 
+\begin_inset CommandInset ref
+LatexCommand nameref
+reference "def:regla-clf"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ y una región 
+\begin_inset Formula $\Gamma\subseteq\t{dom}\ X$
+\end_inset
+
+.
+ El 
+\emph on
+riesgo de Bayes
+\emph default
+ asociado a 
+\begin_inset Formula $\calR$
+\end_inset
+
+ en 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+ es 
+\begin_inset Formula 
+\begin{align*}
+\text{err}\left(\calR\vert\ensuremath{\Gamma}\right) & =\\
+ & \sum_{j=1}^{K}p_{j}\int_{\Gamma}Pr\left(x\text{\textbf{ no }sea clasificado por \ensuremath{\mathcal{R}} como \ensuremath{\in C_{j}}}\right)f_{j}\left(x\right)dx
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Hall muestra que el el clasificador de 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:clf-kde-univ"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ es una regla óptima en el sentido del riesgo de Bayes - y por ende, para
+ clasificación.
+ Luego, sería razonable argumentar que elegir 
+\begin_inset Formula $h$
+\end_inset
+
+ como Hall propone es superador a optimizar 
+\begin_inset Formula $h$
+\end_inset
+
+ para el objetivo intermedio de estimar las verdaderas densidades de clase
+ 
+\begin_inset Formula $f_{i}$
+\end_inset
+
+.
+ En un análisis concienzudo del caso 
+\begin_inset Formula $d=1,K=2,\Gamma\subset\R$
+\end_inset
+
+, Hall halla que para el caso más sencillo 
+\begin_inset Formula $K=2,d=1$
+\end_inset
+
+, según los signos de las derivadas 
+\begin_inset Formula $f_{1}^{'},f_{2}'$
+\end_inset
+
+ en los puntos de cruce de 
+\begin_inset Formula $f_{1},f_{2}$
+\end_inset
+
+ respectivas, el orden de magnitud del 
+\begin_inset Formula $h$
+\end_inset
+
+ óptimo varía drásticamente.
+ El rango de 
+\begin_inset Quotes fld
+\end_inset
+
+malos condicionamientos
+\begin_inset Quotes frd
+\end_inset
+
+ que llevan a estas situaciones, sin embargo, se vuelve mucho más angosto
+ en el problema multivariado (
+\begin_inset Formula $d>1$
+\end_inset
+
+) o de múltiples clases (
+\begin_inset Formula $K>2$
+\end_inset
+
+).
+ En estos contextos, el ancho de banda óptimo es generalmente el mismo que
+ es apropiado para estimación de densidad, según (A)M[I|S]E.
+\end_layout
+
+\begin_layout Subsubsection
+La elección de H en el caso bivariado
+\end_layout
+
+\begin_layout Standard
+Para ilustrar la creciente complejidad en la elección de los coeficientes
+ de 
+\series bold
+H
+\series default
+, consideremos el caso multivariado más sencillo, 
 \begin_inset Formula $d=2$
 \end_inset
 
-, considerando familias de creciente complejidad para 
+, siguiendo a 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wandComparisonSmoothingParameterizations1993"
+literal "false"
+
+\end_inset
+
+ que realizan un estudio exhaustivo de este problema, en relación a un conjunto
+ de densidades 
+\begin_inset Formula $f$
+\end_inset
+
+ que se desea estimar vía KDE, con distintas propiedades
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+e.g., con componentes con y sin correlación, sesgadas, kurtoticas, bi-, tri-
+ y tetra-modales.
+\end_layout
+
+\end_inset
+
+ que dificulten la tarea.
+ 
+\end_layout
+
+\begin_layout Standard
+Consideremos las familias de creciente complejidad para 
 \begin_inset Formula $\mathbf{H}$
 \end_inset
 
@@ -1598,18 +2097,14 @@ esferización
 \begin_inset Quotes erd
 \end_inset
 
- de los datos vía matriz de covarianza 
+ de los datos vía matriz de covarianza muestral 
 \begin_inset Formula $\mathbf{C}=\left[\begin{array}{cc}
 c_{11} & c_{12}\\
 c_{12} & c_{22}
 \end{array}\right]$
 \end_inset
 
- de la densidad objetivo 
-\begin_inset Formula $f$
-\end_inset
-
-:
+ :
 \end_layout
 
 \begin_deeper
@@ -1663,48 +2158,36 @@ Nótese que
 \end_inset
 
 .
- Wand & Jones se 
-\begin_inset Quotes eld
-\end_inset
-
-desembarazan
-\begin_inset Quotes erd
-\end_inset
-
- del problema de 
+ Para cada distribución estudiada y familia de matrices 
+\series bold
+H
+\series default
+, se elige la matriz de ancho de banda optimizando el 
 \emph on
-selección
-\emph default
- de anchos de banda, eligiendo enfocarse en la 
-\emph on
-eficiencia relativa asintótica
+error cuadrático integrado medio asintótico
 \begin_inset Foot
 status open
 
 \begin_layout Plain Layout
-burdamente, la relación entre los tamaños muestrales necesarios para conseguir
- el mismo error asintótico restringiendo 
-\begin_inset Formula $\mathbf{H}$
-\end_inset
+\begin_inset ERT
+status open
 
- a cierto par de las clases aquí descritas 
+\begin_layout Plain Layout
+
+[AMISE]
 \end_layout
 
 \end_inset
 
 
-\emph default
- de cada clase con respecto a la más general 
-\begin_inset Formula $\mathcal{H}_{3}$
+\begin_inset CommandInset label
+LatexCommand label
+name "fn:amise"
+
 \end_inset
 
-.
- A tal fin, toman como medida del error global incurrido por cierto estimador
- 
-\begin_inset Formula $\hat{f}_{\mathbf{H}}$
-\end_inset
-
- el error cuadrático medio integrado (MISE, por sus siglas en inglés)
+ El error cuadrático medio integrado (MISE, por sus siglas en inglés) se
+ define como
 \begin_inset Formula 
 \[
 MISE\left(\mathbf{H}\right)=MISE\left(\hat{f}_{\mathbf{H}},f\right)=E\int_{\R^{d}}\left(\hat{f}_{\mathbf{H}}\left(y\right)-f\left(y\right)\right)^{2}dy
@@ -1715,8 +2198,103 @@ MISE\left(\mathbf{H}\right)=MISE\left(\hat{f}_{\mathbf{H}},f\right)=E\int_{\R^{d
 
 \end_layout
 
-\begin_layout Standard
-y su aproximación asintótica.
+\begin_layout Plain Layout
+y su versión asintótica,
+\begin_inset Formula 
+\[
+AMISE\left(\H\right)=\lim_{N\rightarrow\infty}MISE\left(\H\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+Luego, fijada una densidad 
+\begin_inset Formula $f$
+\end_inset
+
+ cuyo KDE se desea estudiar, restringiendo 
+\series bold
+H
+\series default
+ a una familia 
+\begin_inset Formula $\mathcal{A}$
+\end_inset
+
+, se toma 
+\begin_inset Formula 
+\[
+\mathbf{H_{\mathcal{A}}^{*}}=\arg\inf_{\H\in\mathcal{A}}AMISE\left(\H\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+, 
+\emph default
+y luego analizan la 
+\emph on
+eficiencia relativa asintótica
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[ARE]
+\end_layout
+
+\end_inset
+
+ por 
+\emph on
+Asymptotic Relative Efficiency, 
+\emph default
+definido como 
+\begin_inset Formula 
+\[
+ARE\left(\mathcal{A}:\mathcal{B}\right)=AMISE\left(\mathbf{H_{\mathcal{A}}^{*}}\right)/AMISE\left(\mathbf{H_{\mathcal{B}}^{*}}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\emph default
+ de cada familia 
+\begin_inset Formula $\mathcal{A\in\text{\left\{  \mathcal{H}_{1},\mathcal{H}_{2},\mathcal{C}_{2},\mathcal{C}_{3},\mathcal{Y}\right\}  }}$
+\end_inset
+
+, en comparación con la familia 
+\begin_inset Quotes fld
+\end_inset
+
+irrestricta
+\begin_inset Quotes frd
+\end_inset
+
+ 
+\begin_inset Formula $\mathcal{H}_{3}$
+\end_inset
+
+, que en virtud de darle tantos grados de libertad como es posible a 
+\series bold
+H
+\series default
+, tendrá siempre el menor AMISE - a costa de ser la más difícil de parametrizar.
 \end_layout
 
 \begin_layout Standard
@@ -1739,14 +2317,22 @@ ingenua
 \begin_inset Quotes erd
 \end_inset
 
- de depender para ello de la covarianza muestral conlleva enormes pérdidas
- de eficiencia, aún para la familia 
+ de depender para ello de la covarianza muestral conlleva considerables
+ pérdidas de eficiencia, aún para la familia 
 \begin_inset Formula $\mathcal{Y}$
 \end_inset
 
-, sobre todo para densidades multimodales y otras que se alejan de la normalidad.
-\begin_inset Note Comment
-status collapsed
+, la más cercana a 
+\begin_inset Formula $\mathcal{H}_{3}$
+\end_inset
+
+, cuando 
+\begin_inset Formula $f$
+\end_inset
+
+ es multimodal o se aleja de la normalidad.
+\begin_inset Foot
+status open
 
 \begin_layout Plain Layout
 W&J (1993) tiene un lindo ejemplo 
@@ -1761,11 +2347,12 @@ W&J (1993) tiene un lindo ejemplo
  en la locación sobre el eje x, y mayor dispersión en el eje y, termina
  dando una estimación de la covarianza inútil para suavizado.
  Podría reproducirlo con scipy+matplotlib para ilustrar.
+ 
 \end_layout
 
 \end_inset
 
- En su recomendación final, los autores sugieren que en general 
+En su recomendación final, los autores sugieren que en general 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1780,19 +2367,72 @@ hay mucho para ganar incluyendo parámetros de orientación
 .
 \end_layout
 
-\begin_layout Standard
-Autores posteriores han tomado el desafío y considerado métodos para la
- elección de un suavizador 
-\begin_inset Formula $\mathbf{H}\in\mathcal{H}_{3}$
-\end_inset
-
- para el caso general 
+\begin_layout Subsubsection
+El caso 
 \begin_inset Formula $d-$
 \end_inset
 
-dimensional.
- Los mismos autores en un trabajo posterior (WandJones94) proponen un estimador
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+dimensional
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
  
+\end_layout
+
+\begin_layout Standard
+Si el dominio bivariado ya presentaba suficientes dificultades para que
+ ningún método de de elección de 
+\series bold
+H 
+\series default
+
+\begin_inset Quotes fld
+\end_inset
+
+dominase
+\begin_inset Quotes frd
+\end_inset
+
+ a los demás para cualquier densidad 
+\begin_inset Formula $f$
+\end_inset
+
+, el caso 
+\begin_inset Formula $d-$
+\end_inset
+
+dimensional general no es excepción.
+ Como secuela de 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wandComparisonSmoothingParameterizations1993"
+literal "false"
+
+\end_inset
+
+, los autores proponen un estimador 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1804,17 +2444,126 @@ plug-in
 \begin_inset Formula $\mathbf{H}$
 \end_inset
 
- óptimo que se puede aplicar a 
-\begin_inset Formula $\mathcal{H}_{3}$
+ óptimo - en el sentido de AMISE
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+ver 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fn:amise"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
-, pero luego se limitan a la familia diagonal 
-\begin_inset Formula $\mathcal{H}_{2}$
+
+\end_layout
+
 \end_inset
 
- para su aplicación concreta.
- Duong2005 sintetiza sus aportes propios y otros precedentes alrededor de
- la estimación de 
+ - que se puede calcular para 
+\series bold
+H 
+\series default
+
+\begin_inset Quotes fld
+\end_inset
+
+completa
+\begin_inset Quotes frd
+\end_inset
+
+, a través de ciertos 
+\begin_inset Quotes fld
+\end_inset
+
+funcionales
+\begin_inset Quotes frd
+\end_inset
+
+ 
+\begin_inset Formula $\psi_{\text{\textbf{m}}}$
+\end_inset
+
+ que dependen de 
+\begin_inset Formula $f$
+\end_inset
+
+ y sus derivadas parciales de orden 
+\begin_inset Formula $d$
+\end_inset
+
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Sea 
+\begin_inset Formula $\mathbf{m}$
+\end_inset
+
+ una 
+\begin_inset Formula $d-$
+\end_inset
+
+tupla 
+\begin_inset Formula $\mathbf{m}=\text{\left(m_{1},\dots,m_{d}\right)}$
+\end_inset
+
+ y 
+\begin_inset Formula $f^{\left(\mathbf{m}\right)}$
+\end_inset
+
+ la derivada parcial de 
+\begin_inset Formula $f$
+\end_inset
+
+ en 
+\begin_inset Formula $\mathbf{m}$
+\end_inset
+
+, entonces 
+\begin_inset Formula $\psi_{\mathbf{m}}=\int f^{\left(\mathbf{m}\right)}\left(x\right)f\left(x\right)dx$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ Cuando se busca una matriz 
+\series bold
+H
+\series default
+ completa, aún para dimensiones moderadas (
+\begin_inset Formula $d\leq5)$
+\end_inset
+
+ la cantidad de funcionales a estimar es enorme, por lo que luego se limitan
+ a matrices diagonales para su aplicación concreta
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wandMultivariatePluginBandwidth1994"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "duongCrossvalidationBandwidthMatrices2005"
+literal "false"
+
+\end_inset
+
+ sintetiza aportes propios y ajenos alrededor de la estimación de 
 \series bold
 
 \begin_inset Formula $\mathbf{H}$
@@ -1822,43 +2571,27 @@ plug-in
 
 
 \series default
- completa según tres métodos de validación cruzada
+ completa según tres métodos de validación cruzada 
+\begin_inset Quotes fld
+\end_inset
+
+deja-uno-afuera
+\begin_inset Quotes frd
+\end_inset
+
+: sesgada (BCV), insesgada (UCV), y (SCV)
 \begin_inset Foot
 status open
 
 \begin_layout Plain Layout
-\begin_inset Quotes eld
-\end_inset
-
-cross-validation
-\begin_inset Quotes erd
-\end_inset
-
-, o CV, por sus siglas en inglés.
+en inglés: Biased, Unbiased & Smoothed Cross Validation
 \end_layout
 
 \end_inset
 
-: CV sesgada (BCV), CV insesgada (UCV), y CV 
-\begin_inset Quotes eld
-\end_inset
-
-suavizada
-\begin_inset Quotes erd
-\end_inset
-
- (SCV).
- Todos los métodos propuestos buscan minimizar un error cuadrático (UCV
- usa MISE; BCV el asintótico AMISE y SCV una combinación lineal de ambos),
- en el contexto de validación cruzada 
-\begin_inset Quotes eld
-\end_inset
-
-dejar-uno-afuera
-\begin_inset Quotes erd
-\end_inset
-
 .
+ Con cada método, busca minimizar cierto error cuadrático: MISE para UCV;
+ el asintótico AMISE en BCV y una combinación lineal de ambos define SCV.
  El método con el que mejores resultados obtienen, SCV, es también el más
  complejo en su implementación, pues requiere considerar un 
 \begin_inset Quotes eld
@@ -1876,127 +2609,131 @@ suavizador piloto
 \end_layout
 
 \begin_layout Standard
-Hall2005, por su parte, motivado por la aplicación concreta de estimación
- de densidad al problema de clasificación, toma un camino distinto para
- la optimización: en lugar de elegir 
-\begin_inset Formula $\mathbf{H}$
+Una parametrización completa de 
+\series bold
+H
+\series default
+ en 
+\begin_inset Formula $d$
 \end_inset
 
- minimizando (A)MISE, se propone elegir 
-\begin_inset Formula $\mathbf{H}$
+ dimensiones requiere la hercúlea tarea de elegir 
+\begin_inset Formula $\tbinom{d}{1}+\tbinom{d}{2}=\text{\left(d^{2}+d\right)/2}$
 \end_inset
 
- de manera que minimice una función relacionada directamente con la tarea
- propuesta: el riesgo de Bayes.
- Sea 
-\begin_inset Formula $\mathcal{R}$
-\end_inset
+ coeficientes
+\begin_inset Foot
+status open
 
- una regla de decisión como se planteó en 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "def:prob-clf"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-, diremos que el 
-\emph on
-riesgo de Bayes
-\emph default
- en una región 
-\begin_inset Formula $\Gamma$
-\end_inset
-
- es 
-\begin_inset Formula 
-\begin{align*}
-\text{err}_{\mathcal{R}}\text{\left(f_{1},\dots,f_{K}\vert\gamma\right)}\\
-= & \sum_{j=1}^{K}p_{j}\int_{\Gamma}Pr\left(x\text{\textbf{ no }sea clasificado por \ensuremath{\mathcal{R}} como \ensuremath{\in C_{j}}}\right)f_{j}\left(x\right)dx
-\end{align*}
-
-\end_inset
-
-
+\begin_layout Plain Layout
+¡y yo me trabo eligiendo entre té ver y té negro!
 \end_layout
 
-\begin_layout Standard
-En este sentido, el clasificador de 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "def:clf-kde-univ"
-plural "false"
-caps "false"
-noprefix "false"
+\end_inset
+
+.
+ El ya-mencionado trabajo de 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "jenq-nenghwangNonparametricMultivariateDensity1994"
+literal "false"
 
 \end_inset
 
- es óptimo, y por ende es razonable argumentar que elegir 
-\begin_inset Formula $\mathbf{H}$
+ toma un camino alternativo: pre-transformar los datos para que tengan media
+ cero y matriz de covarianza unitaria
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+práctica también conocida como 
+\begin_inset Quotes fld
 \end_inset
 
- como Hall propone es superador a optimizar 
-\begin_inset Formula $\mathbf{H}$
+esferización
+\begin_inset Quotes frd
 \end_inset
 
- para el 
-\begin_inset Quotes eld
+ o 
+\begin_inset Quotes fld
 \end_inset
 
-resultado intermedio
-\begin_inset Quotes erd
+blanqueo
+\begin_inset Quotes frd
 \end_inset
 
- de estimar las densidades de cada clase.
- En efecto, para el caso más sencillo 
-\begin_inset Formula $K=2,d=1$
+.
+ En particular, si 
+\begin_inset Formula $\bar{X},\text{\textbf{C}}$
 \end_inset
 
- y las densidades se 
-\begin_inset Quotes eld
+ aon respectivamente la media y covarianza muestral de 
+\begin_inset Formula $\X$
 \end_inset
 
-cruzan
-\begin_inset Quotes erd
+, el conjunto 
+\begin_inset Formula $\left\{ \mathbf{Z}\right\} :=\left\{ Z_{i}=\mathbf{C}^{-1/2}\left(X_{i}-\bar{X}\right)\ \forall\ X\in\X\right\} $
 \end_inset
 
- en un solo punto con un mismo signo, los anchos de banda encontrados por
- minimización del riesgo de Bayes son un orden de magnitud distintos de
- los ya cubiertos.
- Sin embargo, para 
-\begin_inset Formula $d>1,K\geq2$
+ es su equivalente blanqueado.
+ Es fácil ver que 
+\begin_inset Formula $E\left[Z\right]=0,\ E\left[ZZ^{T}\right]=\mathbf{I}$
 \end_inset
 
- , resulta ser el caso que el ancho de banda óptimo según el error de Bayes
- es el mismo que via (A)MISE.
+.
 \end_layout
 
-\begin_layout Standard
-Hwang (1994) comienza estudiando explícitamente cómo elegir 
+\end_inset
+
+, y luego intenta buscar 
 \begin_inset Formula $h$
 \end_inset
 
- para datos esferizados (la familia 
-\begin_inset Formula $\mathcal{C}_{3}$
+ para los datos transformados.
+ La práctica es equivalente a buscar 
+\begin_inset Formula $\H$
 \end_inset
 
- en Wand&Jones93), luego nota las dificultades (2) y (3) previamente mencionadas
+ en la familia 
+\begin_inset Formula $\mathcal{C}_{3}\coloneqq\left\{ h^{2}\mathbf{C};h^{2}>0\right\} $
+\end_inset
+
+ de 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wandComparisonSmoothingParameterizations1993"
+literal "false"
+
+\end_inset
+
+.
+ Hwang encuentra las dificultades listadas en 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "enu:dif-kde-esf"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
 , y compara varios algoritmos superadores en algún sentido al KDE con ancho
- de banda fijo (FKDE):
+ de banda fijo (FKDE).
 \end_layout
 
-\begin_layout Itemize
-KDE adaptativo (AKDE), similar a FKDE esferizado pero con un factor de ancho
- local 
+\begin_layout Paragraph
+KDE Adaptativo (AKDE)
+\end_layout
+
+\begin_layout Standard
+Similar a FKDE, pero con un factor de ancho local 
 \begin_inset Formula $\lambda_{n}$
 \end_inset
 
  para cada núcleo
 \begin_inset Formula 
 \[
-\hat{f}_{AKDE}\left(z\right)=\frac{1}{Nh^{d}}\sum_{i=1}^{N}\lambda_{i}^{-d}\phi\left(\frac{1}{h\lambda_{i}}\left(z-z_{i}\right)\right)
+\hat{f}_{AKDE}\left(z\right)=\frac{1}{Nh^{d}}\sum_{i=1}^{N}\lambda_{i}^{-d}K\left(\frac{1}{h\lambda_{i}}\left(Z-Z_{i}\right)\right)
 \]
 
 \end_inset
@@ -2004,9 +2741,14 @@ KDE adaptativo (AKDE), similar a FKDE esferizado pero con un factor de ancho
 
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
-El cómputo de los factores 
+\begin_layout Standard
+Aunque cada núcleo estará mejor escalado a su contexto local, el enfoque
+ sigue utilizando una misma orientación global 
+\series bold
+C 
+\series default
+para todos los núcleos.
+ El cómputo de los factores 
 \begin_inset Formula $\lambda_{i}$
 \end_inset
 
@@ -2017,18 +2759,16 @@ El cómputo de los factores
 , con lo cual el costo computacional será aún más alto que en el caso base.
 \end_layout
 
-\begin_layout Itemize
-Aunque cada núcleo estará mejor escalado a su contexto local, el enfoque
- sigue utilizando una misma orientación global para todos los núcleos.
+\begin_layout Paragraph
+KDE de base funcional radial (RBF)
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-KDE de base funcional radial (RBF): para minimizar la cantidad de núcleos
- a ajustar a los datos, divide el proceso de estimación de densidad en dos
- partes: (i) agrupar los datos en clusters según cierto algoritmo no-supervisado
-, y luego (ii) ajustar un núcleo gaussiano, su altura y su ancho a cada
- cluster de (i).
+\begin_layout Standard
+Para minimizar la cantidad de núcleos a ajustar a los datos, divide el proceso
+ de estimación de densidad en dos partes: (i) agrupar los datos en clusters
+ según cierto algoritmo no-supervisado, y luego (ii) ajustar a cada cluster
+ un núcleo gaussiano, su altura y su ancho según la posición y cantidad
+ de sus observaciones.
  Por esto, también se lo conoce com 
 \begin_inset Quotes eld
 \end_inset
@@ -2037,23 +2777,35 @@ modelado de mezclas gaussianas
 \begin_inset Quotes erd
 \end_inset
 
-.
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+GMM, o 
+\size normal
+\emph on
+Gaussian Mixture Modelling 
+\emph default
+en inglés
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
-Aunque el estimador final se puede expresar con muy pocos términos, el procedimi
-ento completo es considerablemente más complejo que el de FKDE, dependiendo
- críticamente de la esferización y remoción de 
+\end_inset
+
+.
+ Aunque el estimador final se puede expresar con tan pocos términos como
+ clusters haya, el procedimiento completo es considerablemente más complejo
+ que el de FKDE, dependiendo críticamente de la esferización y remoción
+ de 
 \emph on
 outliers
 \emph default
  para la detección de clusters.
-\end_layout
+ Dependiendo de 
+\begin_inset Formula $N,d$
+\end_inset
 
-\begin_layout Itemize
-Dependiendo del tamaño muestral, la dimensionalidad de los datos y la cantidad
- de bases utilizadas, ciertos clusters pueden resultar en núcleos demasiado
+ y la cantidad de clusters identificados, pueden aparecer núcleos demasiado
  
 \begin_inset Quotes eld
 \end_inset
@@ -2077,8 +2829,7 @@ planos
  es razonable para cada base.
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
+\begin_layout Paragraph
 KDE por 
 \begin_inset Quotes eld
 \end_inset
@@ -2087,8 +2838,11 @@ persecución de la proyección
 \begin_inset Quotes erd
 \end_inset
 
- (PPDE): El espíritu de este método, está basado en buscar iterativamente
- proyecciones 
+ (PPDE)
+\end_layout
+
+\begin_layout Standard
+El espíritu de PPDE consiste en buscar iterativamente proyecciones 
 \begin_inset Quotes eld
 \end_inset
 
@@ -2098,12 +2852,20 @@ interesantes
 
  de los datos en bajas dimensiones (típicamente 1-D), modificar la muestra
  original 
-\begin_inset Formula $\left\{ \mathbf{x}\right\} ^{\left(0\right)}$
+\begin_inset Formula $\left\{ \mathbf{Z}\right\} ^{\left(0\right)}$
 \end_inset
 
- para remover la estructura encontrada en la proyección, y repetir el proceso
+ para remover la estructura encontrada en la proyección, e iterar el proceso
  en los datos resultantes.
- Siguiendo a Huber 85, la distribución normal se considera la 
+ Siguiendo a 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "huberProjectionPursuit1985"
+literal "false"
+
+\end_inset
+
+, la distribución normal se considera la 
 \begin_inset Quotes eld
 \end_inset
 
@@ -2122,20 +2884,33 @@ más interesante
  aquella proyección de los datos que más se le aleje.
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 Para evitar confundir la dirección y escala de la muestra con proyecciones
  verdaderamente interesante, el método de PPDE requiere también esferizar
  los datos e ignorar 
 \emph on
 outliers 
 \emph default
-juiciosamente (p.
- 29 Huber85).
+juiciosamente
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset citation
+LatexCommand cite
+after "p. 29"
+key "huberProjectionPursuit1985"
+literal "false"
+
+\end_inset
+
+
 \end_layout
 
-\begin_layout Itemize
-Un problema específico a PPDE, es que no puede lidiar satisfactoriamente
+\end_inset
+
+.
+ Un problema específico a PPDE, es que no puede lidiar satisfactoriamente
  con estructuras 
 \begin_inset Quotes eld
 \end_inset
@@ -2144,55 +2919,35 @@ escondidas
 \begin_inset Quotes erd
 \end_inset
 
- detrás de otras.
- E.g., las proyecciones de una densidad 2-D con forma de dona a 1-D no dan
- cuenta fehaciente de la estructura original.
-\end_layout
-
-\end_deeper
-\begin_layout Standard
-En resumen:
-\end_layout
-
-\begin_layout Itemize
-Wand, Jones y Duong, entre tantos otros, pretenden buscar selectores basados
- en MISE para 
-\begin_inset Formula $\mathbf{H}$
+ en alta dimensión, 
+\begin_inset Quotes fld
 \end_inset
 
- completa, pero terminan encontrando dificultades que los restringen, en
- la práctica, a matrices diagonales, o los enriedan en la selección de parámetro
-s auxiliares con complejidad propia.
+detrás
+\begin_inset Quotes frd
+\end_inset
+
+ de proyecciones en baja dimensión
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+e.g., las proyecciones unidimensionales de una densidad en 
+\begin_inset Formula $\R^{2}$
+\end_inset
+
+ con forma de dona no dan cuenta fehaciente de la estructura original.
+ Estimar estas 
+\emph on
+variedades
+\emph default
+ escondida en el espacio ambiente euclídeo será un punto central de nuestro
+ trabajo más adelante.
 \end_layout
 
-\begin_layout Itemize
-Hall, motivado por el problema que nos compete, intenta un selector basado
- en el riesgo de Bayes, pero el método resulta tan complejo en su propio
- derecho, que aún al tratar muestras multivariadas, lo hace con un suavizador
- escalar 
-\begin_inset Formula $h,\ \mathbf{H}\in\mathcal{H}_{1}$
 \end_inset
 
-, y nota que los resultados no difieren significativamente de los obtenidos
- minimizando el error cuadrático integrado.
-\end_layout
 
-\begin_layout Itemize
-Hwang explora todo tipo de anchos de banda escalares (fijos, adaptativos,
- clusterizados), y por último 
-\begin_inset Quotes eld
-\end_inset
-
-abandona
-\begin_inset Quotes erd
-\end_inset
-
- esta línea y considera un método que no requiere definir explícitamente
- un suavizador 
-\series bold
-H
-\series default
-: PPDE.
 \end_layout
 
 \begin_layout Standard
@@ -2247,6 +3002,17 @@ maldición de la dimensionalidad
 \end_layout
 
 \begin_layout Remark
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[maldición de la dimensionalidad]
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset label
 LatexCommand label
 name "rem:curse-dim"
@@ -2254,7 +3020,7 @@ name "rem:curse-dim"
 \end_inset
 
 Sea 
-\begin_inset Formula $B\left(x,r,d\right)$
+\begin_inset Formula $B\left(c,r,d\right)$
 \end_inset
 
  la bola 
@@ -2266,11 +3032,15 @@ dimensional de radio
 \end_inset
 
  centrada en 
-\begin_inset Formula $x\in\R^{d}$
+\begin_inset Formula $c\in\R^{d}$
 \end_inset
 
-, y consideremos una v.a.
- uniformemente distribuida dentro de ella (por volumen), 
+, y 
+\begin_inset Formula $X$
+\end_inset
+
+ v.a.
+ uniformemente distribuida (por volumen), 
 \begin_inset Formula $X\sim Unif\left(B\left(0,r,d\right)\right)$
 \end_inset
 
@@ -2291,7 +3061,7 @@ interior
 \begin_inset Quotes erd
 \end_inset
 
- de la bola (sustrayendo un 
+ de la bola, sustrayendo un 
 \begin_inset Quotes eld
 \end_inset
 
@@ -2303,8 +3073,8 @@ cascarón
 \begin_inset Formula $\epsilon$
 \end_inset
 
-) 
-\begin_inset Formula $Pr\text{\left(X\in B\left(0,r-\epsilon,d\right)\right)}$
+, 
+\begin_inset Formula $\prob{X\in B\left(0,r-\epsilon,d\right)}$
 \end_inset
 
 ?
@@ -2316,7 +3086,7 @@ Como la distribución de
 \end_inset
 
  es uniforme en volumen, y 
-\begin_inset Formula $B\left(x,r-\epsilon,d\right)\subset B\left(x,r,d\right)$
+\begin_inset Formula $B\left(0,r-\epsilon,d\right)\subset B\left(0,r,d\right)$
 \end_inset
 
 , basta con comparar los volúmenes de de ambas 
@@ -2334,7 +3104,7 @@ dimensional de una bola es
 \begin_layout Remark
 \begin_inset Formula 
 \[
-{\displaystyle Vol\left(B\left(x,r,d\right)\right)=Vol_{B}\left(r,d\right)={\frac{\pi^{d/2}}{\Gamma\left(\tfrac{d}{2}+1\right)}}r^{d}}
+{\displaystyle Vol\left(B\left(\cdot,r,d\right)\right)=Vol_{B}\left(r,d\right)={\frac{\pi^{d/2}}{\Gamma\left(\tfrac{d}{2}+1\right)}}r^{d}}
 \]
 
 \end_inset
@@ -2351,7 +3121,7 @@ donde
  Luego,
 \begin_inset Formula 
 \[
-Pr\text{\ensuremath{\left(X\in B\left(0,r-\epsilon,d\right)\right)}}=\frac{Vol\left(B\left(0,r-\epsilon,d\right)\right)}{Vol\left(B\left(0,r,d\right)\right)}=\left(\frac{r-\epsilon}{r}\right)^{d}
+Pr\text{\ensuremath{\left(X\in B\left(0,r-\epsilon,d\right)\right)}}=\frac{Vol_{B}\left(r-\epsilon,d\right)}{Vol_{B}\left(r,d\right)}=\left(\frac{r-\epsilon}{r}\right)^{d}
 \]
 
 \end_inset
@@ -2411,7 +3181,7 @@ cascarón
 \begin_inset Formula $X$
 \end_inset
 
-! 
+!
 \end_layout
 
 \begin_layout Remark
@@ -2434,18 +3204,18 @@ ingenuas
 
  de distancia.
  Como 
-\begin_inset Formula $x\in B\left(0,r,d\right)\iff\norm x\leq r\sqrt{d}$
+\begin_inset Formula $x\in B\left(0,r,d\right)\iff\norm x\leq r$
 \end_inset
 
 , y similarmente 
-\begin_inset Formula $x\notin B\left(0,r-\epsilon,d\right)\iff\norm x>\left(r-\epsilon\right)\sqrt{d}$
+\begin_inset Formula $x\notin B\left(0,r-\epsilon,d\right)\iff\norm x>\left(r-\epsilon\right)$
 \end_inset
 
 , podemos escribir 
 \begin_inset Formula 
 \begin{align*}
 Pr\text{\ensuremath{\left(X\notin B\left(0,r-\epsilon,d\right)\right)}} & =Pr\text{\ensuremath{\left(X\notin B\left(0,r-\epsilon,d\right),X\in B\left(0,r,d\right)\right)}}\\
-1-\left(\frac{r-\epsilon}{r}\right)^{d} & =Pr\left(\left(r-\epsilon\right)\sqrt{d}<\norm X\leq r\sqrt{d}\right)
+1-\left(\frac{r-\epsilon}{r}\right)^{d} & =Pr\left(\left(r-\epsilon\right)<\norm X\leq r\right)
 \end{align*}
 
 \end_inset
@@ -2467,33 +3237,35 @@ De manera que
 \begin_inset Formula $\epsilon$
 \end_inset
 
- arbitrariamente pequeño, la distancia euclídea de (casi) toda la distribución
- al centro de la esfera tiende a ser aproximadamente 
-\begin_inset Formula $r\sqrt{d}$
+ arbitrariamente pequeño, la distancia euclídea de cualquier observación
+ al centro de la esfera tiende a 
+\begin_inset Formula $r$
 \end_inset
 
-, lo cual hace que esta distancia euclídea sea inútil para diferenciar entre
- elementos de la muestra.
+.
+ En altas dimensiones, la distancia euclídea resulta inútil para diferenciar
+ entre elementos muestrales.
 \end_layout
 
 \begin_layout Subsection
-Reducción de dimensionalidad y la hipótesis de la variedad
+La 
+\emph on
+hipótesis de la variedad
 \end_layout
 
 \begin_layout Standard
-A pesar de lo sorprendente del resultado, vale notar que descansa sobre
- el hecho de que la distribución de 
+El resultado previo descansa sobre el hecho de que la distribución de 
 \begin_inset Formula $X$
 \end_inset
 
  sobre su soporte 
-\begin_inset Formula $\text{supp}\left(X\right)=B\left(0,r,d\right)\subset\R^{d}$
+\begin_inset Formula $\text{sop}\left(X\right)=B\left(0,r,d\right)\subset\R^{d}$
 \end_inset
 
  es uniforme, e independiente en todas las dimensiones.
  En casi cualquier contexto material, este supuesto no es sostenible.
  Por poner un ejemplo, podemos representar todas las posibles imágenes en
- escala de grises de 1 megapixel como puntos 
+ escala de grises de 1 megapíxel como puntos 
 \begin_inset Formula $X$
 \end_inset
 
@@ -2501,7 +3273,7 @@ A pesar de lo sorprendente del resultado, vale notar que descansa sobre
 \begin_inset Formula $\R^{1024\times1024}$
 \end_inset
 
-, pero la basta mayoría de ellas consistirían en 
+, pero si tomamos una imagen la basta mayoría de ellas consistirían en 
 \begin_inset Quotes eld
 \end_inset
 
@@ -2519,7 +3291,94 @@ puro ruido blanco
 \emph on
 correlacionados
 \emph default
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Un desarrollo contemporáneo sumamente interesante es el de 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "linShellTheoryStatistical2021"
+literal "false"
+
+\end_inset
+
+, que se puede traducir como 
+\emph on
+Teoría de los 
+\begin_inset Quotes fld
+\end_inset
+
+caparazones
+\begin_inset Quotes frd
+\end_inset
+
+: Un modelo estadístico de la realidad.
+
+\emph default
+ Los autores observan que en teoría, debido a la 
+\begin_inset CommandInset ref
+LatexCommand nameref
+reference "rem:curse-dim"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, el aprendizaje estadístico debería ser lisa y llanamente imposible en
+ altas dimensiones, pero en la práctica se ve que funciona.
+ Propone un marco estadístico riguroso destinado a concebir el aprendizaje
+ automático en alta dimensión, la 
+\begin_inset Quotes fld
+\end_inset
+
+teoría de los caparazones
+\begin_inset Quotes frd
+\end_inset
+
+ - aunque en inglés suena más bonito, 
+\emph on
+shell theory
+\emph default
+ .
+ Fundado en la observación de que las relaciones entre objetos que deseamos
+ entender forman una jerarquía (gato siamés 
+\begin_inset Formula $\subset$
+\end_inset
+
+ gato 
+\begin_inset Formula $\subset$
+\end_inset
+
+ animal), propone que las observaciones en alta dimensión son resultado
+ de un proceso de 
+\begin_inset Quotes eld
+\end_inset
+
+generadores jerárquicos
+\begin_inset Quotes erd
+\end_inset
+
 .
+ Desarrollando una noción de distancia adecuada, muestran que en dichos
+ procesos generativos, las instancias de cada proceso en la jerarquía -
+ casi siempre - están encapsuladas por un 
+\begin_inset Quotes fld
+\end_inset
+
+caparazón
+\begin_inset Quotes frd
+\end_inset
+
+ distintivo que excluye a (casi) cualquier otra instancia, y permite identificar
+ clases rigurosamente.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2535,7 +3394,7 @@ reducir la dimensionalidad
 
  lo que nos embrolló en un principio.
  Dadas 
-\begin_inset Formula $\left\{ \mathbf{x}\right\} =\left\{ x_{i}\vert x_{i}\in\Rdimx,\ i\in\text{\left[N\right]}\right\} $
+\begin_inset Formula $\left\{ \mathbf{X}\right\} =\left\{ X_{i}\vert X_{i}\in\Rdimx,\ i\in\text{\left[N\right]}\right\} $
 \end_inset
 
 , buscaremos una 
@@ -2567,21 +3426,55 @@ fidelidad
 \emph on
 aprendizaje de representaciones, 
 \emph default
-del cual Bengio2012
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-https://www.reddit.com/r/MachineLearning/comments/mzjshl/comment/gwq8szw/?utm_sour
-ce=share&utm_medium=web2x&context=3 Bengio himself sobre el origen del término.
-\end_layout
+del cual
+\begin_inset CommandInset citation
+LatexCommand cite
+key "bengioRepresentationLearningReview2014"
+literal "false"
 
 \end_inset
 
  hace un excelente censo.
  El autor relaciona la tarea del área con la noción geométrica de una 
 \emph on
-variedad.
+variedad,
+\emph default
+ a través de la 
+\emph on
+hipótesis de la variedad
+\emph default
+.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+El término no es del todo riguroso pero figura frecuentemente en la literatura
+ sobre aprendizaje automático.
+ El mismo Bengio se explaya sobre el origen del término 
+\begin_inset CommandInset href
+LatexCommand href
+name "en Reddit"
+target "https://www.reddit.com/r/MachineLearning/comments/mzjshl/comment/gwq8szw/?utm_source=share&utm_medium=web2x&context=3"
+literal "false"
+
+\end_inset
+
+, y 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rifaiManifoldTangentClassifier2011"
+literal "false"
+
+\end_inset
+
+ distingue entre varias formulaciones íntimamente relacionadas de la misma
+ hipótesis.
+\end_layout
+
+\end_inset
+
+.
+ 
 \end_layout
 
 \begin_layout Remark
@@ -2589,11 +3482,11 @@ A nuestros fines, una variedad
 \begin_inset Formula $\mathcal{\M}$
 \end_inset
 
- es un espacio de dimensión 
+ de dimensión 
 \begin_inset Formula $d_{\M}$
 \end_inset
 
- que 
+, es un espacio que 
 \emph on
 localmente
 \emph default
@@ -2653,17 +3546,28 @@ manifold hypothesis
 \end_inset
 
 .
- 
-\end_layout
+ Esta asunción parece particularmente adecuada en tareas de aprendizaje
+ para las cuales las configuraciones muestreadas aleatoriamente no son como
+ las que ocurren naturalmente: ya mencionamos imágenes, pero esperamos lo
+ mismo de cualquier tipo de observaciones multivariadas obtenidas 
+\begin_inset Quotes fld
+\end_inset
 
-\begin_layout Quotation
-Esta asunción parece particularmente adecuada en tareas de aprendizaje para
- las cuales las configuraciones muestreadas aleatoriamente no son como las
- que ocurren naturalmente: ya mencionamos imágenes, pero esperamos lo mismo
- de sonidos, texto, secuencias genómicas y hasta aún las respuestas a algunos
- cuestionarios inverosímilmente exhaustivos de los departamentos estatales
- de estadística.
- 
+naturalmente
+\begin_inset Quotes frd
+\end_inset
+
+: sonidos, texto, secuencias genómicas y hasta las respuestas al eterno
+ cuestionario del censo.
+ Siguiendo a 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "bengioRepresentationLearningReview2014"
+literal "false"
+
+\end_inset
+
+,
 \end_layout
 
 \begin_layout Quotation
@@ -2716,8 +3620,8 @@ Fue inicialmente diseñado con el objetivo de encontrar la variedad lineal
 
 , ubica unívocamente su proyección en esa variedad: se corresponde con coordenad
 as intrínsecas de la variedad.
- Las variedad que soportan dominios complejos del mundo real, sin embargo,
- se esperan que sean fuertemente no-lineales.
+ Las variedades que soportan dominios complejos del mundo real, sin embargo,
+ se espera que sean fuertemente no-lineales.
 \end_layout
 
 \begin_layout Standard
@@ -2733,8 +3637,8 @@ ión de los datos, mencionamos la
 \emph on
 hipótesis de la variedad
 \emph default
- en tanto resulta modelo mental útil para entender cómo estimar la densidad
- generadora de los datos en altas dimensiones.
+ como un modelo mental útil para entender cómo estimar la densidad generadora
+ de los datos en altas dimensiones.
  Ya mencionamos que a medida que 
 \begin_inset Formula $d_{x}$
 \end_inset
@@ -2790,17 +3694,13 @@ U
 \begin_inset Formula $\mathcal{U}$
 \end_inset
 
- es una variedad 1-dimensional - una curva - embebida en el espacio cartesiano
- - 
+ es una variedad 1-dimensional - un segmento curvo - embebida en el espacio
+ cartesiano - 
 \begin_inset Formula $\R^{2},$
 \end_inset
 
- una variedad 2-dimensional., Llamemos 
-\begin_inset Formula $u_{\alpha},u_{\omega}$
-\end_inset
-
- a los dos puntos que se encuentran más cerca de los extremos superiores
- del dibujo de la 
+ una variedad 2-dimensional.
+ En la variedad latente, los dos puntos extremos del dibujo de la 
 \begin_inset Quotes eld
 \end_inset
 
@@ -2808,23 +3708,12 @@ U
 \begin_inset Quotes erd
 \end_inset
 
-.
- En la variedad latente, estos dos puntos están tan separados entre sí como
- es posible; sin embargo, si medimos la distancia entre ambos en el espacio
- ambiente - 
+ están tan separados entre sí como es posible; sin embargo, si medimos la
+ distancia entre ambos en el espacio ambiente - 
 \begin_inset Formula $\R^{2}$
 \end_inset
 
- - obtendremos que están mucho más cerca entre sí que, por ejemplo, el punto
- medio donde la 
-\begin_inset Quotes eld
-\end_inset
-
-U
-\begin_inset Quotes erd
-\end_inset
-
- corta su eje de simetría axial.
+ - obtendremos que están mucho más cerca entre sí.
  La razón de tal insensatez, es simplemente, que hemos tomado una medida
  de distancia que no se ajusta bien al espacio latente.
 \end_layout
@@ -2854,7 +3743,8 @@ KDE en variedades
 \emph on
 en una variedad
 \emph default
-? Algunas variedades particularmente interesantes, como el círculo 
+? Algunas variedades particularmente interesantes, como en la circunferencia
+ 
 \begin_inset Formula $S^{1}$
 \end_inset
 
@@ -2862,37 +3752,140 @@ en una variedad
 \begin_inset Formula $S^{2}$
 \end_inset
 
-, fueron estudiadas temprano en el siglo XX (Rao, Fisher, citar bien), pero
- la estimación de densidad en variedades arbitrarias no parece haber sido
- tratado antes que en Pelletier2005, quien - convenientemente - hizo exactamente
- eso, 
-\begin_inset Quotes eld
+, fueron estudiadas temprano en el siglo XX 
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Motivado por el estudio de los pesos atómicos de elementos químicos, 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "vonmisesUberGanzzahligkeitAtomgewicht1918"
+literal "false"
+
 \end_inset
 
-Kernel density estimation on Riemannian Manifolds
-\begin_inset Quotes erd
+ (en alemán) introduce la 
+\begin_inset Quotes fld
+\end_inset
+
+distribución von Mises
+\begin_inset Quotes frd
+\end_inset
+
+ en la circunferencia 
+\begin_inset Formula $S^{1}$
+\end_inset
+
+, adaptando la densidad normal estándar univariada.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "fisherDispersionSphere1997"
+literal "false"
+
+\end_inset
+
+ propone la 
+\begin_inset Quotes fld
+\end_inset
+
+distribución de Fisher
+\begin_inset Quotes frd
+\end_inset
+
+ en la esfera 
+\begin_inset Formula $S^{2}$
+\end_inset
+
+para desarrollar un test sobre la dirección de flujos de lava en Islandia.
+ A mediados del siglo XX el campo de la 
+\begin_inset Quotes fld
+\end_inset
+
+estadística direccional
+\begin_inset Quotes frd
+\end_inset
+
+ - un antecesor directo de la estadística en variedades arbitrarias - estaba
+ bien desarrolada, y 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "mardiaDistributionTheoryMisesFisher1975"
+literal "false"
+
+\end_inset
+
+ estudia en detalle la 
+\begin_inset Quotes fld
+\end_inset
+
+distribución de von Mises-Fisher
+\begin_inset Quotes frd
+\end_inset
+
+, generalización 
+\begin_inset Formula $d-$
+\end_inset
+
+dimensional de los aportes antedichos.
+\end_layout
+
+\end_inset
+
+, pero la estimación de densidad en variedades arbitrarias no parece haber
+ sido tratado sistemáticamente antes de 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "pelletierKernelDensityEstimation2005"
+literal "false"
+
+\end_inset
+
+, quien convenientemente hizo exactamente eso: proponer un estimador de
+ densidad por núcleos en variedades Riemannianas.
+ En lo que sigue, intentamos ser fieles a lo que entendimos de la exposición
+ de Bruno, y suplimos algunos agujeros teóricos con la más amena tesis de
+ licenciatura de 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "munozEstimacionNoParametrica2011"
+literal "false"
+
 \end_inset
 
 .
- En lo que sigue, (intentamos) ser fieles a lo que entendimos de la exposición
- de Bruno.
  
 \end_layout
 
 \begin_layout Definition
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[KDE en variedades]
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset label
 LatexCommand label
 name "def:manif-kde"
 
 \end_inset
 
-(estimación de densidad por núcleos en variedades, Pelletier2005, seccion
- 2; Muñoz2011 en su tesis de lic.
- con directores Henry y Rodriguez)
-\end_layout
+(
+\begin_inset CommandInset citation
+LatexCommand cite
+after "§2"
+key "pelletierKernelDensityEstimation2005"
+literal "false"
 
-\begin_layout Definition
-Sea 
+\end_inset
+
+; Muñoz2011) Sea 
 \begin_inset Formula $\left(\M,g\right)$
 \end_inset
 
@@ -4476,8 +5469,6 @@ Es decir, existe un conjunto abierto y conexo
 \end_inset
 
  una transformación isométrica tal que 
-\backslash
-phi
 \begin_inset Formula $\phi\left(\bar{S}\right)=\M$
 \end_inset
 
@@ -4698,38 +5689,6 @@ s sobre las derivadas primeras) para incluir esa info en la optimizacion
 
 \begin_layout Subsubsection
 Shell Theory
-\end_layout
-
-\begin_layout Standard
-Por la maldicion de la dimensionalidad, debería ser directamente imposible
- ML en alta dimension, pero en la practica se ve que funciona.
- Propone una teoría general pero accesible de 
-\begin_inset Quotes eld
-\end_inset
-
-generadores jerárquicos
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\begin_inset Quotes eld
-\end_inset
-
-shell theory
-\begin_inset Quotes erd
-\end_inset
-
-, que imita las clasificaciones jerárquicas semánticas que buscamos entender
- (gato siamés 
-\begin_inset Formula $\subset$
-\end_inset
-
- gato 
-\begin_inset Formula $\subset$
-\end_inset
-
- animal).
- 
 \end_layout
 
 \begin_layout Subsubsection
@@ -4961,6 +5920,163 @@ Más adelante, considera funciones
 \end_layout
 
 \begin_layout Section
+Cositas
+\end_layout
+
+\begin_layout Subsection
+Hwang1994
+\end_layout
+
+\begin_layout Standard
+Usualmente los datos no se encontrarán distribuidos uniformemente en todas
+ las direcciones, y será deseable pre-escalarlos para evitar diferencias
+ extremas en su dispersión y locación.
+ Un enfoque atractivo, es primero 
+\begin_inset Quotes eld
+\end_inset
+
+esferar
+\begin_inset Quotes erd
+\end_inset
+
+ o 
+\begin_inset Quotes eld
+\end_inset
+
+blanquear
+\begin_inset Quotes erd
+\end_inset
+
+ los datos mediante una transformación afín que devuelva data con media
+ cero y matriz de covarianza unitaria; y luego aplicar 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:kde-multiv"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Más específicamente, dada una muesta 
+\begin_inset Formula $\left\{ x\right\} ,$
+\end_inset
+
+podemos definir su versión 
+\begin_inset Quotes eld
+\end_inset
+
+esférica
+\begin_inset Quotes erd
+\end_inset
+
+ como
+\begin_inset Formula 
+\[
+z=\mathbf{S}^{-1/2}\left(x-Ex\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+donde la esperanza 
+\begin_inset Formula $E$
+\end_inset
+
+ es evaluada a través de la media muestral, y 
+\begin_inset Formula $\mathbf{S}\in\R^{d\times d}$
+\end_inset
+
+es la matriz de covarianza de los datos:
+\begin_inset Formula 
+\begin{align*}
+\mathbf{S} & =E\left[\left(x-Ex\right)\left(x-Ex\right)^{T}\right]=\mathbf{UDU}^{T}\\
+\mathbf{S}^{-1/2} & =\mathbf{UD}^{-1/2}\mathbf{U}^{T}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Donde 
+\begin_inset Formula $\mathbf{U}$
+\end_inset
+
+ es una matriz ortonormal y 
+\begin_inset Formula $\mathbf{D}$
+\end_inset
+
+ es una matriz diagonal.
+ De preocuparse por la influencia de 
+\emph on
+outliers
+\emph default
+ en los datos, existen métodos robustos para su derivación (Huber 1981).
+\end_layout
+
+\begin_layout Standard
+Se puede mostrar fácilment que luego del 
+\begin_inset Quotes eld
+\end_inset
+
+blanqueo
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Formula $Ez=0$
+\end_inset
+
+ y 
+\begin_inset Formula $E\left[zz^{T}\right]=\mathbf{I_{d}}$
+\end_inset
+
+.
+ El estimador resultante para los datos esféricos realiza un estimación
+ de densidad más sofisticada
+\begin_inset CommandInset label
+LatexCommand label
+name "def:kde-multiv-blanco"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\color red
+Acá sigo a Hwang, que hace una presentación algo distinta a Wikipedia/Wand&Jones
+, primero blanquea y luego usa núcleo con 
+\begin_inset Formula $\H=\mathbf{I_{d}}$
+\end_inset
+
+; W&J no recomienda blanquear porque luego usa 
+\begin_inset Formula $\mathbf{H}$
+\end_inset
+
+ arbitraria.
+ Debería revisar bien la equivalencia, qué conviene más.
+\color inherit
+:
+\begin_inset Formula 
+\begin{align*}
+\hat{f}\left(z\right) & =\frac{1}{Nh^{d}}\sum_{i=1}^{N}\phi\left(\frac{1}{h}\left(z-z_{i}\right)\right)\\
+\hat{f}\left(x\right) & =\frac{\left(\det\text{\ensuremath{\mathbf{S}}}\right)^{-1/2}}{Nh^{d}}\sum_{i=1}^{N}\phi\left(\frac{1}{h}\mathbf{S}^{-1/2}\left(x-x_{i}\right)\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Notas sueltas
 \end_layout
 
@@ -5003,12 +6119,32 @@ Cuentita
 Conclusiones
 \end_layout
 
+\begin_layout Section
+Notas al pie
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+printendnotes
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
-btprint "btPrintAll"
+btprint "btPrintCited"
 bibfiles "bib/references"
-options "bibtotoc,plain"
+options "bibtotoc,plainnat"
 
 \end_inset
 
