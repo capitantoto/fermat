@@ -10,6 +10,8 @@
 \usepackage{enotez}      % <-- instead of \usepackage{endnotes}
 \setenotez{backref=true}
 \let\footnote=\endnote
+\usepackage[symbol]{footmisc}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
 \end_preamble
 \use_default_options false
 \begin_modules
@@ -1456,7 +1458,21 @@ Cuando
 \begin_inset Formula $\H=h^{2}\mathbf{I}$
 \end_inset
 
-, el estimador resultante es consistente con el caso unidimensional:
+, el estimador resultante es consistente con el producto de 
+\begin_inset Formula $d$
+\end_inset
+
+ estimadores 
+\begin_inset CommandInset ref
+LatexCommand nameref
+reference "def:kde-univ"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+s:
 \begin_inset Formula 
 \begin{align*}
 {\displaystyle \widehat{f}(x;h^{2}\mathbf{I})} & =N^{-1}\sum_{i=1}^{N}\left|\det h^{2}\mathbf{I}\right|^{-1/2}K\left(\left(h^{2}\mathbf{I}\right)^{-1/2}\left(x-X_{i}\right)\right)\\
@@ -3248,9 +3264,7 @@ De manera que
 \end_layout
 
 \begin_layout Subsection
-La 
-\emph on
-hipótesis de la variedad
+La hipótesis de la variedad
 \end_layout
 
 \begin_layout Standard
@@ -3720,6 +3734,13 @@ U
 
 \begin_layout Subsection
 KDE en variedades
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:KDE-en-variedades"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3864,6 +3885,81 @@ status open
 
 \begin_layout Plain Layout
 
+[variedad Riemanniana]
+\end_layout
+
+\end_inset
+
+(
+\begin_inset CommandInset citation
+LatexCommand cite
+after "§3.3.2"
+key "munozEstimacionNoParametrica2011"
+literal "false"
+
+\end_inset
+
+)
+\emph on
+.
+ 
+\emph default
+Una variedad Riemanniana es una variedad diferenciable 
+\begin_inset Formula $\M$
+\end_inset
+
+ dotada de un métrica Riemanniana 
+\begin_inset Formula $g$
+\end_inset
+
+, que denotaremos con 
+\begin_inset Formula $\left(\M,g\right)$
+\end_inset
+
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Para quienes no entienden casi absolutamente nada de geometría diferencial
+ como yo, la tesis de 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "munozEstimacionNoParametrica2011"
+literal "false"
+
+\end_inset
+
+ es un excelente puente a los trabajos que se citan en las siguientes secciones,
+ en especial §3 de íbid., 
+\begin_inset Quotes fld
+\end_inset
+
+Preliminares Geométricos
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
 [KDE en variedades]
 \end_layout
 
@@ -3885,7 +3981,7 @@ literal "false"
 
 \end_inset
 
-; Muñoz2011) Sea 
+) Sea 
 \begin_inset Formula $\left(\M,g\right)$
 \end_inset
 
@@ -3914,12 +4010,16 @@ Sea X un elemento aleatorio en
 \begin_inset Formula $\M$
 \end_inset
 
-
+ 
 \begin_inset Foot
 status collapsed
 
 \begin_layout Plain Layout
-i.e., un mapa medible en un espacio de probabilidad 
+Más precisamente, 
+\begin_inset Formula $X:\Omega\rightarrow\M$
+\end_inset
+
+ es un mapa medible en un espacio de probabilidad 
 \begin_inset Formula $\left(\Omega,\mathcal{A},P\right)$
 \end_inset
 
@@ -4039,7 +4139,7 @@ donde
 \begin_inset Formula $K$
 \end_inset
 
- es simétrica),
+ es simétrica)
 \end_layout
 
 \begin_layout Enumerate
@@ -4047,7 +4147,7 @@ donde
 \end_inset
 
  (
-\begin_inset Formula $VarX<\infty),$
+\begin_inset Formula $VarX<\infty)$
 \end_inset
 
 
@@ -4057,14 +4157,14 @@ donde
 \begin_inset Formula $\text{sop}K=\text{\left[0,1\right]}$
 \end_inset
 
-,
+
 \end_layout
 
 \begin_layout Enumerate
 \begin_inset Formula $\sup K\text{\left(x\right)}=K\left(0\right)$
 \end_inset
 
-,
+
 \end_layout
 
 \end_deeper
@@ -4081,7 +4181,18 @@ donde
 \begin_inset Formula $\R^{d}\ni x\rightarrow K\left(\norm x\right)\in\R$
 \end_inset
 
- es un núcleo isotrópico en 
+ es un núcleo isotrópico
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+iso-tropos: igual (iso) en toda dirección (tropos).
+ El núcleo gaussiano estándar es isotrópico.
+\end_layout
+
+\end_inset
+
+ en 
 \begin_inset Formula $\R^{d}$
 \end_inset
 
@@ -4112,7 +4223,7 @@ función de densidad volumétrica
 
 
 \begin_inset Foot
-status open
+status collapsed
 
 \begin_layout Plain Layout
 Besse 1978 (p.
@@ -4176,11 +4287,11 @@ en
 
 .
  Definimos el estimador de densidad de 
-\begin_inset Formula $f$
+\begin_inset Formula $\hat{f}\text{\left(p|N,K\right)}$
 \end_inset
 
  como el mapa 
-\begin_inset Formula $f_{N,K}:\M\rightarrow\R$
+\begin_inset Formula $\hat{f}:\M\rightarrow\R$
 \end_inset
 
  que a cada 
@@ -4188,13 +4299,13 @@ en
 \end_inset
 
  le asocia el valor 
-\begin_inset Formula $f_{N,K}\left(p\right)$
+\begin_inset Formula $\hat{f}\left(p\right)$
 \end_inset
 
  definido como
 \begin_inset Formula 
 \[
-f_{N,K}\left(p\right)=N^{-1}\sum_{i=1}^{N}\frac{1}{h^{d}}\frac{1}{\theta_{X_{i}}\left(p\right)}K\left(\frac{d_{g}\left(p,X_{i}\right)}{h}\right)
+\hat{f}\left(p\right)=N^{-1}\sum_{i=1}^{N}\frac{1}{h^{d}}\frac{1}{\theta_{X_{i}}\left(p\right)}K\left(\frac{d_{g}\left(p,X_{i}\right)}{h}\right)
 \]
 
 \end_inset
@@ -4217,7 +4328,7 @@ f_{N,K}\left(p\right)=N^{-1}\sum_{i=1}^{N}\frac{1}{h^{d}}\frac{1}{\theta_{X_{i}}
 \end_inset
 
  se puede escribir como 
-\begin_inset Formula $f_{N,K}=N^{-1}\sum_{i=1}^{N}r^{-d}K\left(\norm{p-X_{i}}/r\right)$
+\begin_inset Formula $f_{N,K}=N^{-1}\sum_{i=1}^{N}h^{-d}K\left(\norm{p-X_{i}}/h\right)$
 \end_inset
 
 .
@@ -4225,7 +4336,96 @@ f_{N,K}\left(p\right)=N^{-1}\sum_{i=1}^{N}\frac{1}{h^{d}}\frac{1}{\theta_{X_{i}}
 \begin_inset Formula $f_{N,K}$
 \end_inset
 
- es consistente con la expresión de KDEs en el caso euclídeo.
+ es consistente con la expresión de 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:kde-multiv"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ como producto de 
+\begin_inset Formula $d$
+\end_inset
+
+ 
+\begin_inset CommandInset ref
+LatexCommand nameref
+reference "def:kde-univ"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ de idéntico ancho de banda 
+\begin_inset Formula $h$
+\end_inset
+
+ .
+ Sea 
+\begin_inset Formula $\M=\R^{d}$
+\end_inset
+
+ y 
+\begin_inset Formula $d_{M}\left(p,q|\Sigma\right)$
+\end_inset
+
+ la 
+\begin_inset CommandInset ref
+LatexCommand nameref
+reference "rem:mahalanobis-dist"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ con covarianza 
+\begin_inset Formula $\Sigma$
+\end_inset
+
+.
+ Como 
+\begin_inset Formula $\norm{\Sigma^{-1/2}\left(p-q\right)}=d_{M}\left(p,q|\Sigma\right)$
+\end_inset
+
+ y 
+\begin_inset Formula $\Sigma$
+\end_inset
+
+ es una transformación lineal, 
+\begin_inset Formula $\forall p,q\in\R^{d},\ \theta_{p}\text{\left(q\right)}=\det\text{\ensuremath{\Sigma^{1/2}=}}\left(\det\Sigma\right)^{1/2}$
+\end_inset
+
+ y 
+\begin_inset Formula 
+\begin{align*}
+\widehat{f}(x|\Sigma) & =N^{-1}\sum_{i=1}^{N}\frac{1}{h^{d}}\frac{1}{\theta_{X_{i}}\left(p\right)}K\left(\frac{d_{g}\left(p,X_{i}\right)}{h}\right)\\
+ & ={\displaystyle N^{-1}\sum_{i=1}^{N}\frac{1}{h^{d}}\frac{1}{\left(\det\Sigma\right)^{-1/2}}K\left(\frac{d_{M}\left(p,X|\Sigma\right)}{h}\right)}\\
+ & ={\displaystyle N^{-1}\sum_{i=1}^{N}\frac{1}{h^{d}}\frac{1}{\left(\det\Sigma\right)^{-1/2}}K\left(\frac{\norm{\Sigma^{-1/2}\left(x-X_{i}\right)}}{h}\right)}\\
+ & =N^{-1}\sum_{i=1}^{N}\frac{1}{h^{d}}K_{\Sigma}\left(\frac{\norm{x-X_{i}}}{h}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark
+y el estimador en variedades es consistente con el caso general del 
+\begin_inset CommandInset ref
+LatexCommand nameref
+reference "def:kde-multiv"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -4264,15 +4464,29 @@ radio de inyectividad
 \begin_inset Formula $\M$
 \end_inset
 
- (Chavel1993, p.
- 108; Muñoz2011, p.
- 23)
+
 \begin_inset Foot
 status collapsed
 
 \begin_layout Definition
-(Muñoz2011, p.
- 23, definición 3.3.16) Sea 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "p. 108"
+key "chavelRiemannianGeometryModern2006"
+literal "false"
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after "p. 23"
+key "munozEstimacionNoParametrica2011"
+literal "false"
+
+\end_inset
+
+ Sea 
 \begin_inset Formula $(\M,g)$
 \end_inset
 
@@ -4395,7 +4609,24 @@ muy cercano a
 \end_inset
 
 .
- REPASAR.
+ Lo ventajoso de que 
+\begin_inset Formula $h$
+\end_inset
+
+ esté por debajo del radio de inyectividad, será que al integrar sobre las
+ bolas que soportan el núcleo 
+\begin_inset Formula $K$
+\end_inset
+
+ alrededor de cada 
+\begin_inset Formula $p\in\M$
+\end_inset
+
+, la densidad se podrá integrar - luego de una transformación - en 
+\begin_inset Formula $\R^{d},$
+\end_inset
+
+ donde nuestras herramientas tradicionales han sido afinadas.
 \end_layout
 
 \end_inset
@@ -4414,70 +4645,63 @@ muy cercano a
 \begin_inset Formula $h\rightarrow0$
 \end_inset
 
-), 
+), siempre existe un 
 \begin_inset Formula $0<h<h_{0}$
 \end_inset
 
-.
+ posible.
 \end_layout
 
 \begin_layout Standard
-Pelletier2005 avanza algunas propiedades elementales de este estimador:
- adapta el concepto de 
-\begin_inset Quotes eld
+Pelletier avanza algunas propiedades elementales de este estimador: adapta
+ el concepto de 
+\begin_inset Quotes fld
 \end_inset
 
 media
-\begin_inset Quotes erd
+\begin_inset Quotes frd
 \end_inset
 
  para elementos aleatorios en 
 \begin_inset Formula $\R^{d}$
 \end_inset
 
- a e.a.
- en variedades Riemannianas compactas sin frontera 
-\begin_inset Formula $\M$
-\end_inset
-
- (Proposición II, 
-\begin_inset Quotes eld
+ a el de 
+\begin_inset Quotes fld
 \end_inset
 
 media intrínseca
-\begin_inset Quotes erd
+\begin_inset Quotes frd
 \end_inset
 
-), y prueba que 
-\begin_inset Formula $f_{N,K}$
-\end_inset
-
- es un estimador consistente 
-\begin_inset Foot
-status open
-
-\begin_layout Plain Layout
-Pelletier considera la convergencia en 
-\begin_inset Formula $L^{2}\left(\M\right),$
-\end_inset
-
- ¿esto sería consistencia débil? ¿Qué diferencia hay con la que estudian
- Henry&Rodríguez2009?
-\end_layout
+ en variedades Riemannianas compactas sin frontera 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "Prop. II"
+key "pelletierKernelDensityEstimation2005"
+literal "false"
 
 \end_inset
 
- de 
+), y prueba que es consistente para 
 \begin_inset Formula $f$
 \end_inset
 
- (Teorema 5), en el siguiente sentido
+ en el siguiente sentido
 \end_layout
 
 \begin_layout Theorem
-(Teorema 5, Pelletier 2005) 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "Teorema 5"
+key "pelletierKernelDensityEstimation2005"
+literal "false"
+
+\end_inset
+
+
 \emph on
-Sea 
+ Sea 
 \begin_inset Formula $f$
 \end_inset
 
@@ -4487,7 +4711,7 @@ Sea
 
  con segunda derivada covariante acotada.
  Sea 
-\begin_inset Formula $f_{N,K}$
+\begin_inset Formula $\hat{f}$
 \end_inset
 
  su estimador definido en 
@@ -4525,7 +4749,7 @@ noprefix "false"
 \begin_layout Theorem
 \begin_inset Formula 
 \[
-E_{f}\norm{f_{N,K}-f}_{L^{2}\left(\M\right)}^{2}\leq C_{f}\left(\frac{1}{Nh^{d}}+h^{4}\right)
+E_{f}\norm{\hat{f}-f}_{L^{2}\left(\M\right)}^{2}\leq C_{f}\left(\frac{1}{Nh^{d}}+h^{4}\right)
 \]
 
 \end_inset
@@ -4545,7 +4769,7 @@ En consecuencia, para
 
 \begin_inset Formula 
 \[
-E_{f}\norm{f_{N,K}-f}_{L^{2}\left(\M\right)}^{2}\leq\text{O}\left(N^{\frac{-4}{d+4}}\right)
+E_{f}\norm{\hat{f}-f}_{L^{2}\left(\M\right)}^{2}\leq\text{O}\left(N^{\frac{-4}{d+4}}\right)
 \]
 
 \end_inset
@@ -4561,7 +4785,25 @@ E_{f}\norm{f_{N,K}-f}_{L^{2}\left(\M\right)}^{2}\leq\text{O}\left(N^{\frac{-4}{d
 \end_layout
 
 \begin_layout Standard
-Henry & Rodríguez2009 continúan el estudio de este estimador, probando
+
+\color red
+Pelletier considera la convergencia en 
+\begin_inset Formula $L^{2}\left(\M\right),$
+\end_inset
+
+ ¿esto qué tipo de consistencia sería? ¿débil? ¿Qué diferencia hay con la
+ que estudian Henry&Rodríguez2009?
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "henryKernelDensityEstimation2009"
+literal "false"
+
+\end_inset
+
+ continúan el estudio de este estimador, probando
 \end_layout
 
 \begin_layout Enumerate
@@ -4616,8 +4858,19 @@ bajo condiciones extras sobre
 \end_layout
 
 \begin_layout Standard
-Loubes y Pelletier (2010) extienden el trabajo de Pelletier 2005, proponiendo
- un clasificador binario basado en núcleos, para e.a.
+\begin_inset CommandInset citation
+LatexCommand cite
+key "loubesKernelbasedClassifierRiemannian2008"
+literal "false"
+
+\end_inset
+
+ se apalancan sobre los resultados previos proponiendo un clasificador binario
+ (
+\begin_inset Formula $M=2$
+\end_inset
+
+) basado en núcleos, para e.a.
  soportados sobre variedades compactas y cerradas de Riemann.
  Recordemos que en 
 \begin_inset CommandInset ref
@@ -4646,8 +4899,8 @@ de manera que podemos describir una reglas de clasificación dura, como
 \begin_inset Formula 
 \begin{align*}
 \mathcal{R}\left(x\vert f_{1},\dots,f_{K}\right) & =\arg\max_{j\in\left[K\right]}p\left(C\left(x\right)=j\right)\\
- & =\arg\max_{j\in\left[K\right]}\frac{f^{(j)}\left(x\right)\cdot p\text{\ensuremath{\left(C_{j}\right)}}}{\sum_{j\in\left[K\right]}f^{(j)}\left(x\right)\cdot p\text{\ensuremath{\left(C_{j}\right)}}}\\
- & \arg\max_{j\in\left[K\right]}f^{(j)}\left(x\right)\cdot p\text{\ensuremath{\left(C_{j}\right)}}
+ & =\arg\max_{j\in\left[K\right]}\frac{f_{j}\left(x\right)\cdot p\text{\ensuremath{\left(C_{j}\right)}}}{\sum_{j\in\left[K\right]}f_{j}\left(x\right)\cdot p\text{\ensuremath{\left(C_{j}\right)}}}\\
+ & \arg\max_{j\in\left[K\right]}f_{j}\left(x\right)\cdot p\text{\ensuremath{\left(C_{j}\right)}}
 \end{align*}
 
 \end_inset
@@ -4666,7 +4919,7 @@ name "def:manif-clf-kde"
 
 \begin_inset Formula 
 \begin{align*}
-\mathcal{\hat{R}}\left(x\vert\hat{f}_{1},\dots,\hat{f}_{K}\right) & =\arg\max_{j\in\left[K\right]}\hat{f}^{(j)}\left(x\right)\cdot\hat{p}\left(C_{j}\right)\\
+\mathcal{\hat{R}}\left(x\vert\hat{f}_{1},\dots,\hat{f}_{K}\right) & =\arg\max_{j\in\left[K\right]}\hat{f}_{j}\left(x\right)\cdot\hat{p}\left(C_{j}\right)\\
  & =\arg\max_{j\in\left[K\right]}N_{j}^{-1}\sum_{i=1}^{N}\frac{1}{h^{d}}\frac{1}{\theta_{X_{i}}\left(p\right)}K\left(\frac{d_{g}\left(p,X_{i}\right)}{h}\right)\cdot\frac{N_{j}}{N}\\
  & =\arg\max_{j\in\left[K\right]}\sum_{i=1}^{N}\mathbf{1}\left\{ C\left(X_{i}\right)=j\right\} K_{h}\left(p,X_{i}\right)
 \end{align*}
@@ -4689,12 +4942,25 @@ K_{h}\left(p,X_{i}\right)=\frac{1}{h^{d}}\frac{1}{\theta_{X_{i}}\left(p\right)}K
 \end_layout
 
 \begin_layout Standard
-Este es, precisamente, el clasificador que Loubes y Pelletier proponen.
+Este es, precisamente, el clasificador que Loubes y Pelletier proponen,
+ adaptado para 
+\begin_inset Formula $M$
+\end_inset
+
+ clases.
  Considerando como función objetivo a minimizar la misma probabilidad de
- error de clasificación que vimos con Hall2005, 
+ error de clasificación que vimos con 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "hallBandwidthChoiceNonparametric2005"
+literal "false"
+
+\end_inset
+
+,
 \begin_inset Formula 
 \[
-L\left(\mathcal{R}\right)=Pr\left(\mathcal{R}\left(X\right)=C\left(X\right)\right)
+L\left(\mathcal{R}\right)=Pr\left(\mathcal{R}\left(X\right)\ne C\left(X\right)\right)
 \]
 
 \end_inset
@@ -4732,7 +4998,16 @@ con
 \end_layout
 
 \begin_layout Standard
-Siguiendo a Drevoye1996, diremos que el clasificador es 
+Siguiendo a 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "§6 Consistencia"
+key "devroyeProbabilisticTheoryPattern1996"
+literal "false"
+
+\end_inset
+
+, diremos que el clasificador es 
 \emph on
 fuertemente consistente
 \emph default
@@ -4745,11 +5020,24 @@ fuertemente consistente
  del trabajo.
 \end_layout
 
+\begin_layout Subsection
+Variedades desconocidas
+\end_layout
+
 \begin_layout Standard
-Los resultados combinados de Pelletier, Henry, Rodríguez y Loubes nos dejan
- bastante cerca de lo que venimos buscando - construir un clasificador basado
- en densidades -, con una diferencia fatal: estos trabajos consideran variedades
- 
+Los resultados combinados de 
+\begin_inset CommandInset ref
+LatexCommand nameref
+reference "subsec:KDE-en-variedades"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ nos dejan bastante cerca de lo que venimos buscando - construir un clasificador
+ basado en densidades -, con una diferencia fatal: estos trabajos consideran
+ variedades 
 \emph on
 conocidas
 \emph default
@@ -4758,33 +5046,113 @@ conocidas
 hipótesis de la variedad
 \emph default
 , pero en principio no conocemos la variedad en sí.
- Crucialmente, desconocer la variedad implica desconocer dos cosas: la distancia
- geodésica 
+ Crucialmente, desconocer la variedad 
+\begin_inset Formula $\M=\t{sop}X$
+\end_inset
+
+ implica desconocer:
+\end_layout
+
+\begin_layout Itemize
+su dimensión intrínseca 
+\begin_inset Formula $d_{\M}$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+la distancia geodésica 
 \begin_inset Formula $d_{g}$
 \end_inset
 
- y la función de densidad de volumen 
+,
+\end_layout
+
+\begin_layout Itemize
+y la función de densidad de volumen 
 \begin_inset Formula $\theta_{p}$
 \end_inset
 
-, que tendremos que 
-\emph on
-aprender de los datos
-\emph default
- de alguna manera, junto con la densidad 
-\begin_inset Formula $f$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsubsection
-Isomap
+,
 \end_layout
 
 \begin_layout Standard
-Consideraremos brevemente uno de los algoritmos más famosos de aprendizaje
- de variedades no-lineales: Isomap
+aún 
+\emph on
+antes 
+\emph default
+de estimar la densidad 
+\begin_inset Formula $f:\M\rightarrow\R^{+}$
+\end_inset
+
+, que nos trajo hasta aquí.
+ Por partes o juntas, tendremos que 
+\emph on
+aprenderlas de los datos
+\emph default
+ de alguna manera.
+\end_layout
+
+\begin_layout Subsubsection
+La distancia geodésica 
+\begin_inset Formula $d_{g}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Dada la naturaleza localmente euclídea de las variedades, para puntos 
+\begin_inset Quotes eld
+\end_inset
+
+vecinos
+\begin_inset Quotes erd
+\end_inset
+
+ entre sí, la distancia en 
+\begin_inset Formula $\R^{d_{x}}$
+\end_inset
+
+ (en el espacio 
+\begin_inset Quotes fld
+\end_inset
+
+ambiente
+\begin_inset Quotes frd
+\end_inset
+
+ en que está 
+\begin_inset Quotes fld
+\end_inset
+
+embebida
+\begin_inset Quotes frd
+\end_inset
+
+ 
+\begin_inset Formula $\M$
+\end_inset
+
+) será una aproximación razonable a la distancia geodésica en la variedad.
+ Para puntos alejados entre sí, podemos aproximar 
+\begin_inset Formula $d_{g}$
+\end_inset
+
+ como la suma de una secuencia de 
+\begin_inset Quotes eld
+\end_inset
+
+pequeños saltos
+\begin_inset Quotes erd
+\end_inset
+
+ entre puntos vecinos en el grafo de la muestra.
+\end_layout
+
+\begin_layout Standard
+Esta inocente observación es el núcleo de la innovación de Isomap
 \begin_inset Foot
 status open
 
@@ -4802,8 +5170,15 @@ ping, en inglés
 
 \end_inset
 
-.
- Según Tenenbaum2000, el objetivo explícito de su algoritmo es 
+, algoritmo presentado en 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "tenenbaumMappingManifoldPerceptual1997,tenenbaumGlobalGeometricFramework2000"
+literal "false"
+
+\end_inset
+
+ con el objetivo de 
 \begin_inset Quotes eld
 \end_inset
 
@@ -4812,55 +5187,30 @@ aprender la geometría global subyacente de un dataset, usando información
 \begin_inset Quotes erd
 \end_inset
 
-, para un conjunto amplio de variedades no-lineales.
- La tarea central, consiste en aproximar adecuadamente las distancias geodésicas
+, de entre un conjunto amplio de variedades no-lineales.
+ Su tarea central, consiste en aproximar adecuadamente las distancias geodésicas
  en la variedad 
-\begin_inset Formula $d_{g}\left(x,y\right)$
+\begin_inset Formula $d_{g}\left(p,q\right)$
 \end_inset
 
  entre puntos alejados, conociendo únicamente las distancias euclídeas en
  la muestra 
-\begin_inset Formula $\norm{x-y}$
+\begin_inset Formula $\norm{p-q}$
 \end_inset
 
 .
 \end_layout
 
 \begin_layout Standard
-Dada la naturaleza localmente euclídea de las variedades, para puntos 
-\begin_inset Quotes eld
+El algoritmo completo, consta de tres pasos principales 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "Tabla 1"
+key "tenenbaumGlobalGeometricFramework2000"
+literal "false"
+
 \end_inset
 
-vecinos
-\begin_inset Quotes erd
-\end_inset
-
- entre sí, la distancia en 
-\begin_inset Formula $\R^{d_{x}}$
-\end_inset
-
- (en el espacio de las 
-\begin_inset Formula $X$
-\end_inset
-
-) será una aproximación razonable a la distancia geodésica en la variedad.
- Luego, para puntos alejados entre sí, podemos aproximar 
-\begin_inset Formula $d_{g}$
-\end_inset
-
- como la suma de una secuencia de 
-\begin_inset Quotes eld
-\end_inset
-
-pequeños saltos
-\begin_inset Quotes erd
-\end_inset
-
- entre puntos vecinos en el grafo de la muestra.
-\end_layout
-
-\begin_layout Standard
-El algoritmo completo, consta de tres pasos principales (Tabla 1, Tenenbaum2000)
 :
 \end_layout
 
@@ -4870,7 +5220,7 @@ El algoritmo completo, consta de tres pasos principales (Tabla 1, Tenenbaum2000)
 Constrúyase un grafo de vecinos muestrales
 \series default
  
-\begin_inset Formula $G=\text{\left(X,E\right)}$
+\begin_inset Formula $\mathbf{NN}=\text{\left(\text{\X},E\right)}$
 \end_inset
 
  sobre el dataset completo, donde la arista 
@@ -4886,10 +5236,10 @@ Constrúyase un grafo de vecinos muestrales
 \end_inset
 
 
-\begin_inset Formula $\epsilon$
+\begin_inset Formula $\epsilon-$
 \end_inset
 
--Isomap
+Isomap
 \begin_inset Quotes erd
 \end_inset
 
@@ -4905,7 +5255,19 @@ Constrúyase un grafo de vecinos muestrales
 \begin_inset Formula $x$
 \end_inset
 
- .
+ (
+\begin_inset Quotes fld
+\end_inset
+
+
+\begin_inset Formula $K-$
+\end_inset
+
+isomap
+\begin_inset Quotes frd
+\end_inset
+
+) .
  Tómese 
 \begin_inset Formula $\norm{x-y}$
 \end_inset
@@ -4922,21 +5284,38 @@ Constrúyase un grafo de vecinos muestrales
 \series bold
 Compútense los caminos mínimos
 \series default
-, usando - según convenga - el algoritmo de Floyd-Warshall o Dijsktra en
- el grafo 
+, usando - según convenga - el algoritmo de 
+\begin_inset CommandInset href
+LatexCommand href
+name "Floyd-Warshall"
+target "https://es.wikipedia.org/wiki/Algoritmo_de_Floyd-Warshall"
+literal "false"
+
+\end_inset
+
+ o 
+\begin_inset CommandInset href
+LatexCommand href
+name "Dijsktra"
+target "https://es.wikipedia.org/wiki/Algoritmo_de_Dijkstra"
+literal "false"
+
+\end_inset
+
+ en 
 \begin_inset Formula $G$
 \end_inset
 
 .
  Los costos de los caminos mínimos 
-\begin_inset Formula $d_{G}\left(x,y\right)$
+\begin_inset Formula $d_{\mathbf{NN}}\left(x,y\right)$
 \end_inset
 
- constituyen una aproximación de las distnacias geodésicas 
-\begin_inset Formula $d_{\M}\left(x,y\right)$
+ constituyen una aproximación de las distancias geodésicas 
+\begin_inset Formula $d_{g}\left(x,y\right)$
 \end_inset
 
- .
+.
 \end_layout
 
 \begin_layout Enumerate
@@ -4953,27 +5332,64 @@ embedding
 dimensional.
  
 \series default
-Utilizando escalamiento multidimensional (MDS, MultiDimensional Scaling,
- un algoritmo de reducción de dimensionalidad), crear una representación
- (embedding) en el espacio euclídeo 
+Utilizando 
+\begin_inset CommandInset href
+LatexCommand href
+name "escalamiento multidimensional"
+target "https://es.wikipedia.org/wiki/Escalamiento_multidimensional"
+literal "false"
+
+\end_inset
+
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+MDS, 
+\series bold
+M
+\series default
+ulti
+\series bold
+d
+\series default
+imensional 
+\series bold
+S
+\series default
+caling
+\end_layout
+
+\end_inset
+
+, un algoritmo de reducción de dimensionalidad), crear una representación
+ (
+\begin_inset Quotes fld
+\end_inset
+
+embedding
+\begin_inset Quotes frd
+\end_inset
+
+) en el espacio euclídeo 
 \begin_inset Formula $\R^{d}$
 \end_inset
 
- que minimice una métrica de discrepancia entre las distancias computadas
- en (2), con las distancias en la representación a construir, llamada 
-\begin_inset Quotes eld
+ que minimice una métrica de discrepancia denominada 
+\begin_inset Quotes fld
 \end_inset
 
-stress
-\begin_inset Quotes erd
+estrés
+\begin_inset Quotes frd
 \end_inset
 
- o 
-\begin_inset Quotes eld
+, entre las distancias 
+\begin_inset Formula $d_{\mathbf{NN}}$
 \end_inset
 
-strain
-\begin_inset Quotes erd
+ antes computadas con las distancias en la representación a construir 
+\begin_inset Formula $\norm{\cdot-\cdot}_{\R^{d}}$
 \end_inset
 
 .
@@ -5018,15 +5434,15 @@ Los resultados de este algoritmo - que han sido bastante espectaculares
 \end_inset
 
 ) y de la densidad 
-\begin_inset Formula $f:\M\rightarrow\R>0$
+\begin_inset Formula $f$
 \end_inset
 
  de la que estamos sampleando.
 \end_layout
 
 \begin_layout Standard
-Allende los costos computacionales, hay dos parámetros a fijar en este algoritmo
-: el parámetro de 
+Allende los costos computacionales, hay dos parámetros a fijar en este algoritmo.
+ El primero es el parámetro de 
 \begin_inset Quotes eld
 \end_inset
 
@@ -5042,53 +5458,7 @@ vecindad
 \begin_inset Formula $K$
 \end_inset
 
- en (1), y la dimensión 
-\begin_inset Formula $d$
-\end_inset
-
- en (3).
- Inspeccionando el gráfico de 
-\begin_inset Quotes eld
-\end_inset
-
-estrés
-\begin_inset Quotes erd
-\end_inset
-
- de MDS como función de la dimensión 
-\begin_inset Formula $d$
-\end_inset
-
- escogida, se pueden buscar un punto de inflexión (
-\begin_inset Quotes eld
-\end_inset
-
-codo
-\begin_inset Quotes erd
-\end_inset
-
-) en que seguir aumentando 
-\begin_inset Formula $d$
-\end_inset
-
- no aliviana significativamente la tensión del algoritmo, y son por tanto
- candidatos naturales a la dimensión intrínseca de la variedad 
-\begin_inset Formula $d_{\M}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-Por su parte, el valor óptimo de 
-\begin_inset Formula $\epsilon$
-\end_inset
-
- ó 
-\begin_inset Formula $K$
-\end_inset
-
- no cuenta con una regla inmediata para su determinación.
+ de (1), cuyo valor óptimo no es trivial determinar.
  Consideremos 
 \begin_inset Formula $\epsilon-$
 \end_inset
@@ -5106,11 +5476,19 @@ Isomap: valores demasiado pequeños de
 \begin_inset Formula $G;$
 \end_inset
 
-valores demasiado grandes de 
+ valores demasiado grandes de 
 \begin_inset Formula $\epsilon$
 \end_inset
 
- podrían llevar a incluir en 
+ podrían 
+\begin_inset Quotes fld
+\end_inset
+
+cortocircuitar
+\begin_inset Quotes frd
+\end_inset
+
+ la representación - incluir en 
 \begin_inset Formula $G$
 \end_inset
 
@@ -5126,15 +5504,7 @@ valores demasiado grandes de
 \begin_inset Formula $\M$
 \end_inset
 
-, 
-\begin_inset Quotes eld
-\end_inset
-
-cortocircuitando
-\begin_inset Quotes erd
-\end_inset
-
- la representación.
+.
  Consideraciones análogas complican la elección de cantidad de vecinos en
  
 \begin_inset Formula $K-$
@@ -5143,156 +5513,839 @@ cortocircuitando
 Isomap.
 \end_layout
 
-\begin_layout Subsection
-Distancia de Fermat
+\begin_layout Standard
+El otro parámetro de interés es la dimensión 
+\begin_inset Formula $d$
+\end_inset
+
+ del embedding euclídeo 
+\begin_inset Quotes fld
+\end_inset
+
+óptimo
+\begin_inset Quotes frd
+\end_inset
+
+.
+ Inspeccionando el gráfico de 
+\begin_inset Quotes eld
+\end_inset
+
+estrés
+\begin_inset Quotes erd
+\end_inset
+
+ de MDS como función de la dimensión 
+\begin_inset Formula $d$
+\end_inset
+
+ escogida, se pueden buscar punto(s) de inflexión (
+\begin_inset Quotes eld
+\end_inset
+
+codos
+\begin_inset Quotes erd
+\end_inset
+
+) en que seguir aumentando 
+\begin_inset Formula $d$
+\end_inset
+
+ no aliviana significativamente la tensión del algoritmo, y son por tanto
+ candidatos naturales a la dimensión intrínseca de la variedad 
+\begin_inset Formula $d_{\M}$
+\end_inset
+
+.
+ Al menos en ejemplos sintéticos, al método del codo lo heurístico no le
+ quita lo certero.
+ La representación 
+\begin_inset Formula $d-$
+\end_inset
+
+dimensional que produce MDS no es la variedad 
+\begin_inset Formula $\M$
+\end_inset
+
+ que buscamos, pero sí es razonable que con suficientes datos, 
+\begin_inset Formula $d\approx d_{\M}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+La dimensión intrínseca 
+\begin_inset Formula $d_{\M}$
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-La idea central en Isomap, es 
-\emph on
-primero
-\emph default
- aprender/computar una distancia (en el grafo de vecinos más cercanos) y
- 
-\emph on
-luego
-\emph default
- construir un 
-\emph on
-embedding 
-\emph default
-- una representación - en cierta dimensión dada, en lugar de usar una distancia
- dada, para aprender una representación de menor dimensión.
- Sin embargo, por cómo está definido el algoritmo, lo que Isomap aproxima
- es la distancia euclídea en la dimensión intrínseca de la variedad subyacente.
- A nuestros fines, será necesario también considerar la 
-\emph on
-densidad 
-\begin_inset Formula $f$
+La literatura que intenta estimar directamente 
+\begin_inset Formula $d_{\M}$
 \end_inset
 
- en la variedad 
+, compensa su escasez con creatividad.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "brandChartingManifold2002"
+literal "false"
+
+\end_inset
+
+ se propone no sólo estimar 
+\begin_inset Formula $d_{\M}$
+\end_inset
+
+, sino además ofrecer un algoritmo para proveer un 
+\begin_inset Quotes fld
+\end_inset
+
+atlas
+\begin_inset Quotes frd
+\end_inset
+
+ 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+El par 
+\begin_inset Formula $\left(U,\varphi\right)$
+\end_inset
+
+ compuesto por un conjunto abierto 
+\begin_inset Formula $U$
+\end_inset
+
+ medible en 
 \begin_inset Formula $\M$
+\end_inset
+
+, y un homeomorfismo 
+\begin_inset Formula $\varphi:U\rightarrow A\subset\R^{d_{\M}}$
+\end_inset
+
+ también abierto se denomina 
+\begin_inset Quotes fld
+\end_inset
+
+carta
+\begin_inset Quotes frd
+\end_inset
+
+ (
+\begin_inset Quotes fld
+\end_inset
+
+chart
+\begin_inset Quotes frd
+\end_inset
+
+), o 
+\begin_inset Quotes fld
+\end_inset
+
+entorno coordenado
+\begin_inset Quotes frd
+\end_inset
+
+.
+ Un conjunto de cartas 
+\begin_inset Quotes fld
+\end_inset
+
+compatibles
+\begin_inset Quotes frd
+\end_inset
+
+ entre sí cuya unión sea la variedad 
+\begin_inset Formula $\M$
+\end_inset
+
+ es un 
+\begin_inset Quotes fld
+\end_inset
+
+atlas
+\begin_inset Quotes frd
+\end_inset
+
+, exactamente como llamamos en cartografía a un conjunto de mapas - euclídeos
+ en 
+\begin_inset Formula $\R^{2}$
+\end_inset
+
+- cuya unión representa la superficie terrestre 
+\begin_inset Formula $S^{2}.$
+\end_inset
+
+ El trabajo de 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "brandChartingManifold2002"
+literal "false"
+
+\end_inset
+
+ es sumamente interesante, aunque queda algo por fuera del ya extenso paseo
+ bibliográfico.
+ del trabajo de 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "§3.1 \"Variedades Diferenciables\""
+key "munozEstimacionNoParametrica2011"
+literal "false"
+
+\end_inset
+
+ provee los preliminares necesarios para entenderlo.
+\end_layout
+
+\end_inset
+
+ de 
+\begin_inset Formula $\M$
+\end_inset
+
+, una representación harto útil.
+ 
+\end_layout
+
+\begin_layout Standard
+Llamemos 
+\begin_inset Formula $n\text{\left(r\right)}$
+\end_inset
+
+ a la 
+\begin_inset Quotes fld
+\end_inset
+
+función de conteo
+\begin_inset Quotes frd
+\end_inset
+
+ que indica cuántos puntos de 
+\begin_inset Formula $\X$
+\end_inset
+
+ se encuentran dentro de una bola en 
+\begin_inset Formula $\R^{d_{\M}}$
+\end_inset
+
+centrada en un punto 
+\begin_inset Formula $p\in\M$
+\end_inset
+
+.
+ 
+\begin_inset Formula $n\left(r\right)$
+\end_inset
+
+ debería crecer a tasa 
+\begin_inset Formula $r^{d_{\M}}$
+\end_inset
+
+, pero únicamente en la escala en la que la variedad es efectivamente localmente
+ lineal.
+ Si hay ruido en la medición en 
+\begin_inset Formula $\R^{d_{x}},$
+\end_inset
+
+ en la mínima escala los puntos se encontrarán en toda dirección y 
+\begin_inset Formula $n\left(r\right)$
+\end_inset
+
+ crecerá a tasa 
+\begin_inset Formula $r^{d_{x}}$
+\end_inset
+
+; en escalas mayores a la localmente lineal, la tasa de crecimiento de 
+\begin_inset Formula $n\left(r\right)$
+\end_inset
+
+ también será mayor, pues la variedad ya no es perpendicular a la superficie
+ de la bola, y la curvatura hace que 
+\begin_inset Formula $r$
+\end_inset
+
+ no deba crecer tan rápido para incorporar nuevos puntos.
+ Un cuidadoso análisis de la tasa de crecimiento de 
+\begin_inset Formula $n\left(r\right)$
+\end_inset
+
+ permitiría identificar la dimensión más probable de la variedad.
+ Aunque teóricamente llamativo, el resultado es costoso de computar y no
+ tan obvio de interpretar para datasets 
+\begin_inset Quotes fld
+\end_inset
+
+naturales
+\begin_inset Quotes frd
+\end_inset
+
+ o sintéticos pero de pequeño 
+\begin_inset Formula $N$
 \end_inset
 
 .
 \end_layout
 
 \begin_layout Standard
-Por ejemplo, si 
-\begin_inset Formula $f$
+\begin_inset CommandInset citation
+LatexCommand cite
+key "vincentManifoldParzenWindows2002"
+literal "false"
+
 \end_inset
 
- fuese una mezcla con iguales pesos de dos leyes gaussianas unidimensionales,
- 
-\begin_inset Formula $\mathcal{N}\left(0,1\right)$
+ presenta una estrategia más directa.
+ El vecindario local de un punto 
+\begin_inset Formula $p\in\M$
 \end_inset
 
- y 
-\begin_inset Formula $\mathcal{N}\left(10,2\right)$
+ debería encontrar a sus vecinos en un subespacio lineal de dimensión 
+\begin_inset Formula $d_{\M}$
 \end_inset
 
-, quisiéramos que el punto 
-\begin_inset Formula $x=5$
+, y espacio ambiente vacío en las demás dimensiones.
+ De computar PCA
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Por 
+\begin_inset Quotes fld
 \end_inset
 
- - euclídeamente equidistante de ambas - estuviese más cerca de 
-\begin_inset Formula $\mathcal{N}\left(10,2\right)$
+consideraciones prácticas
+\begin_inset Quotes frd
 \end_inset
 
- que de 
-\begin_inset Formula $\mathcal{N}\left(0,1\right)$
+, los autores no implementan PCA sino la descomposición en valores singulares,
+ SVD, y toman los 
+\begin_inset Formula $d_{\M}$
 \end_inset
 
- - exactamente como sucedería en 
-\begin_inset Formula $\R^{d}$
+ mayores valores singulares en lugar de los respectivos autovalores.
+ Por qué han de hacerlo así no me queda del todo claro.
+\end_layout
+
 \end_inset
 
- si consideramos la distancia de Mahalanobis 
+ para el vecindario de 
+\begin_inset Formula $p$
+\end_inset
+
+, esperaríamos encontrar 
+\begin_inset Formula $d_{\M}$
+\end_inset
+
+ direcciones principales con autovalores ordenados 
+\begin_inset Formula $\lambda_{1},\dots,\lambda_{d_{\M}}$
+\end_inset
+
+ significativos, y 
+\begin_inset Formula $\lambda_{i}\approx0,\ i>d_{\M}$
+\end_inset
+
+.
+ A partir de esta observación, proponen esencialmente un estimador 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "rem:mahalanobis-dist"
+LatexCommand nameref
+reference "def:kde-multiv"
 plural "false"
 caps "false"
 noprefix "false"
 
 \end_inset
 
-.
-\end_layout
-
-\begin_layout Standard
-En casos reales, ni 
-\begin_inset Formula $f$
+ con una 
+\begin_inset Formula $\mathbf{H}_{i}$
 \end_inset
 
- ni 
-\begin_inset Formula $\M$
+ elegida específicamente para cada 
+\begin_inset Formula $X_{i}$
 \end_inset
 
- se conocerán de antemano, así que pareciera conveniente tratar de aprender
- una distancia que considere ambas a la vez.
- Es exactamente en ese sentido que Groisman et al.
- (2019) proponen la 
-\begin_inset Quotes eld
+ en función de su vecindario 
+\begin_inset Quotes fld
 \end_inset
 
-distancia de Fermat
-\begin_inset Quotes erd
+suave
+\begin_inset Quotes frd
 \end_inset
 
-, una distancia basada en densidades aplicable a variedades que, de alguna
- manera, generaliza el trabajo de Tenenbaum2000.
-\end_layout
-
-\begin_layout Definition
-(distancia de Fermat muestral, adaptado de Definición 2.1 en Groisman2019)
-\end_layout
-
-\begin_layout Definition
-Sea 
-\begin_inset Formula $Q$
+ o 
+\begin_inset Quotes fld
 \end_inset
 
- un conjunto no-vacío, localmente finito, contenido en 
-\begin_inset Formula $\R^{d}$
-\end_inset
-
-.
- Para 
-\begin_inset Formula $\alpha\geq1$
+duro
+\begin_inset Quotes frd
 \end_inset
 
 
-\begin_inset Note Comment
+\begin_inset Foot
 status collapsed
 
 \begin_layout Plain Layout
-hace falta el 
-\begin_inset Quotes eld
+Respectivamente, ponderando la contribución a la matriz de covarianza de
+ cada vecino según un núcleo gaussiano (vecindario 
+\begin_inset Quotes fld
 \end_inset
 
->=1
-\begin_inset Quotes erd
+suave
+\begin_inset Quotes frd
 \end_inset
 
-? o con >= 0 alcanzaria? Tiene algun valor la generalizacion?
+), o calculándola tradicionalmente sobre los K vecinos más cercanos (
+\begin_inset Quotes fld
+\end_inset
+
+duro
+\begin_inset Quotes frd
+\end_inset
+
+) 
 \end_layout
 
 \end_inset
 
- y 
-\begin_inset Formula $s,t\in Q,$
+, añadiendo 
+\begin_inset Formula $\sigma^{2}\mathbf{I}$
 \end_inset
 
- definimos la 
+ a las las 
+\begin_inset Formula $d_{\M}$
+\end_inset
+
+ direcciones principales (a escala).
+ El regularizador 
+\begin_inset Formula $\sigma^{2}\mathbf{I}$
+\end_inset
+
+ provee dos ventajas: evita tener que guardar las 
+\begin_inset Formula $d_{x}$
+\end_inset
+
+ componenetes principales para cada punto, y nos asegura que 
+\begin_inset Formula $\H_{i}$
+\end_inset
+
+ siempre esté bien condicionada, aún cuando el vecindario tiene sólo 
+\begin_inset Formula $K<d_{x}$
+\end_inset
+
+ vecinos.
+ Cuando 
+\begin_inset Formula $d_{\M}$
+\end_inset
+
+ no se conoce de antemano, una heurística como el 
+\begin_inset Quotes fld
+\end_inset
+
+método del codo
+\begin_inset Quotes frd
+\end_inset
+
+ antedicho o 
+\begin_inset Quotes fld
+\end_inset
+
+tantos autovalores como sean necesarios para explicar 
+\begin_inset Formula $X\%$
+\end_inset
+
+ de la varianza
+\begin_inset Quotes frd
+\end_inset
+
+ debería funcionar razonablemente bien.
+\end_layout
+
+\begin_layout Subsubsection
+La densidad de volumen 
+\begin_inset Formula $\theta_{p}\left(q\right)$
+\end_inset
+
+ - TBD
+\end_layout
+
+\begin_layout Subsection
+Distancias basadas en densidad
+\end_layout
+
+\begin_layout Subsubsection
+De Isomap al presente
+\end_layout
+
+\begin_layout Standard
+Al núcleo de 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "tenenbaumGlobalGeometricFramework2000,vincentManifoldParzenWindows2002"
+literal "false"
+
+\end_inset
+
+ y otros, está la idea de considerar el grafo de vecinos más cercanos 
+\series bold
+NN 
+\series default
+de 
+\begin_inset Formula $\X$
+\end_inset
+
+ como aproximación a la estructura de 
+\begin_inset Formula $\M$
+\end_inset
+
+, y asumir que en los vecindarios de cada punto la distancia euclídea aún
+ es representativa.
+ Cuando 
+\begin_inset Formula $\M$
+\end_inset
+
+ está ralamente muestreado, o tiene una curvatura considerable, aún este
+ supuesto relativamente benigno puede resultar fatal.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "vincentDensitySensitiveMetrics2003"
+literal "false"
+
+\end_inset
+
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset CommandInset citation
+LatexCommand cite
+key "bijralSemisupervisedLearningDensity2012"
+literal "false"
+
+\end_inset
+
+ lo cita, pero no me resultó posible encontrar el PDF del trabajo original.
+ Atención a la fecha: 2003, hace dos décadas, probablemente por el trabajo
+ de 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "tenenbaumGlobalGeometricFramework2000"
+literal "false"
+
+\end_inset
+
+ fresquito en la memoria.
+\end_layout
+
+\end_inset
+
+ ya sugiere una alternativa heurística en el contexto de clustering: construir
+ un grafo con aristas pesadas sobre 
+\begin_inset Formula $\X$
+\end_inset
+
+ con pesos iguales 
 \emph on
-distancia de Fermat muestral
+al cuadrado
 \emph default
+ de la distancia (euclídea) entre sus extremos y tomar como distancia entre
+ vértices el costo de camino mínimo correspondiente.
+ 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Esencialmente, lo mismo que Isomap pero con costo 
+\begin_inset Formula $\norm{x-y}^{2}$
+\end_inset
+
+en el primer paso.
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ El cuadrado castiga más severamente los saltos entre puntos alejados, y
+ favorecerá caminos mínimos que pasen por regiones de alta densidad.
+ El trabajo de 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "bijralSemisupervisedLearningDensity2012"
+literal "false"
+
+\end_inset
+
+ ya habla explícitamente de 
+\begin_inset Quotes fld
+\end_inset
+
+distancias basadas en densidad
+\begin_inset Quotes frd
+\end_inset
+
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+DBDs, density-based distances.
+\end_layout
+
+\end_inset
+
+, definidas a partir de transformaciones 
+\begin_inset Formula $g$
+\end_inset
+
+ monótonamente decrecientes en la densidad 
+\begin_inset Formula $f$
+\end_inset
+
+.
+ Más aún, en el caso de la familia 
+\begin_inset Formula $g\left(f|r\right)=f^{-r}$
+\end_inset
+
+ que resulta de pesar el grafo según 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\norm{x-y}^{q}\t{donde\ }q=rd+1$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+, considera su estimación empírica en el grafo completo de vértices 
+\begin_inset Formula $\X$
+\end_inset
+
+.
+ La dimensión intrínseca 
+\begin_inset Formula $d$
+\end_inset
+
+ de la variedad a estimar casi nunca es conocida de antemano, pero esto
+ no es obstáculo para aplicar esta familia: podemos elegir - por validación
+ cruzada, por ejemplo - 
+\begin_inset Formula $q$
+\end_inset
+
+ directamente, y atrapar en dicho parámetro 
+\begin_inset Formula $r,d$
+\end_inset
+
+ a la vez.
+\end_layout
+
+\begin_layout Remark
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset citation
+LatexCommand cite
+after "§3"
+key "bijralSemisupervisedLearningDensity2012"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+Cuando la densidad es efectivamente uniforme en la variedad, 
+\begin_inset Formula $f$
+\end_inset
+
+ es constante en 
+\begin_inset Formula $\M$
+\end_inset
+
+ y 
+\begin_inset Formula $g$
+\end_inset
+
+ también, así que medir la distancia entre puntos según 
+\begin_inset Formula $\norm{x-y}$
+\end_inset
+
+es óptimo.
+ Lamentablemente, las densidades que buscamos estimar nunca son uniformes.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark
+Para Isomap, el parámetro de vecindad es clave, en tanto 
+\begin_inset Quotes fld
+\end_inset
+
+esculpe
+\begin_inset Quotes frd
+\end_inset
+
+ la estructura local del grafo completo.
+ Al usar una distancia basada en densidad, tal restricción ya no es necesaria.
+ Se puede elegir un 
+\begin_inset Formula $k,\epsilon$
+\end_inset
+
+ pequeño por consideraciones computacionales, pero en principio las distancias
+ basadas en densidad sólo se benefician al agrandar los vencindarios a considera
+r.
+\end_layout
+
+\begin_layout Standard
+La década de los 2010 fue fructífera para las distancias basadas en densidad,
+ y hacia fines de ella se dan múltiples resultados sólidos casi en paralelo.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "chuExactComputationManifold2019"
+literal "false"
+
+\end_inset
+
+ prueba una relación sorprendente entre la distancia de vecinos más cercanos
+ y la de 
+\begin_inset Quotes fld
+\end_inset
+
+aristas cuadradas
+\begin_inset Quotes frd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset citation
+LatexCommand cite
+after "Definición 1.1"
+key "chuExactComputationManifold2019"
+literal "false"
+
+\end_inset
+
+ Dada una función de costo continua 
+\begin_inset Formula $c:\R^{d}\rightarrow\R$
+\end_inset
+
+ definimos el costo 
+\begin_inset Quotes fld
+\end_inset
+
+basado en densidad
+\begin_inset Quotes frd
+\end_inset
+
+ de un sendero 
+\begin_inset Formula $\gamma$
+\end_inset
+
+ relativo a 
+\begin_inset Formula $c$
+\end_inset
+
+ como 
+\begin_inset Formula $c\left(\gamma\right)=\int_{0}^{1}c\left(\gamma\left(t\right)\right)\norm{\gamma'\left(t\right)}dt$
+\end_inset
+
+, donde el sendero 
+\begin_inset Formula $\gamma$
+\end_inset
+
+ es un mapa continuo 
+\begin_inset Formula $\gamma:\left[0,1\right]\rightarrow\R^{d}$
+\end_inset
+
+.
+ Sea 
+\begin_inset Formula $\t{senderos}\left(p,q\right)$
+\end_inset
+
+ el conjunto de senderos 
+\begin_inset Formula $C^{1}$
+\end_inset
+
+ de a tramos
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+i.e., con primera derivada continua.
+ Es el conjunto de senderos sobre los que es factible computar 
+\begin_inset Formula $c\left(\gamma\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ Definimos la DBD entre dos puntos 
+\begin_inset Formula $p,q\in\R^{d}$
+\end_inset
+
  como 
 \begin_inset Formula 
 \[
-D_{Q,\alpha}\left(s,t\right)=\inf\left\{ \sum_{j=1}^{K-1}\norm{x_{i_{j}+1}-x_{i_{j}}}^{\alpha}:\left(q_{1},\dots,q_{K}\right)\text{es un camino de \ensuremath{s} a \ensuremath{t}},q_{i}\in Q\forall i\in\left[K\right],K\geq1\right\} 
+d_{c}(p,q)=\inf_{\gamma\in\t{senderos}\left(p,q\right)}c\left(\gamma\right)
 \]
 
 \end_inset
@@ -5301,12 +6354,292 @@ D_{Q,\alpha}\left(s,t\right)=\inf\left\{ \sum_{j=1}^{K-1}\norm{x_{i_{j}+1}-x_{i_
 \end_layout
 
 \begin_layout Standard
-Los autores definen esta distancia muestral para conjuntos arbitrarios 
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset citation
+LatexCommand cite
+after "Definición 1.2"
+key "chuExactComputationManifold2019"
+literal "false"
+
+\end_inset
+
+Sea 
+\begin_inset Formula $Q\subseteq\R^{d}$
+\end_inset
+
+ un conjunto finito.
+ Definiremos la métrica de vecino más cercano, 
+\begin_inset Formula $\mathbf{r}_{Q}\left(a\right)=4\min_{q\in Q}\norm{a-q}$
+\end_inset
+
+ y la distancia asociada como 
+\begin_inset Formula 
+\[
+d_{\mathbf{N}}\left(a,b\right)\coloneqq d_{\mathbf{r}_{Q}}\forall\ a,b\in\R^{d}
+\]
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset citation
+LatexCommand cite
+after "Definición 1.3"
+key "chuExactComputationManifold2019"
+literal "false"
+
+\end_inset
+
+Para un conjunto de puntos 
+\begin_inset Formula $Q\in\R^{d},$
+\end_inset
+
+la distancia de aristas cuadradas 
+\begin_inset Formula $\forall\ p,q\in Q$
+\end_inset
+
+ es
+\begin_inset Formula 
+\[
+d_{\mathbf{2}}\left(a,b\right)=\inf_{\left(q_{0},\dots,q_{k}\right)}\sum_{i=1}^{k}\norm{q_{i}-q_{i-1}}^{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+donde el ínfimo es sobre secuencia de 
+\begin_inset Formula $k$
+\end_inset
+
+ puntos con 
+\begin_inset Formula $q_{0}=a$
+\end_inset
+
+ y 
+\begin_inset Formula $q_{k}=b$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Theorem
+\begin_inset CommandInset citation
+LatexCommand cite
+after "Definición 1.3"
+key "chuExactComputationManifold2019"
+literal "false"
+
+\end_inset
+
+ La métria de vecino más cercano y la métrica de aristas cuadradas son equivalen
+tes para cualquier conjunto finito de puntos 
 \begin_inset Formula $Q$
 \end_inset
 
-, pero de aquí en más consideraremos 
-\begin_inset Formula $Q=\left\{ \mathbf{x}\right\} $
+ en dimensión arbitraria
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+El resultado es aún más fuerte: establece que 
+\begin_inset Formula $d_{\mathbf{N}}\equiv d_{\mathbf{2}}$
+\end_inset
+
+ para todo 
+\begin_inset Formula $Q$
+\end_inset
+
+ sea una colección finita de conjuntos compactos conectados por senderos.
+ Es decir, si reemplazamos los puntos por 
+\begin_inset Quotes fld
+\end_inset
+
+regiones compactas
+\begin_inset Quotes frd
+\end_inset
+
+ del espacio - que no tenga costo atravesar -, la equivalencia aguanta.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Contar con una aproximación en un grafo finito para computar una distancia
+ sobre senderos arbitrarios en el espacio ambiente es un resultado muy poderoso.
+ Sin embargo, ya 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "§2"
+key "bijralSemisupervisedLearningDensity2012"
+literal "false"
+
+\end_inset
+
+ mencionaba que la construcción de un estimador 
+\begin_inset Formula $\hat{f}$
+\end_inset
+
+ basado en la métrica de vecino más cercano es insesgado para la 
+\emph on
+mediana
+\emph default
+, pero no es consistente, pues su varianza permanece constante aún cuando
+ 
+\begin_inset Formula $N\rightarrow\infty$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Distancia de Fermat
+\end_layout
+
+\begin_layout Standard
+El estudio de las distancias correspondientes a las funciones de costo 
+\begin_inset Formula $g=f^{-r}$
+\end_inset
+
+, equivalentes continuos a la distancia de camino mínimo en el grafo pesado
+ por 
+\begin_inset Formula $\norm{x-y}^{q}$
+\end_inset
+
+, es estudiado por 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "mckenziePowerWeightedShortest2019,littleBalancingGeometryDensity2021,groismanNonhomogeneousEuclideanFirstpassage2019"
+literal "false"
+
+\end_inset
+
+, con diferencias de notación y aplicación, pero no sustantivas.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "Def. 2.1"
+key "groismanNonhomogeneousEuclideanFirstpassage2019"
+literal "false"
+
+\end_inset
+
+ considera la generalización 
+\begin_inset Formula $\mathbf{d_{\alpha}}$
+\end_inset
+
+ de 
+\begin_inset Formula $\mathbf{d_{2}}$
+\end_inset
+
+, que llaman 
+\begin_inset Quotes fld
+\end_inset
+
+distancia de Fermat muestral
+\begin_inset Quotes frd
+\end_inset
+
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset citation
+LatexCommand cite
+key "mckenziePowerWeightedShortest2019,littleBalancingGeometryDensity2021"
+literal "false"
+
+\end_inset
+
+ consideran una versión 
+\begin_inset Quotes fld
+\end_inset
+
+normalizada
+\begin_inset Quotes frd
+\end_inset
+
+ de la distancia de Fermat, 
+\begin_inset Formula $\left(d_{\mathbf{\alpha}}\left(a,b\right)\right)^{1/\alpha}$
+\end_inset
+
+.
+ Donde éstos últimos autores consideran una 
+\begin_inset Formula $f$
+\end_inset
+
+ definida en la unión de variedades disjuntas y usan la distancia resultante
+ para 
+\begin_inset Quotes fld
+\end_inset
+
+clustering espectral
+\begin_inset Quotes frd
+\end_inset
+
+, los primeros consideran una única variedad compacta y usan la distancia
+ en clustering por 
+\begin_inset Formula $K-$
+\end_inset
+
+medoides.
+ Para evitar estirar este de por sí extenso censo del arte, la exposición
+ posterior corresponde únicamente a 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "groismanNonhomogeneousEuclideanFirstpassage2019"
+literal "false"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{equation}
+d_{Q\mathbf{,\alpha}}\left(a,b\right)=\inf_{\left(q_{0},\dots,q_{K}\right)}\sum_{i=1}^{K}\norm{q_{i}-q_{i-1}}^{\alpha},\ \alpha\geq1\label{eq:sample-fermat-dist}
+\end{equation}
+
+\end_inset
+
+ Los autores definen esta distancia muestral para conjuntos arbitrarios
+ 
+\begin_inset Formula $Q$
+\end_inset
+
+, pero en general consideraremos 
+\begin_inset Formula $Q=\X$
 \end_inset
 
 , la muestra 
@@ -5315,7 +6648,7 @@ Los autores definen esta distancia muestral para conjuntos arbitrarios
 
 -dimensional de interés.
  Nótese que 
-\begin_inset Formula $D_{Q,\alpha}$
+\begin_inset Formula $d_{Q\mathbf{,\alpha}}$
 \end_inset
 
  satisface la desigualdad triangular, y define una métrica sobre 
@@ -5323,44 +6656,39 @@ Los autores definen esta distancia muestral para conjuntos arbitrarios
 \end_inset
 
 .
- Cuando no sea estrictamente necesario, omitiremos en la notación la dependencia
- en 
+ Cuando no se preste a confusión, omitiremos la dependencia en 
 \begin_inset Formula $Q,\alpha$
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Remark
-La distancia de Fermat muestral es el costo del camino mínimo en el grafo
- 
+ A continuación, se define la versión 
 \emph on
-completo 
+macroscópica
 \emph default
-de 
-\begin_inset Formula $Q$
-\end_inset
-
-, con las aristas pesadas por una potencia 
-\begin_inset Formula $\alpha$
-\end_inset
-
- de la distancia euclídea.
- Cuando 
-\begin_inset Formula $Q=\left\{ \mathbf{x}\right\} ,\ K=N,\ \alpha=1$
-\end_inset
-
-, la distancia del paso (1) en Isomap es idéntica a la distancia muestral
- de Fermat.
-\end_layout
-
-\begin_layout Remark
-A continuación, definen la versión macroscópica de la distancia de Fermat
- muestral,
+ de la distancia de Fermat muestral.
 \end_layout
 
 \begin_layout Definition
-(distancia de Fermat, definicion 2.2) Sea 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[distancia de Fermat]
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after "Definicion 2.2"
+key "groismanNonhomogeneousEuclideanFirstpassage2019"
+literal "false"
+
+\end_inset
+
+ Sea 
 \begin_inset Formula $\M$
 \end_inset
 
@@ -5383,7 +6711,25 @@ A continuación, definen la versión macroscópica de la distancia de Fermat
 .
  Definimos la 
 \emph on
-distancia de Fermat 
+distancia de Fermat macroscópica
+\emph default
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+O 
+\emph on
+distancia de Fermat
+\emph default
+, a secas.
+\end_layout
+
+\end_inset
+
+
+\emph on
+ 
 \begin_inset Formula $\mathcal{D}_{f,\beta}\left(s,t\right)$
 \end_inset
 
@@ -5420,10 +6766,7 @@ donde el ínfimo esta tomado sobre el conjunto de todos los caminos continuos
 
 , y la integral es respecto de la longitud de arco dada por la distancia
  euclídea.
-\end_layout
-
-\begin_layout Standard
-Se omitirán las dependencias de 
+ Se omitirán las dependencias de 
 \begin_inset Formula $f,\beta$
 \end_inset
 
@@ -5439,7 +6782,15 @@ Uniendo las dos definiciones previas, el teorema central del trabajo es
 \begin_layout Theorem
 
 \emph on
-(Teorema 2.7, Groisman2019) Sea 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "Teorema 2.7"
+key "groismanNonhomogeneousEuclideanFirstpassage2019"
+literal "false"
+
+\end_inset
+
+ Sea 
 \begin_inset Formula $\M$
 \end_inset
 
@@ -5525,6 +6876,24 @@ Aquí,
 \end_inset
 
 .
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Debería unificar la notación de 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "groismanNonhomogeneousEuclideanFirstpassage2019,chuExactComputationManifold2019,bijralSemisupervisedLearningDensity2012"
+literal "false"
+
+\end_inset
+
+, creo que la de Chu es la más amena, pero estaría bueno revisarlas.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5576,35 +6945,95 @@ Propuesta
 \end_layout
 
 \begin_layout Standard
-En la Introducción hemos repasado en detalle un método eficiente y lo sumamente
- estudiado para responder al problema de clasificación en dominios de alta
- dimensionalidad: la estimación de densidad por núcleos (KDE), específicamente
- en variedades de Riemann.
+Hemos repasado en detalle la historia y motivación por detrás de un método
+ eficiente y sumamente estudiado para responder al 
+\begin_inset CommandInset ref
+LatexCommand nameref
+reference "def:prob-clf"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ en dominios de alta dimensionalidad: la estimación de densidad por núcleos
+ (KDE), hasta llegar a definirla en variedades de Riemann.
  Notamos que de los tres parámetros a elegir - el núcleo, el ancho de banda
  y la distancia - tanto el ancho de banda como la distancia son problemáticos
- en HD, aunque para el ancho de banda el tratamiento encontrado en la literatura
- es mucho más extenso.
- Nos proponemos investigar si es posible mejorar la performance de los métodos
- descritos hasta ahora, con una noción de distancia aprendida de los datos,
- la distancia muestral de Fermat propuesta por Groisman2019.
- Más específicamente, aplicaremos
+ en alta dimensiones.
+ Para KDE, la elección del ancho de banda el tratamiento encontrado en la
+ literatura es extenso y exhaustivco; no así para la elección de la distancia.
+ Nos proponemos elucidar si es posible mejorar la performance de 
+\begin_inset CommandInset ref
+LatexCommand nameref
+reference "def:manif-kde"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ usando una noción de distancia basada en densidades de desarrollo reciente,
+ la distancia muestral de Fermat.
+ Más específicamente, construiremos
 \end_layout
 
 \begin_layout Itemize
-un clasificador basado en estimaciones de densidad por núcleos (gaussianos)
- en variedades según Loubes2010
+un 
+\begin_inset CommandInset ref
+LatexCommand nameref
+reference "def:manif-clf-kde"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ en variedades según 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "loubesKernelbasedClassifierRiemannian2008"
+literal "false"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
 con matriz de suavización 
 \series bold
-H
+
+\begin_inset Formula $\H_{i}$
+\end_inset
+
+
 \series default
- individualmente orientada en cada elemento muestral según Vincent2003
+ individualmente orientada en cada elemento muestral según 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "vincentManifoldParzenWindows2002"
+literal "false"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
-y distancia varietal aprendida según Groisman2019
+y distancia varietal aprendida según 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "groismanNonhomogeneousEuclideanFirstpassage2019"
+literal "false"
+
+\end_inset
+
+ por validación cruzada de 
+\begin_inset Formula $\alpha$
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5685,83 +7114,6 @@ Usa una NN para encontrar en cada punto, direcciones tangentes en las que
  Luego, usa tangentprop (una forma de gradient backpropagatiojn con restriccione
 s sobre las derivadas primeras) para incluir esa info en la optimizacion
  y mejorar los resultados de clasificacion.
-\end_layout
-
-\begin_layout Subsubsection
-Shell Theory
-\end_layout
-
-\begin_layout Subsubsection
-Brand2003 - Charting a Manifold
-\end_layout
-
-\begin_layout Standard
-Menciona una especie de hipotesis de la variedad antes que otros cuantos,
- aunque no la llama así.
-\end_layout
-
-\begin_layout Standard
-Ofrece una idea empírica de cómo estimar la dimensión de la variedad mirando
- cómo crece la función de conteo de puntos 
-\begin_inset Formula $c\left(r,y\right)=\sum_{i=1}^{N}\mathbf{1}\left\{ x_{i}\in B\left(y,r,d_{x}\right)\right\} $
-\end_inset
-
- en relación al radio de la bola considerada.
-\end_layout
-
-\begin_layout Standard
-Aplica el método propuesto al trefoil que consideramos recientemente.
-\end_layout
-
-\begin_layout Subsubsection
-Vincent, Bengio 2003 - Manifold Parzen Windows
-\end_layout
-
-\begin_layout Standard
-Esencialmente MVKDE con 
-\begin_inset Formula $\mathbf{H}_{i}$
-\end_inset
-
-definida para 
-\emph on
-cada
-\emph default
- obserbvación en un vecindario 
-\begin_inset Quotes eld
-\end_inset
-
-suave
-\begin_inset Quotes erd
-\end_inset
-
- (usando kernels sobre la distancia a c/otra obs) o duro (KNN) alrededor
- de la obs.
- Usa algunos 
-\begin_inset Quotes eld
-\end_inset
-
-trucos
-\begin_inset Quotes erd
-\end_inset
-
- para evitar 
-\begin_inset Formula $\mathbf{H}_{i}$
-\end_inset
-
- mal condicionadas.
-\end_layout
-
-\begin_layout Standard
-Considera 
-\begin_inset Quotes eld
-\end_inset
-
-negative conditional log likhelihood
-\begin_inset Quotes erd
-\end_inset
-
- como medida de bondad del clasificador, como alernativa continua al error
- de clasificación y otras.
 \end_layout
 
 \begin_layout Subsubsection
@@ -5920,163 +7272,6 @@ Más adelante, considera funciones
 \end_layout
 
 \begin_layout Section
-Cositas
-\end_layout
-
-\begin_layout Subsection
-Hwang1994
-\end_layout
-
-\begin_layout Standard
-Usualmente los datos no se encontrarán distribuidos uniformemente en todas
- las direcciones, y será deseable pre-escalarlos para evitar diferencias
- extremas en su dispersión y locación.
- Un enfoque atractivo, es primero 
-\begin_inset Quotes eld
-\end_inset
-
-esferar
-\begin_inset Quotes erd
-\end_inset
-
- o 
-\begin_inset Quotes eld
-\end_inset
-
-blanquear
-\begin_inset Quotes erd
-\end_inset
-
- los datos mediante una transformación afín que devuelva data con media
- cero y matriz de covarianza unitaria; y luego aplicar 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "def:kde-multiv"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- Más específicamente, dada una muesta 
-\begin_inset Formula $\left\{ x\right\} ,$
-\end_inset
-
-podemos definir su versión 
-\begin_inset Quotes eld
-\end_inset
-
-esférica
-\begin_inset Quotes erd
-\end_inset
-
- como
-\begin_inset Formula 
-\[
-z=\mathbf{S}^{-1/2}\left(x-Ex\right)
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-donde la esperanza 
-\begin_inset Formula $E$
-\end_inset
-
- es evaluada a través de la media muestral, y 
-\begin_inset Formula $\mathbf{S}\in\R^{d\times d}$
-\end_inset
-
-es la matriz de covarianza de los datos:
-\begin_inset Formula 
-\begin{align*}
-\mathbf{S} & =E\left[\left(x-Ex\right)\left(x-Ex\right)^{T}\right]=\mathbf{UDU}^{T}\\
-\mathbf{S}^{-1/2} & =\mathbf{UD}^{-1/2}\mathbf{U}^{T}
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Donde 
-\begin_inset Formula $\mathbf{U}$
-\end_inset
-
- es una matriz ortonormal y 
-\begin_inset Formula $\mathbf{D}$
-\end_inset
-
- es una matriz diagonal.
- De preocuparse por la influencia de 
-\emph on
-outliers
-\emph default
- en los datos, existen métodos robustos para su derivación (Huber 1981).
-\end_layout
-
-\begin_layout Standard
-Se puede mostrar fácilment que luego del 
-\begin_inset Quotes eld
-\end_inset
-
-blanqueo
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\begin_inset Formula $Ez=0$
-\end_inset
-
- y 
-\begin_inset Formula $E\left[zz^{T}\right]=\mathbf{I_{d}}$
-\end_inset
-
-.
- El estimador resultante para los datos esféricos realiza un estimación
- de densidad más sofisticada
-\begin_inset CommandInset label
-LatexCommand label
-name "def:kde-multiv-blanco"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-
-\color red
-Acá sigo a Hwang, que hace una presentación algo distinta a Wikipedia/Wand&Jones
-, primero blanquea y luego usa núcleo con 
-\begin_inset Formula $\H=\mathbf{I_{d}}$
-\end_inset
-
-; W&J no recomienda blanquear porque luego usa 
-\begin_inset Formula $\mathbf{H}$
-\end_inset
-
- arbitraria.
- Debería revisar bien la equivalencia, qué conviene más.
-\color inherit
-:
-\begin_inset Formula 
-\begin{align*}
-\hat{f}\left(z\right) & =\frac{1}{Nh^{d}}\sum_{i=1}^{N}\phi\left(\frac{1}{h}\left(z-z_{i}\right)\right)\\
-\hat{f}\left(x\right) & =\frac{\left(\det\text{\ensuremath{\mathbf{S}}}\right)^{-1/2}}{Nh^{d}}\sum_{i=1}^{N}\phi\left(\frac{1}{h}\mathbf{S}^{-1/2}\left(x-x_{i}\right)\right)
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
 Notas sueltas
 \end_layout
 
@@ -6119,10 +7314,6 @@ Cuentita
 Conclusiones
 \end_layout
 
-\begin_layout Section
-Notas al pie
-\end_layout
-
 \begin_layout Standard
 \begin_inset ERT
 status open
@@ -6144,7 +7335,7 @@ printendnotes
 LatexCommand bibtex
 btprint "btPrintCited"
 bibfiles "bib/references"
-options "bibtotoc,plainnat"
+options "bibtotoc,apalike"
 
 \end_inset
 
