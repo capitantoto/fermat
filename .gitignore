@@ -1,3 +1,4 @@
+**/.DS_store
 *.code-workspace
 .ipynb_checkpoints
 .vscode
@@ -10,3 +11,5 @@ resources
 bib/*.pdf# No publicar PDFs de bibliografía
 bib/*.pdf# No publicar PDFs de bibliografía
 bib/*.pdf
+# Programas de terceros
+src
