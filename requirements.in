@@ -3,6 +3,7 @@ scipy
 pandas
 scikit-learn
 matplotlib
+statsmodels
 seaborn
 ipython
 ipykernel
@@ -10,3 +11,4 @@ typing
 # fermat
 ipympl  # interactive mpl widgets in notebooks
 networkx  # graph library
+black  # code formatter
