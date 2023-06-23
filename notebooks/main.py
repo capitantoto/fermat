@@ -10,7 +10,10 @@ from scipy.sparse.csgraph import shortest_path
 
 from joblib import Memory
 from itertools import product
+from numbers import Number
 
+# Ignore warnings for np.log(0) and siimilar
+np.seterr(divide="ignore", invalid="ignore")
 
 cachedir = "_cache"
 memory = Memory(cachedir, verbose=0)
@@ -161,7 +164,7 @@ class FermatKDEClassifier(BaseEstimator, ClassifierMixin):
         return self
 
     def _pick_bandwidths(self, training_sets):
-        if isinstance(self.bandwidth, numbers.Number):
+        if isinstance(self.bandwidth, Number):
             bandwidths = np.repeat(self.bandwidth, len(self.classes_))
         elif len(self.bandwidth) == len(self.classes_):
             bandwidths = np.array(self.bandwidth, dtype=float)
@@ -178,7 +181,6 @@ class FermatKDEClassifier(BaseEstimator, ClassifierMixin):
                 search = GridSearchCV(FermatKDE(alpha=self.alpha).fit(Xi), grid, cv=cv)
                 search.fit(Xi)
                 bandwidths[i] = search.best_params_["bandwidth"]
-        print(bandwidths)
         return bandwidths
 
     def predict_proba(self, X):
