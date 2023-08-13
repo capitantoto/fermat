@@ -42,6 +42,9 @@ class Bundle(dict):
     def __setattr__(self, key, value):
         self[key] = value
 
+    def __repr__(self):
+        return "Bundle(" + ", ".join(f"{k}={v}" for k, v in self.items()) + ")"
+
 
 def iqr(X):
     return np.percentile(X, 75) - np.percentile(X, 25)
@@ -56,7 +59,7 @@ class FermatKDE(BaseEstimator, DensityMixin):
     # MAX_DIST = 38.6
     MIN_LOG_SCORE = -1e6
 
-    def __init__(self, alpha=1, bandwidth=1, d=None):
+    def __init__(self, alpha: float = 1, bandwidth: float = 1, d: int = -1):
         self.bandwidth = bandwidth
         self.alpha = alpha
         self.d = d  # TODO: Evitar completamente? Quitando el h^-d del score?
@@ -65,7 +68,7 @@ class FermatKDE(BaseEstimator, DensityMixin):
         self.Q_ = X
         # A is the adjacency matrix with Fermat distances as edge weights
         self.A_ = sample_fermat(X, self.alpha)
-        if self.d is None:
+        if self.d == -1:
             self.d = self.D
         return self
 
@@ -146,10 +149,9 @@ class BaseKDEClassifier(BaseEstimator, ClassifierMixin):
 
 
 class FermatKDEClassifier(BaseEstimator, ClassifierMixin):
-    def __init__(self, bandwidth=-1.0, alpha=1.0, method="fermat"):
+    def __init__(self, bandwidth: float = -1.0, alpha: float = 1.0):
         self.bandwidth = bandwidth
         self.alpha = alpha
-        self.method = method
 
     def fit(self, X, y):
         self.classes_ = np.sort(np.unique(y))
