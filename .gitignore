@@ -13,3 +13,5 @@ bib/*.pdf
 src
 # joblib cache
 _cache
+# Data files
+*.pkl
