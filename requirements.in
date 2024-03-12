@@ -12,3 +12,6 @@ typing
 ipympl  # interactive mpl widgets in notebooks
 networkx  # graph library
 black  # code formatter
+# For comparatives
+scikit-optimize
+lightgbm

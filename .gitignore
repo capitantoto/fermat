@@ -11,7 +11,9 @@ resources
 bib/*.pdf
 # Programas de terceros
 src
-# joblib cache
+# caches
 _cache
+__pycache__
 # Data files
 *.pkl
+*.pyc
