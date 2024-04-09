@@ -1,0 +1,7 @@
+[flake8]
+max-line-length = 88
+# E501 line too long is managed by black
+# This avoids enforcing the 88 char limit on docstrings
+# Use `extend-ignore` instead of plain `ignore` to avoid overwriting defaults
+# https://stackoverflow.com/a/68172142
+extend-ignore = E501
