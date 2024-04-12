@@ -15,10 +15,10 @@ Dem:
 3. Desig. triangular:
 
  Sea $geod_{D}(p, q)$ la geodésica  inducida por la distancia $D$, y $a + b$ el camino que resulta de concatenar los caminos $a = (a_1, \dots, a_n, x)$  y $b = (x, b_1, \dots, b_m)$. Cuando
- 
+
  - $geod_D(p, r) = geod_D(p, q) + geod_D(q, r)$, resulta que $D(p, r) =  D(p, q) + D(q, r)$ y la desigualdad se cumple con igualdad.
  - $geod_D(p, r) \ne geod_D(p, q) + geod_D(q, r)$, el RHS es _un_ camino entre $p$ y $r$, por lo cual está incluido en el conjunto sobre el que se minimiza la expresión que define $D_{X_n}(p, r)$, y la desigualdad se cumple con desigualdad (?).
- 
+
  QED. Es así, casi tautológico? O me falta algo?
 
  ### Elección de $d$
