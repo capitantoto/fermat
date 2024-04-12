@@ -31,7 +31,9 @@ def _ellipse_length(d1, d2) -> float:
     return 4 * a_ellipse * ellipe(e_ellipse)
 
 
-def eyeglasses(center=(0, 0), r=1, separation=3, n=500, bridge_height=0.2, exclude_theta=None):
+def eyeglasses(
+    center=(0, 0), r=1, separation=3, n=500, bridge_height=0.2, exclude_theta=None
+):
     exclude_theta = exclude_theta or np.arcsin(bridge_height / r)
     effective_angle = np.pi - exclude_theta
 
@@ -78,12 +80,16 @@ def eyeglasses(center=(0, 0), r=1, separation=3, n=500, bridge_height=0.2, exclu
     return np.vstack((circle1, circle2, top_tunnel, bottom_tunnel))
 
 
-def arc(center=(0, 0), r=1, n=500, sampling="uniform", max_abs_angle=np.pi, angle_shift=0):
+def arc(
+    center=(0, 0), r=1, n=500, sampling="uniform", max_abs_angle=np.pi, angle_shift=0
+):
     if sampling == "uniform":
         theta = np.random.uniform(-max_abs_angle, max_abs_angle, n)
     elif sampling == "normal":
         angle_sd = max_abs_angle / 1.50
-        theta = truncnorm.rvs(-max_abs_angle, max_abs_angle, loc=0, scale=angle_sd, size=n)
+        theta = truncnorm.rvs(
+            -max_abs_angle, max_abs_angle, loc=0, scale=angle_sd, size=n
+        )
     else:
         raise ValueError("Sampling should be either 'uniform' or 'normal'")
     r = [r] if not hasattr(r, "__getitem__") else r
@@ -118,9 +124,13 @@ def rectangle(n: int, length_x: float, length_y: float):
 
 def football_sensor(n: int, tag_id: int, second_half: bool = False):
     root_path = pathlib.Path(__file__).parent.parent.resolve()
-    df = pd.read_csv(f"{root_path}/datasets/2013-11-03_tromso_stromsgodset_raw_first.csv")
+    df = pd.read_csv(
+        f"{root_path}/datasets/2013-11-03_tromso_stromsgodset_raw_first.csv"
+    )
     if second_half:
-        second_df = pd.read_csv("../datasets/2013-11-03_tromso_stromsgodset_raw_second.csv")
+        second_df = pd.read_csv(
+            "../datasets/2013-11-03_tromso_stromsgodset_raw_second.csv"
+        )
         df = pd.concat([df, second_df])
     df.columns = [
         "timestamp",
@@ -150,7 +160,9 @@ def add_outliers(X, frac=0.05, iqr_factor=1.5):
     iqr = qs[1] - qs[0]
     iqr_sign = np.random.choice([-1, 1], amount)
     ixs = np.random.choice(n, amount, replace=True)
-    X[ixs, :] = X[ixs, :] + iqr_factor * iqr_sign[:, np.newaxis] * np.tile(iqr, (amount, 1))
+    X[ixs, :] = X[ixs, :] + iqr_factor * iqr_sign[:, np.newaxis] * np.tile(
+        iqr, (amount, 1)
+    )
     return X
 
 

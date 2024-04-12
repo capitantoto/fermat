@@ -1,21 +1,18 @@
-
-
+import numpy as np
+from lightgbm import LGBMClassifier
+from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.utils import Bunch
-from lightgbm import LGBMClassifier
-
-# %%
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
+from sklearn.svm import SVC
+from sklearn.utils import Bunch
+
 from fkdc.fermat import BaseKDEClassifier, FermatKDEClassifier
 
 
 class Algoritmo:
-
     preprocesador_base = Pipeline(
         [
             ("scaler", StandardScaler()),
@@ -37,13 +34,14 @@ class Algoritmo:
         }
         self.pipe = Pipeline([("pre", self.pre), ("clf", self.clf)])
 
+
 # %%
 clasificadores = Bunch(
     fkde=FermatKDEClassifier(),
     kde=BaseKDEClassifier(),
     gnb=GaussianNB(),
     kn=KNeighborsClassifier(),
-    # lgbm=LGBMClassifier(),
+    lgbm=LGBMClassifier(),
     lr=LogisticRegression(solver="saga"),
     svc=SVC(),
 )

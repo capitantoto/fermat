@@ -1,16 +1,14 @@
-import numpy as np
-
-from sklearn.base import BaseEstimator, DensityMixin, ClassifierMixin
-from sklearn.model_selection import GridSearchCV, ShuffleSplit
-from sklearn.neighbors import KernelDensity
-
-from scipy.spatial.distance import cdist, pdist, squareform
-from scipy.sparse import csr_matrix
-from scipy.sparse.csgraph import shortest_path
-
-from joblib import Memory
 from itertools import product
 from numbers import Number
+
+import numpy as np
+from joblib import Memory
+from scipy.sparse import csr_matrix
+from scipy.sparse.csgraph import shortest_path
+from scipy.spatial.distance import cdist, pdist, squareform
+from sklearn.base import BaseEstimator, ClassifierMixin, DensityMixin
+from sklearn.model_selection import GridSearchCV, ShuffleSplit
+from sklearn.neighbors import KernelDensity
 
 # Ignore warnings for np.log(0) and siimilar
 np.seterr(divide="ignore", invalid="ignore")
