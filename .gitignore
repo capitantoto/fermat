@@ -3,7 +3,7 @@
 .ipynb_checkpoints
 .vscode
 # Esta es la copia local de la librería `fermat` para su estudio.
-fermat 
+fermat
 venv
 drafts
 resources
@@ -11,7 +11,17 @@ resources
 bib/*.pdf
 # Programas de terceros
 src
-# joblib cache
+# caches
 _cache
+__pycache__
 # Data files
 *.pkl
+*.pyc
+# LaTeX
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
