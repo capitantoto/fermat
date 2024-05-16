@@ -19,7 +19,7 @@ class Algoritmo:
             ("pca", PCA()),
         ]
     )
-    espacio_pre = {
+    espacio_pre_base = {
         "scaler": [StandardScaler(), "passthrough"],
         "pca": [*[PCA(ratio) for ratio in [0.8, 0.9, 0.95]], "passthrough"],
     }
@@ -27,9 +27,10 @@ class Algoritmo:
     def __init__(self, nombre, clf, espacio_clf=None, pre=None, espacio_pre=None):
         self.nombre = nombre
         self.clf = clf
-        self.pre = pre or self.preprocesador_base
+        self.pre = self.preprocesador_base if pre is None else pre
+        espacio_pre = self.espacio_pre_base if espacio_pre is None else espacio_pre
         self.espacio = {
-            **{"pre__%s" % k: v for k, v in (espacio_pre or {}).items()},
+            **{"pre__%s" % k: v for k, v in espacio_pre.items()},
             **{"clf__%s" % k: v for k, v in (espacio_clf or {}).items()},
         }
         self.pipe = Pipeline([("pre", self.pre), ("clf", self.clf)])
