@@ -38,8 +38,8 @@ class Algoritmo:
 
 # %%
 clasificadores = Bunch(
-    fkde=FermatKDEClassifier(),
-    kde=BaseKDEClassifier(),
+    fkdc=FermatKDEClassifier(),
+    kdc=BaseKDEClassifier(),
     gnb=GaussianNB(),
     kn=KNeighborsClassifier(),
     lgbm=LGBMClassifier(),
@@ -49,34 +49,34 @@ clasificadores = Bunch(
 # max_neighbors = np.floor(min(Ni) * (1 - inner_test_size)).astype(int)
 
 
-espacios_clf = {
-    "kde": {"bandwidth": np.logspace(-2, 6, 101)},
-    "fkde": (
+espacios_clf = Bunch(
+    kdc={"bandwidth": np.logspace(-2, 6, 101)},
+    fkdc=(
         {
-            "alpha": np.linspace(1, 2.5, 17),
-            "bandwidth": np.logspace(-2, 6, 61),
+            "alpha": np.linspace(1, 2.5, 9),
+            "bandwidth": np.logspace(-2, 2, 31),
         }
     ),
-    "gnb": {"var_smoothing": np.logspace(-9, -1, 17)},
-    "kn": {
-        "n_neighbors": np.linspace(1, 200, dtype=int),
+    gnb={"var_smoothing": np.logspace(-10, -2, 17)},
+    kn={
+        "n_neighbors": np.unique(np.logspace(0, np.log10(200), num=12, dtype=int)),
         "weights": ["uniform", "distance"],
     },
-    "svc": {
-        "C": np.logspace(-4, 3, 21),
-        "gamma": np.logspace(-4, 2, 21),
+    svc={
+        "C": np.logspace(-3, 3, 21),
+        "gamma": ["scale", "auto", *np.logspace(-3, 2, 11)],
         "kernel": [
             "linear",
             "rbf",
-            "sigmoid",
+            # "sigmoid",
         ],  # excluding 'poly' which sometimes takes forever to finish
     },
-    "lr": {
-        "C": np.logspace(-4, 4, 20),
+    lr={
+        "C": np.logspace(-2, 2, 11),
         "penalty": ["elasticnet"],
-        "l1_ratio": np.linspace(0, 1, 20),
+        "l1_ratio": np.linspace(0, 1, 3),
     },
-    "lgbm": {
+    lgbm={
         "n_estimators": [50, 200, 500],
         "learning_rate": np.logspace(-4, -2, 5),
         "num_leaves": [3, 5, 8],
@@ -84,7 +84,7 @@ espacios_clf = {
         "reg_lambda": np.logspace(-3, -1, 3),
         "colsample_bytree": [1 / 3, 1 / 2],
     },
-}
+)
 
 algoritmos = Bunch(
     **{
