@@ -1,3 +1,4 @@
+import pickle
 from time import time
 
 import pandas as pd
@@ -22,7 +23,7 @@ class Tarea:
         seed=42,
     ):
         self.dataset = ds = datasets[dataset] if isinstance(dataset, str) else dataset
-        self.algoritmos = algoritmos
+        self.algoritmos = Bunch(**{algo.nombre: algo for algo in algoritmos})
         self.busqueda_factory = busqueda_factory
         self.busqueda_params = busqueda_params or {}
         self.busqueda_params.setdefault("cv", cv)
@@ -37,20 +38,23 @@ class Tarea:
         )
         self.debug = Bunch()
 
+    def __str__(self):
+        return f"Tarea({self.dataset.nombre}, [{', '.join(self.algoritmos)}])"
+
     def entrenar(self):
         self.clasificadores = Bunch()
         self.debug.t_entrenar = Bunch()
         self.debug.busquedas = Bunch()
-        for algo in self.algoritmos:
-            print(f"Entrenar {algo.nombre} en {self.dataset.nombre}")
+        for nombre, algo in self.algoritmos.items():
+            print(f"Entrenar {nombre} en {self.dataset.nombre}")
             print(f"Espacio de búsqueda: {algo.espacio}")
-            self.debug.busquedas[algo.nombre] = busqueda = self.busqueda_factory(
+            self.debug.busquedas[nombre] = busqueda = self.busqueda_factory(
                 algo.pipe, algo.espacio, **self.busqueda_params
             )
             t0 = time()
             busqueda.fit(self.X_train, self.y_train)
-            self.debug.t_entrenar[algo.nombre] = time() - t0
-            self.clasificadores[algo.nombre] = busqueda.best_estimator_
+            self.debug.t_entrenar[nombre] = time() - t0
+            self.clasificadores[nombre] = busqueda.best_estimator_
         self._fitted = True
 
     def evaluar(self, forzar_entrenamiento=True):
@@ -70,15 +74,21 @@ class Tarea:
             )
             self.debug.t_evaluar[nombre] = time() - t0
 
+    def guardar(self, path=None):
+        if path is None:
+            params = (self.dataset.nombre, self.seed, self.split_evaluacion)
+            path = "%s-%s-%s.pkl" % params
+        pickle.dump(self, open(path, "wb"))
+
 
 tareas = [
     Tarea(
         dataset,
-        algoritmos.values(),
+        [algoritmos[algo] for algo in ["fkdc", "kdc", "gnb", "kn", "lr"]],
         split_evaluacion=0.5,
         seed=1991,
     )
-    for dataset in datasets
+    for dataset in datasets.values()
 ]
 
 if __name__ == "__main__":
