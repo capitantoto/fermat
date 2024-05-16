@@ -1,3 +1,4 @@
+"""Funciones auxiliares graciosamente donadas por Ing. Diego Battochio."""
 import pathlib
 
 import matplotlib.pyplot as plt
