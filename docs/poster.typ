@@ -89,68 +89,56 @@ Para comparar equitativamente estos _algoritmos_ de clasificación,
 - mediremos la exactitud de todos los algoritmos en el mismo conjunto de testeo.
 
 = Análisiss
-== Fan
-Para tener una idea "sistémica" de la performance de los algoritmos, evaluaremos su performance con diferentes _datasets_. Muchos factores en la definición de un dataset pueden afectar la exactitud de la clasificación; nos interesará explorar en particular 3 que a su vez figuran en el cálculo de la densidad en variedades:
-- $n$, el tamaño de la muestra,
-- $d$, la dimensión de las observaciones y
-- $k$, la cantidad de categorías.
+Para tener una idea "sistémica" de la performance de los algoritmos, evaluaremos su performance con diferentes _datasets_. Muchos factores en la definición de un dataset pueden afectar la exactitud de la clasificación; nos interesará explorar en particular 3 que a su vez figuran en el cálculo de la densidad en variedades:, el tamaño de la muestra $n$, la dimensión $p$ de las observaciones y la cantidad $k$ de categorías.
 
 
-= Resultados y Análisis
-== Fantasías en 2D
+== Fantasías en $RR^2$ <fantasias>
 #figure(image("img/fantasias-2d.png", width: 100%), caption: [Datasets sintéticos en $RR^2$])
-== Iris
-== digits
+#let best = it => table.cell(fill: green, it)
+
+#table(columns: 8, align: center+horizon,
+table.header([*Ruido*],[*Dataset*],[*FKDC*],[*GNB*],[*KDC*],[*KN*],[*LR*],[*SVC*]),
+table.cell(rowspan: 3, [Alto]),[Circulos], [67.2 (4.4)],[63.5 (7.0)],[67.0 (4.3)],[67.3 (4.5)],[44.8 (4.6)],best[71.3 (5.1)],
+[Espirales],[76.2 (4.8)],[48.5 (6.2)],[76.6 (4.4)],[76.0 (5.2)],[48.6 (5.7)],best[78.7 (4.0)],
+[Lunas],[79.7 (5.6)],[80.4 (3.9)],best[81.3 (4.8)],[80.9 (4.4)],[80.7 (3.9)],[81.2 (5.0)],
+table.cell(rowspan: 3, [Bajo]),[Circulos],[78.4 (4.1)],[67.7 (11.3)],[78.5 (4.1)],[79.1 (4.2)],[45.0 (4.5)],best[81.2 (5.4)],
+[Espirales],[90.0 (3.2)],[49.6 (6.2)],[90.4 (3.2)],[90.3 (2.9)],[49.5 (6.5)],best[92.9 (1.7)],
+[Lunas],[88.0 (4.6)],[83.6 (4.3)],best[88.1 (4.6)],[87.8 (4.6)],[83.9 (4.0)],[88.0 (3.7)],
+)
+Exactitud (espresada en porcentaje), con sus respectivos desviós estándares a lo largo de 16 repeticiones de cada experimento.
+
+Los tres datasets, `lunas, circulos, espirales`, tienen $k=2, p=2, n=400, n_1=n_2=200$, y presentan variedades de dimensión intrínsica $d=1$, a las cuales se les agrego "ruido" gaussiano con "bajo" y "alto" desvío estándar ($sigma_"alto" approx 1.5 sigma_"bajo"$). 
+En los tres datasets, la performance de SVC es consistentemente la mejor, aunque KN, KDC y FKDC no son significativamente distintos si consideramos un intervalo de confianza razonable.
+Es alentador ver que la performance de KDC es siempre competitiva, pero descorazonador ver que FKDC es sistemáticamente igual o ligeramente peor que KDC.
+
+== `vino`, `pinguinos`, `iris` y `anteojos`
+El siguiente conjunto de datos contiene $k=3$ con diferente cantidad de predictores y $n$. Salvo por "anteojos", todos los datasets son pequeños pero reales.
+#figure(image("img/fig2.png", width: 100%), caption: [Datasets  con $k=3$])
+
+
+#table(columns: 7, align: center+horizon,
+table.header([*Dataset*],[*FKDC*],[*GNB*],[*KDC*],[*KN*],[*LR*],[*SVC*]),
+[Anteojos],[97.5 (1.4)],[97.0 (1.8)],[97.4 (1.4)],[97.7 (1.4)],[50.5 (5.0)],best[97.7 (1.8)],
+[Iris],[94.4 (4.3)],[94.6 (5.0)],[94.0 (4.4)],[95.4 (4.0)],best[97.5 (2.3)],[94.2 (5.8)],
+[Pinguinos],[84.0 (4.2)],[97.8 (1.6)],[84.1 (4.2)],[85.2 (3.8)],[66.6 (4.5)],best[98.2 (1.0)],
+[Vino],[71.9 (7.1)],best[96.9 (2.2)],[73.8 (6.3)],[71.0 (6.5)],[66.0 (6.7)],[95.3 (2.6)],
+)
+En los datasets de `anteojos` e `iris`, se observa el mismo fenómeno que en los datasets "2D": (F)KDC es competitivo con los mejores métodos (SVC y LR, resp.), pero no superador. En los datasets de `pinguinos` y `vino`, la _performance_ de los métodos propuestos es significativamente peor. En todos los casos, no conseguimos mejoras significativas sobre KDC con FKDC.
+
+
+== digitos
+Los ee.aa. a estudiar son imaágenes de 8x8 (_id est_, en $RR^64$) que representan dígitos manuscritos. En este caso, aunque $p=64$, es de esperar que la variedad donde yacen los trazos sea de mucha menor dimensión, y mejores resultados esperaríamos de la "estimación de la variedad" que promete FKDC.
+
+#figure(image("img/fig3.png", width: 80%), caption: [Dígitos manuscritos en B&N, 8x8 píxeles])
+
+#table(columns: 7, align: center+horizon,
+table.header([Eval.],[FKDC],[GNB],[KDC],[KN],[LR],[SVC]),
+[20%],[98.8 (0.7)],[92.1 (1.1)],[98.9 (0.6)],[98.9 (0.4)],[96.7 (0.6)],best[99.0 (0.6)],
+[80%],[97.0 (0.4)],[90.2 (0.6)],[96.9 (0.5)],[96.6 (0.8)],[94.5 (0.7)],best[97.5 (0.4)],
+)
+
+
 
 = Observaciones Generales
-= Preguntas abiertas
 
-
-#lorem(30)
-
-+ #lorem(10)
-+ #lorem(10)
-+ #lorem(10)
-
-#lorem(10)
-
-#set align(center)
-#table(
-  columns:(auto, auto, auto), 
-  inset:(10pt),
- [#lorem(4)], [#lorem(2)], [#lorem(2)],
- [#lorem(3)], [#lorem(2)], [$alpha$],
- [#lorem(2)], [#lorem(1)], [$beta$],
- [#lorem(1)], [#lorem(1)], [$gamma$],
- [#lorem(2)], [#lorem(3)], [$theta$],
-)
-
-#set align(left)
-$ mat(
-  1, 2, ..., 8, 9, 10;
-  2, 2, ..., 8, 9, 10;
-  dots.v, dots.v, dots.down, dots.v, dots.v, dots.v;
-  10, 10, ..., 10, 10, 10;
-) $
-== #lorem(5)
-
-#lorem(65)
-#figure(
-  image("contour.png", 
-        width: 60%),
-  caption: [#lorem(8)]
-)
-
-= #lorem(3)
-
-#block(
-  fill: luma(230),
-  inset: 8pt,
-  radius: 4pt,
-  [
-    - #lorem(10),
-    - #lorem(10),
-    - #lorem(10),
-  ]
-)
 #bibliography("../bib/references.bib")
