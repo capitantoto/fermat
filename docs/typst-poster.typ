@@ -91,7 +91,7 @@
     width: width,
     height: height,
     margin: 
-      (top: 1in, left: 2in, right: 2in, bottom: 2in),
+      (top: 1in, left: 1in, right: 1in, bottom: 2in),
     footer: [
       #set align(center)
       #set text(font_size)
@@ -171,7 +171,7 @@
       rows: 2,
       columns: (univ_logo_column_size, title_column_size),
       column-gutter: 0pt,
-      row-gutter: 50pt,
+      row-gutter: 30pt,
       image(univ_logo, width: univ_logo_scale),
       text(title_font_size, title + "\n\n") + 
       text(authors_font_size, emph(authors) + 
