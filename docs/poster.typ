@@ -80,7 +80,7 @@ Para tener una idea "sistémica" de la performance de los algoritmos, evaluaremo
 
 == Fantasías en $RR^2$ <fantasias>
 
-#figure(image("img/fantasias-2d.png", width: 90%), caption: [Datasets sintéticos en $RR^2$])
+#figure(image("img/poster-fig-1.png", width: 90%), caption: [Datasets sintéticos en $RR^2$])
 #let best = it => table.cell(fill: luma(85%), it)
 #set text(size: 24pt)
 #set align(center)
@@ -102,7 +102,7 @@ Las performances de SVC, KN, KDC y FKDC no son significativamente distintas, aun
 
 == `vino`, `pinguinos`, `iris` y `anteojos` ($ k = 3$)
 
-#figure(image("img/fig2.png", width: 100%), caption: [Datasets  con $k=3$. Salvo por `anteojos`, todos los datasets son pequeños pero reales.])
+#figure(image("img/poster-fig-2.png", width: 100%), caption: [Datasets  con $k=3$. Salvo por `anteojos`, todos los datasets son pequeños pero reales.])
 
 #set text(size: 24pt)
 #set align(center)
@@ -119,7 +119,7 @@ En los datasets de `anteojos` e `iris`, se observa el mismo fenómeno que en los
 
 
 == digitos
-#image("img/fig3-1l.png", width: 100%)
+#image("img/poster-fig-3.png", width: 100%)
 Los ee.aa. son imágenes de 8x8 (_id est_, en $RR^64$) que representan dígitos manuscritos. Es de esperar que la variedad donde yacen los trazos sea de menor dimensión, para hacer buen uso de la "estimación de la variedad" que promete FKDC. Consideramos dos regímenes de evaluación: sobre el 80% de entrenamiento ("escaso") y sobre el 20%("denso"), para ver si FKDC destaca en alguno.
 #set text(size: 24pt)
 #set align(center)
@@ -153,7 +153,7 @@ table.header(table.cell(rowspan: 2, [Dataset]),[KDC],table.cell(colspan: 2,[FKDC
 )]
 ]
 Cuando observamos la "accuracy" com función de $h$ para distintos $alpha$ en la etapa de testeo, pareciera ser que hay un "techo" a la performance, y aún cuando para cierto $h$ exista un $alpha_"opt" > 1$, lo cierto es que para _cualquier_ $alpha$, existe un $h_"opt" = f(alpha | "dataset")$ de performance equivalente. 
-#figure(columns(2, [#image("img/iris-test-score.png") #colbreak() #image("img/digitos-test-score.png")]), caption: [Exactitud en validación para `iris` (izq.) y `digitos` (der.)])
+#figure(columns(2, [#image("img/poster-iris-test-score.png") #colbreak() #image("img/poster-digitos-test-score.png")]), caption: [Exactitud en validación para `iris` (izq.) y `digitos` (der.)])
 
 = Conclusiones y Trabajo a Futuro
 La sensación es "agridulce": el algoritmo de clasificación por KDE resulta competitivo con métodos bien establecidos, pero no encontramos aún mejoras marginales por el uso de la distancia muestal de Fermat. ¿Por qué? Tal vez en los datasets considerados la variedad subyacente no difiera mucho del espacio euclídeo ambiente. Esta hipótesis es problemática en tanto las `lunas, circulos y espirales` son claramente unidimensionales en $RR^2$, y cuesta pensar en `digitos` como elementos de $RR^64$.
