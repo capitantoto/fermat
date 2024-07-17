@@ -7,7 +7,7 @@ from scipy.sparse.csgraph import csgraph_from_dense, shortest_path
 from scipy.spatial.distance import cdist, pdist, squareform
 from sklearn.base import BaseEstimator, ClassifierMixin, DensityMixin
 from sklearn.model_selection import GridSearchCV, ShuffleSplit
-from sklearn.neighbors import KernelDensity
+from sklearn.neighbors import KernelDensity, KNeighborsClassifier
 
 # Ignore warnings for np.log(0) and siimilar
 np.seterr(divide="ignore", invalid="ignore")
@@ -192,3 +192,48 @@ class FermatKDEClassifier(BaseEstimator, ClassifierMixin):
 
     def predict(self, X):
         return self.classes_[np.argmax(self.predict_proba(X), 1)]
+
+
+class SampleFermatDistance:
+    def __init__(self, Q, alpha=1, groups=None):
+        self.Q = Q
+        self.N = Q.shape[0]
+        self.groups = np.zeros(self.N) if groups is None else np.array(groups)
+        self.K = len(set(self.groups))
+        assert (
+            len(self.groups) == self.N
+        ), "`groups` debe ser None, o de la misma longitud que el número de filas de Q"
+        self.alpha = alpha
+        self.A = {k: sample_fermat(Q[self.groups == k], alpha) for k in range(self.K)}
+
+    def __call__(self, X):
+        sample_distances = -np.ones((X.shape[0], self.N))
+        for k in range(self.K):
+            group_k = self.groups == k
+            to_Q_k = euclidean(X, self.Q[group_k]) ** self.alpha
+            for i in range(len(X)):
+                sample_distances[i, group_k] = np.min(to_Q_k[i].T + self.A[k], axis=1)
+        assert np.all(sample_distances >= 0)
+        return sample_distances
+
+
+class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
+    def __init__(self, n_neighbors=5, alpha=1, weights="uniform", n_jobs=-1):
+        self.n_neighbors = n_neighbors
+        self.alpha = alpha
+        self.weights = weights
+        self.n_jobs = n_jobs
+
+    def fit(self, X, y):
+        self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha, groups=y)
+        self.classifier_ = KNeighborsClassifier(
+            n_neighbors=self.n_neighbors,
+            weights=self.weights,
+            metric="precomputed",
+            n_jobs=self.n_jobs,
+        )
+        self.classifier_.fit(self.distance_(X), y)
+        return self
+
+    def predict(self, X):
+        return self.classifier_.predict(self.distance_(X))
