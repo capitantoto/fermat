@@ -62,8 +62,8 @@ class Dataset(Bunch):
     def __str__(self):
         return f"Dataset('{self.nombre}', n={self.n}, p={self.p}, k={self.k})"
 
-    def scatter(self, x=0, y=1, ax=None):
-        sns_scatterplot(x=self.X[:, x], y=self.X[:, y], hue=self.y, ax=ax)
+    def scatter(self, x=0, y=1, ax=None, **plot_kws):
+        sns_scatterplot(x=self.X[:, x], y=self.X[:, y], hue=self.y, ax=ax, **plot_kws)
 
 
 n_samples = 400

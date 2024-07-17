@@ -3,8 +3,7 @@ from numbers import Number
 
 import numpy as np
 from joblib import Memory
-from scipy.sparse import csr_matrix
-from scipy.sparse.csgraph import shortest_path
+from scipy.sparse.csgraph import csgraph_from_dense, shortest_path
 from scipy.spatial.distance import cdist, pdist, squareform
 from sklearn.base import BaseEstimator, ClassifierMixin, DensityMixin
 from sklearn.model_selection import GridSearchCV, ShuffleSplit
@@ -26,8 +25,11 @@ def euclidean(X, Y=None):
 
 
 @memory.cache
-def sample_fermat(Q, alpha=1):
-    return shortest_path(csr_matrix(euclidean(Q) ** alpha), directed=False)
+def sample_fermat(Q, alpha=1, fill_value=np.inf):
+    adyacencias = np.ma.masked_array(
+        euclidean(Q) ** alpha, np.diag([True] * Q.shape[0]), fill_value=fill_value
+    )
+    return shortest_path(csgraph_from_dense(adyacencias, fill_value), directed=False)
 
 
 class Bundle(dict):
