@@ -185,7 +185,7 @@ theorems-ams
 \end_layout
 
 \begin_layout Title
-Distancia de Fermat en Clasificadores de Densidad Nuclear
+Distancia de Fermat en Clasificadores de Densidad por Núcleos
 \end_layout
 
 \begin_layout Author
@@ -293,8 +293,425 @@ LatexCommand tableofcontents
 
 \end_layout
 
+\begin_layout Part
+Forma Final
+\end_layout
+
 \begin_layout Section
-Introducción
+Preliminares
+\end_layout
+
+\begin_layout Subsection
+El problema de clasificación
+\end_layout
+
+\begin_layout Subsubsection
+Definición del problema unidimensional
+\end_layout
+
+\begin_layout Standard
+Consideremos el problema de clasificación: 
+\end_layout
+
+\begin_layout Definition
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[problema de clasificación]
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:prob-clf-1"
+
+\end_inset
+
+ Sea 
+\begin_inset Formula $\X=\left\{ X_{1},\dots,X_{N}\right\} ,\ X_{i}\in\R^{\dimx}\ \forall i\in\left[N\right]$
+\end_inset
+
+ una muestra de 
+\begin_inset Formula $N$
+\end_inset
+
+ observaciones aleatorias 
+\begin_inset Formula $\dimx-$
+\end_inset
+
+dimensionales, repartidas en 
+\begin_inset Formula $M$
+\end_inset
+
+ clases 
+\begin_inset Formula $C_{1},\dots,C_{M}$
+\end_inset
+
+ mutuamente excluyentes y conjuntamente exhaustivas
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+es decir, 
+\begin_inset Formula $\forall\ i\in\left[N\right]\equiv\left\{ 1,\dots,N\right\} ,X_{i}\in C_{j}\iff X_{i}\notin C_{k},k\in\text{\ensuremath{\left[M\right]}},k\neq j$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ Asumamos además que la muestra está compuesta de observaciones independientes
+ entre sí, y las observaciones de cada clase están idénticamente distribuidas
+ según su propia ley: si 
+\begin_inset Formula $\card{C_{j}}=N_{j}$
+\end_inset
+
+ y 
+\begin_inset Formula $X_{i}^{\left(j\right)}$
+\end_inset
+
+representa la i-ésima observación de la clase 
+\begin_inset Formula $j$
+\end_inset
+
+, resulta que 
+\begin_inset Formula $X_{i}^{(j)}\sim\mathcal{L}_{j}\left(X\right)\ \forall\ j\in\text{\ensuremath{\left[M\right]}},i\in\left[N_{j}\right]$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+Dada una nueva observación 
+\begin_inset Formula $x_{0}$
+\end_inset
+
+ cuya clase es desconocida, 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+(clasificación dura) ¿a qué clase deberíamos asignarla? 
+\end_layout
+
+\begin_layout Enumerate
+(clasificación suave) ¿qué probabilidad tiene de pertenecer a cada clase
+ 
+\begin_inset Formula $C_{j},j\in\left[M\right]$
+\end_inset
+
+ ? 
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Cualquier método o algoritmo que pretenda responder el problema de clasificación
+, prescribe un modo u otro de combinar toda la información muestral disponible,
+ ponderando las 
+\begin_inset Formula $N$
+\end_inset
+
+ observaciones relativamente a su cercanía o similitud con 
+\begin_inset Formula $x_{0}$
+\end_inset
+
+.
+ Por caso, 
+\begin_inset Formula $k-$
+\end_inset
+
+vecinos más cercanos (
+\begin_inset Formula $k-$
+\end_inset
+
+NN) asignará la nueva observación 
+\begin_inset Formula $x_{0}$
+\end_inset
+
+ a la clase modal - la más frecuente - entre las 
+\begin_inset Formula $k$
+\end_inset
+
+ observaciones de entrenamiento más cercanas
+\emph on
+ 
+\emph default
+en distancia euclídea 
+\begin_inset Formula $\norm{x_{0}-\cdot}$
+\end_inset
+
+.
+ 
+\begin_inset Formula $k-$
+\end_inset
+
+NN no menciona explícitamente las leyes de clase 
+\begin_inset Formula $\mathcal{L}_{j}$
+\end_inset
+
+, lo cual lo mantiene sencillo a costa de ignorar la estructura del problema.
+\end_layout
+
+\begin_layout Subsubsection
+Clasificadores 
+\begin_inset Quotes fld
+\end_inset
+
+duros
+\begin_inset Quotes frd
+\end_inset
+
+ y 
+\begin_inset Quotes fld
+\end_inset
+
+suaves
+\begin_inset Quotes frd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Clasificadores basados en densidad
+\end_layout
+
+\begin_layout Subsubsection
+KDE: Estimación de la densidad por núcleos
+\end_layout
+
+\begin_layout Subsection
+La maldición de la (alta) dimensionalidad
+\end_layout
+
+\begin_layout Subsubsection
+NB: El clasificador de 
+\begin_inset Quotes fld
+\end_inset
+
+ingenuo
+\begin_inset Quotes frd
+\end_inset
+
+ de Bayes
+\end_layout
+
+\begin_layout Paragraph
+Una muestra adversa
+\end_layout
+
+\begin_layout Subsubsection
+KDC Multivariado
+\end_layout
+
+\begin_layout Paragraph
+El caso 2-dimensional
+\end_layout
+
+\begin_layout Paragraph
+Relación entre 
+\begin_inset Formula $\H$
+\end_inset
+
+ y la distancia de Mahalanobis
+\end_layout
+
+\begin_layout Subsection
+La hipótesis de la variedad
+\end_layout
+
+\begin_layout Subsubsection
+KDE en variedades de Riemann
+\end_layout
+
+\begin_layout Subsubsection
+Variedades desconocidas
+\end_layout
+
+\begin_layout Subsection
+Aprendizaje de distancias
+\end_layout
+
+\begin_layout Subsubsection
+Isomap
+\end_layout
+
+\begin_layout Subsubsection
+Distancias basadas en densidad
+\end_layout
+
+\begin_layout Subsection
+Distancia de Fermat
+\end_layout
+
+\begin_layout Itemize
+Groisman & Jonckheere
+\end_layout
+
+\begin_layout Itemize
+Little & Mackenzie
+\end_layout
+
+\begin_layout Itemize
+Bijral
+\end_layout
+
+\begin_layout Itemize
+Bengio
+\end_layout
+
+\begin_layout Section
+Propuesta Original
+\end_layout
+
+\begin_layout Subsection
+KDC con Distancia de Fermat Muestral
+\end_layout
+
+\begin_layout Subsection
+f-KNN
+\end_layout
+
+\begin_layout Section
+Evaluación
+\end_layout
+
+\begin_layout Subsection
+Metodología
+\end_layout
+
+\begin_layout Subsubsection
+Tareas Puntuadas (acc %, pseudo-R^2 if poss.)
+\end_layout
+
+\begin_layout Subsubsection
+Algoritmos de referencia
+\end_layout
+
+\begin_layout Paragraph
+Uno complejo: SVC
+\end_layout
+
+\begin_layout Paragraph
+Uno sencillo: 1-NN - tal vez?
+\end_layout
+
+\begin_layout Paragraph
+Uno conocido: LR - tal vez?
+\end_layout
+
+\begin_layout Subsubsection
+Datasets
+\end_layout
+
+\begin_layout Paragraph
+Datasets sintéticos baja dimensión
+\end_layout
+
+\begin_layout Paragraph
+Datasets reales en 
+\begin_inset Quotes fld
+\end_inset
+
+mediana
+\begin_inset Quotes frd
+\end_inset
+
+ dimensión
+\end_layout
+
+\begin_layout Paragraph
+Dígitos
+\end_layout
+
+\begin_layout Paragraph
+PCA-red MNIST
+\end_layout
+
+\begin_layout Section
+Análisis de Resultados
+\end_layout
+
+\begin_layout Subsection
+Datasets sintéticos, Baja dimensión
+\end_layout
+
+\begin_layout Subsection
+Datasets orgánicos, Mediana dimensión
+\end_layout
+
+\begin_layout Subsection
+Alta dimensión: Dígitos
+\end_layout
+
+\begin_layout Subsection
+Efecto de dimensiones 
+\begin_inset Quotes fld
+\end_inset
+
+ruidosas
+\begin_inset Quotes frd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+fKDC: Interrelación entre 
+\begin_inset Formula $h,\alpha$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+fKNN: Comportamiento local-global
+\end_layout
+
+\begin_layout Section
+Comentarios finales
+\end_layout
+
+\begin_layout Subsection
+Conclusiones
+\end_layout
+
+\begin_layout Subsection
+Posibles líneas de desarrollo
+\end_layout
+
+\begin_layout Subsection
+Relación con el estado del arte
+\end_layout
+
+\begin_layout Section
+Referencias
+\end_layout
+
+\begin_layout Section
+Código Fuente
+\end_layout
+
+\begin_layout Subsection
+sklearn
+\end_layout
+
+\begin_layout Subsection
+fkdc
+\end_layout
+
+\begin_layout Part
+Disponibles
+\end_layout
+
+\begin_layout Section
+El problema de clasificación
 \end_layout
 
 \begin_layout Subsection
@@ -7334,7 +7751,7 @@ printendnotes
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 btprint "btPrintCited"
-bibfiles "bib/references"
+bibfiles "bib/references,/Users/gonzalo/Git/fkdc/bib/references"
 options "bibtotoc,apalike"
 
 \end_inset
