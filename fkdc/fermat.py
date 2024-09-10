@@ -125,7 +125,7 @@ def lattice(a, b, step=1, dim=2, array=True):
     return np.array([*gen]) if array else gen
 
 
-class BaseKDEClassifier(BaseEstimator, ClassifierMixin):
+class BaseKDClassifier(BaseEstimator, ClassifierMixin):
     def __init__(self, bandwidth=1.0):
         self.bandwidth = bandwidth
 
@@ -148,7 +148,7 @@ class BaseKDEClassifier(BaseEstimator, ClassifierMixin):
         return self.classes_[np.argmax(self.predict_proba(X), 1)]
 
 
-class FermatKDEClassifier(BaseEstimator, ClassifierMixin):
+class FermatKDClassifier(BaseEstimator, ClassifierMixin):
     def __init__(self, bandwidth: float = -1.0, alpha: float = 1.0):
         self.bandwidth = bandwidth
         self.alpha = alpha

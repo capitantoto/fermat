@@ -1,5 +1,4 @@
 import numpy as np
-from lightgbm import LGBMClassifier
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
@@ -9,7 +8,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.utils import Bunch
 
-from fkdc.fermat import BaseKDEClassifier, FermatKDEClassifier
+from fkdc.fermat import BaseKDClassifier, FermatKDClassifier, FermatKNeighborsClassifier
 
 
 class Algoritmo:
@@ -38,17 +37,20 @@ class Algoritmo:
 
 # %%
 clasificadores = Bunch(
-    fkdc=FermatKDEClassifier(),
-    kdc=BaseKDEClassifier(),
+    fkdc=FermatKDClassifier(),
+    kdc=BaseKDClassifier(),
     gnb=GaussianNB(),
     kn=KNeighborsClassifier(),
-    lgbm=LGBMClassifier(),
+    fkn=FermatKNeighborsClassifier(),
     lr=LogisticRegression(solver="saga"),
     svc=SVC(),
 )
 # max_neighbors = np.floor(min(Ni) * (1 - inner_test_size)).astype(int)
 
-
+espacio_kn = {
+    "n_neighbors": np.unique(np.logspace(0, np.log10(200), num=12, dtype=int)),
+    "weights": ["uniform", "distance"],
+}
 espacios_clf = Bunch(
     kdc={"bandwidth": np.logspace(-2, 6, 101)},
     fkdc=(
@@ -58,31 +60,18 @@ espacios_clf = Bunch(
         }
     ),
     gnb={"var_smoothing": np.logspace(-10, -2, 17)},
-    kn={
-        "n_neighbors": np.unique(np.logspace(0, np.log10(200), num=12, dtype=int)),
-        "weights": ["uniform", "distance"],
-    },
+    kn=espacio_kn,
+    fkn=espacio_kn,
     svc={
         "C": np.logspace(-3, 3, 21),
         "gamma": ["scale", "auto", *np.logspace(-3, 2, 11)],
-        "kernel": [
-            "linear",
-            "rbf",
-            # "sigmoid",
-        ],  # excluding 'poly' which sometimes takes forever to finish
+        "kernel": ["linear", "rbf", "sigmoid"],
+        # excluding 'poly' kernel which sometimes takes forever to finish
     },
     lr={
         "C": np.logspace(-2, 2, 11),
         "penalty": ["elasticnet"],
         "l1_ratio": np.linspace(0, 1, 3),
-    },
-    lgbm={
-        "n_estimators": [50, 200, 500],
-        "learning_rate": np.logspace(-4, -2, 5),
-        "num_leaves": [3, 5, 8],
-        "reg_alpha": np.logspace(-3, -1, 3),
-        "reg_lambda": np.logspace(-3, -1, 3),
-        "colsample_bytree": [1 / 3, 1 / 2],
     },
 )
 
