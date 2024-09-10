@@ -197,7 +197,7 @@ class FermatKDEClassifier(BaseEstimator, ClassifierMixin):
 class SampleFermatDistance:
     def __init__(self, Q, alpha=1, groups=None):
         self.Q = Q
-        self.N = Q.shape[0]
+        self.N, self.D = Q.shape
         self.groups = np.zeros(self.N) if groups is None else np.array(groups)
         self.K = len(set(self.groups))
         assert (
@@ -206,8 +206,9 @@ class SampleFermatDistance:
         self.alpha = alpha
         self.A = {k: sample_fermat(Q[self.groups == k], alpha) for k in range(self.K)}
 
-    def __call__(self, X):
+    def _sample_distance(self, X):
         sample_distances = -np.ones((X.shape[0], self.N))
+
         for k in range(self.K):
             group_k = self.groups == k
             to_Q_k = euclidean(X, self.Q[group_k]) ** self.alpha
@@ -215,6 +216,26 @@ class SampleFermatDistance:
                 sample_distances[i, group_k] = np.min(to_Q_k[i].T + self.A[k], axis=1)
         assert np.all(sample_distances >= 0)
         return sample_distances
+
+    def _distance(self, X, Y):
+        sfd_XQ = self._sample_distance(X)
+        sfd_YQ = self._sample_distance(Y)
+        euc_XY = euclidean(X, Y)
+        nX, nY = X.shape[0], Y.shape[0]
+        distances = -np.ones((nX, nY))
+        for i in range(nX):
+            for j in range(nY):
+                bypass_sfd = euc_XY[i, j] ** self.alpha
+                cross_sfd = np.min(sfd_XQ[i] + sfd_YQ[j])
+                distances[i, j] = np.min([bypass_sfd, cross_sfd])
+        assert np.all(distances >= 0)
+        return distances
+
+    def __call__(self, X, Y=None):
+        if Y is None:
+            return self._sample_distance(X)
+        else:
+            return self._distance(X, Y)
 
 
 class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
