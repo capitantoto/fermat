@@ -2,8 +2,7 @@ import numpy as np
 from scipy import stats
 from seaborn import load_dataset as sns_load_dataset
 from seaborn import scatterplot as sns_scatterplot
-from sklearn.datasets import (
-    fetch_openml,
+from sklearn.datasets import (  # fetch_openml,
     load_digits,
     load_iris,
     load_wine,
@@ -15,17 +14,29 @@ from sklearn.utils import Bunch
 from fkdc.eyeglasses import eyeglasses
 
 
-def hacer_espiral_fermat(a=1, n_samples=200, turns=2, noise=None):
-    phi = np.arange(n_samples) / n_samples * 2 * np.pi * turns
-    arm = np.vstack([a * np.sqrt(phi) * np.cos(phi), a * np.sqrt(phi) * np.sin(phi)]).T
-    X = np.vstack([arm, -arm])
+def hacer_espiral_fermat(a=1, n_samples=200, turns=2, noise=None, random_state=None):
+    rng = np.random.default_rng(random_state)
+    # n_samples: If int, the total number of points generated. If two-element tuple, number of points in each of two moons.
+    if isinstance(n_samples, int):
+        n0 = n1 = n_samples // 2
+        n0 += n_samples % 2
+    elif isinstance(n_samples, tuple) and len(n_samples) == 2:
+        assert all(isinstance(n, int) for n in n_samples)
+        n0, n1 = n_samples
+        n_samples = sum(n_samples)
+    else:
+        raise ValueError("`n_samples` debe ser un entero o una 2-tupla de enteros")
+
+    phi = stats.uniform(0, 2 * np.pi * turns).rvs(n_samples, random_state=rng)
+    X = np.vstack([a * np.sqrt(phi) * np.cos(phi), a * np.sqrt(phi) * np.sin(phi)]).T
     if noise:
-        X += stats.norm(scale=noise).rvs(size=(n_samples * 2, 2))
-    y = np.hstack([np.zeros(n_samples), np.ones(n_samples)])
+        X += stats.norm(scale=noise).rvs(size=(n_samples, 2), random_state=rng)
+    y = np.hstack([np.zeros(n0), np.ones(n1)])
+    X[y == 1] *= -1
     return X, y
 
 
-def hacer_anteojos(n_sample=400, noise=0, separation=3, **eye_kwarg):
+def hacer_anteojos(n_samples=400, noise=0, separation=3, **eye_kwarg):
     eye_kwarg["n"] = n_samples // 2
     eye_kwarg["separation"] = separation
     X0 = eyeglasses(**eye_kwarg)
@@ -72,7 +83,7 @@ datasets = [
     ("lunas", *make_moons(n_samples=n_samples)),
     ("circulos", *make_circles(n_samples=n_samples)),
     ("espirales", *hacer_espiral_fermat(n_samples=n_samples)),
-    ("mnist", *fetch_openml("mnist_784", version=1, return_X_y=True)),
+    # ("mnist", *fetch_openml("mnist_784", version=1, return_X_y=True)),
     ("vino", *load_wine(return_X_y=True)),
     (f"noisy_lunas_{n_samples}", *make_moons(n_samples=n_samples, noise=0.35)),
     (f"noisy_circulos_{n_samples}", *make_circles(n_samples=n_samples, noise=0.1)),
