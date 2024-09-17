@@ -16,7 +16,6 @@ from fkdc.eyeglasses import eyeglasses
 
 def hacer_espiral_fermat(a=1, n_samples=200, turns=2, noise=None, random_state=None):
     rng = np.random.default_rng(random_state)
-    # n_samples: If int, the total number of points generated. If two-element tuple, number of points in each of two moons.
     if isinstance(n_samples, int):
         n0 = n1 = n_samples // 2
         n0 += n_samples % 2
@@ -31,34 +30,44 @@ def hacer_espiral_fermat(a=1, n_samples=200, turns=2, noise=None, random_state=N
     X = np.vstack([a * np.sqrt(phi) * np.cos(phi), a * np.sqrt(phi) * np.sin(phi)]).T
     if noise:
         X += stats.norm(scale=noise).rvs(size=(n_samples, 2), random_state=rng)
-    y = np.hstack([np.zeros(n0), np.ones(n1)])
+    y = rng.permutation(np.hstack([np.zeros(n0), np.ones(n1)]).astype(int))
     X[y == 1] *= -1
     return X, y
 
 
-def hacer_anteojos(n_samples=400, noise=0, separation=3, **eye_kwarg):
-    eye_kwarg["n"] = n_samples // 2
+def hacer_anteojos(
+    n_samples=400, noise=0, separation=3, random_state=None, **eye_kwarg
+):
+    rng = np.random.default_rng(random_state)
+    if isinstance(n_samples, int):  # 1/2 en anteojos, 1/4 en c/ojo
+        n_anteojos = n_ojos = n_samples // 2
+        n_anteojos += n_samples % 2
+        n_oi = n_od = n_ojos // 2
+        n_oi += n_ojos % 2
+    elif isinstance(n_samples, tuple) and len(n_samples) == 3:
+        assert all(isinstance(n, int) for n in n_samples)
+        n_anteojos, n_oi, n_od = n_samples
+        n_ojos = n_oi + n_od
+        n_samples = sum(n_samples)
+    else:
+        raise ValueError("`n_samples` debe ser un entero o una 3-tupla de enteros")
+    eye_kwarg["n"] = n_anteojos
     eye_kwarg["separation"] = separation
-    X0 = eyeglasses(**eye_kwarg)
+    X_anteojos = eyeglasses(**eye_kwarg)
     if noise:
-        X0 += stats.norm(scale=noise).rvs(size=X0.shape)
-    n_eyes = n_samples // 4
-    X1 = np.vstack(
+        X_anteojos += stats.norm(scale=noise).rvs(
+            size=X_anteojos.shape, random_state=rng
+        )
+    X_ojos = np.vstack(
         [
-            stats.norm(-separation / 2, 1 / 6).rvs(n_eyes),
-            stats.norm(0, 2 / 6).rvs(n_eyes),
+            stats.norm(separation / 2, 1 / 6).rvs(n_ojos, random_state=rng),
+            stats.norm(0, 2 / 6).rvs(n_ojos, random_state=rng),
         ]
     ).T
-    X2 = np.vstack(
-        [
-            stats.norm(separation / 2, 1 / 6).rvs(n_eyes),
-            stats.norm(0, 2 / 6).rvs(n_eyes),
-        ]
-    ).T
-    X = np.vstack([X0, X1, X2])
-    y = np.hstack(
-        [np.zeros(n_samples // 2), np.ones(n_eyes), 2 * np.ones(n_eyes)]
-    ).astype(str)
+    y_ojos = rng.permutation(np.hstack([np.ones(n_oi), 2 * np.ones(n_od)]))
+    X_ojos[y_ojos == 1, 0] *= -1
+    X = np.vstack([X_anteojos, X_ojos])
+    y = np.hstack([np.zeros(n_anteojos), y_ojos]).astype(int)
     return X, y
 
 
@@ -66,7 +75,7 @@ class Dataset(Bunch):
     def __init__(self, nombre, X=None, y=None):
         self.nombre = nombre
         self.X = X
-        self.y = y
+        self.y = y.astype(str)
         self.n, self.p = X.shape
         self.k = len(np.unique(y))
 
@@ -107,5 +116,5 @@ datasets.pinguinos = Dataset(
     "pinguinos", penguins[penguins_keep].values, penguins.species.values
 )
 datasets.anteojos = Dataset(
-    "anteojos", *hacer_anteojos(n_sample=n_samples, bridge_height=0.6, noise=0.15)
+    "anteojos", *hacer_anteojos(n_samples=n_samples, bridge_height=0.6, noise=0.15)
 )
