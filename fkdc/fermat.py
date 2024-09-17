@@ -8,6 +8,7 @@ from scipy.spatial.distance import cdist, pdist, squareform
 from sklearn.base import BaseEstimator, ClassifierMixin, DensityMixin
 from sklearn.model_selection import GridSearchCV, ShuffleSplit
 from sklearn.neighbors import KernelDensity, KNeighborsClassifier
+from sklearn.utils.multiclass import unique_labels
 
 # Ignore warnings for np.log(0) and siimilar
 np.seterr(divide="ignore", invalid="ignore")
@@ -198,22 +199,26 @@ class SampleFermatDistance:
     def __init__(self, Q, alpha=1, groups=None):
         self.Q = Q
         self.N, self.D = Q.shape
-        self.groups = np.zeros(self.N) if groups is None else np.array(groups)
-        self.K = len(set(self.groups))
+        self.groups = np.array(np.zeros(self.N) if groups is None else groups)
+        self.labels = unique_labels(self.groups)
         assert (
             len(self.groups) == self.N
         ), "`groups` debe ser None, o de la misma longitud que el número de filas de Q"
         self.alpha = alpha
-        self.A = {k: sample_fermat(Q[self.groups == k], alpha) for k in range(self.K)}
+        self.A = {
+            lbl: sample_fermat(Q[self.groups == lbl], alpha) for lbl in self.labels
+        }
 
     def _sample_distance(self, X):
         sample_distances = -np.ones((X.shape[0], self.N))
 
-        for k in range(self.K):
-            group_k = self.groups == k
-            to_Q_k = euclidean(X, self.Q[group_k]) ** self.alpha
+        for lbl in self.labels:
+            group_mask = self.groups == lbl
+            to_Q_lbl = euclidean(X, self.Q[group_mask]) ** self.alpha
             for i in range(len(X)):
-                sample_distances[i, group_k] = np.min(to_Q_k[i].T + self.A[k], axis=1)
+                sample_distances[i, group_mask] = np.min(
+                    to_Q_lbl[i].T + self.A[lbl], axis=1
+                )
         assert np.all(sample_distances >= 0)
         return sample_distances
 
