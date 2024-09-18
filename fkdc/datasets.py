@@ -108,7 +108,7 @@ def hacer_helices(
     return X, y
 
 
-def make_eslabones(
+def hacer_eslabones(
     n_samples=200,
     centro=(0, 0),
     radio=1,
@@ -119,13 +119,17 @@ def make_eslabones(
     rng = np.random.default_rng(random_state)
     y = _dos_muestras(n_samples, rng, shuffle)
     seeds = np.random.uniform(size=len(y)) * 2 * np.pi
-    X = [
-        centro[0] + radio * np.cos(seeds),
-        centro[1] + radio * np.sin(seeds),
-        np.zeros_like(seeds),
-    ]
-    X[y == 1, 0] += radio  # traslada eslabon 1 `radio`, como el logo de cierta TC
-    X[y == 1, [1, 2]] = X[y == 1, [2, 1]]  # roto eslabon 1, queda perpendicular al 0
+    X_x = centro[0] + radio * np.cos(seeds)
+    X_y = centro[1] + radio * np.sin(seeds)
+    X_z = np.zeros_like(seeds)
+    X = np.vstack([X_x, X_y, X_z]).T
+    mask = y == 1  # "mascara" para observaciones del eslabon 1
+    X[mask, 0] += radio  # traslada `1 * radio` el eje x, como el logo de cierta TC
+    X[mask, 1], X[mask, 2] = X[mask, 2], X[mask, 1]  # roto 90º, perpendicular al 0
+    if noise:
+        X += rng.normal(scale=noise, size=X.shape)
+    return X, y
+
     if noise:
         X += rng.normal(scale=noise, size=X.shape)
     return X, y
