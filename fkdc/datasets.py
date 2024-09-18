@@ -1,5 +1,6 @@
 from numbers import Number
 
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 from seaborn import load_dataset as sns_load_dataset
@@ -34,7 +35,7 @@ def _dos_muestras(n_samples, random_state=None, shuffle=False):
     return y
 
 
-def hacer_espiral_fermat(
+def hacer_espirales(
     a=1, n_samples=200, turns=2, noise=None, random_state=None, shuffle=False
 ):
     rng = np.random.default_rng(random_state)
@@ -104,7 +105,7 @@ def hacer_helices(
     X_z = seeds * altura / (2 * np.pi)
     X_x = centro[0] + radio * np.cos(seeds + np.pi * y)
     X_y = centro[1] + radio * np.sin(seeds + np.pi * y)
-    X = np.stack([X_x, X_y, X_z], axis=1)
+    X = np.vstack([X_x, X_y, X_z]).T
     if noise:
         X += rng.normal(scale=noise, size=X.shape)
     return X, y
@@ -178,16 +179,17 @@ def hacer_pionono(
     X = np.vstack([t * np.cos(t), 21 * seeds[:, 1], t * np.sin(t)]).T
     if noise:
         X += rng.normal(scale=noise, size=X.shape)
-    return X, y
+    return X, y.astype(int)
 
 
-class Dataset(Bunch):
+class Dataset:
     def __init__(self, nombre, X=None, y=None):
         self.nombre = nombre
         self.X = X
         self.y = y.astype(str)
         self.n, self.p = X.shape
-        self.k = len(np.unique(y))
+        self.labels = np.unique(self.y)
+        self.k = len(self.labels)
 
     def __str__(self):
         return f"Dataset('{self.nombre}', n={self.n}, p={self.p}, k={self.k})"
@@ -195,26 +197,35 @@ class Dataset(Bunch):
     def scatter(self, x=0, y=1, ax=None, **plot_kws):
         sns_scatterplot(x=self.X[:, x], y=self.X[:, y], hue=self.y, ax=ax, **plot_kws)
 
+    def scatter_3d(self, x=0, y=1, z=2, **plot_kws):
+        if self.p < 3:
+            raise ValueError(f"{self.nombre} tiene sólo {self.p} dimensiones")
+        ax = plt.gcf().add_subplot(projection="3d")
+        for i, lbl in enumerate(self.labels):
+            X_lbl = self.X[self.y == lbl]
+            ax.scatter(X_lbl[:, x], X_lbl[:, y], X_lbl[:, z], c=f"C{i}", label=str(lbl))
+        ax.legend(title="Clase")
+
 
 n_samples = 400
 datasets = [
     ("iris", *load_iris(return_X_y=True)),
     ("lunas", *make_moons(n_samples=n_samples)),
     ("circulos", *make_circles(n_samples=n_samples)),
-    ("espirales", *hacer_espiral_fermat(n_samples=n_samples)),
+    ("espirales", *hacer_espirales(n_samples=n_samples)),
     # ("mnist", *fetch_openml("mnist_784", version=1, return_X_y=True)),
     ("vino", *load_wine(return_X_y=True)),
     (f"noisy_lunas_{n_samples}", *make_moons(n_samples=n_samples, noise=0.35)),
     (f"noisy_circulos_{n_samples}", *make_circles(n_samples=n_samples, noise=0.1)),
     (
         f"noisy_espirales_{n_samples}",
-        *hacer_espiral_fermat(n_samples=n_samples // 2, noise=0.15),
+        *hacer_espirales(n_samples=n_samples // 2, noise=0.15),
     ),
     (f"2noisy_lunas_{n_samples}", *make_moons(n_samples=n_samples, noise=0.525)),
     (f"2noisy_circulos_{n_samples}", *make_circles(n_samples=n_samples, noise=0.15)),
     (
         f"2noisy_espirales_{n_samples}",
-        *hacer_espiral_fermat(n_samples=n_samples // 2, noise=0.225),
+        *hacer_espirales(n_samples=n_samples // 2, noise=0.225),
     ),
     ("digitos", *load_digits(return_X_y=True)),
 ]
