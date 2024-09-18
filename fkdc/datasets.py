@@ -86,6 +86,51 @@ def hacer_anteojos(
     return X, y
 
 
+def hacer_helices(
+    n_samples=400,
+    centro=(0, 0),
+    radio=1,
+    altura=1,
+    vueltas=5,
+    noise=None,
+    random_state=None,
+    shuffle=False,
+):
+    rng = np.random.default_rng(random_state)
+    y = _dos_muestras(n_samples, rng, shuffle)
+    seeds = rng.uniform(size=len(y)) * vueltas * 2 * np.pi
+    X_z = seeds * altura / (2 * np.pi)
+    X_x = centro[0] + radio * np.cos(seeds + np.pi * y)
+    X_y = centro[1] + radio * np.sin(seeds + np.pi * y)
+    X = np.stack([X_x, X_y, X_z], axis=1)
+    if noise:
+        X += rng.normal(scale=noise, size=X.shape)
+    return X, y
+
+
+def make_eslabones(
+    n_samples=200,
+    centro=(0, 0),
+    radio=1,
+    noise=None,
+    random_state=None,
+    shuffle=False,
+):
+    rng = np.random.default_rng(random_state)
+    y = _dos_muestras(n_samples, rng, shuffle)
+    seeds = np.random.uniform(size=len(y)) * 2 * np.pi
+    X = [
+        centro[0] + radio * np.cos(seeds),
+        centro[1] + radio * np.sin(seeds),
+        np.zeros_like(seeds),
+    ]
+    X[y == 1, 0] += radio  # traslada eslabon 1 `radio`, como el logo de cierta TC
+    X[y == 1, [1, 2]] = X[y == 1, [2, 1]]  # roto eslabon 1, queda perpendicular al 0
+    if noise:
+        X += rng.normal(scale=noise, size=X.shape)
+    return X, y
+
+
 class Dataset(Bunch):
     def __init__(self, nombre, X=None, y=None):
         self.nombre = nombre
