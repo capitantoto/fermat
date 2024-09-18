@@ -10,11 +10,12 @@ from sklearn.datasets import (  # fetch_openml,
     make_moons,
 )
 from sklearn.utils import Bunch
+from sklearn.utils import shuffle as sk_shuffle
 
 from fkdc.eyeglasses import eyeglasses
 
 
-def hacer_espiral_fermat(a=1, n_samples=200, turns=2, noise=None, random_state=None):
+def _dos_muestras(n_samples, random_state=None, shuffle=False):
     rng = np.random.default_rng(random_state)
     if isinstance(n_samples, int):
         n0 = n1 = n_samples // 2
@@ -25,12 +26,21 @@ def hacer_espiral_fermat(a=1, n_samples=200, turns=2, noise=None, random_state=N
         n_samples = sum(n_samples)
     else:
         raise ValueError("`n_samples` debe ser un entero o una 2-tupla de enteros")
+    y = np.hstack([np.zeros(n0), np.ones(n1)]).astype(int)
+    if shuffle:
+        y = sk_shuffle(y, random_state=rng)
+    return y
 
-    phi = stats.uniform(0, 2 * np.pi * turns).rvs(n_samples, random_state=rng)
+
+def hacer_espiral_fermat(
+    a=1, n_samples=200, turns=2, noise=None, random_state=None, shuffle=False
+):
+    rng = np.random.default_rng(random_state)
+    y = _dos_muestras(n_samples, rng, shuffle)
+    phi = stats.uniform(0, 2 * np.pi * turns).rvs(len(y), random_state=rng)
     X = np.vstack([a * np.sqrt(phi) * np.cos(phi), a * np.sqrt(phi) * np.sin(phi)]).T
     if noise:
-        X += stats.norm(scale=noise).rvs(size=(n_samples, 2), random_state=rng)
-    y = rng.permutation(np.hstack([np.zeros(n0), np.ones(n1)]).astype(int))
+        X += rng.normal(scale=noise, size=X.shape)
     X[y == 1] *= -1
     return X, y
 
