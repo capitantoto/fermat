@@ -1,3 +1,5 @@
+from numbers import Number
+
 import numpy as np
 from scipy import stats
 from seaborn import load_dataset as sns_load_dataset
@@ -141,6 +143,39 @@ def hacer_hueveras(
     X_z = np.sin(X_x) * np.sin(X_y)
     X_z[y == 1] *= -1  # "doy vuelta" la huevera de la clase 1
     X = np.vstack([X_x, X_y, X_z]).T
+    if noise:
+        X += rng.normal(scale=noise, size=X.shape)
+    return X, y
+
+
+def hacer_pionono(
+    n_samples=400,
+    esquinas=(0.3, 0.7),
+    desvios=4,
+    noise=0.01,
+    random_state=None,
+    shuffle=False,
+):
+    assert (len(esquinas) == 2) and all(isinstance(n, Number) for n in esquinas)
+    rng = np.random.default_rng(random_state)
+    if isinstance(n_samples, int):  # 1/2 en anteojos, 1/4 en c/ojo
+        base, resto = n_samples // 4, n_samples % 4
+        ns_clase = base + np.array([i < resto for i in range(4)], np.int32)
+    elif isinstance(n_samples, tuple) and len(n_samples) == 4:
+        assert all(isinstance(n, int) for n in n_samples)
+        ns_clase = n_samples
+        n_samples = sum(n_samples)
+    else:
+        raise ValueError("`n_samples` debe ser un entero o una 3-tupla de enteros")
+    y = np.concatenate([np.ones(n_clase) * i for i, n_clase in enumerate(ns_clase)])
+    if shuffle:
+        y = sk_shuffle(y, random_state=rng)
+    centros = [(x, y) for x in esquinas for y in esquinas]
+    seeds = rng.normal(scale=(esquinas[1] - esquinas[0]) / desvios, size=(n_samples, 2))
+    for i in range(4):
+        seeds[y == i] += centros[i]
+    t = 2 * np.pi * (1 + 2 * seeds[:, 0])
+    X = np.vstack([t * np.cos(t), 21 * seeds[:, 1], t * np.sin(t)]).T
     if noise:
         X += rng.normal(scale=noise, size=X.shape)
     return X, y
