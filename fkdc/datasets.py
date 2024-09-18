@@ -46,7 +46,12 @@ def hacer_espiral_fermat(
 
 
 def hacer_anteojos(
-    n_samples=400, noise=0, separation=3, random_state=None, **eye_kwarg
+    n_samples=400,
+    separation=3,
+    noise=None,
+    random_state=None,
+    shuffle=False,
+    **eye_kwarg,
 ):
     rng = np.random.default_rng(random_state)
     if isinstance(n_samples, int):  # 1/2 en anteojos, 1/4 en c/ojo
@@ -65,19 +70,19 @@ def hacer_anteojos(
     eye_kwarg["separation"] = separation
     X_anteojos = eyeglasses(**eye_kwarg)
     if noise:
-        X_anteojos += stats.norm(scale=noise).rvs(
-            size=X_anteojos.shape, random_state=rng
-        )
+        X_anteojos += rng.normal(scale=noise, size=X_anteojos.shape)
     X_ojos = np.vstack(
         [
             stats.norm(separation / 2, 1 / 6).rvs(n_ojos, random_state=rng),
             stats.norm(0, 2 / 6).rvs(n_ojos, random_state=rng),
         ]
     ).T
-    y_ojos = rng.permutation(np.hstack([np.ones(n_oi), 2 * np.ones(n_od)]))
+    y_ojos = np.hstack([np.ones(n_oi), 2 * np.ones(n_od)])
     X_ojos[y_ojos == 1, 0] *= -1
     X = np.vstack([X_anteojos, X_ojos])
     y = np.hstack([np.zeros(n_anteojos), y_ojos]).astype(int)
+    if shuffle:
+        X, y = sk_shuffle(X, y, random_state=rng)
     return X, y
 
 
