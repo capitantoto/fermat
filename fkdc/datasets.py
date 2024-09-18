@@ -130,6 +130,17 @@ def hacer_eslabones(
         X += rng.normal(scale=noise, size=X.shape)
     return X, y
 
+
+def hacer_hueveras(
+    n_samples=200, limites=(10, 10), noise=None, random_state=None, shuffle=False
+):
+    rng = np.random.default_rng(random_state)
+    y = _dos_muestras(n_samples, rng, shuffle)
+    X_x = rng.uniform(0, limites[0], size=len(y))
+    X_y = rng.uniform(0, limites[1], size=len(y))
+    X_z = np.sin(X_x) * np.sin(X_y)
+    X_z[y == 1] *= -1  # "doy vuelta" la huevera de la clase 1
+    X = np.vstack([X_x, X_y, X_z]).T
     if noise:
         X += rng.normal(scale=noise, size=X.shape)
     return X, y
