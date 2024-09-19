@@ -29,7 +29,7 @@ def _dos_muestras(n_samples, random_state=None, shuffle=False):
         n_samples = sum(n_samples)
     else:
         raise ValueError("`n_samples` debe ser un entero o una 2-tupla de enteros")
-    y = np.hstack([np.zeros(n0), np.ones(n1)]).astype(int)
+    y = np.hstack([np.zeros(n0, int), np.ones(n1, int)])
     if shuffle:
         y = sk_shuffle(y, random_state=rng)
     return y
@@ -80,10 +80,10 @@ def hacer_anteojos(
             stats.norm(0, 2 / 6).rvs(n_ojos, random_state=rng),
         ]
     ).T
-    y_ojos = np.hstack([np.ones(n_oi), 2 * np.ones(n_od)])
+    y_ojos = np.hstack([np.ones(n_oi, int), 2 * np.ones(n_od, int)])
     X_ojos[y_ojos == 1, 0] *= -1
     X = np.vstack([X_anteojos, X_ojos])
-    y = np.hstack([np.zeros(n_anteojos), y_ojos]).astype(int)
+    y = np.hstack([np.zeros(n_anteojos, int), y_ojos])
     if shuffle:
         X, y = sk_shuffle(X, y, random_state=rng)
     return X, y
@@ -103,8 +103,8 @@ def hacer_helices(
     y = _dos_muestras(n_samples, rng, shuffle)
     seeds = rng.uniform(size=len(y)) * vueltas * 2 * np.pi
     X_z = seeds * altura / (2 * np.pi)
-    X_x = centro[0] + radio * np.cos(seeds + np.pi * y)
-    X_y = centro[1] + radio * np.sin(seeds + np.pi * y)
+    X_x = centro[0] + radio * np.cos(seeds + np.pi * y)  # `np * y` rota clase 1 180º
+    X_y = centro[1] + radio * np.sin(seeds + np.pi * y)  # sobre el eje Z
     X = np.vstack([X_x, X_y, X_z]).T
     if noise:
         X += rng.normal(scale=noise, size=X.shape)
@@ -128,7 +128,7 @@ def hacer_eslabones(
     X = np.vstack([X_x, X_y, X_z]).T
     mask = y == 1  # "mascara" para observaciones del eslabon 1
     X[mask, 0] += radio  # traslada `1 * radio` el eje x, como el logo de cierta TC
-    X[mask, 1], X[mask, 2] = X[mask, 2], X[mask, 1]  # roto 90º, perpendicular al 0
+    X[mask, 1], X[mask, 2] = X[mask, 2], X[mask, 1]  # roto 90º sobre el eje X
     if noise:
         X += rng.normal(scale=noise, size=X.shape)
     return X, y
@@ -157,6 +157,7 @@ def hacer_pionono(
     random_state=None,
     shuffle=False,
 ):
+    # TODO: Credit Sapienza & lle.py de noseque libro con swissroll original
     assert (len(esquinas) == 2) and all(isinstance(n, Number) for n in esquinas)
     rng = np.random.default_rng(random_state)
     if isinstance(n_samples, int):  # 1/2 en anteojos, 1/4 en c/ojo
@@ -168,7 +169,7 @@ def hacer_pionono(
         n_samples = sum(n_samples)
     else:
         raise ValueError("`n_samples` debe ser un entero o una 3-tupla de enteros")
-    y = np.concatenate([np.ones(n_clase) * i for i, n_clase in enumerate(ns_clase)])
+    y = np.concatenate([np.ones(n_cls, int) * i for i, n_cls in enumerate(ns_clase)])
     if shuffle:
         y = sk_shuffle(y, random_state=rng)
     centros = [(x, y) for x in esquinas for y in esquinas]
@@ -179,7 +180,15 @@ def hacer_pionono(
     X = np.vstack([t * np.cos(t), 21 * seeds[:, 1], t * np.sin(t)]).T
     if noise:
         X += rng.normal(scale=noise, size=X.shape)
-    return X, y.astype(int)
+    return X, y
+
+
+def agregar_dims_ruido(X, ndims=None, scale=None, random_state=None):
+    rng = np.random.default_rng(random_state)
+    scale = scale or np.std(X)
+    ndims = ndims or (3 * X.shape[1])
+    ruido = rng.normal(scale=scale, size=(X.shape[0], ndims))
+    return np.hstack([X, ruido])
 
 
 class Dataset:
