@@ -1,26 +1,7 @@
 """Funciones auxiliares graciosamente donadas por Ing. Diego Battochio."""
-import pathlib
-
-import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
-import seaborn as sns
 from scipy.special import ellipe
 from scipy.stats import truncnorm
-
-plt.style.use("seaborn-v0_8")
-
-
-def plot_dataset(X, title="Conjunto de datos", ax=None):
-    df = pd.DataFrame(X, columns=["x", "y"])
-    if ax is None:
-        ax = plt.gca()
-    sns.kdeplot(data=df, x="x", y="y", fill=True, cut=1, cmap="Blues", ax=ax)
-    ax.scatter(x=df["x"], y=df["y"], alpha=0.5)
-    ax.set_title(title)
-    ax.set_xlabel("x")
-    ax.set_ylabel("y")
-    return ax
 
 
 def _ellipse_length(d1, d2) -> float:
@@ -97,77 +78,3 @@ def arc(
     x = center[0] + r[0] * np.cos(theta - angle_shift)
     y = center[1] + r[len(r) - 1] * np.sin(theta - angle_shift)
     return np.column_stack((x, y))
-
-
-def filled_circle(center=(0, 0), max_r=1, r_power=4, n=500):
-    theta = np.random.uniform(-np.pi, np.pi, n)
-    r = np.random.uniform(0, 1, n) ** (1 / r_power) * max_r
-    x = center[0] + r * np.cos(theta)
-    y = center[1] + r * np.sin(theta)
-    return np.column_stack((x, y))
-
-
-def rectangle(n: int, length_x: float, length_y: float):
-    cum_lengths = np.cumsum([length_y, length_x, length_y, length_x])
-    samples = np.random.uniform(0, max(cum_lengths), size=n)
-    result_samples = np.empty(shape=(n, 2))
-    for i, x in enumerate(samples):
-        if x < cum_lengths[0]:
-            result_samples[i] = [0, x]
-        elif x < cum_lengths[1]:
-            result_samples[i] = [x - cum_lengths[0], 0]
-        elif x < cum_lengths[2]:
-            result_samples[i] = [length_x, x - cum_lengths[1]]
-        elif x < cum_lengths[3]:
-            result_samples[i] = [x - cum_lengths[2], length_y]
-    return pd.DataFrame(result_samples, columns=["x", "y"])
-
-
-def football_sensor(n: int, tag_id: int, second_half: bool = False):
-    root_path = pathlib.Path(__file__).parent.parent.resolve()
-    df = pd.read_csv(
-        f"{root_path}/datasets/2013-11-03_tromso_stromsgodset_raw_first.csv"
-    )
-    if second_half:
-        second_df = pd.read_csv(
-            "../datasets/2013-11-03_tromso_stromsgodset_raw_second.csv"
-        )
-        df = pd.concat([df, second_df])
-    df.columns = [
-        "timestamp",
-        "tag_id",
-        "x",
-        "y",
-        "heading",
-        "direction",
-        "energy",
-        "speed",
-        "total_distance",
-    ]
-    df.query("tag_id == @tag_id", inplace=True)
-    return df[["x", "y"]].sample(n)
-
-
-def add_noise(X, sd=1):
-    n, d = X.shape
-    noise = np.random.normal(0, sd, (n, d))
-    return X + noise
-
-
-def add_outliers(X, frac=0.05, iqr_factor=1.5):
-    n, d = X.shape
-    amount = int(round(frac * n))
-    qs = np.percentile(X, [25, 75], axis=0)
-    iqr = qs[1] - qs[0]
-    iqr_sign = np.random.choice([-1, 1], amount)
-    ixs = np.random.choice(n, amount, replace=True)
-    X[ixs, :] = X[ixs, :] + iqr_factor * iqr_sign[:, np.newaxis] * np.tile(
-        iqr, (amount, 1)
-    )
-    return X
-
-
-def add_dummy_dimensions(X, d=1):
-    n, _ = X.shape
-    new_columns = np.random.normal(0, 1, (n, d))
-    return np.hstack((X, new_columns))
