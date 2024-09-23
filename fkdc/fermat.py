@@ -131,7 +131,7 @@ class BaseKDClassifier(BaseEstimator, ClassifierMixin):
         self.bandwidth = bandwidth
 
     def fit(self, X, y):
-        self.classes_ = np.sort(np.unique(y))
+        self.classes_ = unique_labels(y)
         training_sets = [X[y == yi] for yi in self.classes_]
         self.models_ = [
             KernelDensity(bandwidth=self.bandwidth, kernel="gaussian").fit(Xi)
@@ -251,6 +251,7 @@ class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
         self.n_jobs = n_jobs
 
     def fit(self, X, y):
+        self.classes_ = unique_labels(y)
         self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha, groups=y)
         self.classifier_ = KNeighborsClassifier(
             n_neighbors=self.n_neighbors,

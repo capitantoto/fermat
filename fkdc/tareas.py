@@ -10,12 +10,12 @@ from sklearn.utils import Bunch
 
 from fkdc.datasets import datasets
 
-logger = logging.basicConfig()
-
-
-def _renormalizar_probas(probas, eps=1e-100):
-    X = probas + eps
-    return (X.T / X.sum(axis=1)).T
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO,
+)
+logger = logging.getLogger()
+logger.addHandler(logging.StreamHandler())
 
 
 class Tarea:
@@ -49,7 +49,7 @@ class Tarea:
             )
         self.busqueda_factory = busqueda_factory
         self.busqueda_params = busqueda_params or {}
-        self.seed = seed or np.random.randint(0, int(1e10))
+        self.seed = seed or np.random.randint(0, 4294967295)
         self.split_evaluacion = split_evaluacion
         self._fitted = False
 
@@ -86,8 +86,11 @@ class Tarea:
         self.info.base = base = Bunch(
             probas=pd.Series(self.y_train).value_counts(normalize=True)
         )
+        base.accuracy = (self.y_eval == base.probas.idxmax()).mean()
         if verosimilitud:
-            base.logvero = base.probas.loc[self.y_eval].apply("log").sum()
+            conteos = pd.Series(self.y_eval).value_counts()
+            base.logvero = (np.log(base.probas) * conteos).sum()
+            base.r2 = 0
         for nombre, clf in self.clasificadores.items():
             logger.info(f"Evaluando {nombre}")
             info = self.info[nombre]
@@ -95,8 +98,8 @@ class Tarea:
                 info.probas = clf.predict_proba(self.X_eval)
                 info.preds_proba = clf.classes_[info.probas.argmax(axis=1)]
                 info.logvero = -log_loss(
-                    _renormalizar_probas(info.probas),
                     self.y_eval,
+                    info.probas,
                     normalize=False,
                     labels=self.dataset.labels,
                 )
