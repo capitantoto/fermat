@@ -1,3 +1,4 @@
+import pickle
 from numbers import Number
 
 import matplotlib.pyplot as plt
@@ -14,6 +15,7 @@ from sklearn.datasets import (  # fetch_openml,
 )
 from sklearn.utils import Bunch
 from sklearn.utils import shuffle as sk_shuffle
+from sklearn.utils.multiclass import unique_labels
 
 from fkdc.eyeglasses import eyeglasses
 
@@ -71,7 +73,7 @@ def hacer_anteojos(
         raise ValueError("`n_samples` debe ser un entero o una 3-tupla de enteros")
     eye_kwarg["n"] = n_anteojos
     eye_kwarg["separation"] = separation
-    X_anteojos = eyeglasses(**eye_kwarg)
+    X_anteojos = eyeglasses(**eye_kwarg, random_state=rng)
     if noise:
         X_anteojos += rng.normal(scale=noise, size=X_anteojos.shape)
     X_ojos = np.vstack(
@@ -121,7 +123,7 @@ def hacer_eslabones(
 ):
     rng = np.random.default_rng(random_state)
     y = _dos_muestras(n_samples, rng, shuffle)
-    seeds = np.random.uniform(size=len(y)) * 2 * np.pi
+    seeds = rng.uniform(size=len(y)) * 2 * np.pi
     X_x = centro[0] + radio * np.cos(seeds)
     X_y = centro[1] + radio * np.sin(seeds)
     X_z = np.zeros_like(seeds)
@@ -192,16 +194,30 @@ def agregar_dims_ruido(X, ndims=None, scale=None, random_state=None):
 
 
 class Dataset:
-    def __init__(self, nombre, X=None, y=None):
-        self.nombre = nombre
+    def __init__(self, X=None, y=None, nombre=None):
         self.X = X
         self.y = y.astype(str)
+        self.nombre = nombre
         self.n, self.p = X.shape
-        self.labels = np.unique(self.y)
+        self.labels = unique_labels(self.y)
         self.k = len(self.labels)
+
+    def de_fabrica(factory, factory_params=None, ruido_params=None, nombre=None):
+        params = Bunch(**(factory_params or {}))
+        X, y = factory(**params)
+        if ruido_params:
+            X = agregar_dims_ruido(X, **({} if ruido_params is True else ruido_params))
+        params.factory = factory.__name__
+        params.ruido = ruido_params
+        ds = Dataset(X, y, nombre)
+        ds.params = params
+        return ds
 
     def __str__(self):
         return f"Dataset('{self.nombre}', n={self.n}, p={self.p}, k={self.k})"
+
+    def __hash__(self):
+        return hash(tuple(tuple(row) for row in self.X)) * hash(tuple(self.y)) % 2**64
 
     def scatter(self, x=0, y=1, ax=None, **plot_kws):
         sns_scatterplot(x=self.X[:, x], y=self.X[:, y], hue=self.y, ax=ax, **plot_kws)
@@ -214,6 +230,10 @@ class Dataset:
             X_lbl = self.X[self.y == lbl]
             ax.scatter(X_lbl[:, x], X_lbl[:, y], X_lbl[:, z], c=f"C{i}", label=str(lbl))
         ax.legend(title="Clase")
+
+    def guardar(self, archivo=None):
+        with open(archivo or f"{hash(self)}.pkl", "wb") as file:
+            pickle.dump(self, file)
 
 
 n_samples = 400
@@ -238,13 +258,13 @@ datasets = [
     ),
     ("digitos", *load_digits(return_X_y=True)),
 ]
-datasets = Bunch(**{nombre: Dataset(nombre, X, y) for nombre, X, y in datasets})
+datasets = Bunch(**{nombre: Dataset(X, y, nombre) for nombre, X, y in datasets})
 
 penguins = sns_load_dataset("penguins").dropna()
 penguins_keep = ["bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"]
 datasets.pinguinos = Dataset(
-    "pinguinos", penguins[penguins_keep].values, penguins.species.values
+    penguins[penguins_keep].values, penguins.species.values, "pinguinos"
 )
 datasets.anteojos = Dataset(
-    "anteojos", *hacer_anteojos(n_samples=n_samples, bridge_height=0.6, noise=0.15)
+    *hacer_anteojos(n_samples=n_samples, bridge_height=0.6, noise=0.15), "anteojos"
 )
