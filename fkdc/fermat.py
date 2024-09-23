@@ -263,3 +263,6 @@ class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
 
     def predict(self, X):
         return self.classifier_.predict(self.distance_(X))
+
+    def predict_proba(self, X):
+        return self.classifier_.predict_proba(self.distance_(X))
