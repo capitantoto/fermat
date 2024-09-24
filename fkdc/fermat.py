@@ -17,6 +17,7 @@ memory = Memory(cachedir, verbose=0)
 MIN_LOG_SCORE = -1e6
 MAX_LOG_SCORE = np.log(np.finfo("float64").max)
 
+
 @memory.cache
 def euclidean(X, Y=None):
     if Y is None:
@@ -31,122 +32,6 @@ def sample_fermat(Q, alpha=1, fill_value=np.inf):
         euclidean(Q) ** alpha, np.diag([True] * Q.shape[0]), fill_value=fill_value
     )
     return shortest_path(csgraph_from_dense(adyacencias, fill_value), directed=False)
-
-
-class FermatKDE(BaseEstimator, DensityMixin):
-
-    def __init__(self, alpha: float = 1, bandwidth: float = 1, d: int = -1):
-        self.bandwidth = bandwidth
-        self.alpha = alpha
-        self.d = d  # TODO: Evitar completamente? Quitando el h^-d del score?
-
-    def fit(self, X):
-        self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha)
-        if self.d == -1:
-            self.d = self.distance_.D
-        return self
-
-    def score_samples(self, X=None, log=True):
-        if X is None:
-            distances = self.distance_.A[0]
-        else:
-            distances = self.distance_(X)
-        score = np.exp(-0.5 * (distances / self.bandwidth) ** 2).sum(1)
-        if log:
-            return (
-                -np.log(self.distance_.N)
-                - self.d * np.log(self.bandwidth)
-                - self.d / 2 * np.log(2 * np.pi)
-                + np.maximum(np.log(score), MIN_LOG_SCORE)
-            )
-        else:
-            return (
-                self.distance_.N**-1
-                * (self.bandwidth**-self.d)
-                * (2 * np.pi) ** (-self.d / 2)
-                * score
-            )
-
-    def score(self, X=None):
-        return self.score_samples(X).sum()
-
-
-class KDClassifier(BaseEstimator, ClassifierMixin):
-    def __init__(self, bandwidth=1.0, metric="euclidean", alpha=1.0):
-        self.bandwidth = bandwidth
-        self.metric = metric
-        self.alpha = alpha
-
-    def fit(self, X, y):
-        self.classes_ = unique_labels(y)
-        training_sets = [X[y == yi] for yi in self.classes_]
-        if self.metric == "fermat":
-            density_factory = partial(FermatKDE, alpha=self.alpha)
-        else:
-            density_factory = partial(KernelDensity, metric=self.metric)
-        self.models_ = [
-            density_factory(bandwidth=self.bandwidth).fit(Xi) for Xi in training_sets
-        ]
-        self.logpriors_ = [np.log(Xi.shape[0] / X.shape[0]) for Xi in training_sets]
-        return self
-
-    def predict_proba(self, X):
-        logscores = np.array([model.score_samples(X) for model in self.models_]).T
-        logprobs = (logscores + self.logpriors_).clip(MIN_LOG_SCORE, MAX_LOG_SCORE)
-        result = np.exp(logprobs + self.logpriors_)
-        return np.exp(logprobs) / result.sum(axis=1, keepdims=True)
-
-    def predict(self, X):
-        return self.classes_[np.argmax(self.predict_proba(X), 1)]
-
-
-class BaseKDClassifier(BaseEstimator, ClassifierMixin):
-    def __init__(self, bandwidth=1.0):
-        self.bandwidth = bandwidth
-
-    def fit(self, X, y):
-        self.classes_ = unique_labels(y)
-        training_sets = [X[y == yi] for yi in self.classes_]
-        self.models_ = [
-            KernelDensity(bandwidth=self.bandwidth, kernel="gaussian").fit(Xi)
-            for Xi in training_sets
-        ]
-        self.logpriors_ = [np.log(Xi.shape[0] / X.shape[0]) for Xi in training_sets]
-        return self
-
-    def predict_proba(self, X):
-        logprobs = np.array([model.score_samples(X) for model in self.models_]).T
-        result = np.exp(logprobs + self.logpriors_)
-        return result / result.sum(1, keepdims=True)
-
-    def predict(self, X):
-        return self.classes_[np.argmax(self.predict_proba(X), 1)]
-
-
-class FermatKDClassifier(BaseEstimator, ClassifierMixin):
-    def __init__(self, bandwidth: float = -1.0, alpha: float = 1.0):
-        self.bandwidth = bandwidth
-        self.alpha = alpha
-
-    def fit(self, X, y):
-        self.classes_ = np.sort(np.unique(y))
-        training_sets = [X[y == yi] for yi in self.classes_]
-        self.bandwidths_ = self._pick_bandwidths(training_sets)
-
-        self.models_ = [
-            FermatKDE(bandwidth=hi, alpha=self.alpha).fit(Xi)
-            for hi, Xi in zip(self.bandwidths_, training_sets)
-        ]
-        self.logpriors_ = [np.log(Xi.shape[0] / X.shape[0]) for Xi in training_sets]
-        return self
-
-    def predict_proba(self, X):
-        logprobs = np.array([model.score_samples(X) for model in self.models_]).T
-        result = np.exp(logprobs + self.logpriors_)
-        return result / result.sum(1, keepdims=True)
-
-    def predict(self, X):
-        return self.classes_[np.argmax(self.predict_proba(X), 1)]
 
 
 class SampleFermatDistance:
@@ -221,3 +106,69 @@ class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
 
     def predict_proba(self, X):
         return self.classifier_.predict_proba(self.distance_(X))
+
+
+class FermatKDE(BaseEstimator, DensityMixin):
+    def __init__(self, alpha: float = 1, bandwidth: float = 1, d: int = -1):
+        self.bandwidth = bandwidth
+        self.alpha = alpha
+        self.d = d  # TODO: Evitar completamente? Quitando el h^-d del score?
+
+    def fit(self, X):
+        self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha)
+        if self.d == -1:
+            self.d = self.distance_.D
+        return self
+
+    def score_samples(self, X=None, log=True):
+        if X is None:
+            distances = self.distance_.A[0]
+        else:
+            distances = self.distance_(X)
+        score = np.exp(-0.5 * (distances / self.bandwidth) ** 2).sum(1)
+        if log:
+            return (
+                -np.log(self.distance_.N)
+                - self.d * np.log(self.bandwidth)
+                - self.d / 2 * np.log(2 * np.pi)
+                + np.maximum(np.log(score), MIN_LOG_SCORE)
+            )
+        else:
+            return (
+                self.distance_.N**-1
+                * (self.bandwidth**-self.d)
+                * (2 * np.pi) ** (-self.d / 2)
+                * score
+            )
+
+    def score(self, X=None):
+        return self.score_samples(X).sum()
+
+
+class KDClassifier(BaseEstimator, ClassifierMixin):
+    def __init__(self, bandwidth=1.0, metric="euclidean", alpha=1.0):
+        self.bandwidth = bandwidth
+        self.metric = metric
+        self.alpha = alpha
+
+    def fit(self, X, y):
+        self.classes_ = unique_labels(y)
+        training_sets = [X[y == yi] for yi in self.classes_]
+        if self.metric == "fermat":
+            density_factory = partial(FermatKDE, alpha=self.alpha)
+        else:
+            density_factory = partial(KernelDensity, metric=self.metric)
+        self.models_ = [
+            density_factory(bandwidth=self.bandwidth).fit(Xi) for Xi in training_sets
+        ]
+        self.logpriors_ = [np.log(Xi.shape[0] / X.shape[0]) for Xi in training_sets]
+        return self
+
+    def predict_proba(self, X):
+        logscores = np.array([model.score_samples(X) for model in self.models_]).T
+        logprobs = (logscores + self.logpriors_).clip(MIN_LOG_SCORE, MAX_LOG_SCORE)
+        result = np.exp(logprobs + self.logpriors_)
+        return np.exp(logprobs) / result.sum(axis=1, keepdims=True)
+
+    def predict(self, X):
+        return self.classes_[np.argmax(self.predict_proba(X), 1)]
