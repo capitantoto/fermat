@@ -33,7 +33,7 @@ from fkdc.fermat import FermatKNeighborsClassifier, KDClassifier
 # %%
 
 espacio_kn = {
-    "n_neighbors": np.unique(np.logspace(0, np.log10(200), num=12, dtype=int)),
+    "n_neighbors": np.unique(np.logspace(0, np.log10(300), num=15, dtype=int)),
     "weights": ["uniform", "distance"],
 }
 clasificadores = Bunch(
@@ -41,7 +41,7 @@ clasificadores = Bunch(
         KDClassifier(metric="fermat"),
         {
             "alpha": np.linspace(1, 2.5, 9),
-            "bandwidth": np.logspace(-2, 2, 31),
+            "bandwidth": np.logspace(-3, 2, 31),
         },
     ),
     kdc=(KDClassifier(metric="euclidean"), {"bandwidth": np.logspace(-2, 6, 101)}),
