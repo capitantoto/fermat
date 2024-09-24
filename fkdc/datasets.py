@@ -4,20 +4,12 @@ from numbers import Number
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
-from seaborn import load_dataset as sns_load_dataset
 from seaborn import scatterplot as sns_scatterplot
-from sklearn.datasets import (  # fetch_openml,
-    load_digits,
-    load_iris,
-    load_wine,
-    make_circles,
-    make_moons,
-)
 from sklearn.utils import Bunch
 from sklearn.utils import shuffle as sk_shuffle
 from sklearn.utils.multiclass import unique_labels
 
-from fkdc.eyeglasses import eyeglasses
+from fkdc.utils import eyeglasses
 
 
 def _dos_muestras(n_samples, random_state=None, shuffle=False):
@@ -234,37 +226,3 @@ class Dataset:
     def guardar(self, archivo=None):
         with open(archivo or f"{hash(self)}.pkl", "wb") as file:
             pickle.dump(self, file)
-
-
-n_samples = 400
-datasets = [
-    ("iris", *load_iris(return_X_y=True)),
-    ("lunas", *make_moons(n_samples=n_samples)),
-    ("circulos", *make_circles(n_samples=n_samples)),
-    ("espirales", *hacer_espirales(n_samples=n_samples)),
-    # ("mnist", *fetch_openml("mnist_784", version=1, return_X_y=True)),
-    ("vino", *load_wine(return_X_y=True)),
-    (f"noisy_lunas_{n_samples}", *make_moons(n_samples=n_samples, noise=0.35)),
-    (f"noisy_circulos_{n_samples}", *make_circles(n_samples=n_samples, noise=0.1)),
-    (
-        f"noisy_espirales_{n_samples}",
-        *hacer_espirales(n_samples=n_samples // 2, noise=0.15),
-    ),
-    (f"2noisy_lunas_{n_samples}", *make_moons(n_samples=n_samples, noise=0.525)),
-    (f"2noisy_circulos_{n_samples}", *make_circles(n_samples=n_samples, noise=0.15)),
-    (
-        f"2noisy_espirales_{n_samples}",
-        *hacer_espirales(n_samples=n_samples // 2, noise=0.225),
-    ),
-    ("digitos", *load_digits(return_X_y=True)),
-]
-datasets = Bunch(**{nombre: Dataset(X, y, nombre) for nombre, X, y in datasets})
-
-penguins = sns_load_dataset("penguins").dropna()
-penguins_keep = ["bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"]
-datasets.pinguinos = Dataset(
-    penguins[penguins_keep].values, penguins.species.values, "pinguinos"
-)
-datasets.anteojos = Dataset(
-    *hacer_anteojos(n_samples=n_samples, bridge_height=0.6, noise=0.15), "anteojos"
-)
