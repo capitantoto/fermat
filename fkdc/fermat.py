@@ -66,53 +66,33 @@ class FermatKDE(BaseEstimator, DensityMixin):
         self.d = d  # TODO: Evitar completamente? Quitando el h^-d del score?
 
     def fit(self, X):
-        self.Q_ = X
-        # A is the adjacency matrix with Fermat distances as edge weights
-        self.A_ = sample_fermat(X, self.alpha)
+        self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha)
         if self.d == -1:
-            self.d = self.D
+            self.d = self.distance_.D
         return self
-
-    @property
-    def N(self):
-        return self.Q_.shape[0]
-
-    @property
-    def D(self):
-        return self.Q_.shape[1]
-
-    def _sample_distances(self, X):
-        to_Q = euclidean(X, self.Q_) ** self.alpha
-        sample_distances = np.zeros((X.shape[0], self.N))
-        for i in range(len(X)):
-            sample_distances[i, :] = np.min(to_Q[i].T + self.A_, axis=1)
-        return sample_distances
 
     def score_samples(self, X=None, log=True):
         if X is None:
-            X = self.Q_
-
-        score = np.exp(-0.5 * (self._sample_distances(X) / self.bandwidth) ** 2).sum(1)
-
+            distances = self.distance_.A[0]
+        else:
+            distances = self.distance_(X)
+        score = np.exp(-0.5 * (distances / self.bandwidth) ** 2).sum(1)
         if log:
             return (
-                -np.log(self.N)
+                -np.log(self.distance_.N)
                 - self.d * np.log(self.bandwidth)
                 - self.d / 2 * np.log(2 * np.pi)
                 + np.maximum(np.log(score), self.MIN_LOG_SCORE)
             )
-
         else:
             return (
-                self.N**-1
+                self.distance_.N**-1
                 * (self.bandwidth**-self.d)
                 * (2 * np.pi) ** (-self.d / 2)
                 * score
             )
 
     def score(self, X=None):
-        if X is None:
-            X = self.Q_
         return self.score_samples(X).sum()
 
 

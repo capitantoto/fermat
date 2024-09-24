@@ -27,7 +27,7 @@ class Tarea:
         busqueda_params=Bunch(
             refit=True, return_train_score=True, cv=5, scoring="accuracy"
         ),
-        split_evaluacion=0.8,
+        split_evaluacion=0.2,
         seed=None,
     ):
         self.dataset = ds = (
