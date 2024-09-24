@@ -8,8 +8,6 @@ from sklearn.metrics import accuracy_score, log_loss
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.utils import Bunch
 
-from fkdc.datasets import datasets
-
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
@@ -114,47 +112,3 @@ class Tarea:
             params = (self.dataset.nombre, self.seed, self.split_evaluacion)
             path = "%s-%s-%s.pkl" % params
         pickle.dump(self, open(path, "wb"))
-
-
-tareas = [
-    Tarea(dataset, [], split_evaluacion=0.5, seed=1991) for dataset in datasets.values()
-]
-
-if __name__ == "__main__":
-    import pickle as pkl
-
-    for tarea in tareas:
-        tarea.entrenar()
-        tarea.evaluar()
-
-    resumenes = Bunch()
-
-    for tarea in tareas:
-        logger.info("==== %s ====" % tarea.dataset.nombre.upper())
-        busquedas = tarea.info.pop("busquedas")
-        train = (
-            pd.concat(
-                [
-                    pd.DataFrame(busqueda.cv_results_)[
-                        ["mean_test_score", "mean_train_score"]
-                    ]
-                    for busqueda in busquedas.values()
-                ],
-                keys=busquedas.keys(),
-                names=["algo", "_drop"],
-            )
-            .reset_index()
-            .drop(columns="_drop")
-        )
-        idx = train.groupby("algo").mean_test_score.idxmax()
-        train_scores = train.loc[idx].set_index("algo")
-        resumen = pd.concat(
-            [
-                pd.DataFrame({**tarea.info, "mean_eval_score": tarea.puntajes}),
-                train_scores,
-            ],
-            axis=1,
-        ).sort_values("mean_eval_score", ascending=False)
-        logger.info(resumen)
-    pkl.dump(resumenes, open("resumenes.pkl", "wb"))
-    pkl.dump(tareas, open("tareas.pkl", "wb"))
