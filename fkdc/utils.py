@@ -6,6 +6,8 @@ import numpy as np
 from scipy.special import ellipe
 from scipy.stats import truncnorm
 
+MAX_SEED = 2**32  # Seeding random_state with a larger integer returns an error
+
 
 def iqr(X):
     return np.percentile(X, 75) - np.percentile(X, 25)
@@ -117,3 +119,20 @@ def arc(
     x = center[0] + r[0] * np.cos(theta - angle_shift)
     y = center[1] + r[len(r) - 1] * np.sin(theta - angle_shift)
     return np.column_stack((x, y))
+
+
+def sample(*arrays, n_samples, random_state=None):
+    rng = np.random.default_rng(random_state)
+    n_arrays = arrays[0].shape[0]
+    assert all(
+        array.shape[0] == n_arrays for array in arrays
+    ), "Todo elemento en *arrays deben tener igual dimensión 0 ('n')."
+    if isinstance(n_samples, float):
+        assert (0 <= n_samples) and (n_samples <= 1), "El ratio debe estar entre 0 y 1"
+        n_samples = int(n_arrays * n_samples)
+    if isinstance(n_samples, int):
+        assert (0 <= n_samples) and (
+            n_samples <= n_arrays
+        ), "El nro de muestras debe estar entre 0 y la longitud de los arrays"
+    idxs = rng.choice(range(n_arrays), size=n_samples, replace=False)
+    return [array[idxs] for array in arrays]
