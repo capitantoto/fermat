@@ -14,7 +14,7 @@ np.seterr(divide="ignore", invalid="ignore")
 cachedir = "_cache"
 memory = Memory(cachedir, verbose=0)
 
-MIN_LOG_SCORE = -1e6
+MIN_LOG_SCORE = np.log(1e-323)  # For numpy, 1e-324 == 0 and  1e-323 != 0
 MAX_LOG_SCORE = np.log(np.finfo("float64").max)
 
 

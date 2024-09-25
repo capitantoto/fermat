@@ -8,12 +8,9 @@ from sklearn.metrics import accuracy_score, log_loss
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.utils import Bunch
 
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO,
-)
-logger = logging.getLogger()
-logger.addHandler(logging.StreamHandler())
+from fkdc.utils import MAX_SEED
+
+logger = logging.getLogger(__name__)
 
 
 class Tarea:
@@ -47,7 +44,7 @@ class Tarea:
             )
         self.busqueda_factory = busqueda_factory
         self.busqueda_params = busqueda_params or {}
-        self.seed = seed or np.random.randint(0, 4294967295)
+        self.seed = seed or np.random.randint(0, MAX_SEED)
         self.split_evaluacion = split_evaluacion
         self._fitted = False
 
@@ -63,8 +60,6 @@ class Tarea:
         self.clasificadores = Bunch()
         for nombre, algo in self.algoritmos.items():
             self.info[nombre] = info = Bunch()
-            logger.info(f"Entrenar {nombre} en {self.dataset.nombre}")
-            logger.info(f"Espacio de búsqueda: {algo.espacio}")
             busqueda = self.busqueda_factory(
                 algo.clf, algo.espacio, **self.busqueda_params
             )
@@ -90,22 +85,24 @@ class Tarea:
             base.logvero = (np.log(base.probas) * conteos).sum()
             base.r2 = 0
         for nombre, clf in self.clasificadores.items():
-            logger.info(f"Evaluando {nombre}")
-            info = self.info[nombre]
-            if verosimilitud and hasattr(clf, "predict_proba"):
-                info.probas = clf.predict_proba(self.X_eval)
-                info.preds_proba = clf.classes_[info.probas.argmax(axis=1)]
-                info.logvero = -log_loss(
-                    self.y_eval,
-                    info.probas,
-                    normalize=False,
-                    labels=self.dataset.labels,
-                )
-                info.r2 = 1 - info.logvero / base.logvero
-            t0 = time()
-            info.preds = clf.predict(self.X_eval)
-            info.t_evaluar = time() - t0
-            info.accuracy = accuracy_score(info.preds, self.y_eval)
+            try:
+                info = self.info[nombre]
+                if verosimilitud and hasattr(clf, "predict_proba"):
+                    info.probas = clf.predict_proba(self.X_eval)
+                    info.preds_proba = clf.classes_[info.probas.argmax(axis=1)]
+                    info.logvero = -log_loss(
+                        self.y_eval,
+                        info.probas,
+                        normalize=False,
+                        labels=self.dataset.labels,
+                    )
+                    info.r2 = 1 - info.logvero / base.logvero
+                t0 = time()
+                info.preds = clf.predict(self.X_eval)
+                info.t_evaluar = time() - t0
+                info.accuracy = accuracy_score(info.preds, self.y_eval)
+            except Exception as exc:
+                logger.warn(exc, exc_info=True)
 
     def guardar(self, path=None):
         if path is None:

@@ -48,14 +48,12 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
 )
-logger = logging.getLogger()
-logger.addHandler(logging.StreamHandler())
+logger = logging.getLogger(__name__)
 
 main_seed = hash(dt.datetime.now()) % MAX_SEED
 rng = np.random.default_rng(main_seed)
 repetitions = 16
 run_seeds = rng.integers(1000, 10000, size=repetitions)
-pickle.dump(run_seeds, open(f"{main_seed}-run_seeds.pkl", "wb"))
 n_samples = 800
 
 # %%
@@ -69,24 +67,27 @@ clasificadores = Bunch(
         KDClassifier(metric="fermat"),
         {
             "alpha": np.linspace(1, 2.5, 9),
-            "bandwidth": np.logspace(-3, 2, 31),
+            "bandwidth": np.logspace(-3, 2, 21),
         },
     ),
-    kdc=(KDClassifier(metric="euclidean"), {"bandwidth": np.logspace(-2, 6, 101)}),
+    kdc=(KDClassifier(metric="euclidean"), {"bandwidth": np.logspace(-3, 5, 101)}),
     gnb=(GaussianNB(), {"var_smoothing": np.logspace(-10, -2, 17)}),
     kn=(KNeighborsClassifier(), espacio_kn),
     fkn=(FermatKNeighborsClassifier(), espacio_kn),
     lr=(
-        LogisticRegression(solver="saga", penalty="elasticnet"),
-        {"C": np.logspace(-2, 2, 11), "l1_ratio": np.linspace(0, 1, 3)},
+        LogisticRegression(solver="saga", penalty="elasticnet", max_iter=200),
+        {"C": np.logspace(-2, 2, 11), "l1_ratio": [0, 0.5, 1]},
     ),
     svc=(
         SVC(),
-        {
-            "C": np.logspace(-3, 3, 21),
-            "gamma": ["scale", "auto", *np.logspace(-3, 2, 11)],
-            "kernel": ["linear", "rbf", "sigmoid"],
-        },
+        [
+            {
+                "C": np.logspace(-3, 4, 31),
+                "gamma": ["scale", "auto"],
+                "kernel": ["rbf"],
+            },
+            {"C": np.logspace(-3, 4, 31), "kernel": ["linear"]},
+        ],
     ),
 )
 
@@ -156,14 +157,19 @@ tareas_ds_variable = {
     for nombre, ds in {**datasets_2d, **datasets_mnist}.items()
 }
 if __name__ == "__main__":
+    from pathlib import Path
+
+    dir = Path(f"run-{main_seed}")
+    dir.mkdir(parents=True, exist_ok=True)
+    pickle.dump(run_seeds, open(dir / f"{main_seed}-run_seeds.pkl", "wb"))
     for nombre, tarea in {**tareas_ds_fijo, **tareas_ds_variable}.items():
         logger.info("Entrenando y evaluando %s", nombre)
         t0 = time()
         tarea.evaluar()
         logger.info("Tomó %f.2 segundos" % (time() - t0))
-        tarea.dataset.guardar(f"dataset-{nombre}.pkl")
-        tarea.guardar(f"tarea-{nombre}.pkl")
+        tarea.dataset.guardar(dir / f"dataset-{nombre}.pkl")
+        tarea.guardar(dir / f"tarea-{nombre}.pkl")
         logger.info("Resumen resultados")
         campos = ["logvero", "r2", "accuracy", "t_entrenar", "t_evaluar"]
         logger.info(pd.DataFrame(tarea.info).T[campos].to_markdown())
-        pickle.dump(tarea.info, open(f"info-{nombre}.pkl", "wb"))
+        pickle.dump(tarea.info, open(dir / f"info-{nombre}.pkl", "wb"))
