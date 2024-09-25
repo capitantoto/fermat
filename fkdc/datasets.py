@@ -179,7 +179,11 @@ def hacer_pionono(
 
 def agregar_dims_ruido(X, ndims=None, scale=None, random_state=None):
     rng = np.random.default_rng(random_state)
-    scale = scale or np.std(X)
+    if scale is None:
+        scale = np.std(X)
+    elif isinstance(scale, callable):
+        scale = scale(X)
+    assert isinstance(scale, Number), "`scale` debe ser None, un callable o un escalar"
     ndims = ndims or (3 * X.shape[1])
     ruido = rng.normal(scale=scale, size=(X.shape[0], ndims))
     return np.hstack([X, ruido])
@@ -194,13 +198,13 @@ class Dataset:
         self.labels = unique_labels(self.y)
         self.k = len(self.labels)
 
-    def de_fabrica(factory, factory_params=None, ruido_params=None, nombre=None):
+    def de_fabrica(factory, ruido=None, nombre=None, **factory_params):
         params = Bunch(**(factory_params or {}))
         X, y = factory(**params)
-        if ruido_params:
-            X = agregar_dims_ruido(X, **({} if ruido_params is True else ruido_params))
+        if ruido:
+            X = agregar_dims_ruido(X, **({} if ruido is True else ruido))
         params.factory = factory.__name__
-        params.ruido = ruido_params
+        params.ruido = ruido
         ds = Dataset(X, y, nombre)
         ds.params = params
         return ds
@@ -214,13 +218,15 @@ class Dataset:
     def scatter(self, x=0, y=1, ax=None, **plot_kws):
         sns_scatterplot(x=self.X[:, x], y=self.X[:, y], hue=self.y, ax=ax, **plot_kws)
 
-    def scatter_3d(self, x=0, y=1, z=2, **plot_kws):
+    def scatter_3d(self, x=0, y=1, z=2, ax=None, **plot_kws):
         if self.p < 3:
             raise ValueError(f"{self.nombre} tiene sólo {self.p} dimensiones")
-        ax = plt.gcf().add_subplot(projection="3d")
+        ax = ax or plt.gcf().add_subplot(projection="3d")
+        assert ax.name == "3d", "El eje (`ax`) debe tener proyección 3d"
         for i, lbl in enumerate(self.labels):
             X_lbl = self.X[self.y == lbl]
-            ax.scatter(X_lbl[:, x], X_lbl[:, y], X_lbl[:, z], c=f"C{i}", label=str(lbl))
+            X, Y, Z = X_lbl[:, x], X_lbl[:, y], X_lbl[:, z]
+            ax.scatter(X, Y, Z, c=f"C{i}", label=str(lbl), **plot_kws)
         ax.legend(title="Clase")
 
     def guardar(self, archivo=None):
