@@ -59,6 +59,7 @@ class Tarea:
     def entrenar(self):
         self.clasificadores = Bunch()
         for nombre, algo in self.algoritmos.items():
+            logger.info("Entrenando %s", nombre)
             self.info[nombre] = info = Bunch()
             busqueda = self.busqueda_factory(
                 algo.clf, algo.espacio, **self.busqueda_params
@@ -85,6 +86,7 @@ class Tarea:
             base.logvero = (np.log(base.probas) * conteos).sum()
             base.r2 = 0
         for nombre, clf in self.clasificadores.items():
+            logger.info("Evaluando %s", nombre)
             try:
                 info = self.info[nombre]
                 if verosimilitud and hasattr(clf, "predict_proba"):
@@ -102,7 +104,7 @@ class Tarea:
                 info.t_evaluar = time() - t0
                 info.accuracy = accuracy_score(info.preds, self.y_eval)
             except Exception as exc:
-                logger.warn(exc, exc_info=True)
+                logger.warning(exc, exc_info=True)
 
     def guardar(self, path=None):
         if path is None:
