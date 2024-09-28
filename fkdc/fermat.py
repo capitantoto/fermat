@@ -167,8 +167,10 @@ class KDClassifier(BaseEstimator, ClassifierMixin):
     def predict_proba(self, X):
         logscores = np.array([model.score_samples(X) for model in self.models_]).T
         logprobs = (logscores + self.logpriors_).clip(MIN_LOG_SCORE, MAX_LOG_SCORE)
-        result = np.exp(logprobs + self.logpriors_)
-        return np.exp(logprobs) / result.sum(axis=1, keepdims=True)
+        # Tomo factor común de la máxima logprob para evitar problemas numericos
+        deltas = logprobs - logprobs.max(axis=1, keepdims=True)
+        result = np.exp(deltas)
+        return result / result.sum(axis=1, keepdims=True)
 
     def predict(self, X):
         return self.classes_[np.argmax(self.predict_proba(X), 1)]
