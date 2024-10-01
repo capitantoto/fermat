@@ -8,11 +8,12 @@ from sklearn.base import BaseEstimator, ClassifierMixin, DensityMixin
 from sklearn.neighbors import KernelDensity, KNeighborsClassifier
 from sklearn.utils.multiclass import unique_labels
 
+from fkdc import cache_dir
+
 # Ignore warnings for np.log(0) and siimilar
 np.seterr(divide="ignore", invalid="ignore")
 
-cachedir = "_cache"
-memory = Memory(cachedir, verbose=0)
+memory = Memory(cache_dir, verbose=0)
 
 MIN_LOG_SCORE = np.log(1e-323)  # For numpy, 1e-324 == 0 and  1e-323 != 0
 MAX_LOG_SCORE = np.log(np.finfo("float64").max)
@@ -35,7 +36,7 @@ def sample_fermat(Q, alpha=1, fill_value=np.inf):
 
 
 class SampleFermatDistance:
-    def __init__(self, Q, alpha=1, groups=None):
+    def __init__(self, Q, alpha: float = 1, groups=None):
         self.Q = Q
         self.N, self.D = Q.shape
         self.groups = np.array(np.zeros(self.N) if groups is None else groups)
