@@ -99,8 +99,9 @@ datasets_2d = {
     for noise_lvl, noise in cfg.noise_levels.items()
     for seed in run_seeds
 }
-pinguinos = sns_load_dataset("penguins")
 X_pinguinos = ["bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"]
+y_pinguinos = "species"
+pinguinos = sns_load_dataset("penguins")[X_pinguinos + [y_pinguinos]].dropna()
 datasets_multik = {
     "anteojos": Dataset.de_fabrica(
         hacer_anteojos, n_samples=n_samples, noise=0.1, random_state=main_seed
