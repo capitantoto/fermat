@@ -28,7 +28,7 @@ from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
+from sklearn.svm import SVC, LinearSVC
 from sklearn.utils import Bunch
 
 from fkdc.datasets import (
@@ -78,16 +78,10 @@ clasificadores = Bunch(
         LogisticRegression(solver="saga", penalty="elasticnet", max_iter=200),
         {"C": np.logspace(-2, 2, 11), "l1_ratio": [0, 0.5, 1]},
     ),
-    svc=(
-        SVC(),
-        [
-            {
-                "C": np.logspace(-3, 4, 31),
-                "gamma": ["scale", "auto"],
-                "kernel": ["rbf"],
-            },
-            {"C": np.logspace(-3, 4, 31), "kernel": ["linear"]},
-        ],
+    svc=(SVC(), {"C": np.logspace(-3, 5, 51), "gamma": ["scale", "auto"]}),
+    lsvc=(
+        LinearSVC(dual="auto"),
+        {"C": np.logspace(-3, 3, 11), "fit_intercept": [True, False]},
     ),
 )
 
