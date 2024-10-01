@@ -9,6 +9,7 @@ drafts
 resources
 # No publicar PDFs de bibliografía
 bib/*.pdf
+bib/*.djvu
 # Programas de terceros
 src
 # caches
