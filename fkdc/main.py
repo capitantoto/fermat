@@ -12,6 +12,7 @@ import datetime as dt
 import logging
 import pickle
 from time import time
+from warnings import simplefilter
 
 import numpy as np
 import pandas as pd
@@ -25,12 +26,14 @@ from sklearn.datasets import (
     make_moons,
 )
 from sklearn.decomposition import PCA
+from sklearn.exceptions import ConvergenceWarning
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC, LinearSVC
 from sklearn.utils import Bunch
 
+from fkdc import main_seed
 from fkdc.datasets import (
     Dataset,
     hacer_anteojos,
@@ -44,20 +47,23 @@ from fkdc.fermat import FermatKNeighborsClassifier, KDClassifier
 from fkdc.tarea import Tarea
 from fkdc.utils import MAX_SEED, sample
 
+main_seed = main_seed or hash(dt.datetime.now()) % MAX_SEED
+simplefilter("ignore", category=ConvergenceWarning)
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
+    handlers=[logging.StreamHandler(), logging.FileHandler(f"run-{main_seed}.log")],
 )
 logger = logging.getLogger(__name__)
+logger.info("Logging inicializado")
 
-main_seed = hash(dt.datetime.now()) % MAX_SEED
 rng = np.random.default_rng(main_seed)
 repetitions = 16
 run_seeds = rng.integers(1000, 10000, size=repetitions)
 n_samples = 800
 
 # %%
-
+logger.info("Instanciando clasificadores y grillas")
 espacio_kn = {
     "n_neighbors": np.unique(np.logspace(0, np.log10(300), num=15, dtype=int)),
     "weights": ["uniform", "distance"],
@@ -85,7 +91,7 @@ clasificadores = Bunch(
     ),
 )
 
-
+logger.info("Instanciando datasets")
 config_2d = Bunch(
     lunas=Bunch(factory=make_moons, noise_levels=Bunch(lo=0.25, hi=0.5)),
     circulos=Bunch(factory=make_circles, noise_levels=Bunch(lo=0.08, hi=0.2)),
@@ -139,7 +145,7 @@ datasets_mnist = {
     )
     for seed in run_seeds
 }
-
+logger.info("Instanciando Tareas")
 split_tareas = 0.5
 
 tareas_ds_fijo = {
@@ -154,17 +160,20 @@ tareas_ds_variable = {
 if __name__ == "__main__":
     from pathlib import Path
 
-    dir = Path(f"run-{main_seed}")
+    logger.info("Comienza loop principal")
+    dir = Path(f"runs/run-{main_seed}")
     dir.mkdir(parents=True, exist_ok=True)
     pickle.dump(run_seeds, open(dir / f"{main_seed}-run_seeds.pkl", "wb"))
     for nombre, tarea in {**tareas_ds_fijo, **tareas_ds_variable}.items():
-        logger.info("Entrenando y evaluando %s", nombre)
+        logger.info("Entrenando %s", nombre)
         t0 = time()
+        tarea.entrenar()
+        logger.info("Evaluando %s", nombre)
         tarea.evaluar()
         logger.info("Tomó %f.2 segundos" % (time() - t0))
         tarea.dataset.guardar(dir / f"dataset-{nombre}.pkl")
         tarea.guardar(dir / f"tarea-{nombre}.pkl")
         logger.info("Resumen resultados")
         campos = ["logvero", "r2", "accuracy", "t_entrenar", "t_evaluar"]
-        logger.info(pd.DataFrame(tarea.info).T[campos].to_markdown())
+        logger.info("\n%s" % pd.DataFrame(tarea.info).T[campos].to_markdown())
         pickle.dump(tarea.info, open(dir / f"info-{nombre}.pkl", "wb"))
