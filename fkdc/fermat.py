@@ -77,9 +77,13 @@ class SampleFermatDistance:
         return distances
 
     def __call__(self, X, Y=None):
+        if X.ndim == 1:  # en caso de que lo llamen con una sola observación en X
+            X = X.reshape(1, self.D)
         if Y is None:
             return self._sample_distance(X)
         else:
+            if Y.ndim == 1:  # en caso de que lo llamen con una sola observación en Y
+                Y = Y.reshape(1, self.D)
             return self._distance(X, Y)
 
 

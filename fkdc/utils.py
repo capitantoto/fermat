@@ -1,10 +1,17 @@
 """Funciones auxiliares varias. `_ellipse_length`, `eyeglasses` y `arc` son autoría del Ing. Diego Battochio."""
 
+import hashlib
 from itertools import product
 
 import numpy as np
+import yaml
 from scipy.special import ellipe
 from scipy.stats import truncnorm
+
+yaml.add_representer(np.int64, lambda dumper, num: dumper.represent_int(num))
+yaml.add_representer(np.float64, lambda dumper, num: dumper.represent_float(num))
+yaml.add_representer(np.ndarray, lambda dumper, array: dumper.represent_list(array))
+
 
 MAX_SEED = 2**32  # Seeding random_state with a larger integer returns an error
 
@@ -136,3 +143,7 @@ def sample(*arrays, n_samples, random_state=None):
         ), "El nro de muestras debe estar entre 0 y la longitud de los arrays"
     idxs = rng.choice(range(n_arrays), size=n_samples, replace=False)
     return [array[idxs] for array in arrays]
+
+
+def dict_hasher(D, len=16):
+    return hashlib.md5(((k, v) for k, v in D.items())).hexdigest()[:len]
