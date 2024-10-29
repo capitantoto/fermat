@@ -2,17 +2,12 @@
 *.code-workspace
 .ipynb_checkpoints
 .vscode
-# Esta es la copia local de la librería `fermat` para su estudio.
-fermat
 venv
-drafts
-resources
 # No publicar PDFs de bibliografía
 bib/*.pdf
 bib/*.djvu
-# Programas de terceros
-src
 # caches
+.cache
 _cache
 __pycache__
 # Data files
@@ -26,3 +21,8 @@ __pycache__
 *.out
 *.synctex.gz
 *.toc
+# Directorios de trabajo
+datasets
+configs
+infos
+runs

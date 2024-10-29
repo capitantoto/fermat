@@ -1,15 +1,31 @@
+import datetime as dt
+import logging
 import pickle
 from numbers import Number
+from pathlib import Path
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
+import typer
 from scipy import stats
+from seaborn import load_dataset as sns_load_dataset
 from seaborn import scatterplot as sns_scatterplot
+from sklearn.datasets import (
+    fetch_openml,
+    load_digits,
+    load_iris,
+    load_wine,
+    make_circles,
+    make_moons,
+)
+from sklearn.decomposition import PCA
 from sklearn.utils import Bunch
 from sklearn.utils import shuffle as sk_shuffle
 from sklearn.utils.multiclass import unique_labels
 
-from fkdc.utils import eyeglasses
+from fkdc import config
+from fkdc.utils import MAX_SEED, eyeglasses, sample
 
 
 def _dos_muestras(n_samples, random_state=None, shuffle=False):
@@ -190,7 +206,7 @@ def agregar_dims_ruido(X, ndims=None, scale=None, random_state=None):
 
 
 class Dataset:
-    def __init__(self, X=None, y=None, nombre=None):
+    def __init__(self, X, y, nombre=None):
         self.X = X
         self.y = y.astype(str)
         self.nombre = nombre
@@ -232,3 +248,99 @@ class Dataset:
     def guardar(self, archivo=None):
         with open(archivo or f"{hash(self)}.pkl", "wb") as file:
             pickle.dump(self, file)
+
+
+def make_datasets(
+    n_samples: int = config.n_samples,
+    main_seed: Optional[int] = config.main_seed,
+    repetitions: int = config.repetitions,
+    data_dir: Path = Path.cwd() / "datasets",
+):
+    data_dir.mkdir(parents=True, exist_ok=True)
+
+    np.random.default_rng(main_seed)
+    main_seed = main_seed or hash(dt.datetime.now()) % MAX_SEED
+    run_seeds = config._get_run_seeds(main_seed, repetitions)
+    logging.basicConfig(
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        level=logging.INFO,
+        handlers=[logging.StreamHandler()],
+    )
+    logger = logging.getLogger(__name__)
+
+    logger.info("Instanciando datasets 2D")
+    config_2d = Bunch(
+        lunas=Bunch(factory=make_moons, noise_levels=Bunch(lo=0.25, hi=0.5)),
+        circulos=Bunch(factory=make_circles, noise_levels=Bunch(lo=0.08, hi=0.2)),
+        espirales=Bunch(factory=hacer_espirales, noise_levels=Bunch(lo=0.1, hi=0.2)),
+    )
+    datasets_2d = {
+        (f"{nombre}_{noise_lvl}", seed): Dataset.de_fabrica(
+            cfg.factory, n_samples=n_samples, noise=noise, random_state=seed
+        )
+        for nombre, cfg in config_2d.items()
+        for noise_lvl, noise in cfg.noise_levels.items()
+        for seed in run_seeds
+    }
+
+    logger.info("Instanciando datasets Multi-K")
+    X_pinguinos = [
+        "bill_length_mm",
+        "bill_depth_mm",
+        "flipper_length_mm",
+        "body_mass_g",
+    ]
+    y_pinguinos = "species"
+    pinguinos = sns_load_dataset("penguins")[X_pinguinos + [y_pinguinos]].dropna()
+    datasets_multik = {
+        "anteojos": Dataset.de_fabrica(
+            hacer_anteojos, n_samples=n_samples, noise=0.1, random_state=main_seed
+        ),
+        "iris": Dataset.de_fabrica(load_iris, return_X_y=True),
+        "vino": Dataset.de_fabrica(load_wine, return_X_y=True),
+        "pinguinos": Dataset(pinguinos[X_pinguinos].values, pinguinos.species.values),
+        "digitos": Dataset.de_fabrica(load_digits, return_X_y=True),
+    }
+
+    logger.info("Instanciando datasets 3D")
+    config_3d = Bunch(
+        eslabones=Bunch(factory=hacer_eslabones, noise=0.15),
+        helices=Bunch(factory=hacer_helices, noise=0.05),
+        hueveras=Bunch(factory=hacer_hueveras, noise=0.05),
+        pionono=Bunch(factory=hacer_pionono, noise=0.5),
+    )
+    datasets_3d = {
+        (f"{nombre}_{ndims}", seed): Dataset.de_fabrica(
+            cfg.factory,
+            n_samples=n_samples,
+            noise=cfg.noise,
+            random_state=seed,
+            ruido=Bunch(random_state=main_seed, ndims=ndims) if ndims else False,
+        )
+        for nombre, cfg in config_3d.items()
+        for ndims in [0, 12]
+        for seed in run_seeds
+    }
+
+    logger.info("Instanciando datasets MNIST")
+    n_components = 96
+    X, y = fetch_openml("mnist_784", version=1, return_X_y=True, as_frame=False)
+    pca = PCA(n_components).fit(X)
+    _X = pca.transform(X)
+    datasets_mnist = {
+        ("mnist", seed): Dataset(*sample(_X, y, n_samples=n_samples, random_state=seed))
+        for seed in run_seeds
+    }
+    logger.info("Guardando datasets")
+    for key, dataset in {
+        **datasets_2d,
+        **datasets_3d,
+        **datasets_multik,
+        **datasets_mnist,
+    }.items():
+        key = "-".join(map(str, key)) if isinstance(key, tuple) else key
+        pickle.dump(dataset, open(data_dir / ("%s.pkl" % key), "wb"))
+
+
+if __name__ == "__main__":
+    typer.run(make_datasets)
