@@ -16,6 +16,6 @@ Tesis en progreso para la Maestría en Estadística Matemática, IC, FCEN-UBA
 - [Fermat](https://www.aristas.com.ar/fermat/fermat.html), librería en python para el cómputo de la distancia homónima
 
 ## Biblio
-Zotero
-Zotero Folder Import (https://github.com/retorquere/zotero-folder-import)
-Zotero Connector
+- [Zotero + Zotero Connector](https://www.zotero.org/)
+- [Zotero Folder Import](https://github.com/retorquere/zotero-folder-import)
+- [Better Bibtex for Zotero](https://retorque.re/zotero-better-bibtex/)
