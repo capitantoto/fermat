@@ -77,14 +77,7 @@ def make_configs(
     logger.setLevel(logging.DEBUG if verbose else logging.INFO)
     logger.info("Generando configuraciones")
 
-    datasets = {
-        ds.stem: ds
-        for ds in datasets_dir.glob("*.pkl")
-        if any(
-            nombre in ds.stem
-            for nombre in ["anteojos", "vino", "pinguinos", "iris", "digitos"]
-        )
-    }
+    datasets = {ds.stem: ds for ds in datasets_dir.glob("*.pkl")}
     for nombre_clf, clf in clasificadores.items():
         scores = ["accuracy"]
         if hasattr(clf, "predict_proba"):
