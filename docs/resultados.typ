@@ -307,7 +307,10 @@ Veamos entonces cómo les fue a los contendientes, considerando primero la exact
   image("img/boxplot-lunas-espirales-circulos.svg", width: 120%),
   caption: flex-caption[Boxplots con la distribución de dxactitud en las #reps repeticiones de cada experimento de @fig-2][Boxplots para exactitud de @fig-2],
 ) <bp-exac-2d>
-
+#figure(
+  image("img/boxplot-lunas-espirales-circulos-new.svg", width: 120%),
+  caption: flex-caption[Boxplots con la distribución de dxactitud en las #reps repeticiones de cada experimento de @fig-2][Boxplots para exactitud de @fig-2],
+)
 #figure(tabla_csv("data/exac-ds-2d.csv"), caption: flex-caption[ "mi caption, bo". ][])
 #let lsvc = `LSVC`
 KDC (en sus dos variantes), KNN y SVC (con kernel RBF) parecieran ser los métodos más competitivos, con mínimas diferencias de performance entre sí: sólo en "círculos" se observa un ligero ordenamiento de los métodos, $svc succ  kdc succ knn $, aunque la performance mediana de #svc está dentro de "los bigotes" de todos los métodos antedichos. La tarea "lunas" pareciera ser la más fácil de todas, en la que hasta una regresión logística sin modelado alguno es adecuada. Para "espirales" y "círculos", #gnb, #lr y #lsvc no logran performar significativamente mejor que el clasificador base.
