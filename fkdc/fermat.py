@@ -1,19 +1,22 @@
-from itertools import product
-from numbers import Number
+from functools import partial
 
 import numpy as np
 from joblib import Memory
 from scipy.sparse.csgraph import csgraph_from_dense, shortest_path
 from scipy.spatial.distance import cdist, pdist, squareform
 from sklearn.base import BaseEstimator, ClassifierMixin, DensityMixin
-from sklearn.model_selection import GridSearchCV, ShuffleSplit
 from sklearn.neighbors import KernelDensity, KNeighborsClassifier
+from sklearn.utils.multiclass import unique_labels
+
+from fkdc import cache_dir
 
 # Ignore warnings for np.log(0) and siimilar
 np.seterr(divide="ignore", invalid="ignore")
 
-cachedir = "_cache"
-memory = Memory(cachedir, verbose=0)
+memory = Memory(cache_dir, verbose=0)
+
+MIN_LOG_SCORE = np.log(1e-323)  # For numpy, 1e-324 == 0 and  1e-323 != 0
+MAX_LOG_SCORE = np.log(np.finfo("float64").max)
 
 
 @memory.cache
@@ -32,189 +35,56 @@ def sample_fermat(Q, alpha=1, fill_value=np.inf):
     return shortest_path(csgraph_from_dense(adyacencias, fill_value), directed=False)
 
 
-class Bundle(dict):
-    def __getattr__(self, key):
-        try:
-            return self[key]
-        except KeyError:
-            raise AttributeError(key)
-
-    def __setattr__(self, key, value):
-        self[key] = value
-
-    def __repr__(self):
-        return "Bundle(" + ", ".join(f"{k}={v}" for k, v in self.items()) + ")"
-
-
-def iqr(X):
-    return np.percentile(X, 75) - np.percentile(X, 25)
-
-
-def pilot_h(dists):
-    return 0.9 * np.minimum(dists.std(), iqr(dists) / 1.34) * len(dists) ** (-1 / 5)
-    # return np.mean(sample_fermat(X, alpha=alpha))
-
-
-class FermatKDE(BaseEstimator, DensityMixin):
-    # MAX_DIST = 38.6
-    MIN_LOG_SCORE = -1e6
-
-    def __init__(self, alpha: float = 1, bandwidth: float = 1, d: int = -1):
-        self.bandwidth = bandwidth
-        self.alpha = alpha
-        self.d = d  # TODO: Evitar completamente? Quitando el h^-d del score?
-
-    def fit(self, X):
-        self.Q_ = X
-        # A is the adjacency matrix with Fermat distances as edge weights
-        self.A_ = sample_fermat(X, self.alpha)
-        if self.d == -1:
-            self.d = self.D
-        return self
-
-    @property
-    def N(self):
-        return self.Q_.shape[0]
-
-    @property
-    def D(self):
-        return self.Q_.shape[1]
-
-    def _sample_distances(self, X):
-        to_Q = euclidean(X, self.Q_) ** self.alpha
-        sample_distances = np.zeros((X.shape[0], self.N))
-        for i in range(len(X)):
-            sample_distances[i, :] = np.min(to_Q[i].T + self.A_, axis=1)
-        return sample_distances
-
-    def score_samples(self, X=None, log=True):
-        if X is None:
-            X = self.Q_
-
-        score = np.exp(-0.5 * (self._sample_distances(X) / self.bandwidth) ** 2).sum(1)
-
-        if log:
-            return (
-                -np.log(self.N)
-                - self.d * np.log(self.bandwidth)
-                - self.d / 2 * np.log(2 * np.pi)
-                + np.maximum(np.log(score), self.MIN_LOG_SCORE)
-            )
-
-        else:
-            return (
-                self.N**-1
-                * (self.bandwidth**-self.d)
-                * (2 * np.pi) ** (-self.d / 2)
-                * score
-            )
-
-    def score(self, X=None):
-        if X is None:
-            X = self.Q_
-        return self.score_samples(X).sum()
-
-
-def lattice(a, b, step=1, dim=2, array=True):
-    side = np.arange(a, b, step)
-    if len(side) ** dim > 1e6:
-        raise ValueError(
-            f"Too many points ({len(side) ** dim:.2e} > 1e6). Try a bigger step or a smaller dim."
-        )
-    gen = product(*[side] * dim)
-    return np.array([*gen]) if array else gen
-
-
-class BaseKDEClassifier(BaseEstimator, ClassifierMixin):
-    def __init__(self, bandwidth=1.0):
-        self.bandwidth = bandwidth
-
-    def fit(self, X, y):
-        self.classes_ = np.sort(np.unique(y))
-        training_sets = [X[y == yi] for yi in self.classes_]
-        self.models_ = [
-            KernelDensity(bandwidth=self.bandwidth, kernel="gaussian").fit(Xi)
-            for Xi in training_sets
-        ]
-        self.logpriors_ = [np.log(Xi.shape[0] / X.shape[0]) for Xi in training_sets]
-        return self
-
-    def predict_proba(self, X):
-        logprobs = np.array([model.score_samples(X) for model in self.models_]).T
-        result = np.exp(logprobs + self.logpriors_)
-        return result / result.sum(1, keepdims=True)
-
-    def predict(self, X):
-        return self.classes_[np.argmax(self.predict_proba(X), 1)]
-
-
-class FermatKDEClassifier(BaseEstimator, ClassifierMixin):
-    def __init__(self, bandwidth: float = -1.0, alpha: float = 1.0):
-        self.bandwidth = bandwidth
-        self.alpha = alpha
-
-    def fit(self, X, y):
-        self.classes_ = np.sort(np.unique(y))
-        training_sets = [X[y == yi] for yi in self.classes_]
-        self.bandwidths_ = self._pick_bandwidths(training_sets)
-
-        self.models_ = [
-            FermatKDE(bandwidth=hi, alpha=self.alpha).fit(Xi)
-            for hi, Xi in zip(self.bandwidths_, training_sets)
-        ]
-        self.logpriors_ = [np.log(Xi.shape[0] / X.shape[0]) for Xi in training_sets]
-        return self
-
-    def _pick_bandwidths(self, training_sets):
-        if isinstance(self.bandwidth, Number):
-            bandwidths = np.repeat(self.bandwidth, len(self.classes_))
-        elif len(self.bandwidth) == len(self.classes_):
-            bandwidths = np.array(self.bandwidth, dtype=float)
-        else:
-            raise ValueError(
-                "bandwidth must be a scalar or a vector of exactly n_classes"
-            )
-        for i, bw in enumerate(bandwidths):
-            Xi = training_sets[i]
-            if bw == -1:  # automatic bandwidth selection
-                pilot = pilot_h(sample_fermat(Xi, self.alpha))
-                grid = {"bandwidth": pilot * np.logspace(-3, 3, 31)}
-                cv = ShuffleSplit(n_splits=10, test_size=0.5)
-                search = GridSearchCV(FermatKDE(alpha=self.alpha).fit(Xi), grid, cv=cv)
-                search.fit(Xi)
-                bandwidths[i] = search.best_params_["bandwidth"]
-        return bandwidths
-
-    def predict_proba(self, X):
-        logprobs = np.array([model.score_samples(X) for model in self.models_]).T
-        result = np.exp(logprobs + self.logpriors_)
-        return result / result.sum(1, keepdims=True)
-
-    def predict(self, X):
-        return self.classes_[np.argmax(self.predict_proba(X), 1)]
-
-
 class SampleFermatDistance:
-    def __init__(self, Q, alpha=1, groups=None):
+    def __init__(self, Q, alpha: float = 1, groups=None):
         self.Q = Q
-        self.N = Q.shape[0]
-        self.groups = np.zeros(self.N) if groups is None else np.array(groups)
-        self.K = len(set(self.groups))
+        self.N, self.D = Q.shape
+        self.groups = np.array(np.zeros(self.N) if groups is None else groups)
+        self.labels = unique_labels(self.groups)
         assert (
             len(self.groups) == self.N
         ), "`groups` debe ser None, o de la misma longitud que el número de filas de Q"
         self.alpha = alpha
-        self.A = {k: sample_fermat(Q[self.groups == k], alpha) for k in range(self.K)}
+        self.A = {
+            lbl: sample_fermat(Q[self.groups == lbl], alpha) for lbl in self.labels
+        }
 
-    def __call__(self, X):
+    def _sample_distance(self, X):
         sample_distances = -np.ones((X.shape[0], self.N))
-        for k in range(self.K):
-            group_k = self.groups == k
-            to_Q_k = euclidean(X, self.Q[group_k]) ** self.alpha
+
+        for lbl in self.labels:
+            group_mask = self.groups == lbl
+            to_Q_lbl = euclidean(X, self.Q[group_mask]) ** self.alpha
             for i in range(len(X)):
-                sample_distances[i, group_k] = np.min(to_Q_k[i].T + self.A[k], axis=1)
+                sample_distances[i, group_mask] = np.min(
+                    to_Q_lbl[i].T + self.A[lbl], axis=1
+                )
         assert np.all(sample_distances >= 0)
         return sample_distances
+
+    def _distance(self, X, Y):
+        sfd_XQ = self._sample_distance(X)
+        sfd_YQ = self._sample_distance(Y)
+        euc_XY = euclidean(X, Y)
+        nX, nY = X.shape[0], Y.shape[0]
+        distances = -np.ones((nX, nY))
+        for i in range(nX):
+            for j in range(nY):
+                bypass_sfd = euc_XY[i, j] ** self.alpha
+                cross_sfd = np.min(sfd_XQ[i] + sfd_YQ[j])
+                distances[i, j] = np.min([bypass_sfd, cross_sfd])
+        assert np.all(distances >= 0)
+        return distances
+
+    def __call__(self, X, Y=None):
+        if X.ndim == 1:  # en caso de que lo llamen con una sola observación en X
+            X = X.reshape(1, self.D)
+        if Y is None:
+            return self._sample_distance(X)
+        else:
+            if Y.ndim == 1:  # en caso de que lo llamen con una sola observación en Y
+                Y = Y.reshape(1, self.D)
+            return self._distance(X, Y)
 
 
 class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
@@ -225,6 +95,7 @@ class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
         self.n_jobs = n_jobs
 
     def fit(self, X, y):
+        self.classes_ = unique_labels(y)
         self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha, groups=y)
         self.classifier_ = KNeighborsClassifier(
             n_neighbors=self.n_neighbors,
@@ -237,3 +108,74 @@ class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
 
     def predict(self, X):
         return self.classifier_.predict(self.distance_(X))
+
+    def predict_proba(self, X):
+        return self.classifier_.predict_proba(self.distance_(X))
+
+
+class FermatKDE(BaseEstimator, DensityMixin):
+    def __init__(self, alpha: float = 1, bandwidth: float = 1, d: int = -1):
+        self.bandwidth = bandwidth
+        self.alpha = alpha
+        self.d = d  # TODO: Evitar completamente? Quitando el h^-d del score?
+
+    def fit(self, X):
+        self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha)
+        if self.d == -1:
+            self.d = self.distance_.D
+        return self
+
+    def score_samples(self, X=None, log=True):
+        if X is None:
+            distances = self.distance_.A[0]
+        else:
+            distances = self.distance_(X)
+        score = np.exp(-0.5 * (distances / self.bandwidth) ** 2).sum(1)
+        if log:
+            return (
+                -np.log(self.distance_.N)
+                - self.d * np.log(self.bandwidth)
+                - self.d / 2 * np.log(2 * np.pi)
+                + np.maximum(np.log(score), MIN_LOG_SCORE)
+            )
+        else:
+            return (
+                self.distance_.N**-1
+                * (self.bandwidth**-self.d)
+                * (2 * np.pi) ** (-self.d / 2)
+                * score
+            )
+
+    def score(self, X=None):
+        return self.score_samples(X).sum()
+
+
+class KDClassifier(BaseEstimator, ClassifierMixin):
+    def __init__(self, bandwidth=1.0, metric="euclidean", alpha=1.0):
+        self.bandwidth = bandwidth
+        self.metric = metric
+        self.alpha = alpha
+
+    def fit(self, X, y):
+        self.classes_ = unique_labels(y)
+        training_sets = [X[y == yi] for yi in self.classes_]
+        if self.metric == "fermat":
+            density_factory = partial(FermatKDE, alpha=self.alpha)
+        else:
+            density_factory = partial(KernelDensity, metric=self.metric)
+        self.models_ = [
+            density_factory(bandwidth=self.bandwidth).fit(Xi) for Xi in training_sets
+        ]
+        self.logpriors_ = [np.log(Xi.shape[0] / X.shape[0]) for Xi in training_sets]
+        return self
+
+    def predict_proba(self, X):
+        logscores = np.array([model.score_samples(X) for model in self.models_]).T
+        logprobs = (logscores + self.logpriors_).clip(MIN_LOG_SCORE, MAX_LOG_SCORE)
+        # Tomo factor común de la máxima logprob para evitar problemas numericos
+        deltas = logprobs - logprobs.max(axis=1, keepdims=True)
+        result = np.exp(deltas)
+        return result / result.sum(axis=1, keepdims=True)
+
+    def predict(self, X):
+        return self.classes_[np.argmax(self.predict_proba(X), 1)]

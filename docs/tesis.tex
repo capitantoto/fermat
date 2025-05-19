@@ -35,9 +35,9 @@
 \usepackage{babel}
 \usepackage{enotez}      % <-- instead of \usepackage{endnotes}
 \setenotez{backref=true}
-\let\footnote=\endnote
-\usepackage[symbol]{footmisc}
-\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+% \let\footnote=\endnote
+% \usepackage[symbol]{footmisc}
+% \renewcommand{\thefootnote}{\fnsymbol{footnote}}
 
 \makeatother
 
@@ -66,7 +66,7 @@
 \global\long\def\ind#1{\mathbb{\mathbf{1}}\left\{  #1\right\}  }%
 \global\long\def\prob#1{Pr\left(#1\right)}%
 
-\title{Distancia de Fermat en Clasificadores de Densidad Nuclear}
+\title{Distancia de Fermat en Clasificadores de Densidad por Núcleos}
 \author{Lic. Gonzalo Barrera Borla}
 \date{Buenos Aires, 02/03/23}
 
@@ -118,7 +118,157 @@ TODO
 
 \pagebreak{}
 
-\section{Introducción}
+\part{Forma Final}
+
+\section*{Notación}
+
+$\R$: los números reales
+
+\section{Preliminares}
+
+\subsection{El problema de clasificación}
+
+\subsubsection{Definición del problema unidimensional}
+\begin{defn}
+[muestra aleatoria]Sea 
+\end{defn}
+
+Consideremos el problema de clasificación: 
+\begin{defn}
+[problema de clasificación]\label{def:prob-clf-1} Sea $\X=\left\{ X_{1},\dots,X_{N}\right\} ,\ X_{i}\in\R^{\dimx}\ \forall i\in\left[N\right]$
+una muestra de $N$ observaciones aleatorias $\dimx-$dimensionales,
+repartidas en $M$ clases $C_{1},\dots,C_{M}$ mutuamente excluyentes
+y conjuntamente exhaustivas\footnote{es decir, $\forall\ i\in\left[N\right]\equiv\left\{ 1,\dots,N\right\} ,X_{i}\in C_{j}\iff X_{i}\notin C_{k},k\in\text{\ensuremath{\left[M\right]}},k\neq j$}.
+Asumamos además que la muestra está compuesta de observaciones independientes
+entre sí, y las observaciones de cada clase están idénticamente distribuidas
+según su propia ley: si $\card{C_{j}}=N_{j}$ y $X_{i}^{\left(j\right)}$representa
+la i-ésima observación de la clase $j$, resulta que $X_{i}^{(j)}\sim\mathcal{L}_{j}\left(X\right)\ \forall\ j\in\text{\ensuremath{\left[M\right]}},i\in\left[N_{j}\right]$.
+
+Dada una nueva observación $x_{0}$ cuy
+\end{defn}
+
+
+\subsubsection{Clasificadores \guillemotleft duros\guillemotright{} y \guillemotleft suaves\guillemotright}
+\begin{defn}
+a clase es desconocida, 
+\begin{enumerate}
+\item (clasificación dura) ¿a qué clase deberíamos asignarla? 
+\item (clasificación suave) ¿qué probabilidad tiene de pertenecer a cada
+clase $C_{j},j\in\left[M\right]$ ? 
+\end{enumerate}
+\end{defn}
+
+Cualquier método o algoritmo que pretenda responder el problema de
+clasificación, prescribe un modo u otro de combinar toda la información
+muestral disponible, ponderando las $N$ observaciones relativamente
+a su cercanía o similitud con $x_{0}$. Por caso, $k-$vecinos más
+cercanos ($k-$NN) asignará la nueva observación $x_{0}$ a la clase
+modal - la más frecuente - entre las $k$ observaciones de entrenamiento
+más cercanas\emph{ }en distancia euclídea $\norm{x_{0}-\cdot}$. $k-$NN
+no menciona explícitamente las leyes de clase $\mathcal{L}_{j}$,
+lo cual lo mantiene sencillo a costa de ignorar la estructura del
+problema.
+
+\subsubsection{Clasificador de Bayes}
+
+\subsubsection{KDE: Estimación de la densidad por núcleos}
+
+\subsection{La maldición de la (alta) dimensionalidad}
+
+\subsubsection{NB: El clasificador de \guillemotleft ingenuo\guillemotright{} de
+Bayes}
+
+\paragraph{Una muestra adversa}
+
+\subsubsection{KDC Multivariado}
+
+\paragraph{El caso 2-dimensional}
+
+\paragraph{Relación entre $\protect\H$ y la distancia de Mahalanobis}
+
+\subsection{La hipótesis de la variedad}
+
+\subsubsection{KDE en variedades de Riemann}
+
+\subsubsection{Variedades desconocidas}
+
+\subsection{Aprendizaje de distancias}
+
+\subsubsection{Isomap}
+
+\subsubsection{Distancias basadas en densidad}
+
+\subsection{Distancia de Fermat}
+\begin{itemize}
+\item Groisman \& Jonckheere
+\item Little \& Mackenzie
+\item Bijral
+\item Bengio
+\end{itemize}
+
+\section{Propuesta Original}
+
+\subsection{KDC con Distancia de Fermat Muestral}
+
+\subsection{f-KNN}
+
+\section{Evaluación}
+
+\subsection{Metodología}
+
+\subsubsection{Tareas Puntuadas (acc \%, pseudo-R\textasciicircum 2 if poss.)}
+
+\subsubsection{Algoritmos de referencia}
+
+\paragraph{Uno complejo: SVC}
+
+\paragraph{Uno sencillo: 1-NN - tal vez?}
+
+\paragraph{Uno conocido: LR - tal vez?}
+
+\subsubsection{Datasets}
+
+\paragraph{Datasets sintéticos baja dimensión}
+
+\paragraph{Datasets reales en \guillemotleft mediana\guillemotright{} dimensión}
+
+\paragraph{Dígitos}
+
+\paragraph{PCA-red MNIST}
+
+\section{Análisis de Resultados}
+
+\subsection{Datasets sintéticos, Baja dimensión}
+
+\subsection{Datasets orgánicos, Mediana dimensión}
+
+\subsection{Alta dimensión: Dígitos}
+
+\subsection{Efecto de dimensiones \guillemotleft ruidosas\guillemotright}
+
+\subsection{fKDC: Interrelación entre $h,\alpha$}
+
+\subsection{fKNN: Comportamiento local-global}
+
+\section{Comentarios finales}
+
+\subsection{Conclusiones}
+
+\subsection{Posibles líneas de desarrollo}
+
+\subsection{Relación con el estado del arte}
+
+\section{Referencias}
+
+\section{Código Fuente}
+
+\subsection{sklearn}
+
+\subsection{fkdc}
+
+\part{Disponibles}
+
+\section{El problema de clasificación}
 
 \subsection{El problema de clasificacion}
 
@@ -1556,15 +1706,13 @@ a que cuernos ser refieren?
 la baje por uno?
 \end{itemize}
 
-\section{Análisis experimental}
+\section{Análisis experimentale}
 
 \section{Cuentita}
 
 \section{Conclusiones}
 
-\printendnotes
-
 \bibliographystyle{apalike}
-\phantomsection\addcontentsline{toc}{section}{\refname}\bibliography{bib/references}
+\phantomsection\addcontentsline{toc}{section}{\refname}\bibliography{/Users/gonzalo/Git/fkdc/bib/references-old}
 
 \end{document}

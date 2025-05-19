@@ -9,9 +9,9 @@
 \usepackage{babel}
 \usepackage{enotez}      % <-- instead of \usepackage{endnotes}
 \setenotez{backref=true}
-\let\footnote=\endnote
-\usepackage[symbol]{footmisc}
-\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+% \let\footnote=\endnote
+% \usepackage[symbol]{footmisc}
+% \renewcommand{\thefootnote}{\fnsymbol{footnote}}
 \end_preamble
 \use_default_options false
 \begin_modules
@@ -297,6 +297,17 @@ LatexCommand tableofcontents
 Forma Final
 \end_layout
 
+\begin_layout Section*
+Notación
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\R$
+\end_inset
+
+: los números reales
+\end_layout
+
 \begin_layout Section
 Preliminares
 \end_layout
@@ -307,6 +318,20 @@ El problema de clasificación
 
 \begin_layout Subsubsection
 Definición del problema unidimensional
+\end_layout
+
+\begin_layout Definition
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[muestra aleatoria]
+\end_layout
+
+\end_inset
+
+Sea 
 \end_layout
 
 \begin_layout Standard
@@ -392,7 +417,31 @@ Dada una nueva observación
 \begin_inset Formula $x_{0}$
 \end_inset
 
- cuya clase es desconocida, 
+ cuy
+\end_layout
+
+\begin_layout Subsubsection
+Clasificadores 
+\begin_inset Quotes fld
+\end_inset
+
+duros
+\begin_inset Quotes frd
+\end_inset
+
+ y 
+\begin_inset Quotes fld
+\end_inset
+
+suaves
+\begin_inset Quotes frd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+a clase es desconocida, 
 \end_layout
 
 \begin_deeper
@@ -459,27 +508,7 @@ NN no menciona explícitamente las leyes de clase
 \end_layout
 
 \begin_layout Subsubsection
-Clasificadores 
-\begin_inset Quotes fld
-\end_inset
-
-duros
-\begin_inset Quotes frd
-\end_inset
-
- y 
-\begin_inset Quotes fld
-\end_inset
-
-suaves
-\begin_inset Quotes frd
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-Clasificadores basados en densidad
+Clasificador de Bayes
 \end_layout
 
 \begin_layout Subsubsection
@@ -7720,7 +7749,7 @@ biblio: No subirla, pero esconder script ligeramente disimulado que la baje
 \end_layout
 
 \begin_layout Section
-Análisis experimental
+Análisis experimentale
 \end_layout
 
 \begin_layout Section
@@ -7732,6 +7761,10 @@ Conclusiones
 \end_layout
 
 \begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
 \begin_inset ERT
 status open
 
@@ -7747,11 +7780,16 @@ printendnotes
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 btprint "btPrintCited"
-bibfiles "bib/references,/Users/gonzalo/Git/fkdc/bib/references"
+bibfiles "/Users/gonzalo/Git/fkdc/bib/references-old"
 options "bibtotoc,apalike"
 
 \end_inset
