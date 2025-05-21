@@ -32,7 +32,7 @@ grillas = dict(
     gnb={"var_smoothing": np.logspace(-10, -2, 17)},
     kn=espacio_kn,
     fkn={**espacio_kn, "alpha": np.linspace(1, 2.5, 7)},
-    lr={"C": np.logspace(-2, 2, 11), "l1_ratio": [0, 0.5, 1]},
+    lr={"C": np.logspace(-3, 0, 16)},
     svc={"C": np.logspace(-3, 5, 51), "gamma": ["scale", "auto"]},
     lsvc={"C": np.logspace(-3, 3, 11), "fit_intercept": [True, False]},
 )
@@ -42,9 +42,7 @@ clasificadores = Bunch(
     gnb=GaussianNB(),
     kn=KNeighborsClassifier(),
     fkn=FermatKNeighborsClassifier(),
-    lr=LogisticRegression(
-        solver="saga", penalty="elasticnet", max_iter=200, l1_ratio=0
-    ),
+    lr=LogisticRegression(),
     svc=SVC(),
     lsvc=LinearSVC(dual="auto"),
 )
