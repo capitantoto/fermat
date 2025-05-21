@@ -3,7 +3,6 @@ import pickle
 import time
 from math import floor
 from pathlib import Path
-from typing import Optional
 from warnings import simplefilter
 
 import pandas as pd
@@ -14,8 +13,8 @@ from sklearn.exceptions import ConvergenceWarning
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV, train_test_split
 
 from fkdc import config
+from fkdc.datasets import Dataset
 from fkdc.tarea import Tarea
-from fkdc.utils import sample
 
 simplefilter("ignore", category=ConvergenceWarning)
 logging.basicConfig(
@@ -28,13 +27,13 @@ logger.info("Logging inicializado")
 
 
 def main(
-    config_file: Optional[Path] = Path("config.yaml"),
-    workdir: Optional[Path] = Path.cwd(),
+    config_file: Path = Path("config.yaml"),
+    workdir: Path = Path.cwd(),
 ):
     workdir.mkdir(parents=True, exist_ok=True)
     logger.info("Leyendo config %s", config_file)
     cfg = yaml.safe_load(open(config_file, "r"))
-    dataset = pickle.load(open(Path(cfg["dataset"]), "rb"))
+    dataset = Dataset.cargar(cfg["dataset"])
     clf = cfg["clasificador"]
     clasificador = config.clasificadores.get(clf)
     if clasificador is None:
@@ -54,8 +53,7 @@ def main(
     split = cfg.get("split_evaluacion", config.split_evaluacion)
     seed = cfg.get("seed", config.main_seed)
     test_clf = clone(clasificador)
-    X, y = sample(dataset.X, dataset.y, n_samples=split)
-    X_train, X_eval, y_train, y_eval = train_test_split(
+    X_train, X_eval, y_train, _ = train_test_split(
         dataset.X, dataset.y, test_size=(cv - 1) / cv, random_state=seed
     )
     train_time = time.time()

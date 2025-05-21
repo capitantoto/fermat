@@ -249,6 +249,10 @@ class Dataset:
         with open(archivo or f"{hash(self)}.pkl", "wb") as file:
             pickle.dump(self, file)
 
+    @classmethod
+    def cargar(cls, path: Path):
+        return pickle.load(open(path, "rb"))
+
 
 def make_datasets(
     n_samples: int = config.n_samples,
