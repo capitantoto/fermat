@@ -45,7 +45,7 @@ def main(
     cv = cfg.get("cv", config.cv)
     busqueda_params = cfg.get(
         "busqueda_params",
-        dict(refit=True, return_train_score=True, cv=cv, n_jobs=1),
+        dict(refit=True, return_train_score=True, cv=cv, n_jobs=-1),
     )
     busqueda_params.setdefault("scoring", cfg.get("scoring", "accuracy"))
     logger.info("Corrida de prueba")
