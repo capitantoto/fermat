@@ -1,14 +1,14 @@
 import logging
-from itertools import product
 from pathlib import Path
 from typing import List, Optional
 
 import numpy as np
 import typer
+from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC, LinearSVC
+from sklearn.svm import SVC
 from sklearn.utils import Bunch
 from typing_extensions import Annotated
 
@@ -34,7 +34,7 @@ grillas = dict(
     fkn={**espacio_kn, "alpha": np.linspace(1, 2.5, 7)},
     lr={"C": np.logspace(-3, 0, 16)},
     svc={"C": np.logspace(-3, 5, 51), "gamma": ["scale", "auto"]},
-    lsvc={"C": np.logspace(-3, 3, 11), "fit_intercept": [True, False]},
+    gbt={"learning_rate": [0.025, 0.05, 0.1], "max_depth": [3, 5, 7]},
 )
 clasificadores = Bunch(
     fkdc=KDClassifier(metric="fermat"),
@@ -44,10 +44,10 @@ clasificadores = Bunch(
     fkn=FermatKNeighborsClassifier(),
     lr=LogisticRegression(),
     svc=SVC(),
-    lsvc=LinearSVC(dual="auto"),
+    gbt=HistGradientBoostingClassifier(),
 )
 n_samples = 800
-main_seed = 2024
+main_seed = 2411
 max_runtime = 120
 clf_lentos = (KDClassifier, FermatKNeighborsClassifier)
 split_evaluacion = 0.5
@@ -77,9 +77,6 @@ def make_configs(
 
     datasets = {ds.stem: ds for ds in datasets_dir.glob("*.pkl")}
     for nombre_clf, clf in clasificadores.items():
-        scores = ["accuracy"]
-        if hasattr(clf, "predict_proba"):
-            scores.append("neg_log_loss")
         grilla_hipers = {
             param: values if isinstance(values, list) else values.tolist()
             for param, values in grillas[nombre_clf].items()
@@ -105,9 +102,18 @@ def make_configs(
                 task_seeds = run_seeds
             else:
                 raise ValueError("Nombre de dataset invalido: %s" % nombre_dataset)
-            for task_seed, score in product(task_seeds, scores):
-                config = dict(**base_config, seed=task_seed, scoring=score)
-                clave = (nombre_dataset, semilla_dataset, nombre_clf, task_seed, score)
+            for task_seed in task_seeds:
+                scoring = (
+                    "neg_log_loss" if hasattr(clf, "predict_proba") else "accuracy"
+                )
+                config = dict(**base_config, seed=task_seed, scoring=scoring)
+                clave = (
+                    nombre_dataset,
+                    semilla_dataset,
+                    nombre_clf,
+                    task_seed,
+                    scoring,
+                )
                 nombre_config = "-".join(map(str, clave)) + ".yaml"
                 logger.debug("Generando configuracion %s", nombre_config)
                 yaml.dump(config, open(configs_dir / nombre_config, "w"))
