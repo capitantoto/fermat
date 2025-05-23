@@ -59,8 +59,9 @@ def main(
     train_time = time.time()
     test_clf.fit(X_train, y_train)
     logger.info("- Entrenamiento tomó %.2f segundos", time.time() - train_time)
+    eval_time = time.time()
     test_clf.predict(X_eval)
-    logger.info("- Evaluación tomó %.2f segundos", time.time() - train_time)
+    logger.info("- Evaluación tomó %.2f segundos", time.time() - eval_time)
     fold_runtime = time.time() - fold_runtime
     max_runtime = cfg.get("max_runtime", config.max_runtime)
     grilla_hipers = cfg.get("grilla_hipers", {})
