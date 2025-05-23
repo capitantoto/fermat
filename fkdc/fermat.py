@@ -146,11 +146,11 @@ class FermatKDE(BaseEstimator, DensityMixin):
                 * score
             )
 
-    def score(self, X=None):
+    def score(self, X=None, y=None):
         return self.score_samples(X).sum()
 
 
-class KDClassifier(BaseEstimator, ClassifierMixin):
+class KDClassifier(ClassifierMixin, BaseEstimator):
     def __init__(self, bandwidth=1.0, metric="euclidean", alpha=1.0):
         self.bandwidth = bandwidth
         self.metric = metric
