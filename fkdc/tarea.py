@@ -18,10 +18,9 @@ class Tarea:
         self,
         dataset,
         algoritmos,
+        scoring="accuracy",
         busqueda_factory=GridSearchCV,
-        busqueda_params=Bunch(
-            refit=True, return_train_score=True, cv=5, scoring="accuracy"
-        ),
+        busqueda_params=Bunch(refit=True, return_train_score=True, cv=5),
         split_evaluacion=0.2,
         seed=None,
     ):
@@ -44,6 +43,8 @@ class Tarea:
             )
         self.busqueda_factory = busqueda_factory
         self.busqueda_params = busqueda_params or {}
+        # Si `scoring` esta explícitamente seteado en busqueda_params, respétese.
+        self.busqueda_params.setdefault("scoring", scoring)
         self.seed = seed or np.random.randint(0, MAX_SEED)
         self.split_evaluacion = split_evaluacion
         self._fitted = False
