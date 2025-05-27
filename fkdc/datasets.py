@@ -245,7 +245,7 @@ class Dataset:
             ax.scatter(X, Y, Z, c=f"C{i}", label=str(lbl), **plot_kws)
         ax.legend(title="Clase")
 
-    def guardar(self, archivo=None):
+    def guardar(self, archivo: Optional[Path] = None):
         with open(archivo or f"{hash(self)}.pkl", "wb") as file:
             pickle.dump(self, file)
 

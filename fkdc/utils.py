@@ -4,6 +4,7 @@ import hashlib
 from itertools import product
 
 import numpy as np
+import pandas as pd
 import yaml
 from scipy.special import ellipe
 from scipy.stats import truncnorm
@@ -147,3 +148,19 @@ def sample(*arrays, n_samples, random_state=None):
 
 def dict_hasher(D, len=16):
     return hashlib.md5(((k, v) for k, v in D.items())).hexdigest()[:len]
+
+
+def refit_parsimoniously(cv_results_: dict) -> int:
+    regularize_ascending = [
+        ("param_alpha", True),
+        ("param_bandwidth", False),
+        ("param_n_neighbors", False),
+        ("param_C", True),
+        ("param_var_smoothing", False),
+        ("param_max_depth", True),
+    ]
+    results = pd.DataFrame(cv_results_)
+    results = results[results.rank_test_score.eq(1)]
+    regularizers = [reg for reg in regularize_ascending if reg[0] in results.columns]
+    by, ascending = map(list, zip(*regularizers))
+    return results.sort_values(by=by, ascending=ascending).index[0]
