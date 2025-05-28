@@ -7,10 +7,10 @@ from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import typer
 from scipy import stats
-from seaborn import load_dataset as sns_load_dataset
-from seaborn import scatterplot as sns_scatterplot
+from seaborn import load_dataset, pairplot, scatterplot
 from sklearn.datasets import (
     fetch_openml,
     load_digits,
@@ -59,8 +59,8 @@ def hacer_espirales(
 
 
 def hacer_anteojos(
-    n_samples=400,
-    separation=3,
+    n_samples: int | tuple[int, int, int] = 400,
+    separation: float = 3,
     noise=None,
     random_state=None,
     shuffle=False,
@@ -214,6 +214,7 @@ class Dataset:
         self.labels = unique_labels(self.y)
         self.k = len(self.labels)
 
+    @staticmethod
     def de_fabrica(factory, ruido=None, nombre=None, **factory_params):
         params = Bunch(**(factory_params or {}))
         X, y = factory(**params)
@@ -231,8 +232,9 @@ class Dataset:
     def __hash__(self):
         return hash(tuple(tuple(row) for row in self.X)) * hash(tuple(self.y)) % 2**64
 
+    # TODO: Estos métodos de ploteo deberían devolver el objeto ploteado?
     def scatter(self, x=0, y=1, ax=None, **plot_kws):
-        sns_scatterplot(x=self.X[:, x], y=self.X[:, y], hue=self.y, ax=ax, **plot_kws)
+        scatterplot(x=self.X[:, x], y=self.X[:, y], hue=self.y, ax=ax, **plot_kws)
 
     def scatter_3d(self, x=0, y=1, z=2, ax=None, **plot_kws):
         if self.p < 3:
@@ -244,6 +246,13 @@ class Dataset:
             X, Y, Z = X_lbl[:, x], X_lbl[:, y], X_lbl[:, z]
             ax.scatter(X, Y, Z, c=f"C{i}", label=str(lbl), **plot_kws)
         ax.legend(title="Clase")
+
+    def pairplot(self, dims: Optional[list[int]] = None, **plot_kws):
+        if dims is None:
+            dims = list(range(self.p))
+        data = pd.DataFrame(self.X[:, dims])
+        data["y"] = self.y
+        pairplot(data=data, hue="y", **plot_kws)
 
     def guardar(self, archivo: Optional[Path] = None):
         with open(archivo or f"{hash(self)}.pkl", "wb") as file:
@@ -295,7 +304,7 @@ def make_datasets(
         "body_mass_g",
     ]
     y_pinguinos = "species"
-    pinguinos = sns_load_dataset("penguins")[X_pinguinos + [y_pinguinos]].dropna()
+    pinguinos = load_dataset("penguins")[X_pinguinos + [y_pinguinos]].dropna()
     datasets_multik = {
         "anteojos": Dataset.de_fabrica(
             hacer_anteojos, n_samples=n_samples, noise=0.1, random_state=main_seed
