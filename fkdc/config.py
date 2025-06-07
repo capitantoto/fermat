@@ -34,7 +34,7 @@ grillas = dict(
     fkn={**espacio_kn, "alpha": np.linspace(1, 2.5, 7)},
     lr={"C": np.logspace(-3, 0, 16)},
     svc={"C": np.logspace(-3, 5, 51), "gamma": ["scale", "auto"]},
-    gbt={"learning_rate": [0.05, 0.1], "max_depth": [3, 5, 8, 13], "max_features": [0.5]},
+    gbt={"learning_rate": [0.05, 0.1], "max_depth": [3, 5, 8, 13]},
 )
 clasificadores = Bunch(
     fkdc=KDClassifier(metric="fermat"),
@@ -44,7 +44,7 @@ clasificadores = Bunch(
     fkn=FermatKNeighborsClassifier(),
     lr=LogisticRegression(),
     svc=SVC(),
-    gbt=HistGradientBoostingClassifier(),
+    gbt=HistGradientBoostingClassifier(max_features=0.5),
 )
 n_samples = 800
 main_seed = 2411
