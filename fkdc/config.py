@@ -23,18 +23,18 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 espacio_kn = {
-    "n_neighbors": np.unique(np.logspace(0, np.log10(300), num=15, dtype=int)),
+    "n_neighbors": np.unique(np.logspace(0, np.log10(500), num=21, dtype=int)),
     "weights": ["uniform", "distance"],
 }
 grillas = dict(
-    fkdc={"alpha": np.linspace(1, 2.5, 9), "bandwidth": np.logspace(-3, 2, 21)},
-    kdc={"bandwidth": np.logspace(-3, 5, 101)},
-    gnb={"var_smoothing": np.logspace(-10, -2, 17)},
+    fkdc={"alpha": np.linspace(1, 4, 13), "bandwidth": np.logspace(-3, 6, 37)},
+    kdc={"bandwidth": np.logspace(-3, 6, 118)},
+    gnb={"var_smoothing": np.logspace(-12, 1, 40)},
     kn=espacio_kn,
-    fkn={**espacio_kn, "alpha": np.linspace(1, 2.5, 7)},
-    lr={"C": np.logspace(-3, 0, 16)},
-    svc={"C": np.logspace(-3, 5, 51), "gamma": ["scale", "auto"]},
-    gbt={"learning_rate": [0.05, 0.1], "max_depth": [3, 5, 8, 13]},
+    fkn={**espacio_kn, "alpha": np.linspace(1, 4, 13)},
+    lr={"C": np.logspace(-5, 2, 36)},
+    svc={"C": np.logspace(-4, 6, 61), "gamma": ["scale", "auto"]},
+    gbt={"learning_rate": [0.025, 0.05, 0.1], "max_depth": [3, 5, 8, 13]},
 )
 clasificadores = Bunch(
     fkdc=KDClassifier(metric="fermat"),
