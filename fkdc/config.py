@@ -47,7 +47,7 @@ clasificadores = Bunch(
     gbt=HistGradientBoostingClassifier(max_features=0.5),
 )
 n_samples = 800
-main_seed = 2411
+main_seed = 1312
 max_runtime = 120
 clf_lentos = (KDClassifier, FermatKNeighborsClassifier, HistGradientBoostingClassifier)
 split_evaluacion = 0.5
