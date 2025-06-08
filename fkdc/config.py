@@ -42,7 +42,7 @@ clasificadores = Bunch(
     gnb=GaussianNB(),
     kn=KNeighborsClassifier(),
     fkn=FermatKNeighborsClassifier(),
-    lr=LogisticRegression(),
+    lr=LogisticRegression(max_iter=50_000),
     svc=SVC(),
     gbt=HistGradientBoostingClassifier(max_features=0.5),
 )
