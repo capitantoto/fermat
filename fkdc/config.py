@@ -48,7 +48,7 @@ clasificadores = Bunch(
 )
 n_samples = 800
 main_seed = 1312
-max_runtime = 120
+max_runtime = 1200
 clf_lentos = (KDClassifier, FermatKNeighborsClassifier, HistGradientBoostingClassifier)
 split_evaluacion = 0.5
 cv = 5
