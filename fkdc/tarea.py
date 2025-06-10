@@ -11,7 +11,10 @@ from sklearn.utils import Bunch
 from fkdc.utils import MAX_SEED
 
 logger = logging.getLogger(__name__)
-
+# Read warnings, and log them at the debug level
+warnings_logger = logging.getLogger('py.warnings')
+warnings_logger.setLevel(logging.DEBUG)
+logging.captureWarnings(capture=True)
 
 class Tarea:
     def __init__(
