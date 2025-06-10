@@ -63,8 +63,9 @@ class Tarea:
             logger.info("Entrenando %s", nombre)
             self.info[nombre] = info = Bunch()
             if "n_neighbors" in algo.espacio:  # Evita n_neighbors > train size
+                _, conteos = np.unique(self.y_train, return_counts=True)
                 algo.espacio["n_neighbors"] = [
-                    n for n in algo.espacio["n_neighbors"] if n <= len(self.X_train)
+                    n for n in algo.espacio["n_neighbors"] if n <= min(conteos)
                 ]
             busqueda = self.busqueda_factory(
                 algo.clf, algo.espacio, **self.busqueda_params
