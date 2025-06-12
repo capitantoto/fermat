@@ -3,6 +3,8 @@ from pathlib import Path
 from typing import List, Optional
 
 import numpy as np
+from sklearn.discriminant_analysis import StandardScaler
+from sklearn.pipeline import Pipeline
 import typer
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
@@ -12,6 +14,7 @@ from sklearn.svm import SVC
 from sklearn.utils import Bunch
 from typing_extensions import Annotated
 
+from fkdc.datasets import Dataset
 from fkdc.fermat import FermatKNeighborsClassifier, KDClassifier
 from fkdc.utils import yaml
 
@@ -50,10 +53,9 @@ clasificadores = Bunch(
 )
 n_samples = 800
 main_seed = 1312
-max_runtime = 1200
-clf_lentos = (KDClassifier, FermatKNeighborsClassifier, HistGradientBoostingClassifier)
 split_evaluacion = 0.5
 cv = 5
+scoring="neg_log_loss"
 repetitions = 16
 
 
@@ -64,7 +66,6 @@ def _get_run_seeds(main_seed=main_seed, repetitions=repetitions):
 
 def make_configs(
     main_seed: int = main_seed,
-    max_runtime: float = max_runtime,
     split_evaluacion: float = split_evaluacion,
     cv: int = cv,
     run_seeds: Optional[List[int]] = None,
@@ -83,14 +84,16 @@ def make_configs(
             param: values if isinstance(values, list) else values.tolist()
             for param, values in grillas[nombre_clf].items()
         }
-        for nombre_dataset, dataset in datasets.items():
+        for nombre_dataset, dataset_path in datasets.items():
+            ds = Dataset.cargar(dataset_path)
+            if n_neighbors := grilla_hipers.get("n_neighbors"):
+                grilla_hipers["n_neighbors"] = [n for n in n_neighbors if n <= ds.n * (cv - 1) / cv]
             base_config = dict(
-                dataset=str(dataset),
+                dataset=str(dataset_path),
                 clasificador=nombre_clf,
                 grilla_hipers=grilla_hipers,
                 cv=cv,
                 split_evaluacion=split_evaluacion,
-                max_runtime=max_runtime * (5 if isinstance(clf, clf_lentos) else 1),
             )
             partes = nombre_dataset.split("-")
             run_seeds = run_seeds or _get_run_seeds(main_seed, repetitions)
