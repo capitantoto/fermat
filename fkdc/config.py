@@ -1,4 +1,5 @@
 import logging
+from math import floor
 from pathlib import Path
 from typing import List, Optional
 
@@ -14,7 +15,6 @@ from sklearn.svm import SVC
 from sklearn.utils import Bunch
 from typing_extensions import Annotated
 
-from fkdc.datasets import Dataset
 from fkdc.fermat import FermatKNeighborsClassifier, KDClassifier
 from fkdc.utils import yaml
 
@@ -47,7 +47,9 @@ clasificadores = Bunch(
     kn=KNeighborsClassifier(),
     fkn=FermatKNeighborsClassifier(),
     lr=LogisticRegression(max_iter=50_000),
-    slr=Pipeline([("scaler", StandardScaler()), ("logreg", LogisticRegression(max_iter=50_000))]),
+    slr=Pipeline(
+        [("scaler", StandardScaler()), ("logreg", LogisticRegression(max_iter=50_000))]
+    ),
     svc=SVC(),
     gbt=HistGradientBoostingClassifier(max_features=0.5),
 )
@@ -55,7 +57,7 @@ n_samples = 800
 main_seed = 1312
 split_evaluacion = 0.5
 cv = 5
-scoring="neg_log_loss"
+scoring = "neg_log_loss"
 repetitions = 25
 
 
@@ -80,14 +82,17 @@ def make_configs(
 
     datasets = {ds.stem: ds for ds in datasets_dir.glob("*.pkl")}
     for nombre_clf, clf in clasificadores.items():
-        grilla_hipers = {
+        grilla_base = {  # Evita usar np.array quer serializa fiero
             param: values if isinstance(values, list) else values.tolist()
             for param, values in grillas[nombre_clf].items()
         }
         for nombre_dataset, dataset_path in datasets.items():
-            ds = Dataset.cargar(dataset_path)
+            grilla_hipers = grilla_base.copy()
             if n_neighbors := grilla_hipers.get("n_neighbors"):
-                grilla_hipers["n_neighbors"] = [n for n in n_neighbors if n <= ds.n * (cv - 1) / cv]
+                ds = Dataset.cargar(dataset_path)
+                n_samples_fit = floor(ds.n * (cv - 1) / cv * (1 - split_evaluacion))
+                n_neighbors = [n for n in n_neighbors if n < n_samples_fit]
+                grilla_hipers["n_neighbors"] = n_neighbors
             base_config = dict(
                 dataset=str(dataset_path),
                 clasificador=nombre_clf,
@@ -125,4 +130,6 @@ def make_configs(
 
 
 if __name__ == "__main__":
+    from fkdc.datasets import Dataset
+
     typer.run(make_configs)
