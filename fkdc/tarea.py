@@ -8,26 +8,26 @@ from sklearn.metrics import accuracy_score, log_loss
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.utils import Bunch
 
+from fkdc.datasets import Dataset
+from fkdc.utils import refit_parsimoniously
 
 logger = logging.getLogger(__name__)
-# Read warnings, and log them at the debug level
-warnings_logger = logging.getLogger('py.warnings')
-warnings_logger.setLevel(logging.DEBUG)
-logging.captureWarnings(capture=True)
+
 
 class Tarea:
     def __init__(
         self,
-        dataset,
-        algoritmos,
-        scoring="accuracy",
+        dataset: str | Dataset,
+        algoritmos: list | dict,
         busqueda_factory=GridSearchCV,
-        busqueda_params=Bunch(refit=True, return_train_score=True, cv=5),
-        split_evaluacion=0.2,
+        scoring="accuracy",
+        refit=refit_parsimoniously,
+        cv=5,
+        split_evaluacion=0.5,
         seed=None,
     ):
         self.dataset = ds = (
-            pickle.load(open(dataset, "rb")) if isinstance(dataset, str) else dataset
+            Dataset.cargar(dataset) if isinstance(dataset, str) else dataset
         )
         if isinstance(algoritmos, list):
             self.algoritmos = {
@@ -44,9 +44,9 @@ class Tarea:
                 "`algoritmos` debe ser una lista o un dict de 2-tuplas (clf, espacio)"
             )
         self.busqueda_factory = busqueda_factory
-        self.busqueda_params = busqueda_params or {}
-        # Si `scoring` esta explícitamente seteado en busqueda_params, respétese.
-        self.busqueda_params.setdefault("scoring", scoring)
+        self.scoring=scoring
+        self.refit=refit
+        self.cv=cv
         self.split_evaluacion = split_evaluacion
         self.seed = seed or np.random.randint(0, 2**32)
         self._fitted = False
@@ -64,13 +64,8 @@ class Tarea:
         for nombre, algo in self.algoritmos.items():
             logger.info("Entrenando %s", nombre)
             self.info[nombre] = info = Bunch()
-            if "n_neighbors" in algo.espacio:  # Evita n_neighbors > train size
-                _, conteos = np.unique(self.y_train, return_counts=True)
-                algo.espacio["n_neighbors"] = [
-                    n for n in algo.espacio["n_neighbors"] if n <= min(conteos)
-                ]
             busqueda = self.busqueda_factory(
-                algo.clf, algo.espacio, **self.busqueda_params
+                algo.clf, algo.espacio, scoring=self.scoring, cv=self.cv, refit=self.refit, n_jobs=-1
             )
             t0 = time()
             busqueda.fit(self.X_train, self.y_train)
@@ -115,7 +110,5 @@ class Tarea:
                 logger.warning(exc, exc_info=True)
 
     def guardar(self, path=None):
-        if path is None:
-            params = (self.dataset.nombre, self.seed, self.split_evaluacion)
-            path = "%s-%s-%s.pkl" % params
+        path = path or "%s-%s-%s.pkl" % (self.dataset.nombre, self.seed, self.split_evaluacion)
         pickle.dump(self, open(path, "wb"))
