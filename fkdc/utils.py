@@ -150,7 +150,7 @@ def dict_hasher(D, len=16):
     return hashlib.md5(((k, v) for k, v in D.items())).hexdigest()[:len]
 
 
-def refit_parsimoniously(cv_results_: dict) -> int:
+def refit_parsimoniously(cv_results_: dict, std_ratio: float = 1) -> int:
     regularize_ascending = [
         ("param_alpha", True),
         ("param_bandwidth", False),
@@ -160,7 +160,10 @@ def refit_parsimoniously(cv_results_: dict) -> int:
         ("param_max_depth", True),
     ]
     results = pd.DataFrame(cv_results_)
-    results = results[results.rank_test_score.eq(1)]
+    top_score = results.mean_test_score.max()
+    top_std = results[results.mean_test_score.eq(top_score)].std_test_score.min()
+    score_threshold = top_score - std_ratio * top_std
+    results = results[results.mean_test_score.ge(score_threshold)]
     regularizers = [reg for reg in regularize_ascending if reg[0] in results.columns]
     by, ascending = map(list, zip(*regularizers))
     return results.sort_values(by=by, ascending=ascending).index[0]
