@@ -56,7 +56,7 @@ main_seed = 1312
 split_evaluacion = 0.5
 cv = 5
 scoring="neg_log_loss"
-repetitions = 16
+repetitions = 25
 
 
 def _get_run_seeds(main_seed=main_seed, repetitions=repetitions):
