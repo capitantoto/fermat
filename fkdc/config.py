@@ -36,7 +36,7 @@ grillas = dict(
     kn=espacio_kn,
     fkn={**espacio_kn, "alpha": np.linspace(1, 4, 13)},
     lr={"C": np.logspace(-5, 2, 36)},
-    slr={"C": np.logspace(-5, 2, 36)},
+    slr={"logreg__C": np.logspace(-5, 2, 36)},
     svc={"C": np.logspace(-4, 6, 61), "gamma": ["scale", "auto"]},
     gbt={"learning_rate": [0.025, 0.05, 0.1], "max_depth": [3, 5, 8, 13]},
 )

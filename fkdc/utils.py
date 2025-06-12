@@ -153,6 +153,7 @@ def refit_parsimoniously(cv_results_: dict, std_ratio: float = 1) -> int:
         ("param_bandwidth", False),
         ("param_n_neighbors", False),
         ("param_C", True),
+        ("param_logreg__C", True),
         ("param_var_smoothing", False),
         ("param_max_depth", True),
     ]
