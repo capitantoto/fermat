@@ -33,6 +33,7 @@ grillas = dict(
     kn=espacio_kn,
     fkn={**espacio_kn, "alpha": np.linspace(1, 4, 13)},
     lr={"C": np.logspace(-5, 2, 36)},
+    slr={"C": np.logspace(-5, 2, 36)},
     svc={"C": np.logspace(-4, 6, 61), "gamma": ["scale", "auto"]},
     gbt={"learning_rate": [0.025, 0.05, 0.1], "max_depth": [3, 5, 8, 13]},
 )
@@ -43,6 +44,7 @@ clasificadores = Bunch(
     kn=KNeighborsClassifier(),
     fkn=FermatKNeighborsClassifier(),
     lr=LogisticRegression(max_iter=50_000),
+    slr=Pipeline([("scaler", StandardScaler()), ("logreg", LogisticRegression(max_iter=50_000))]),
     svc=SVC(),
     gbt=HistGradientBoostingClassifier(max_features=0.5),
 )
