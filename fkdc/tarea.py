@@ -8,7 +8,6 @@ from sklearn.metrics import accuracy_score, log_loss
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.utils import Bunch
 
-from fkdc.utils import MAX_SEED
 
 logger = logging.getLogger(__name__)
 # Read warnings, and log them at the debug level
@@ -48,8 +47,8 @@ class Tarea:
         self.busqueda_params = busqueda_params or {}
         # Si `scoring` esta explícitamente seteado en busqueda_params, respétese.
         self.busqueda_params.setdefault("scoring", scoring)
-        self.seed = seed or np.random.randint(0, MAX_SEED)
         self.split_evaluacion = split_evaluacion
+        self.seed = seed or np.random.randint(0, 2**32)
         self._fitted = False
 
         self.X_train, self.X_eval, self.y_train, self.y_eval = train_test_split(

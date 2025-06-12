@@ -25,7 +25,7 @@ from sklearn.utils import shuffle as sk_shuffle
 from sklearn.utils.multiclass import unique_labels
 
 from fkdc import config
-from fkdc.utils import MAX_SEED, eyeglasses, sample
+from fkdc.utils import eyeglasses, sample
 
 
 def _dos_muestras(n_samples, random_state=None, shuffle=False):
@@ -270,9 +270,8 @@ def make_datasets(
     data_dir: Path = Path.cwd() / "datasets",
 ):
     data_dir.mkdir(parents=True, exist_ok=True)
-
     np.random.default_rng(main_seed)
-    main_seed = main_seed or hash(dt.datetime.now()) % MAX_SEED
+    main_seed = main_seed or (hash(dt.datetime.now()) % 2**32)  # Larger seeds return an error
     run_seeds = config._get_run_seeds(main_seed, repetitions)
     logging.basicConfig(
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",

@@ -14,9 +14,6 @@ yaml.add_representer(np.float64, lambda dumper, num: dumper.represent_float(num)
 yaml.add_representer(np.ndarray, lambda dumper, array: dumper.represent_list(array))
 
 
-MAX_SEED = 2**32  # Seeding random_state with a larger integer returns an error
-
-
 def iqr(X):
     return np.percentile(X, 75) - np.percentile(X, 25)
 
