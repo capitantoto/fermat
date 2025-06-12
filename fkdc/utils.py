@@ -132,16 +132,16 @@ def arc(
 def sample(*arrays, n_samples, random_state=None):
     rng = np.random.default_rng(random_state)
     n_arrays = arrays[0].shape[0]
-    assert all(
-        array.shape[0] == n_arrays for array in arrays
-    ), "Todo elemento en *arrays deben tener igual dimensión 0 ('n')."
+    assert all(array.shape[0] == n_arrays for array in arrays), (
+        "Todo elemento en *arrays deben tener igual dimensión 0 ('n')."
+    )
     if isinstance(n_samples, float):
         assert (0 <= n_samples) and (n_samples <= 1), "El ratio debe estar entre 0 y 1"
         n_samples = int(n_arrays * n_samples)
     if isinstance(n_samples, int):
-        assert (0 <= n_samples) and (
-            n_samples <= n_arrays
-        ), "El nro de muestras debe estar entre 0 y la longitud de los arrays"
+        assert (0 <= n_samples) and (n_samples <= n_arrays), (
+            "El nro de muestras debe estar entre 0 y la longitud de los arrays"
+        )
     idxs = rng.choice(range(n_arrays), size=n_samples, replace=False)
     return [array[idxs] for array in arrays]
 
