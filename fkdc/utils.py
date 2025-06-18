@@ -4,6 +4,7 @@ import hashlib
 from itertools import product
 
 import numpy as np
+import pandas as pd
 import yaml
 from scipy.special import ellipe
 from scipy.stats import truncnorm
@@ -11,9 +12,6 @@ from scipy.stats import truncnorm
 yaml.add_representer(np.int64, lambda dumper, num: dumper.represent_int(num))
 yaml.add_representer(np.float64, lambda dumper, num: dumper.represent_float(num))
 yaml.add_representer(np.ndarray, lambda dumper, array: dumper.represent_list(array))
-
-
-MAX_SEED = 2**32  # Seeding random_state with a larger integer returns an error
 
 
 def iqr(X):
@@ -131,19 +129,39 @@ def arc(
 def sample(*arrays, n_samples, random_state=None):
     rng = np.random.default_rng(random_state)
     n_arrays = arrays[0].shape[0]
-    assert all(
-        array.shape[0] == n_arrays for array in arrays
-    ), "Todo elemento en *arrays deben tener igual dimensión 0 ('n')."
+    assert all(array.shape[0] == n_arrays for array in arrays), (
+        "Todo elemento en *arrays deben tener igual dimensión 0 ('n')."
+    )
     if isinstance(n_samples, float):
         assert (0 <= n_samples) and (n_samples <= 1), "El ratio debe estar entre 0 y 1"
         n_samples = int(n_arrays * n_samples)
     if isinstance(n_samples, int):
-        assert (0 <= n_samples) and (
-            n_samples <= n_arrays
-        ), "El nro de muestras debe estar entre 0 y la longitud de los arrays"
+        assert (0 <= n_samples) and (n_samples <= n_arrays), (
+            "El nro de muestras debe estar entre 0 y la longitud de los arrays"
+        )
     idxs = rng.choice(range(n_arrays), size=n_samples, replace=False)
     return [array[idxs] for array in arrays]
 
 
 def dict_hasher(D, len=16):
     return hashlib.md5(((k, v) for k, v in D.items())).hexdigest()[:len]
+
+
+def refit_parsimoniously(cv_results_: dict, std_ratio: float = 1) -> int:
+    regularize_ascending = [
+        ("param_alpha", True),
+        ("param_bandwidth", False),
+        ("param_n_neighbors", False),
+        ("param_C", True),
+        ("param_logreg__C", True),
+        ("param_var_smoothing", False),
+        ("param_max_depth", True),
+    ]
+    results = pd.DataFrame(cv_results_)
+    top_score = results.mean_test_score.max()
+    top_std = results[results.mean_test_score.eq(top_score)].std_test_score.min()
+    score_threshold = top_score - std_ratio * top_std
+    results = results[results.mean_test_score.ge(score_threshold)]
+    regularizers = [reg for reg in regularize_ascending if reg[0] in results.columns]
+    by, ascending = map(list, zip(*regularizers))
+    return results.sort_values(by=by, ascending=ascending).index[0]

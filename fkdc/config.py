@@ -1,14 +1,17 @@
 import logging
-from itertools import product
+from math import floor
 from pathlib import Path
 from typing import List, Optional
 
 import numpy as np
+from sklearn.discriminant_analysis import StandardScaler
+from sklearn.pipeline import Pipeline
 import typer
+from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC, LinearSVC
+from sklearn.svm import SVC
 from sklearn.utils import Bunch
 from typing_extensions import Annotated
 
@@ -23,18 +26,19 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 espacio_kn = {
-    "n_neighbors": np.unique(np.logspace(0, np.log10(300), num=15, dtype=int)),
+    "n_neighbors": np.unique(np.logspace(0, np.log10(500), num=21, dtype=int)),
     "weights": ["uniform", "distance"],
 }
 grillas = dict(
-    fkdc={"alpha": np.linspace(1, 2.5, 9), "bandwidth": np.logspace(-3, 2, 21)},
-    kdc={"bandwidth": np.logspace(-3, 5, 101)},
-    gnb={"var_smoothing": np.logspace(-10, -2, 17)},
+    fkdc={"alpha": np.linspace(1, 4, 13), "bandwidth": np.logspace(-3, 6, 37)},
+    kdc={"bandwidth": np.logspace(-3, 6, 118)},
+    gnb={"var_smoothing": np.logspace(-12, 1, 40)},
     kn=espacio_kn,
-    fkn={**espacio_kn, "alpha": np.linspace(1, 2.5, 7)},
-    lr={"C": np.logspace(-2, 2, 11), "l1_ratio": [0, 0.5, 1]},
-    svc={"C": np.logspace(-3, 5, 51), "gamma": ["scale", "auto"]},
-    lsvc={"C": np.logspace(-3, 3, 11), "fit_intercept": [True, False]},
+    fkn={**espacio_kn, "alpha": np.linspace(1, 4, 13)},
+    lr={"C": np.logspace(-5, 2, 36)},
+    slr={"logreg__C": np.logspace(-5, 2, 36)},
+    svc={"C": np.logspace(-4, 6, 61), "gamma": ["scale", "auto"]},
+    gbt={"learning_rate": [0.025, 0.05, 0.1], "max_depth": [3, 5, 8, 13]},
 )
 clasificadores = Bunch(
     fkdc=KDClassifier(metric="fermat"),
@@ -42,19 +46,19 @@ clasificadores = Bunch(
     gnb=GaussianNB(),
     kn=KNeighborsClassifier(),
     fkn=FermatKNeighborsClassifier(),
-    lr=LogisticRegression(
-        solver="saga", penalty="elasticnet", max_iter=200, l1_ratio=0
+    lr=LogisticRegression(max_iter=50_000),
+    slr=Pipeline(
+        [("scaler", StandardScaler()), ("logreg", LogisticRegression(max_iter=50_000))]
     ),
     svc=SVC(),
-    lsvc=LinearSVC(dual="auto"),
+    gbt=HistGradientBoostingClassifier(max_features=0.5),
 )
 n_samples = 800
-main_seed = 2024
-max_runtime = 120
-clf_lentos = (KDClassifier, FermatKNeighborsClassifier)
+main_seed = 1312
 split_evaluacion = 0.5
 cv = 5
-repetitions = 16
+scoring = "neg_log_loss"
+repetitions = 25
 
 
 def _get_run_seeds(main_seed=main_seed, repetitions=repetitions):
@@ -64,7 +68,6 @@ def _get_run_seeds(main_seed=main_seed, repetitions=repetitions):
 
 def make_configs(
     main_seed: int = main_seed,
-    max_runtime: float = max_runtime,
     split_evaluacion: float = split_evaluacion,
     cv: int = cv,
     run_seeds: Optional[List[int]] = None,
@@ -79,21 +82,23 @@ def make_configs(
 
     datasets = {ds.stem: ds for ds in datasets_dir.glob("*.pkl")}
     for nombre_clf, clf in clasificadores.items():
-        scores = ["accuracy"]
-        if hasattr(clf, "predict_proba"):
-            scores.append("neg_log_loss")
-        grilla_hipers = {
+        grilla_base = {  # Evita usar np.array quer serializa fiero
             param: values if isinstance(values, list) else values.tolist()
             for param, values in grillas[nombre_clf].items()
         }
-        for nombre_dataset, dataset in datasets.items():
+        for nombre_dataset, dataset_path in datasets.items():
+            grilla_hipers = grilla_base.copy()
+            if n_neighbors := grilla_hipers.get("n_neighbors"):
+                ds = Dataset.cargar(dataset_path)
+                n_samples_fit = floor(ds.n * (cv - 1) / cv * (1 - split_evaluacion))
+                n_neighbors = [n for n in n_neighbors if n < n_samples_fit]
+                grilla_hipers["n_neighbors"] = n_neighbors
             base_config = dict(
-                dataset=str(dataset),
+                dataset=str(dataset_path),
                 clasificador=nombre_clf,
                 grilla_hipers=grilla_hipers,
                 cv=cv,
                 split_evaluacion=split_evaluacion,
-                max_runtime=max_runtime * (5 if isinstance(clf, clf_lentos) else 1),
             )
             partes = nombre_dataset.split("-")
             run_seeds = run_seeds or _get_run_seeds(main_seed, repetitions)
@@ -107,13 +112,24 @@ def make_configs(
                 task_seeds = run_seeds
             else:
                 raise ValueError("Nombre de dataset invalido: %s" % nombre_dataset)
-            for task_seed, score in product(task_seeds, scores):
-                config = dict(**base_config, seed=task_seed, scoring=score)
-                clave = (nombre_dataset, semilla_dataset, nombre_clf, task_seed, score)
+            for task_seed in task_seeds:
+                scoring = (
+                    "neg_log_loss" if hasattr(clf, "predict_proba") else "accuracy"
+                )
+                config = dict(**base_config, seed=task_seed, scoring=scoring)
+                clave = (
+                    nombre_dataset,
+                    semilla_dataset,
+                    nombre_clf,
+                    task_seed,
+                    scoring,
+                )
                 nombre_config = "-".join(map(str, clave)) + ".yaml"
                 logger.debug("Generando configuracion %s", nombre_config)
                 yaml.dump(config, open(configs_dir / nombre_config, "w"))
 
 
 if __name__ == "__main__":
+    from fkdc.datasets import Dataset
+
     typer.run(make_configs)

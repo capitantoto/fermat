@@ -8,7 +8,8 @@ from sklearn.metrics import accuracy_score, log_loss
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.utils import Bunch
 
-from fkdc.utils import MAX_SEED
+from fkdc.datasets import Dataset
+from fkdc.utils import refit_parsimoniously
 
 logger = logging.getLogger(__name__)
 
@@ -16,17 +17,17 @@ logger = logging.getLogger(__name__)
 class Tarea:
     def __init__(
         self,
-        dataset,
-        algoritmos,
+        dataset: str | Dataset,
+        algoritmos: list | dict,
         busqueda_factory=GridSearchCV,
-        busqueda_params=Bunch(
-            refit=True, return_train_score=True, cv=5, scoring="accuracy"
-        ),
-        split_evaluacion=0.2,
+        scoring="accuracy",
+        refit=refit_parsimoniously,
+        cv=5,
+        split_evaluacion=0.5,
         seed=None,
     ):
         self.dataset = ds = (
-            pickle.load(open(dataset, "rb")) if isinstance(dataset, str) else dataset
+            Dataset.cargar(dataset) if isinstance(dataset, str) else dataset
         )
         if isinstance(algoritmos, list):
             self.algoritmos = {
@@ -43,9 +44,11 @@ class Tarea:
                 "`algoritmos` debe ser una lista o un dict de 2-tuplas (clf, espacio)"
             )
         self.busqueda_factory = busqueda_factory
-        self.busqueda_params = busqueda_params or {}
-        self.seed = seed or np.random.randint(0, MAX_SEED)
+        self.scoring=scoring
+        self.refit=refit
+        self.cv=cv
         self.split_evaluacion = split_evaluacion
+        self.seed = seed or np.random.randint(0, 2**32)
         self._fitted = False
 
         self.X_train, self.X_eval, self.y_train, self.y_eval = train_test_split(
@@ -62,7 +65,7 @@ class Tarea:
             logger.info("Entrenando %s", nombre)
             self.info[nombre] = info = Bunch()
             busqueda = self.busqueda_factory(
-                algo.clf, algo.espacio, **self.busqueda_params
+                algo.clf, algo.espacio, scoring=self.scoring, cv=self.cv, refit=self.refit, n_jobs=-1
             )
             t0 = time()
             busqueda.fit(self.X_train, self.y_train)
@@ -107,7 +110,5 @@ class Tarea:
                 logger.warning(exc, exc_info=True)
 
     def guardar(self, path=None):
-        if path is None:
-            params = (self.dataset.nombre, self.seed, self.split_evaluacion)
-            path = "%s-%s-%s.pkl" % params
+        path = path or "%s-%s-%s.pkl" % (self.dataset.nombre, self.seed, self.split_evaluacion)
         pickle.dump(self, open(path, "wb"))
