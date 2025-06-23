@@ -4,13 +4,13 @@ from pathlib import Path
 from typing import List, Optional
 
 import numpy as np
-from sklearn.discriminant_analysis import StandardScaler
-from sklearn.pipeline import Pipeline
 import typer
+from sklearn.discriminant_analysis import StandardScaler
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.utils import Bunch
 from typing_extensions import Annotated
@@ -30,8 +30,8 @@ espacio_kn = {
     "weights": ["uniform", "distance"],
 }
 grillas = dict(
-    fkdc={"alpha": np.linspace(1, 4, 13), "bandwidth": np.logspace(-3, 6, 37)},
-    kdc={"bandwidth": np.logspace(-3, 6, 118)},
+    fkdc={"alpha": np.linspace(1, 4, 13), "bandwidth": np.logspace(-5, 6, 45)},
+    kdc={"bandwidth": np.logspace(-5, 6, 136)},
     gnb={"var_smoothing": np.logspace(-12, 1, 40)},
     kn=espacio_kn,
     fkn={**espacio_kn, "alpha": np.linspace(1, 4, 13)},
