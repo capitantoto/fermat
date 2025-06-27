@@ -44,9 +44,9 @@ class Tarea:
                 "`algoritmos` debe ser una lista o un dict de 2-tuplas (clf, espacio)"
             )
         self.busqueda_factory = busqueda_factory
-        self.scoring=scoring
-        self.refit=refit
-        self.cv=cv
+        self.scoring = scoring
+        self.refit = refit
+        self.cv = cv
         self.split_evaluacion = split_evaluacion
         self.seed = seed or np.random.randint(0, 2**32)
         self._fitted = False
@@ -65,7 +65,13 @@ class Tarea:
             logger.info("Entrenando %s", nombre)
             self.info[nombre] = info = Bunch()
             busqueda = self.busqueda_factory(
-                algo.clf, algo.espacio, scoring=self.scoring, cv=self.cv, refit=self.refit, n_jobs=-1
+                algo.clf,
+                algo.espacio,
+                scoring=self.scoring,
+                cv=self.cv,
+                refit=self.refit,
+                n_jobs=-1,
+                return_train_score=True,
             )
             t0 = time()
             busqueda.fit(self.X_train, self.y_train)
@@ -110,5 +116,9 @@ class Tarea:
                 logger.warning(exc, exc_info=True)
 
     def guardar(self, path=None):
-        path = path or "%s-%s-%s.pkl" % (self.dataset.nombre, self.seed, self.split_evaluacion)
+        path = path or "%s-%s-%s.pkl" % (
+            self.dataset.nombre,
+            self.seed,
+            self.split_evaluacion,
+        )
         pickle.dump(self, open(path, "wb"))
