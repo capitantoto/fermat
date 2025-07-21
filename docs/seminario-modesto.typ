@@ -100,7 +100,7 @@ Observación 3: Si $ind(dot)$ es la función indicadora, resulta que $op(U_h)(x)
 == Núcleo uniforme
 
 
-#image("../img/unif-gaus-kern.png")
+#image("img/unif-gaus-kern.png")
 
 == Clasificador de densidad por núcleos
 [ESL §6.6.2]
@@ -172,7 +172,7 @@ $
 
 == Dificultades: La maldición de la dimensionalidad
 
-#image("../img/curse-dim.png")
+#image("img/curse-dim.png")
 Para $h <=0.5, Pr(dot) < 1 times 10^(-15)$. Aún para $h=0.95, Pr(dot) approx 0.0077$ #emoji.face.shock
 
 = Clasificación en variedades
@@ -192,9 +192,9 @@ La hipótesis de la variedad postula que los datos $X in RR^(d_X)$ muestreados s
 == IRL
 
 #columns(2,[
-  #image("../img/hormiga-petalo.jpg", height: 70%)
+  #image("img/hormiga-petalo.jpg", height: 70%)
   #colbreak()
-  #image("../img/bandera-argentina.png")])
+  #image("img/bandera-argentina.png")])
 
 
 Pero: ¿en qué variedad vive un dígito, o su trazo, o una canción? #emoji.cigarette
@@ -209,7 +209,7 @@ Pero: ¿en qué variedad vive un dígito, o su trazo, o una canción? #emoji.cig
 #grid(columns: (80%, 20%), [
   Sea $T_p cal(M)$ el _espacio tangente_ a un punto $p in cal(M)$, y $g_p : T_p cal(M) times T_p cal(M) -> RR$ una forma _bilinear pos. def._ para cada $p$ que induce una _norma_ $||v||_p= sqrt(g_p(v, v))$. 
   
-  Decimos entonces que $g_p$ es una métrica Riemanniana y el par $(cal(M), g)$ es una variedad de Riemann, donde las nociones de _distancia, ángulo y geodésica_ están bien definidas.], image("Tangent_plane_to_sphere_with_vectors.svg",)
+  Decimos entonces que $g_p$ es una métrica Riemanniana y el par $(cal(M), g)$ es una variedad de Riemann, donde las nociones de _distancia, ángulo y geodésica_ están bien definidas.], image("img/Tangent_plane_to_sphere_with_vectors.svg",)
 )
 
 == KDE en variedades de Riemann [Pelletier 2005]
@@ -228,9 +228,9 @@ con la restricción de que la ventana $h <= h_0 <= op("inj")(cal(M))$, el _radio
 #columns(2)[
   En _"Kernel Density Estimation on Riemannian Manifolds: Asymptotic Results" (2009)_, Guillermo Henry y Daniela Rodriguez estudian algunas propiedades asintótica de este estimador, y las ejemplifican con datos de sitios volcánicos en la superficie terrestre.
   En particular, calculan la densidad de volumen $theta_p(q)$
-#image("../img/densidad-volumen-esfera.png")
+#image("img/densidad-volumen-esfera.png")
 #colbreak()
-#image("../img/henry-rodriguez-bolas.png")
+#image("img/henry-rodriguez-bolas.png")
 ]
 
 == Clasificación en variedades [Loubes y Pelletier 2008]
@@ -250,7 +250,7 @@ $
 
 == El ejemplo canónica: Análisis de Componentes Principales (PCA)
 
-#align(center)[#image("../img/pca.png", height:90%)]
+#align(center)[#image("img/pca.png", height:90%)]
 #text(size: 17pt)[Karl Pearson (1901), _"LIII. On lines and planes of closest fit to systems of points in space."_]
 
 
@@ -261,7 +261,7 @@ $
   2. Compute los caminos mínimos - las geodésicas entre observaciones, $d_(bu(N N))(x, y)$.
 
   3. Construya una representación ("_embedding"_) $d^*$−dimensional que minimice la discrepancia ("stress") entre $d_(bu(N N))$ y la distancia euclídea en $RR^d^*$
-],image("../img/isomap-2.png", height:90%))
+],image("img/isomap-2.png", height:90%))
 #text(size: 17pt)[Tenenbaum et al (2000), _"A Global Geometric Framework for Nonlinear Dimensionality Reduction"_]
 
 == Distancia de Fermat [Groisman, Jonckheere, Sapienza (2019); Little et al (2021)]
@@ -377,22 +377,22 @@ Sin embargo, un clasificador _peor_ que $cal(C)_0$ en tanto asigne bajas probabi
 == 2D, 2 clases: excelente $R^2$ con exactitud competitiva
 
 === Con Bajo Ruido
-#align(center)[#image("../img/2d-lo-datasets.png")]
+#align(center)[#image("img/2d-lo-datasets.png")]
 #pagebreak()
 #columns(3)[
-  #image("../img/lunas_lo-overall.png")
+  #image("img/lunas_lo-overall.png")
   #colbreak()
-  #image("../img/circulos_lo-overall.png")
+  #image("img/circulos_lo-overall.png")
   #colbreak()
-  #image("../img/espirales_lo-overall.png")
+  #image("img/espirales_lo-overall.png")
   
 ]
 #pagebreak()
 === Boxplot Accuracy
-#align(center)[#image("../img/2d-lo-acc.png")]
+#align(center)[#image("img/2d-lo-acc.png")]
 #pagebreak()
 === Boxplot $R^2$
-#align(center)[#image("../img/2d-lo-r2.png")]
+#align(center)[#image("img/2d-lo-r2.png")]
 
 == Superposición de parámetros: $alpha$ y $h$
 
@@ -413,51 +413,51 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
 ... y sabemos que localmente, eso es cierto #emoji.face.tear
 
 == Parámetros óptimos para $"(F)KDC"$ en `espirales_lo`
-#align(center)[#image("../img/optimos-espirales_lo.png", height: 80%)]
+#align(center)[#image("img/optimos-espirales_lo.png", height: 80%)]
 
 
 == Superficies (o paisajes) de _score_ para `(espirales_lo, 1434)`
 
-#align(center)[#image("../img/heatmap-fkdc-2d-lo-new.svg", height: 110%)]
+#align(center)[#image("img/heatmap-fkdc-2d-lo-new.svg", height: 110%)]
 
 == Alt-viz: Perfiles de pérdida para `(espirales_lo, 1434)`
 
-#align(center)[#image("../img/perfiles-perdida-espirales-1434.png", height: 110%)]
+#align(center)[#image("img/perfiles-perdida-espirales-1434.png", height: 110%)]
 
 == Fronteras de decisión para `(espirales_lo, 1434)`
 
-#align(center)[#image("../img/gbt-lr-espirales.png")]
+#align(center)[#image("img/gbt-lr-espirales.png")]
 #pagebreak()
-#align(center)[#image("../img/kn-espirales.png")]
+#align(center)[#image("img/kn-espirales.png")]
 #pagebreak()
-#align(center)[#image("../img/kdc-espirales.png")]
+#align(center)[#image("img/kdc-espirales.png")]
 #pagebreak()
-#align(center)[#image("../img/gnb-svc-espirales.png")]
+#align(center)[#image("img/gnb-svc-espirales.png")]
 
 
 
 == 3D, 2 clases + piononos
 
-#align(center)[#image("../img/3d.png")]
+#align(center)[#image("img/3d.png")]
 #pagebreak()
-#align(center)[#image("../img/pionono.png", height: 110%)]
+#align(center)[#image("img/pionono.png", height: 110%)]
 #pagebreak()
 #columns(4)[
-  #image("../img/pionono_0-overall.png")
+  #image("img/pionono_0-overall.png")
   #colbreak()
-  #image("../img/eslabones_0-overall.png")
+  #image("img/eslabones_0-overall.png")
   #colbreak()
-  #image("../img/helices_0-overall.png")
+  #image("img/helices_0-overall.png")
   #colbreak()
-  #image("../img/hueveras_0-overall.png")  
+  #image("img/hueveras_0-overall.png")  
 ]
 #pagebreak()
-#align(center)[#image("../img/pionono-eslabones-r2.png")]
+#align(center)[#image("img/pionono-eslabones-r2.png")]
 #pagebreak()
-#align(center)[#image("../img/helices-hueveras-r2.png")]
+#align(center)[#image("img/helices-hueveras-r2.png")]
 
 == Parámetros óptimos para $"(F)KDC"$ en `helices_0`
-#align(center)[#image("../img/optimos-helices_0.png", height: 100%)]
+#align(center)[#image("img/optimos-helices_0.png", height: 100%)]
 
 == Microindiferencia, macrodiferencia
 
@@ -468,58 +468,58 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
 
 
 == $R^2$ por semilla para $"(F)KN"$ en `helices_0`
-#align(center)[#image("../img/r2-fkn-kn-helices_0.png", height: 100%)]
+#align(center)[#image("img/r2-fkn-kn-helices_0.png", height: 100%)]
 
 == $R^2$ y $alpha^star$ para $"(F)KN"$ en `helices_0`, `n_neighbors` seleccionados
-#align(center)[#image("../img/r2-fkn-kn-n_neighbors-seleccionados.png", height: 65%)]
+#align(center)[#image("img/r2-fkn-kn-n_neighbors-seleccionados.png", height: 65%)]
 
 == Mejor $R^2$ para $"(F)KN"$ en `helices_0`, en función de `n_neighbors`
 
-#image("../img/helices_0-fkn_kn-mean_test_score.png")
+#image("img/helices_0-fkn_kn-mean_test_score.png")
 
 
 == $R^2$ por semilla para $"(F)KN"$ en `eslabones_0`
-#align(center)[#image("../img/outputa.png", height: 100%)]
+#align(center)[#image("img/outputa.png", height: 100%)]
 
 == $R^2$ y $alpha^star$ para $"(F)KN"$ en `eslabones_0`, `n_neighbors` seleccionados
-#align(center)[#image("../img/Screenshot 2025-07-18 at 11.43.27 AM.png", height: 65%)]
+#align(center)[#image("img/Screenshot 2025-07-18 at 11.43.27 AM.png", height: 65%)]
 
 == Mejor $R^2$ para $"(F)KN"$ en `eslabones_0`, en función de `n_neighbors`
 
-#image("../img/outputb.png")
+#image("img/outputb.png")
 
 == Otros datasets: 2D mucho ruido
 #columns(3)[
-  #image("../img/lunas_hi-overall.png")
+  #image("img/lunas_hi-overall.png")
   #colbreak()
-  #image("../img/circulos_hi-overall.png")
+  #image("img/circulos_hi-overall.png")
   #colbreak()
-  #image("../img/espirales_hi-overall.png")
+  #image("img/espirales_hi-overall.png")
 ]
 == Otros datasets: 15D
 #columns(4)[
-  #image("../img/pionono_12-overall.png")
+  #image("img/pionono_12-overall.png")
   #colbreak()
-  #image("../img/eslabones_12-overall.png")
+  #image("img/eslabones_12-overall.png")
   #colbreak()
-  #image("../img/helices_12-overall.png")
+  #image("img/helices_12-overall.png")
   #colbreak()
-  #image("../img/hueveras_12-overall.png")  
+  #image("img/hueveras_12-overall.png")  
 ]
 == Otros datasets: multiclase
 #columns(4)[
-  #image("../img/iris-overall.png")
+  #image("img/iris-overall.png")
   #colbreak()
-  #image("../img/vino-overall.png")
+  #image("img/vino-overall.png")
   #colbreak()
-  #image("../img/pinguinos-overall.png")
+  #image("img/pinguinos-overall.png")
   #colbreak()
-  #image("../img/anteojos.png")  
+  #image("img/anteojos.png")  
 ]
 == Otros datasets: `digitos` y `mnist`
 
 #columns(2)[
-  #image("../img/digitos-overall.png")
+  #image("img/digitos-overall.png")
   #colbreak()
-  #image("../img/mnist-overall.png")
+  #image("img/mnist-overall.png")
 ]
