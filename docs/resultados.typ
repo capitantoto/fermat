@@ -1,37 +1,15 @@
-// Basado en How do I get the "LaTeX look?",
-// de https://typst.app/docs/guides/guide-for-latex-users/
-#set page(margin: 1.75in, numbering: "1 de 1")
-#set par(leading: 0.55em, spacing: 0.55em, first-line-indent: 1.8em, justify: true)
-#set text(font: "New Computer Modern", lang: "es")
-#show raw: set text(font: "New Computer Modern Mono")
-#show heading: set block(above: 1.4em, below: 1em)
-
-#set heading(numbering: "1.1")
 #import "@preview/ctheorems:1.1.3": *
-#show: thmrules
-#show link: set text(blue)
-#show link: underline
-// #show math.equation: set text(font: "Fira Math")
-#set strong(delta: 100)
-#set par(justify: true)
-#set math.equation(numbering: "(1)")
 
-#set quote(block: true)
-
+// ################
+// # definiciones #
+// ################
 #let phi = math.phi.alt
 #let ind = $ op(bb(1)) $
 #let bu(x) = $bold(upright(#x))$
 
-
 // Copetes flexibles para outline y texto, adaptado para 0.12 de
 // https://github.com/typst/typst/issues/1295#issuecomment-1853762154
 #let in-outline = state("in-outline", false)
-#show outline: it => {
-  in-outline.update(true)
-  it
-  in-outline.update(false)
-}
-
 #let flex-caption(long, short) = (
   context if in-outline.get() {
     short
@@ -40,14 +18,36 @@
   }
 )
 
-#outline(depth: 2)
+#let defn = thmbox("definition", "Definición", inset: (x: 1.2em, top: 1em))
+#let obs = thmplain("observation", "Observación").with(numbering: none)
 
+// ##############
+// ### estilo ###
+// ##############
+
+// Basado en How do I get the "LaTeX look?",
+// de https://typst.app/docs/guides/guide-for-latex-users/
+#set page(margin: 1.75in, numbering: "1 de 1")
+#set par(leading: 0.55em, spacing: 0.55em, first-line-indent: 1.8em, justify: true)
+#set text(font: "New Computer Modern", lang: "es")
+#set heading(numbering: "1.1")
+#set strong(delta: 100)
+#set par(justify: true)
+#set math.equation(numbering: "(1)")
+#set quote(block: true)
+
+#show: thmrules
+#show raw: set text(font: "New Computer Modern Mono")
+#show heading: set block(above: 1.4em, below: 1em)
+#show link: it =>  underline(text(it, fill: blue))
+
+// ### TOC y listados
+#outline(depth: 2)
 #outline(target: figure.where(kind: image), title: "Listado de Figuras")
 #outline(target: figure.where(kind: table), title: "Listado de Tablas")
 #outline(target: figure.where(kind: raw), title: "Listado de código")
-= Tioremas
-#let defn = thmbox("definition", "Definición", inset: (x: 1.2em, top: 1em))
-#let obs = thmplain("observation", "Observación").with(numbering: none)
+
+= Sandbox
 
 #figure(
   ```python
@@ -67,29 +67,21 @@ Como se explica en @la-mar-en-coche, es muy arriesgado cruzar el océano en un a
 
 = Notación
 
-Ahora se ve lo que escribo?
+#set terms(separator: h(2em, weak: true), spacing: 1em)
 
-
-- $RR$: los números reales
-- $d_x$
-- $RR^(d_x)$
-- $[k]$, el conjunto de los k números enteros, ${1, dots, k}$
-- $cal(M)$
-- $bold(upright(H))$
-- $norm(dot)$
-- ${bold(upright(X))}$
-- $X_(i, j)$
-- $bu(H)$
-
-$abs(x + 2/(1/(1 + theta)))$
-
-#bu("1")
-
-
-$Pr(x in A)$
+/ $RR$: los números reales
+/ $d_x$: 
+/ $RR^(d_x)$:
+/ $[k]$:  el conjunto de los k números enteros, ${1, dots, k}$
+/ $cal(M)$:
+/ $bold(upright(H))$:
+/ $norm(dot)$:
+/ ${bold(upright(X))}$:
+/ $X_(i, j)$:
+/ $ind(dot)$: la función indicadora
+/ $Pr(x in A)$:
 $bb(P)$
 
-#let ind = $ op(bb(1)) $
 
 $ind(x/y)$
 = Preliminares
