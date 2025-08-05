@@ -5,6 +5,8 @@
 // ################
 #let phi = math.phi.alt
 #let ind = $ op(bb(1)) $
+#let sop = $ op("sop") $
+#let Pr = $ op("Pr") $
 #let bu(x) = $bold(upright(#x))$
 
 // Copetes flexibles para outline y texto, adaptado para 0.12 de
@@ -44,9 +46,22 @@
 // ### TOC y listados
 #outline(depth: 2)
 
+= TODOs
+- [ ] Ponderar por $n^beta$
+- [ ] Evitar coma entre sujeto y predicado
+- [ ] Mensionar Rodríguez x2:
+  - @forzaniPenalizationMethodEstimate2022
+  - @henryKernelDensityEstimation2009
+- Algo de densidad de volumen:
+  - @berenfeldDensityEstimationUnknown2021
+  - @bickelLocalPolynomialRegression2007
 
+- @wandKernelSmoothing1995
 = Sandbox
 
+Dado el soporte del núcelo $sop K$ para la probabilidad $Pr(a + b/(c/d + 1))$
+
+$vec(1, 2, 3)$
 #figure(
   ```python
   print("hello world")
@@ -61,7 +76,7 @@
 
 #obs[O sea, sería tremendo hundirse en medio de la mar]
 
-Como se explica en @la-mar-en-coche, es muy arriesgado cruzar el océano en un auto. O sea, no.
+Como se explica en @la-mar-en-coche, es muy arriesgado cruzar el océano en un auto. O sea, no #footnote[Al final qué se io, _kcyo_].
 
 = Notación
 
@@ -77,24 +92,21 @@ Como se explica en @la-mar-en-coche, es muy arriesgado cruzar el océano en un a
 / ${bold(upright(X))}$:
 / $X_(i, j)$:
 / $ind(dot)$: la función indicadora
-/ $Pr(x in A)$:
-$bb(P)$
+/ $Pr(dot)$: función de probabilidad
+/ vectores: ???
+/ escalares: ???
 
-
-$ind(x/y)$
 = Preliminares
-
 
 == El problema de clasificación
 
 === Definición y vocabulario
-[ESL §2.2]
-- El _aprendizaje estadístico supervisado_ busca estimar (aprender) una variable _respuesta_ a partir de cierta(s) variable(s) _predictora(s)_. 
+@hastieElementsStatisticalLearning2009[§2.2]
+El _aprendizaje estadístico supervisado_ busca estimar (aprender) una variable _respuesta_ a partir de cierta(s) variable(s) _predictora(s)_. Cuando la _respuesta_ es una variable _cualitativa_, el problema de asignar cada observación $x$ a una clase $G in cal(G)={g^1, dots, g^K}$ se denomina _de clasificación_.
 
-- Cuando la _respuesta_ es una variable _cualitativa_, el problema de asignar cada observación $x$ a una clase $G in cal(G)={g^1, dots, g^K}$ se denomina _de clasificación_.
+Un _clasificador_ es una función $hat(G)(x)$ que para cada observación $x$, intenta aproximar su verdadera clase $g$ por $hat(g)$ ("ge sombrero").
 
-- Un _clasificador_ es una función $hat(G)(x)$ que para cada observación $x$, intenta aproximar su verdadera clase $g$ por $hat(g)$ ("ge sombrero").
-- Para construir $hat(G)$, contamos con un _conjunto de entrenamiento_ de pares $(x_i, g_i), i in {1, dots, N}$ conocidos. Típicamente, las clases serán MECE, y las observaciones $X in RR^p$.
+Para construir $hat(G)$, contamos con un _conjunto de entrenamiento_ de pares $(x_i, g_i), i in {1, dots, N}$ conocidos. Típicamente, las clases serán MECE, y las observaciones $X in RR^p$.
 
 === Clsasificador de Bayes
 
@@ -926,6 +938,16 @@ Esto digo yo
 @rosenblattRemarksNonparametricEstimates1956
 @carpioFingerprintsCancerPersistent2019
 @chaconDatadrivenDensityDerivative2013
+
+== Glosario
+
+/ clausura: ???
+/ Riemanniana, métrica: sdfsdf
+/ Lebesgue, medida de: ???
+/ densidad, estimación de: cf. @berenfeldDensityEstimationUnknown2021
+/ ventana: parámetro escalar que determina la "unidad" de distancia
+/ núcleo, función: $K$
+
 
 #outline(target: figure.where(kind: image), title: "Listado de Figuras")
 #outline(target: figure.where(kind: table), title: "Listado de Tablas")
