@@ -56,7 +56,7 @@
   - @berenfeldDensityEstimationUnknown2021
   - @bickelLocalPolynomialRegression2007
 
-- @wandKernelSmoothing1995
+- 
 = Sandbox
 
 Dado el soporte del núcelo $sop K$ para la probabilidad $Pr(a + b/(c/d + 1))$
@@ -79,6 +79,7 @@ $vec(1, 2, 3)$
 Como se explica en @la-mar-en-coche, es muy arriesgado cruzar el océano en un auto. O sea, no #footnote[Al final qué se io, _kcyo_].
 
 = Notación
+A lo largo de esta monografía tomaremos como referencia enciclopédica al _Elements of Statistical Learning_ @hastieElementsStatisticalLearning2009, de modo que en la medida de lo posible, basaremos nuestra notación en la suya también.
 
 #set terms(separator: h(2em, weak: true), spacing: 1em)
 
@@ -101,7 +102,7 @@ Como se explica en @la-mar-en-coche, es muy arriesgado cruzar el océano en un a
 == El problema de clasificación
 
 === Definición y vocabulario
-@hastieElementsStatisticalLearning2009[§2.2]
+Para esta sección seguiremos al @hastieElementsStatisticalLearning2009[§2.2]
 El _aprendizaje estadístico supervisado_ busca estimar (aprender) una variable _respuesta_ a partir de cierta(s) variable(s) _predictora(s)_. Cuando la _respuesta_ es una variable _cualitativa_, el problema de asignar cada observación $x$ a una clase $G in cal(G)={g^1, dots, g^K}$ se denomina _de clasificación_.
 
 Un _clasificador_ es una función $hat(G)(x)$ que para cada observación $x$, intenta aproximar su verdadera clase $g$ por $hat(g)$ ("ge sombrero").
@@ -142,8 +143,8 @@ $
 
 === Estimación unidimensional
 
-[ESL §6.6, Parzen 1962]
-
+@hastieElementsStatisticalLearning2009[§6.6], @parzenEstimationProbabilityDensity1962
+@rosenblattRemarksNonparametricEstimates1956
 
 Para fijar ideas, asumamos que $X in RR$ y consideremos la estimación de densidad en una única clase para la que contamos con $N$ ejemplos ${x_1, dots, x_N}$. Una aproximación $hat(f)$ directa sería
 (1) $
@@ -201,7 +202,7 @@ Cada densidad marginal $ f_(j,i)$ condicional a la clase se puede estimar usando
 A este procedimiento, se lo conoce cono "Naive Bayes".
 
 === KDE multivariado
-[Wand & Jones 1995 §4]
+@wandKernelSmoothing1995[§4]
 
 En su forma más general, estimador de densidad por núcleos $d$-variado es 
 
@@ -233,7 +234,7 @@ Aún tomando una única $bu(H)$ para _toda_ la muestra, $bu(H) in dots$
 
 === Dificultades: La maldición de la dimensionalidad
 
-[ESL §2.5, Wand & Jones 1995 §4.9 ej 4.1]
+@hastieElementsStatisticalLearning2009[§2.5], @wandKernelSmoothing1995[§4.9 ej 4.1]
 
 Sean $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d), i in {1, dots, N}$, y consideremos la estimación de la densidad en el origen, $f(bu(0))$. Suponga que el núcleo $K_(bu(H))$ es un "núcleo producto" basado en la distribución univariada $"Uniforme(-1, 1)"$, y $bu(H) = h^2 bu(I)$. Derive una expresión para la proporción esperada de puntos incluidos dentro del soporte del núcleo $K_bu(H)$ para $h, d$. arbitrarios.
 
@@ -250,8 +251,9 @@ $
 Para $h <=0.5, Pr(dot) < 1 times 10^(-15)$. Aún para $h=0.95, Pr(dot) approx 0.0077$ #emoji.face.shock
 
 == Clasificación en variedades
-
+@vincentManifoldParzenWindows2002
 === La hipótesis de la variedad ("manifold hypothesis")
+@bengioRepresentationLearningReview2014: representation learning y manifold hypthesis
 [Bengio Repr learning]
 [#link("https://www.reddit.com/r/MachineLearning/comments/mzjshl/d_who_first_advanced_the_manifold_hypothesis_to/")[Bengio en Reddit]
 ]
@@ -274,6 +276,10 @@ La hipótesis de la variedad postula que los datos $X in RR^(d_X)$ muestreados s
 Pero: ¿en qué variedad vive un dígito, o su trazo, o una canción? #emoji.cigarette
 
 === Interludio: Variedades de Riemann [Wikipedia]
+@munozEstimacionNoParametrica2011
+pick one:
+@chavelRiemannianGeometryModern2006
+@leeIntroductionRiemannianManifolds2018 < este lo usa muñoz y Wikipedia, vamos por acá
 
 #quote[Una variedad $d$-dimensional $cal(M)$ es un espacio _topológico_ tal que cada punto $p in cal(M)$ tiene un vecindario $U$ que resulta _homeomórfico_ a un conjunto abierto en $RR^d$]
 
@@ -287,6 +293,7 @@ Pero: ¿en qué variedad vive un dígito, o su trazo, o una canción? #emoji.cig
 )
 
 === KDE en variedades de Riemann [Pelletier 2005]
+@pelletierKernelDensityEstimation2005
 - Sea $(cal(M), g)$ una variedad de Riemann compacta y sin frontera de dimensión $d$, y usemos $d_g$ para denotar la distancia de Riemann.
 - Sea $K$ un _núcleo isotrópico en $cal(M)$ soportado en la bola unitaria_ (cf. conds. (i)-(v))
 - Sean $p, q in cal(M)$, y $theta_p (q)$ la _función de densidad de volumen en $cal(M)$_ #footnote[¡Ardua definición! Algo así como el cociente entre las medida de volumen en $cal(M)$, y su transformación via el mapa local a $RR^d$]
@@ -297,6 +304,10 @@ $
 
 con la restricción de que la ventana $h <= h_0 <= op("inj")(cal(M))$, el _radio de inyectividad_ de $cal(M)$ #footnote[el ínfimo entre el supremo del radio de una bola en cada $p$ tal que su mapa es un difeomorfismo]
 
+=== Algunas variedades conocidas
+$S^1$: @vonmisesUberGanzzahligkeitAtomgewicht1918
+$S^2$: @fisherDispersionSphere1957
+$S^p$: @mardiaDistributionTheoryMisesFisher1975
 === Interludio: densidad de volumen en la esfera [Henry y Rodríguez, 2009]
 
 #columns(2)[
@@ -308,6 +319,9 @@ con la restricción de que la ventana $h <= h_0 <= op("inj")(cal(M))$, el _radio
 ]
 
 === Clasificación en variedades [Loubes y Pelletier 2008]
+@loubesKernelbasedClassifierRiemannian2008
+@hallBandwidthChoiceNonparametric2005 h optimo para clasificacion con KDE
+@devroyeProbabilisticTheoryPattern1996[§6 Consistencia]
 
 ¡Clasificador de Bayes + KDE en Variedades = Clasificación (suave o dura) en variedades!
 
@@ -324,11 +338,18 @@ $
 
 === El ejemplo canónica: Análisis de Componentes Principales (PCA)
 
-#align(center)[#image("img/pca.png", height:90%)]
-#text(size: 12pt)[Karl Pearson (1901), _"LIII. On lines and planes of closest fit to systems of points in space."_]
+#align(center)[#image("img/pca.png")]
+#text(size: 12pt)[@pearsonLIIILinesPlanes1901, _"LIII. On lines and planes of closest fit to systems of points in space."_]
 
 
 === El algoritmo más _cool_: Isomap
+==== previo: self-organizing mapas
+@kohonenSelforganizedFormationTopologically1982
+@kohonenSelfOrganizationAssociativeMemory1988 
+=== isometric feature mapping
+@tenenbaumMappingManifoldPerceptual1997
+@tenenbaumGlobalGeometricFramework2000
+
 #grid(columns: (35%, 65%), column-gutter:20pt, [
   1. Construya el grafo de $k, epsilon$-vecinos, $bu(N N)=(bu(X), E)$
 
@@ -339,7 +360,9 @@ $
 [Tenenbaum et al (2000), _"A Global Geometric Framework for Nonlinear Dimensionality Reduction"_]
 
 === Distancia de Fermat [Groisman, Jonckheere, Sapienza (2019); Little et al (2021)]
-
+@groismanNonhomogeneousEuclideanFirstpassage2019
+@littleBalancingGeometryDensity2021
+@mckenziePowerWeightedShortest2019
 #quote(attribution: "P. Groisman et al (2019)")[
   #set text(size: 12pt)
 _We tackle the problem of learning a distance between points, able to capture both the geometry of the manifold and the underlying density. We define such a sample distance and prove the convergence, as the sample size goes to infinity, to a macroscopic one that we call Fermat distance as it minimizes a path functional, resembling Fermat principle in optics._]
@@ -658,7 +681,10 @@ problema.
 ==== Relación entre H y la distancia de Mahalanobis
 
 === La hipótesis de la variedad
-
+@bengioRepresentationLearningReview2014
+@rifaiManifoldTangentClassifier2011
+@caytonAlgorithmsManifoldLearning2005
+@galleseRootsEmpathyShared2003 : shared manifold hypothesis
 #figure(
   caption: flex-caption[La variedad $cal(U)$ con $dim(cal(U)) = 1$ embebida en $RR^2$. Nótese que en el espacio ambiente, el punto rojo está más cerca del verde, mientras que a través de $cal(U)$, el punto amarillo está más próximo que el rojo][Variedad $cal(U)$],
 )[#image("img/variedad-u.svg", width: 70%)]
@@ -671,11 +697,13 @@ problema.
 === Isomap
 
 === Distancias basadas en densidad
-
+- Bijral @bijralSemisupervisedLearningDensity2012
+- @brandChartingManifold2002
+@chuExactComputationManifold2019
+@vincentDensitySensitiveMetrics2003
 === Distancia de Fermat
 - Groisman & Jonckheere @groismanNonhomogeneousEuclideanFirstpassage2019
 - Little & Mackenzie @littleBalancingGeometryDensity2021
-- Bijral @bijralSemisupervisedLearningDensity2012
 - Vincent & Bengio @vincentDensitySensitiveMetrics2003
 #defn("Distancia Muestral de Fermat")[]<sample-fermat-distance>
 == Propuesta Original
@@ -924,15 +952,6 @@ Antes de avanzar hacia el siguiente conjunto de datos, una pregunta más: ¿qué
 
 = Referencias
 
-= Código Fuente
-
-=== sklearn
-
-=== fkdc
-
-=== Datasets
-=== Datasets 2d
-
 Esto digo yo
 
 @rosenblattRemarksNonparametricEstimates1956
@@ -949,8 +968,11 @@ Esto digo yo
 / núcleo, función: $K$
 
 
+= Listados
 #outline(target: figure.where(kind: image), title: "Listado de Figuras")
+= Tablas
 #outline(target: figure.where(kind: table), title: "Listado de Tablas")
+= Código
 #outline(target: figure.where(kind: raw), title: "Listado de código")
 
-#bibliography("../bib/references.bib", style: "harvard-cite-them-right")
+#bibliography("../bib/references-20250811.bib", style: "harvard-cite-them-right")
