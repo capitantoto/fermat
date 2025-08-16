@@ -78,8 +78,12 @@ $vec(1, 2, 3)$
 
 Como se explica en @la-mar-en-coche, es muy arriesgado cruzar el océano en un auto. O sea, no #footnote[Al final qué se io, _kcyo_].
 
-= Notación
+= Vocabulario y Notación
 A lo largo de esta monografía tomaremos como referencia enciclopédica al _Elements of Statistical Learning_ @hastieElementsStatisticalLearning2009, de modo que en la medida de lo posible, basaremos nuestra notación en la suya también.
+
+Típicamente, denotaremos a las variables independientes #footnote[También conocidas como predictoras, o _inputs_] con $X$. Si $X$ es un vector, accederemos a sus componentes con subíndices, $X_j$. En el contexto del problema de clasificación, la variable _cualitativa_ dependiente #footnote[También conocida como variable respuesta u _output_] será $G$ (de $G$rupo). Usaremos letras mayúsculas como $X, G$ para referirnos a los aspectos genéricos de una variable. Los valores _observados_ se escribirán en minúscula, de manera que el i-ésimo valor observado de $X$ será $x_i$ (de nuevo, $x_i$ puede ser un escalar o un vector). Representaremos a las matrices con letras mayúsculas en negrita, $bu(X)$; e.g.: el conjunto de de $N$ vectores $p$-dimensionales ${x_i, i in {1, dots, N}}$ será representado por la matrix $bu(X)$ de dimensión $N times p$. En general, los vectores _no_ estarán en negrita, excepto cuando tengan $N$ componentes; esta convención distingue el $p-$vector de _inputs_ para la i-ésima observación,  $x_i$, del $N-$vector $bu(x)_j$ con todas las observaciones de la variable $X_j$. Como todos los vectore se asumen vectores columna, la i-ésima fila de $bu(X)$ es $x_i^T$, la traspuesta de la i-ésima observación $x_i$.
+
+A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 
 #set terms(separator: h(2em, weak: true), spacing: 1em)
 
@@ -92,24 +96,62 @@ A lo largo de esta monografía tomaremos como referencia enciclopédica al _Elem
 / $norm(dot)$:
 / ${bold(upright(X))}$:
 / $X_(i, j)$:
-/ $ind(dot)$: la función indicadora
-/ $Pr(dot)$: función de probabilidad
-/ vectores: ???
-/ escalares: ???
+/ $ind(x)$: la función indicadora, $ind(x)=cases(1 "si" x "es verdadero", 0 "si no"))$
+/ $Pr(x)$: función de probabilidad, 
+/ $EE(x)$: esperanza,
 
 = Preliminares
 
 == El problema de clasificación
 
 === Definición y vocabulario
-Para esta sección seguiremos al @hastieElementsStatisticalLearning2009[§2.2]
-El _aprendizaje estadístico supervisado_ busca estimar (aprender) una variable _respuesta_ a partir de cierta(s) variable(s) _predictora(s)_. Cuando la _respuesta_ es una variable _cualitativa_, el problema de asignar cada observación $x$ a una clase $G in cal(G)={g^1, dots, g^K}$ se denomina _de clasificación_.
+El _aprendizaje estadístico supervisado_ busca estimar (aprender) una variable _respuesta_ a partir de cierta(s) variable(s) _predictora(s)_. Cuando la _respuesta_ es una variable _cualitativa_, el problema de asignar cada observación $X$ a una clase $G in cal(G)={cal(g)^1, dots, cal(g)^K}$ se denomina _de clasificación_. En general, reemplazaremos los nombres o "etiquetas" de clases $g_i$ por los enteros correspondientes, $ G in [K]$. En esta definición del problema, las clases son mutuamente excluyentes y conjuntamente exhaustivas:
+- mutuamente excluyentes: cada observación $X_i$ está asociada a lo sumo a una clase
+- conjuntamente exhaustivas: cada observación $X_i$ está asociada a alguna clase.
 
-Un _clasificador_ es una función $hat(G)(x)$ que para cada observación $x$, intenta aproximar su verdadera clase $g$ por $hat(g)$ ("ge sombrero").
+Un _clasificador_ es una función $hat(G)(X)$ que para cada observación intenta aproximar su verdadera clase $G$ por $hat(G)$ ("ge sombrero"). Para construir $hat(G)$, contamos con un _conjunto de entrenamiento_ de pares $(x_i, g_i), i in {1, dots, N}$ conocidos.
 
-Para construir $hat(G)$, contamos con un _conjunto de entrenamiento_ de pares $(x_i, g_i), i in {1, dots, N}$ conocidos. Típicamente, las clases serán MECE, y las observaciones $X in RR^p$.
 
-=== Clsasificador de Bayes
+=== El problema de clasificación
+
+
+#defn("problema de clasificación")[] <clf-prob>
+#defn("clasificador vecino más cercano")[] <nn-clf>
+
+=== Definición del problema unidimensional
+[muestra aleatoria]Sea
+
+#let dimx = $d_x$
+Consideremos el problema de clasificación:
+[problema de clasificación]<def:prob-clf-1> Sea $X={ X_{1},dots,X_{N}} , X_{i} in R^{"dimx"} forall i in [N]$
+una muestra de $N$ observaciones aleatorias $dimx-$dimensionales,
+repartidas en $M$ clases $C_{1},dots,C_{M}$ mutuamente excluyentes
+y conjuntamente exhaustivasfootnote{es decir, $forall i in[N]equiv{ 1,dots,N} ,X_{i}in C_{j} arrow.l.r.double<=> X_{i} not in C_{k},k in mu,k =/= j$.
+Asumamos además que la muestra está compuesta de observaciones independientes
+entre sí, y las observaciones de cada clase están idénticamente distribuidas
+según su propia ley: si $|C_{j}| =N_{j}$ y $X_{i}^{(j)}$representa
+la i-ésima observación de la clase $j$, resulta que $X_{i}^{(j)} {L}_{j}(X) forall j in mu,i in [N_{j}]$.
+
+Dada una nueva observación $x_{0}$ cuy
+
+
+=== Clasificadores "duros" y "suaves"
+#defn("clasificación dura")[¿a qué clase deberíamos asignarla? ] <clf-dura>
+#defn("clasificación suave")[ ¿qué probabilidad tiene de pertenecer a cada
+  clase $C_{j},j in [M]$ ?] <clf-suave>
+
+Cualquier método o algoritmo que pretenda responder el problema de
+clasificación, prescribe un modo u otro de combinar toda la información
+muestral disponible, ponderando las $N$ observaciones relativamente
+a su cercanía o similitud con $x_{0}$. Por caso, $k-$vecinos más
+cercanos ($k-$NN) asignará la nueva observación $x_{0}$ a la clase
+modal - la más frecuente - entre las $k$ observaciones de entrenamiento
+más cercanasemph{ }en distancia euclídea $norm{x_{0} - .}$. $k-$NN
+no menciona explícitamente las leyes de clase #math.cal("L")},
+lo cual lo mantiene sencillo a costa de ignorar la estructura del
+problema.
+#defn("k-NN")[k-Nearest Neighbors] <knn>
+=== Clasificador de Bayes
 
 Una posible estrategia de clasificación consiste en asignarle a cada observación $x_0$, la clase más probable en ese punto, dada la información disponible. 
 
@@ -621,46 +663,6 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
   #image("img/mnist-overall.png")
 ]
 
-=== El problema de clasificación
-
-
-#defn("problema de clasificación")[] <clf-prob>
-#defn("clasificador vecino más cercano")[] <nn-clf>
-
-=== Definición del problema unidimensional
-[muestra aleatoria]Sea
-
-#let dimx = $d_x$
-Consideremos el problema de clasificación:
-[problema de clasificación]<def:prob-clf-1> Sea $X={ X_{1},dots,X_{N}} , X_{i} in R^{"dimx"} forall i in [N]$
-una muestra de $N$ observaciones aleatorias $dimx-$dimensionales,
-repartidas en $M$ clases $C_{1},dots,C_{M}$ mutuamente excluyentes
-y conjuntamente exhaustivasfootnote{es decir, $forall i in[N]equiv{ 1,dots,N} ,X_{i}in C_{j} arrow.l.r.double<=> X_{i} not in C_{k},k in mu,k =/= j$.
-Asumamos además que la muestra está compuesta de observaciones independientes
-entre sí, y las observaciones de cada clase están idénticamente distribuidas
-según su propia ley: si $|C_{j}| =N_{j}$ y $X_{i}^{(j)}$representa
-la i-ésima observación de la clase $j$, resulta que $X_{i}^{(j)} {L}_{j}(X) forall j in mu,i in [N_{j}]$.
-
-Dada una nueva observación $x_{0}$ cuy
-
-
-=== Clasificadores "duros" y "suaves"
-#defn("clasificación dura")[¿a qué clase deberíamos asignarla? ] <clf-dura>
-#defn("clasificación suave")[ ¿qué probabilidad tiene de pertenecer a cada
-  clase $C_{j},j in [M]$ ?] <clf-suave>
-
-Cualquier método o algoritmo que pretenda responder el problema de
-clasificación, prescribe un modo u otro de combinar toda la información
-muestral disponible, ponderando las $N$ observaciones relativamente
-a su cercanía o similitud con $x_{0}$. Por caso, $k-$vecinos más
-cercanos ($k-$NN) asignará la nueva observación $x_{0}$ a la clase
-modal - la más frecuente - entre las $k$ observaciones de entrenamiento
-más cercanasemph{ }en distancia euclídea $norm{x_{0} - .}$. $k-$NN
-no menciona explícitamente las leyes de clase #math.cal("L")},
-lo cual lo mantiene sencillo a costa de ignorar la estructura del
-problema.
-#defn("k-NN")[k-Nearest Neighbors] <knn>
-=== Clasificador de Bayes
 
 === KDE: Estimación de la densidad por núcleos
 #defn("KDE")[] <kde>
@@ -919,28 +921,6 @@ Antes de avanzar hacia el siguiente conjunto de datos, una pregunta más: ¿qué
 
 ==== Efecto del ruido en la performance de clasificación
 
-
-==== Datasets reales en "mediana" dimensión
-
-
-
-==== Dígitos
-
-==== PCA-red MNIST
-
-= Análisis de Resultados
-
-=== Datasets sintéticos, Baja dimensión
-
-=== Datasets orgánicos, Mediana dimensión
-
-=== Alta dimensión: Dígitos
-
-=== Efecto de dimensiones guillemot ruidosasguillemot
-
-=== fKDC: Interrelación entre $h,alpha$
-
-=== fKNN: Comportamiento local-global
 
 = Comentarios finales
 
