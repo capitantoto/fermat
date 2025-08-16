@@ -268,7 +268,7 @@ La hipótesis de la variedad postula que los datos $X in RR^(d_X)$ muestreados s
 === IRL
 
 #columns(2,[
-  #image("img/hormiga-petalo.jpg", height: 70%)
+  #image("img/hormiga-petalo.jpg")
   #colbreak()
   #image("img/bandera-argentina.png")])
 
@@ -356,7 +356,7 @@ $
   2. Compute los caminos mínimos - las geodésicas entre observaciones, $d_(bu(N N))(x, y)$.
 
   3. Construya una representación ("_embedding"_) $d^*$−dimensional que minimice la discrepancia ("stress") entre $d_(bu(N N))$ y la distancia euclídea en $RR^d^*$
-],image("img/isomap-2.png", height:90%))
+],image("img/isomap-2.png"))
 [Tenenbaum et al (2000), _"A Global Geometric Framework for Nonlinear Dimensionality Reduction"_]
 
 === Distancia de Fermat [Groisman, Jonckheere, Sapienza (2019); Little et al (2021)]
@@ -975,4 +975,4 @@ Esto digo yo
 = Código
 #outline(target: figure.where(kind: raw), title: "Listado de código")
 
-#bibliography("../bib/references-20250811.bib", style: "harvard-cite-them-right")
+#bibliography("../bib/references.bib", style: "harvard-cite-them-right")
