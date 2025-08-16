@@ -76,12 +76,16 @@ $vec(1, 2, 3)$
 
 #obs[O sea, sería tremendo hundirse en medio de la mar]
 
-Como se explica en @la-mar-en-coche, es muy arriesgado cruzar el océano en un auto. O sea, no #footnote[Al final qué se io, _kcyo_].
+Como se explica en @la-mar-en-coche, es muy arriesgado cruzar el océano en un auto. O sea, no.
 
 = Vocabulario y Notación
 A lo largo de esta monografía tomaremos como referencia enciclopédica al _Elements of Statistical Learning_ @hastieElementsStatisticalLearning2009, de modo que en la medida de lo posible, basaremos nuestra notación en la suya también.
 
-Típicamente, denotaremos a las variables independientes #footnote[También conocidas como predictoras, o _inputs_] con $X$. Si $X$ es un vector, accederemos a sus componentes con subíndices, $X_j$. En el contexto del problema de clasificación, la variable _cualitativa_ dependiente #footnote[También conocida como variable respuesta u _output_] será $G$ (de $G$rupo). Usaremos letras mayúsculas como $X, G$ para referirnos a los aspectos genéricos de una variable. Los valores _observados_ se escribirán en minúscula, de manera que el i-ésimo valor observado de $X$ será $x_i$ (de nuevo, $x_i$ puede ser un escalar o un vector). Representaremos a las matrices con letras mayúsculas en negrita, $bu(X)$; e.g.: el conjunto de de $N$ vectores $p$-dimensionales ${x_i, i in {1, dots, N}}$ será representado por la matrix $bu(X)$ de dimensión $N times p$. En general, los vectores _no_ estarán en negrita, excepto cuando tengan $N$ componentes; esta convención distingue el $p-$vector de _inputs_ para la i-ésima observación,  $x_i$, del $N-$vector $bu(x)_j$ con todas las observaciones de la variable $X_j$. Como todos los vectore se asumen vectores columna, la i-ésima fila de $bu(X)$ es $x_i^T$, la traspuesta de la i-ésima observación $x_i$.
+Típicamente, denotaremos a las variables independientes #footnote[También conocidas como predictoras, o _inputs_] con $X$. Si $X$ es un vector, accederemos a sus componentes con subíndices, $X_j$. En el contexto del problema de clasificación, la variable _cualitativa_ dependiente #footnote[También conocida como variable respuesta u _output_] será $G$ (de $G$rupo). Usaremos letras mayúsculas como $X, G$ para referirnos a los aspectos genéricos de una variable. Los valores _observados_ se escribirán en minúscula, de manera que el i-ésimo valor observado de $X$ será $x_i$ (de nuevo, $x_i$ puede ser un escalar o un vector). 
+
+Representaremos a las matrices con letras mayúsculas en negrita, $bu(X)$; e.g.: el conjunto de de $N$ vectores $p$-dimensionales ${x_i, i in {1, dots, N}}$ será representado por la matrix $bu(X)$ de dimensión $N times p$.
+
+En general, los vectores _no_ estarán en negrita, excepto cuando tengan $N$ componentes; esta convención distingue el $p-$vector de _inputs_ para la i-ésima observación,  $x_i$, del $N-$vector $bu(x)_j$ con todas las observaciones de la variable $X_j$. Como todos los vectore se asumen vectores columna, la i-ésima fila de $bu(X)$ es $x_i^T$, la traspuesta de la i-ésima observación $x_i$.
 
 A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 
@@ -96,7 +100,7 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / $norm(dot)$:
 / ${bold(upright(X))}$:
 / $X_(i, j)$:
-/ $ind(x)$: la función indicadora, $ind(x)=cases(1 "si" x "es verdadero", 0 "si no"))$
+/ $ind(x)$: la función indicadora, $ind(x)=cases(1 "si" x "es verdadero", 0 "si no")$
 / $Pr(x)$: función de probabilidad, 
 / $EE(x)$: esperanza,
 
@@ -243,6 +247,7 @@ Cada densidad marginal $ f_(j,i)$ condicional a la clase se puede estimar usando
 
 A este procedimiento, se lo conoce cono "Naive Bayes".
 
+#defn("Naive Bayes")[] <gnb>
 === KDE multivariado
 @wandKernelSmoothing1995[§4]
 
@@ -260,6 +265,7 @@ Típicamente, K es la densidad normal multivariada
 $
  Phi(x) : RR^d -> RR = (2 pi)^(-d/2) exp(- (||x||^2)/2)
 $
+#defn("KDE Multivariada")[] <kde-mv>
 
 === Dificultades: elección de $bu(H)$
 Sean las clases de matrices pertenecientes a $RR^(d times d)$ ...
@@ -295,6 +301,14 @@ Para $h <=0.5, Pr(dot) < 1 times 10^(-15)$. Aún para $h=0.95, Pr(dot) approx 0.
 == Clasificación en variedades
 @vincentManifoldParzenWindows2002
 === La hipótesis de la variedad ("manifold hypothesis")
+@bengioRepresentationLearningReview2014
+@rifaiManifoldTangentClassifier2011
+@caytonAlgorithmsManifoldLearning2005
+@galleseRootsEmpathyShared2003 : shared manifold hypothesis
+#figure(
+  caption: flex-caption[La variedad $cal(U)$ con $dim(cal(U)) = 1$ embebida en $RR^2$. Nótese que en el espacio ambiente, el punto rojo está más cerca del verde, mientras que a través de $cal(U)$, el punto amarillo está más próximo que el rojo][Variedad $cal(U)$],
+)[#image("img/variedad-u.svg", width: 70%)]
+
 @bengioRepresentationLearningReview2014: representation learning y manifold hypthesis
 [Bengio Repr learning]
 [#link("https://www.reddit.com/r/MachineLearning/comments/mzjshl/d_who_first_advanced_the_manifold_hypothesis_to/")[Bengio en Reddit]
@@ -378,6 +392,7 @@ $
 
 == Aprendizaje de distancias
 
+
 === El ejemplo canónica: Análisis de Componentes Principales (PCA)
 
 #align(center)[#image("img/pca.png")]
@@ -388,7 +403,7 @@ $
 ==== previo: self-organizing mapas
 @kohonenSelforganizedFormationTopologically1982
 @kohonenSelfOrganizationAssociativeMemory1988 
-=== isometric feature mapping
+==== isometric feature mapping
 @tenenbaumMappingManifoldPerceptual1997
 @tenenbaumGlobalGeometricFramework2000
 
@@ -401,10 +416,17 @@ $
 ],image("img/isomap-2.png"))
 [Tenenbaum et al (2000), _"A Global Geometric Framework for Nonlinear Dimensionality Reduction"_]
 
+=== Distancias basadas en densidad
+- Bijral @bijralSemisupervisedLearningDensity2012
+- @brandChartingManifold2002
+@chuExactComputationManifold2019
+@vincentDensitySensitiveMetrics2003
 === Distancia de Fermat [Groisman, Jonckheere, Sapienza (2019); Little et al (2021)]
 @groismanNonhomogeneousEuclideanFirstpassage2019
 @littleBalancingGeometryDensity2021
 @mckenziePowerWeightedShortest2019
+#defn("Distancia Muestral de Fermat")[]<sample-fermat-distance>
+
 #quote(attribution: "P. Groisman et al (2019)")[
   #set text(size: 12pt)
 _We tackle the problem of learning a distance between points, able to capture both the geometry of the manifold and the underlying density. We define such a sample distance and prove the convergence, as the sample size goes to infinity, to a macroscopic one that we call Fermat distance as it minimizes a path functional, resembling Fermat principle in optics._]
@@ -437,8 +459,23 @@ donde $beta = (a-1) slash d, thick n >= n_0 $ y $mu$ es una constante adecuada.
 
 ¡Esta sí la podemos aprender de los datos! #emoji.arm.muscle
 
-== Todo junto:
-Clasificación en variedades desconocidas por estimación de densidad por núcleos con Distancia de Fermat Muestral
+== Propuesta Original
+== Todo junto
+
+Habiendo andado este sendero teórico, la pregunta natural que asoma es: ¿es posible mejorar un algoritmo de clasificación reemplazando la distancia euclídea por una aprendida de los datos, como la de Fermat? Para investigar la cuestión, nos propusimos:
+1. Implementar un clasificador basado en estimación de densidad por núcleos (TODO: ref) según @loubesKernelbasedClassifierRiemannian2008, que llamaremos "KDC". Además,
+2. Implementar un estimador de densidad por núcleos basado en la distancia de Fermat, a fines de poder comparar la _performance_ de KDC con distancia euclídea y de Fermat.
+
+Nótese que el clasificador enunciado al inicio (k-NN, @knn), tiene un pariente cercano, $epsilon-upright("NN")$
+
+#defn($epsilon-"NN"$)[] <eps-NN>
+
+@eps-NN es esencialmente equivalente a KDC con un núcleo "rectangular", $k(t) =  ind(d(x, t) < epsilon) / epsilon$, pero su definición es considerablemente más sencilla. Luego, propondremos también
+3. Implementar un clasificador cual @knn, pero con distancia muestral de Fermat en lugar de euclídea.
+
+=== KDC con Distancia de Fermat Muestral
+
+=== f-KNN
 
 === Algunas dudas
 
@@ -473,7 +510,6 @@ y calculamos $D_(Q_i, alpha) (x_0, dot)$
 - k-vecinos-más-cercanos (`KN`)
 - Naive Bayes Gaussiano (`GNB`)]
 
-#pagebreak()
 
 - La implementación de `KNeighbors` de referencia acepta distancias precomputadas, así que incluimos una versión con distancia de Fermat, que apodamos `F(ermat)KN`. 
 
@@ -481,7 +517,6 @@ y calculamos $D_(Q_i, alpha) (x_0, dot)$
 
 - La función de score elegida fue `neg_log_loss` ($ = cal(l)$) para los clasificadores suaves, y `accuracy` para los duros.
 
-#pagebreak()
 - Para tener una idea "sistémica" de la performance de los algoritmos, evaluaremos su performance con _datasets_ que varíen en el tamaño muestral $N$, la dimensión $p$ de las $X_i$, el nro. de clases $k$ y su origen ("real" o "sintético"). 
 
 - Cuando creamos datos sintéticos en variedades  con dimensión intrínseca menor a la ambiente, (casi) cualquier clasificador competente alcanza exactitud perfecta; para complejizar la tarea, agegamos un poco de "ruido" a las observaciones, y también analizamos sus efectos.
@@ -498,9 +533,7 @@ y calculamos $D_(Q_i, alpha) (x_0, dot)$
 
 #align(center)[*Regla de $1sigma$*: De las que estén a $1sigma$ de la mejor, la más sencilla.]
 
-
-
-¿Sabemos cuánto vale $sigma$?
+ ¿Sabemos cuánto vale $sigma$?
 
 === $R^2$ de McFadden
 Sea $cal(C)_0$ el clasificador "base", que asigna a cada observación y posible clase, la frecuencia empírica de clase encontrada en la muestra $bu(X)$. Para todo clasificador suave $cal(C)$, definimos el $R^2$ de McFadden como
@@ -512,218 +545,6 @@ donde $cal(l)(dot)$ es la log-verosimilitud clásica. Nótese que $op(R^2)(cal(C
 
 Sin embargo, un clasificador _peor_ que $cal(C)_0$ en tanto asigne bajas probabilidades ($approx 0$) a las clases correctas, puede tener un $R^2$ infinitamente negativo.
 
-= Resultados
-=== 2D, 2 clases: excelente $R^2$ con exactitud competitiva
-
-=== Con Bajo Ruido
-#align(center)[#image("img/2d-lo-datasets.png")]
-#pagebreak()
-#columns(3)[
-  #image("img/lunas_lo-overall.png")
-  #colbreak()
-  #image("img/circulos_lo-overall.png")
-  #colbreak()
-  #image("img/espirales_lo-overall.png")
-  
-]
-#pagebreak()
-=== Boxplot Accuracy
-#align(center)[#image("img/2d-lo-acc.png")]
-#pagebreak()
-=== Boxplot $R^2$
-#align(center)[#image("img/2d-lo-r2.png")]
-
-=== Superposición de parámetros: $alpha$ y $h$
-
-
-- El uso de la distancia de Fermat muestral no hiere la performance, pero las mejoras son nulas o marginales. ¿Por qué?
-
-
-Si recordamos $hat(f)_(K,N)$ según Loubes & Pelletier, al núcleo $K$ se lo evalúa sobre 
-$
- (d (x_0, X_i)) / h, quad d = D_(Q_i, alpha)
-$
-
-Lo que $alpha$ afecta a $hat(f)$ vía $d$, también se puede conseguir vía $h$.
-
-Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la euclídea), los efectos de $alpha$ y $h$ se "solapan" 
-
-
-... y sabemos que localmente, eso es cierto #emoji.face.tear
-
-=== Parámetros óptimos para $"(F)KDC"$ en `espirales_lo`
-#align(center)[#image("img/optimos-espirales_lo.png", height: 80%)]
-
-
-=== Superficies (o paisajes) de _score_ para `(espirales_lo, 1434)`
-
-#align(center)[#image("img/heatmap-fkdc-2d-lo-new.svg", height: 110%)]
-
-=== Alt-viz: Perfiles de pérdida para `(espirales_lo, 1434)`
-
-#align(center)[#image("img/perfiles-perdida-espirales-1434.png", height: 110%)]
-
-=== Fronteras de decisión para `(espirales_lo, 1434)`
-
-#align(center)[#image("img/gbt-lr-espirales.png")]
-#pagebreak()
-#align(center)[#image("img/kn-espirales.png")]
-#pagebreak()
-#align(center)[#image("img/kdc-espirales.png")]
-#pagebreak()
-#align(center)[#image("img/gnb-svc-espirales.png")]
-
-
-
-=== 3D, 2 clases + piononos
-
-#align(center)[#image("img/3d.png")]
-#pagebreak()
-#align(center)[#image("img/pionono.png", height: 110%)]
-#pagebreak()
-#columns(4)[
-  #image("img/pionono_0-overall.png")
-  #colbreak()
-  #image("img/eslabones_0-overall.png")
-  #colbreak()
-  #image("img/helices_0-overall.png")
-  #colbreak()
-  #image("img/hueveras_0-overall.png")  
-]
-#pagebreak()
-#align(center)[#image("img/pionono-eslabones-r2.png")]
-#pagebreak()
-#align(center)[#image("img/helices-hueveras-r2.png")]
-
-=== Parámetros óptimos para $"(F)KDC"$ en `helices_0`
-#align(center)[#image("img/optimos-helices_0.png", height: 100%)]
-
-=== Microindiferencia, macrodiferencia
-
-- En zonas con muchas observaciones (por tener alta $f$ o alto $N$) sampleadas, la distancia de Fermat y la euclídea coinciden. 
-- "Localmente", siempre van a coincidir, aunque sea en un vecindario muy pequeño. 
-- Si el algoritmo de clasificación sólo depende de ese vencindario local para clasificar, no hay ganancia en la distancia de Fermat. 
-- ¡Pero tampoco hay pérdida si se elige mal `n_neighbors`! #emoji.person.shrug
-
-
-=== $R^2$ por semilla para $"(F)KN"$ en `helices_0`
-#align(center)[#image("img/r2-fkn-kn-helices_0.png", height: 100%)]
-
-=== $R^2$ y $alpha^star$ para $"(F)KN"$ en `helices_0`, `n_neighbors` seleccionados
-#align(center)[#image("img/r2-fkn-kn-n_neighbors-seleccionados.png", height: 65%)]
-
-=== Mejor $R^2$ para $"(F)KN"$ en `helices_0`, en función de `n_neighbors`
-
-#image("img/helices_0-fkn_kn-mean_test_score.png")
-
-
-=== $R^2$ por semilla para $"(F)KN"$ en `eslabones_0`
-#align(center)[#image("img/outputa.png", height: 100%)]
-
-=== $R^2$ y $alpha^star$ para $"(F)KN"$ en `eslabones_0`, `n_neighbors` seleccionados
-#align(center)[#image("img/Screenshot 2025-07-18 at 11.43.27 AM.png", height: 65%)]
-
-=== Mejor $R^2$ para $"(F)KN"$ en `eslabones_0`, en función de `n_neighbors`
-
-#image("img/outputb.png")
-
-=== Otros datasets: 2D mucho ruido
-#columns(3)[
-  #image("img/lunas_hi-overall.png")
-  #colbreak()
-  #image("img/circulos_hi-overall.png")
-  #colbreak()
-  #image("img/espirales_hi-overall.png")
-]
-=== Otros datasets: 15D
-#columns(4)[
-  #image("img/pionono_12-overall.png")
-  #colbreak()
-  #image("img/eslabones_12-overall.png")
-  #colbreak()
-  #image("img/helices_12-overall.png")
-  #colbreak()
-  #image("img/hueveras_12-overall.png")  
-]
-=== Otros datasets: multiclase
-#columns(4)[
-  #image("img/iris-overall.png")
-  #colbreak()
-  #image("img/vino-overall.png")
-  #colbreak()
-  #image("img/pinguinos-overall.png")
-  #colbreak()
-  #image("img/anteojos.png")  
-]
-=== Otros datasets: `digitos` y `mnist`
-
-#columns(2)[
-  #image("img/digitos-overall.png")
-  #colbreak()
-  #image("img/mnist-overall.png")
-]
-
-
-=== KDE: Estimación de la densidad por núcleos
-#defn("KDE")[] <kde>
-
-=== La maldición de la (alta) dimensionalidad
-
-=== NB: El clasificador "ingenuo" de Bayes
-#defn("Naïve Bayes")[] <gnb>
-
-==== Una muestra adversa
-
-=== KDC Multivariado
-#defn("KDE Multivariado")[] <kde-mv>
-#defn("KDC")[] <kdc>
-
-==== El caso 2-dimensional
-
-==== Relación entre H y la distancia de Mahalanobis
-
-=== La hipótesis de la variedad
-@bengioRepresentationLearningReview2014
-@rifaiManifoldTangentClassifier2011
-@caytonAlgorithmsManifoldLearning2005
-@galleseRootsEmpathyShared2003 : shared manifold hypothesis
-#figure(
-  caption: flex-caption[La variedad $cal(U)$ con $dim(cal(U)) = 1$ embebida en $RR^2$. Nótese que en el espacio ambiente, el punto rojo está más cerca del verde, mientras que a través de $cal(U)$, el punto amarillo está más próximo que el rojo][Variedad $cal(U)$],
-)[#image("img/variedad-u.svg", width: 70%)]
-=== KDE en variedades de Riemann
-
-=== Variedades desconocidas
-
-=== Aprendizaje de distancias
-
-=== Isomap
-
-=== Distancias basadas en densidad
-- Bijral @bijralSemisupervisedLearningDensity2012
-- @brandChartingManifold2002
-@chuExactComputationManifold2019
-@vincentDensitySensitiveMetrics2003
-=== Distancia de Fermat
-- Groisman & Jonckheere @groismanNonhomogeneousEuclideanFirstpassage2019
-- Little & Mackenzie @littleBalancingGeometryDensity2021
-- Vincent & Bengio @vincentDensitySensitiveMetrics2003
-#defn("Distancia Muestral de Fermat")[]<sample-fermat-distance>
-== Propuesta Original
-
-Habiendo andado este sendero teórico, la pregunta natural que asoma es: ¿es posible mejorar un algoritmo de clasificación reemplazando la distancia euclídea por una aprendida de los datos, como la de Fermat? Para investigar la cuestión, nos propusimos:
-1. Implementar un clasificador basado en estimación de densidad por núcleos (@kde) según @loubesKernelbasedClassifierRiemannian2008, que llamaremos "KDC". Además,
-2. Implementar un estimador de densidad por núcleos basado en la distancia de Fermat, a fines de poder comparar la _performance_ de KDC con distancia euclídea y de Fermat.
-
-Nótese que el clasificador enunciado al inicio (k-NN, @knn), tiene un pariente cercano, $epsilon-upright("NN")$
-
-#defn($epsilon-"NN"$)[] <eps-NN>
-
-@eps-NN es esencialmente equivalente a KDC con un núcleo "rectangular", $k(t) =  ind(d(x, t) < epsilon) / epsilon$, pero su definición es considerablemente más sencilla. Luego, propondremos también
-3. Implementar un clasificador cual @knn, pero con distancia muestral de Fermat en lugar de euclídea.
-
-=== KDC con Distancia de Fermat Muestral
-
-=== f-KNN
 
 == Evaluación
 
@@ -756,7 +577,7 @@ Una métrica natural para evaluar una regla de clasificación suave, es la _vero
   $ op(cal(l))(clfs) = n^(-1) log(op("L")(clfs)) = n^(-1)sum_(i=1)^n log(hat(bu(Y))_((i, y_i))) $
 ] <vero>
 
-// La verosimilitud de una muestra varía en $[0, 1]$ y su log-verosimilitud, en $(-oo, 0]$, pero como métrica esta sólo se vuelve comprensible _relativa a otros clasificadores_. Una forma de "normalizar" la log-verosimilitud, se debe a @mcfaddenConditionalLogitAnalysis1974.
+La verosimilitud de una muestra varía en $[0, 1]$ y su log-verosimilitud, en $(-oo, 0]$, pero como métrica esta sólo se vuelve comprensible _relativa a otros clasificadores_. Una forma de "normalizar" la log-verosimilitud, se debe a @mcfaddenConditionalLogitAnalysis1974.
 
 #defn([$R^2$ de McFadden])[Sea $clfs_0$ el clasificador "nulo", que asigna a cada observación y posible clase, la frecuencia empírica de clase encontrada en la muestra de entrenamiento $bu(X)_("train")$. Para todo clasificador suave $clfs$, definimos el $R^2$ de McFadden como
   $ op(R^2)(clfs | bu(X)) = 1 - (op(cal(l))(clfs)) / (op(cal(l))(clfs_0)) $
@@ -919,16 +740,149 @@ Ahora bien, esto es sólo en _un_ dataset, con _una_ semilla especfíca. ¿Se re
 
 Antes de avanzar hacia el siguiente conjunto de datos, una pregunta más: ¿qué sucede si aumentamos el nivel de ruido? Es decir, mantenemos los dataset hasta aquí considerados, pero subimos $sigma$ de @ruido-blanco?
 
+
+=== 2D, 2 clases: excelente $R^2$ con exactitud competitiva
+
+=== Con Bajo Ruido
+#align(center)[#image("img/2d-lo-datasets.png")]
+#columns(3)[
+  #image("img/lunas_lo-overall.png")
+  #colbreak()
+  #image("img/circulos_lo-overall.png")
+  #colbreak()
+  #image("img/espirales_lo-overall.png")
+  
+]
+=== Boxplot Accuracy
+#align(center)[#image("img/2d-lo-acc.png")]
+=== Boxplot $R^2$
+#align(center)[#image("img/2d-lo-r2.png")]
+
+=== Superposición de parámetros: $alpha$ y $h$
+
+
+- El uso de la distancia de Fermat muestral no hiere la performance, pero las mejoras son nulas o marginales. ¿Por qué?
+
+
+Si recordamos $hat(f)_(K,N)$ según Loubes & Pelletier, al núcleo $K$ se lo evalúa sobre 
+$
+ (d (x_0, X_i)) / h, quad d = D_(Q_i, alpha)
+$
+
+Lo que $alpha$ afecta a $hat(f)$ vía $d$, también se puede conseguir vía $h$.
+
+Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la euclídea), los efectos de $alpha$ y $h$ se "solapan" 
+
+
+... y sabemos que localmente, eso es cierto #emoji.face.tear
+
+=== Parámetros óptimos para $"(F)KDC"$ en `espirales_lo`
+#align(center)[#image("img/optimos-espirales_lo.png")]
+
+
+=== Superficies (o paisajes) de _score_ para `(espirales_lo, 1434)`
+
+#align(center)[#image("img/heatmap-fkdc-2d-lo-new.svg")]
+
+=== Alt-viz: Perfiles de pérdida para `(espirales_lo, 1434)`
+
+#align(center)[#image("img/perfiles-perdida-espirales-1434.png")]
+
+=== Fronteras de decisión para `(espirales_lo, 1434)`
+
+#align(center)[#image("img/gbt-lr-espirales.png")]
+#align(center)[#image("img/kn-espirales.png")]
+#align(center)[#image("img/kdc-espirales.png")]
+#align(center)[#image("img/gnb-svc-espirales.png")]
+
 ==== Efecto del ruido en la performance de clasificación
+#columns(3)[
+  #image("img/lunas_hi-overall.png")
+  #colbreak()
+  #image("img/circulos_hi-overall.png")
+  #colbreak()
+  #image("img/espirales_hi-overall.png")
+]
+
+=== 3D, 2 clases + piononos
+
+#align(center)[#image("img/3d.png")]
+#align(center)[#image("img/pionono.png")]
+#columns(4)[
+  #image("img/pionono_0-overall.png")
+  #colbreak()
+  #image("img/eslabones_0-overall.png")
+  #colbreak()
+  #image("img/helices_0-overall.png")
+  #colbreak()
+  #image("img/hueveras_0-overall.png")  
+]
+#align(center)[#image("img/pionono-eslabones-r2.png")]
+#align(center)[#image("img/helices-hueveras-r2.png")]
+
+=== Parámetros óptimos para $"(F)KDC"$ en `helices_0`
+#align(center)[#image("img/optimos-helices_0.png")]
+
+=== Microindiferencia, macrodiferencia
+
+- En zonas con muchas observaciones (por tener alta $f$ o alto $N$) sampleadas, la distancia de Fermat y la euclídea coinciden. 
+- "Localmente", siempre van a coincidir, aunque sea en un vecindario muy pequeño. 
+- Si el algoritmo de clasificación sólo depende de ese vencindario local para clasificar, no hay ganancia en la distancia de Fermat. 
+- ¡Pero tampoco hay pérdida si se elige mal `n_neighbors`! #emoji.person.shrug
 
 
-= Comentarios finales
+=== $R^2$ por semilla para $"(F)KN"$ en `helices_0`
+#align(center)[#image("img/r2-fkn-kn-helices_0.png")]
+
+=== $R^2$ y $alpha^star$ para $"(F)KN"$ en `helices_0`, `n_neighbors` seleccionados
+#align(center)[#image("img/r2-fkn-kn-n_neighbors-seleccionados.png")]
+
+=== Mejor $R^2$ para $"(F)KN"$ en `helices_0`, en función de `n_neighbors`
+
+#image("img/helices_0-fkn_kn-mean_test_score.png")
+
+
+=== $R^2$ por semilla para $"(F)KN"$ en `eslabones_0`
+#align(center)[#image("img/outputa.png")]
+
+=== $R^2$ y $alpha^star$ para $"(F)KN"$ en `eslabones_0`, `n_neighbors` seleccionados
+#align(center)[#image("img/Screenshot 2025-07-18 at 11.43.27 AM.png")]
+
+=== Mejor $R^2$ para $"(F)KN"$ en `eslabones_0`, en función de `n_neighbors`
+
+#image("img/outputb.png")
+
+
+=== Otros datasets: 15D
+#columns(4)[
+  #image("img/pionono_12-overall.png")
+  #colbreak()
+  #image("img/eslabones_12-overall.png")
+  #colbreak()
+  #image("img/helices_12-overall.png")
+  #colbreak()
+  #image("img/hueveras_12-overall.png")  
+]
+=== Otros datasets: multiclase
+#columns(4)[
+  #image("img/iris-overall.png")
+  #colbreak()
+  #image("img/vino-overall.png")
+  #colbreak()
+  #image("img/pinguinos-overall.png")
+  #colbreak()
+  #image("img/anteojos.png")  
+]
+=== Otros datasets: `digitos` y `mnist`
+
+#columns(2)[
+  #image("img/digitos-overall.png")
+  #colbreak()
+  #image("img/mnist-overall.png")
+]
+
 
 === Conclusiones
-
-=== Posibles líneas de desarrollo
-
-=== Relación con el estado del arte
 
 = Referencias
 
