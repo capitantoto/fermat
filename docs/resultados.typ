@@ -57,7 +57,7 @@
   - @berenfeldDensityEstimationUnknown2021
   - @bickelLocalPolynomialRegression2007
 
-- 
+-
 = Sandbox
 
 Dado el soporte del núcelo $sop K$ para la probabilidad $Pr(a + b/(c/d + 1))$
@@ -82,7 +82,7 @@ Como se explica en @la-mar-en-coche, es muy arriesgado cruzar el océano en un a
 = Vocabulario y Notación
 A lo largo de esta monografía tomaremos como referencia enciclopédica al _Elements of Statistical Learning_ @hastieElementsStatisticalLearning2009, de modo que en la medida de lo posible, basaremos nuestra notación en la suya también.
 
-Típicamente, denotaremos a las variables independientes #footnote[También conocidas como predictoras, o _inputs_] con $X$. Si $X$ es un vector, accederemos a sus componentes con subíndices, $X_j$. En el contexto del problema de clasificación, la variable _cualitativa_ dependiente #footnote[También conocida como variable respuesta u _output_] será $G$ (de $G$rupo). Usaremos letras mayúsculas como $X, G$ para referirnos a los aspectos genéricos de una variable. Los valores _observados_ se escribirán en minúscula, de manera que el i-ésimo valor observado de $X$ será $x_i$ (de nuevo, $x_i$ puede ser un escalar o un vector). 
+Típicamente, denotaremos a las variables independientes #footnote[También conocidas como predictoras, o _inputs_] con $X$. Si $X$ es un vector, accederemos a sus componentes con subíndices, $X_j$. En el contexto del problema de clasificación, la variable _cualitativa_ dependiente #footnote[También conocida como variable respuesta u _output_] será $G$ (de $G$rupo). Usaremos letras mayúsculas como $X, G$ para referirnos a los aspectos genéricos de una variable. Los valores _observados_ se escribirán en minúscula, de manera que el i-ésimo valor observado de $X$ será $x_i$ (de nuevo, $x_i$ puede ser un escalar o un vector).
 
 Representaremos a las matrices con letras mayúsculas en negrita, $bu(X)$; e.g.: el conjunto de de $N$ vectores $p$-dimensionales ${x_i, i in {1, dots, N}}$ será representado por la matrix $bu(X)$ de dimensión $N times p$.
 
@@ -93,7 +93,7 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 #set terms(separator: h(2em, weak: true), spacing: 1em)
 
 / $RR$: los números reales
-/ $d_x$: 
+/ $d_x$:
 / $RR^(d_x)$:
 / $[k]$: el conjunto de los k números enteros, ${1, dots, k}$
 / $cal(M)$:
@@ -102,7 +102,7 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / ${bold(upright(X))}$:
 / $X_(i, j)$:
 / $ind(x)$: la función indicadora, $ind(x)=cases(1 "si" x "es verdadero", 0 "si no")$
-/ $Pr(x)$: función de probabilidad, 
+/ $Pr(x)$: función de probabilidad,
 / $EE(x)$: esperanza,
 / $iid$: independiente e idénticamente distribuido (suele aplicar a una muestra $bu(X)$
 
@@ -254,7 +254,7 @@ $
   f_j (X) = product_(i=1)^p f_(j,i) (X_i)
 $
 
-Cada densidad marginal $ f_(j,i)$ condicional a la clase se puede estimar usando KDE univariado, y hasta se puede aplicar - usando histogramas - cuando algunas componentes $X_i$ son discretas.
+Cada densidad marginal $f_(j,i)$ condicional a la clase se puede estimar usando KDE univariado, y hasta se puede aplicar - usando histogramas - cuando algunas componentes $X_i$ son discretas.
 
 A este procedimiento, se lo conoce cono "Naive Bayes".
 
@@ -262,19 +262,19 @@ A este procedimiento, se lo conoce cono "Naive Bayes".
 === KDE multivariado
 @wandKernelSmoothing1995[§4]
 
-En su forma más general, estimador de densidad por núcleos $d$-variado es 
+En su forma más general, estimador de densidad por núcleos $d$-variado es
 
 $
-   hat(f) (x; bu(H)) = N^(-1) sum_(i=1)^N K_bu(H)(x - x_i)
+  hat(f) (x; bu(H)) = N^(-1) sum_(i=1)^N K_bu(H)(x - x_i)
 $
 
-donde 
+donde
 - $bu(H) in RR^(d times d)$ es una matriz simétrica def. pos. análoga a la ventana $h in RR$ para $d=1$,
--  $K_bu(H)(t) = abs(det bu(H))^(-1/2) K(bu(H)^(-1/2) t)$
-- $K$ es una función núcleo $d$-variada tal que $integral K(bu(x)) d bu(x) = 1$   
+- $K_bu(H)(t) = abs(det bu(H))^(-1/2) K(bu(H)^(-1/2) t)$
+- $K$ es una función núcleo $d$-variada tal que $integral K(bu(x)) d bu(x) = 1$
 Típicamente, K es la densidad normal multivariada
 $
- Phi(x) : RR^d -> RR = (2 pi)^(-d/2) exp(- (||x||^2)/2)
+  Phi(x) : RR^d -> RR = (2 pi)^(-d/2) exp(- (||x||^2)/2)
 $
 #defn("KDE Multivariada")[] <kde-mv>
 
@@ -283,13 +283,13 @@ Sean las clases de matrices pertenecientes a $RR^(d times d)$ ...
 - $cal(F)$, de matrices simétricas definidas positivas,
 - $cal(D)$, de matrices diagonales definidas positivas ($cal(D) subset.eq cal(F)$) y
 - $cal(S)$, de múltiplos escalares de la identidad: $cal(S) = {h^2 bu(I):h >0} subset.eq cal(D)$
- 
+
 Aún tomando una única $bu(H)$ para _toda_ la muestra, $bu(H) in dots$
 - $cal(F)$, requiere definir $mat(d; 2) = d(d-1)/2$ parámetros de ventana,
 - $cal(D)$ requiere $d$ parámetros, y
 - $cal(S)$ tiene un único parámetro $h$.
 
- A priori no es posible saber qué parametrización conviene, pero en general $bu(H) in cal(D)$ parece un compromiso razonable: no se pierde demasiado contra $cal(F)$, pero tampoco se padece la "rigidez" de $bu(H) in cal(S)$.
+  A priori no es posible saber qué parametrización conviene, pero en general $bu(H) in cal(D)$ parece un compromiso razonable: no se pierde demasiado contra $cal(F)$, pero tampoco se padece la "rigidez" de $bu(H) in cal(S)$.
 
 === Dificultades: La maldición de la dimensionalidad
 
@@ -300,8 +300,8 @@ Sean $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d), i in {1, dots, N}$, y considere
 (... interludio de pizarrón ...)
 
 $
-  Pr(X in [-h, h]^d) &=  Pr(inter_(i=1)^d abs(X_i) <= h) \
-  Pr(X in [-0.95, 0.95]^50) &approx 0.0077 \
+         Pr(X in [-h, h]^d) & = Pr(inter_(i=1)^d abs(X_i) <= h) \
+  Pr(X in [-0.95, 0.95]^50) & approx 0.0077 \
 $
 
 === Dificultades: La maldición de la dimensionalidad
@@ -334,7 +334,7 @@ La hipótesis de la variedad postula que los datos $X in RR^(d_X)$ muestreados s
 
 === IRL
 
-#columns(2,[
+#columns(2, [
   #image("img/hormiga-petalo.jpg")
   #colbreak()
   #image("img/bandera-argentina.png")])
@@ -353,10 +353,13 @@ pick one:
 - topológico: se puede definir cercanía (pero no necesariamente distancia), permite definir funciones continuas y límites
 - homeomórfico a $RR^d$: para cada punto $p in cal(M)$, existe un mapa _biyectivo_ y _suave_ entre el vecindario de $p$ y $RR^d$. El conjunto de tales mapas se denomina _atlas_.
 
-#grid(columns: (80%, 20%), [
-  Sea $T_p cal(M)$ el _espacio tangente_ a un punto $p in cal(M)$, y $g_p : T_p cal(M) times T_p cal(M) -> RR$ una forma _bilinear pos. def._ para cada $p$ que induce una _norma_ $||v||_p= sqrt(g_p(v, v))$. 
-  
-  Decimos entonces que $g_p$ es una métrica Riemanniana y el par $(cal(M), g)$ es una variedad de Riemann, donde las nociones de _distancia, ángulo y geodésica_ están bien definidas.], image("img/Tangent_plane_to_sphere_with_vectors.svg",)
+#grid(
+  columns: (80%, 20%),
+  [
+    Sea $T_p cal(M)$ el _espacio tangente_ a un punto $p in cal(M)$, y $g_p : T_p cal(M) times T_p cal(M) -> RR$ una forma _bilinear pos. def._ para cada $p$ que induce una _norma_ $||v||_p= sqrt(g_p(v, v))$.
+
+    Decimos entonces que $g_p$ es una métrica Riemanniana y el par $(cal(M), g)$ es una variedad de Riemann, donde las nociones de _distancia, ángulo y geodésica_ están bien definidas.],
+  image("img/Tangent_plane_to_sphere_with_vectors.svg"),
 )
 
 === KDE en variedades de Riemann [Pelletier 2005]
@@ -380,9 +383,9 @@ $S^p$: @mardiaDistributionTheoryMisesFisher1975
 #columns(2)[
   En _"Kernel Density Estimation on Riemannian Manifolds: Asymptotic Results" (2009)_, Guillermo Henry y Daniela Rodriguez estudian algunas propiedades asintótica de este estimador, y las ejemplifican con datos de sitios volcánicos en la superficie terrestre.
   En particular, calculan la densidad de volumen $theta_p(q)$
-#image("img/densidad-volumen-esfera.png")
-#colbreak()
-#image("img/henry-rodriguez-bolas.png")
+  #image("img/densidad-volumen-esfera.png")
+  #colbreak()
+  #image("img/henry-rodriguez-bolas.png")
 ]
 
 === Clasificación en variedades [Loubes y Pelletier 2008]
@@ -395,10 +398,10 @@ $S^p$: @mardiaDistributionTheoryMisesFisher1975
 Plantean una regla de clasificación $hat(G)$ para 2 clases adaptable a K clases de forma directa. Sea $p in cal(M)$ una variedad riemanniana como antes, y ${(x_1, g_1), dots, (x_N, g_N)}$ nuestras observaciones y sus clases. Luego,
 
 $
-  hat(G) (p) = arg max_(g in cal(G)) sum_(i=1)^N ind(g_i = g)K_h (p,X_i)
+  hat(G) (p) = arg max_(g in GG) sum_(i=1)^N ind(g_i = g)K_h (p,X_i)
 $
 
- 
+
 #align(center)[Pero... ¿y si la variedad es desconocida?]
 
 == Aprendizaje de distancias
@@ -407,24 +410,31 @@ $
 === El ejemplo canónica: Análisis de Componentes Principales (PCA)
 
 #align(center)[#image("img/pca.png")]
-#text(size: 12pt)[@pearsonLIIILinesPlanes1901, _"LIII. On lines and planes of closest fit to systems of points in space."_]
+#text(
+  size: 12pt,
+)[@pearsonLIIILinesPlanes1901, _"LIII. On lines and planes of closest fit to systems of points in space."_]
 
 
 === El algoritmo más _cool_: Isomap
 ==== previo: self-organizing mapas
 @kohonenSelforganizedFormationTopologically1982
-@kohonenSelfOrganizationAssociativeMemory1988 
+@kohonenSelfOrganizationAssociativeMemory1988
 ==== isometric feature mapping
 @tenenbaumMappingManifoldPerceptual1997
 @tenenbaumGlobalGeometricFramework2000
 
-#grid(columns: (35%, 65%), column-gutter:20pt, [
-  1. Construya el grafo de $k, epsilon$-vecinos, $bu(N N)=(bu(X), E)$
+#grid(
+  columns: (35%, 65%),
+  column-gutter: 20pt,
+  [
+    1. Construya el grafo de $k, epsilon$-vecinos, $bu(N N)=(bu(X), E)$
 
-  2. Compute los caminos mínimos - las geodésicas entre observaciones, $d_(bu(N N))(x, y)$.
+    2. Compute los caminos mínimos - las geodésicas entre observaciones, $d_(bu(N N))(x, y)$.
 
-  3. Construya una representación ("_embedding"_) $d^*$−dimensional que minimice la discrepancia ("stress") entre $d_(bu(N N))$ y la distancia euclídea en $RR^d^*$
-],image("img/isomap-2.png"))
+    3. Construya una representación ("_embedding"_) $d^*$−dimensional que minimice la discrepancia ("stress") entre $d_(bu(N N))$ y la distancia euclídea en $RR^d^*$
+  ],
+  image("img/isomap-2.png"),
+)
 [Tenenbaum et al (2000), _"A Global Geometric Framework for Nonlinear Dimensionality Reduction"_]
 
 === Distancias basadas en densidad
@@ -440,32 +450,32 @@ $
 
 #quote(attribution: "P. Groisman et al (2019)")[
   #set text(size: 12pt)
-_We tackle the problem of learning a distance between points, able to capture both the geometry of the manifold and the underlying density. We define such a sample distance and prove the convergence, as the sample size goes to infinity, to a macroscopic one that we call Fermat distance as it minimizes a path functional, resembling Fermat principle in optics._]
+  _We tackle the problem of learning a distance between points, able to capture both the geometry of the manifold and the underlying density. We define such a sample distance and prove the convergence, as the sample size goes to infinity, to a macroscopic one that we call Fermat distance as it minimizes a path functional, resembling Fermat principle in optics._]
 
 Sea $f$ una función continua y positiva, $beta >=0$
- y $x, y in S subset.eq RR^d$. Definimos la _Distancia de Fermat_ $cal(D)_(f, beta)(x, y)$ como:
+y $x, y in S subset.eq RR^d$. Definimos la _Distancia de Fermat_ $cal(D)_(f, beta)(x, y)$ como:
 
 $
-cal(T)_(f, beta)(gamma) = integral_gamma f^(-beta) space, quad quad quad cal(D)_(f, beta)(x, y) = inf_(gamma in Gamma) cal(T)_(f, beta)(gamma)  quad #emoji.face.shock 
+  cal(T)_(f, beta)(gamma) = integral_gamma f^(-beta) space, quad quad quad cal(D)_(f, beta)(x, y) = inf_(gamma in Gamma) cal(T)_(f, beta)(gamma) quad #emoji.face.shock
 $
 
 ... donde el ínfimo se toma sobre el conjunto $Gamma$ de todos los caminos rectificables entre $x$ e $y$ contenidos en $overline(S)$, la clausura de $S$, y la integral es entendida con respecto a la longitud de arco dada por la distancia euclídea.
- 
+
 === Distancia de Fermat muestral
 
 Para $alpha >=1$ y $x, y in RR^d$, la _Distancia Muestral de Fermat_ se define como
 
 $
-D_(bu(X), alpha) = inf {sum_(j=1)^(K-1) ||q_(j+1) - q_j||^alpha : (q_1, dots, q_K) "es un camino de de x a y", K>=1}
+  D_(bu(X), alpha) = inf {sum_(j=1)^(K-1) ||q_(j+1) - q_j||^alpha : (q_1, dots, q_K) "es un camino de de x a y", K>=1}
 $
 
 donde los $q_j$ son elementos de la muestra $bu(X)$. Nótese que $D_(bu(X), alpha)$ satisface la desigualdad triangular, define una métrica sobre $bu(X)$ y una pseudo-métrica sobre $RR^d$.
 
-En su paper, Groisman et al. muestran que 
+En su paper, Groisman et al. muestran que
 $
   lim_(N -> oo) n^beta D_(bu(X)_n, alpha) (x, y)= mu cal(D)_(f, beta)(x, y)
 $
-donde $beta = (a-1) slash d, thick n >= n_0 $ y $mu$ es una constante adecuada. 
+donde $beta = (a-1) slash d, thick n >= n_0$ y $mu$ es una constante adecuada.
 
 
 ¡Esta sí la podemos aprender de los datos! #emoji.arm.muscle
@@ -477,11 +487,10 @@ Habiendo andado este sendero teórico, la pregunta natural que asoma es: ¿es po
 1. Implementar un clasificador basado en estimación de densidad por núcleos (TODO: ref) según @loubesKernelbasedClassifierRiemannian2008, que llamaremos "KDC". Además,
 2. Implementar un estimador de densidad por núcleos basado en la distancia de Fermat, a fines de poder comparar la _performance_ de KDC con distancia euclídea y de Fermat.
 
-Nótese que el clasificador enunciado al inicio (k-NN, @knn), tiene un pariente cercano, $epsilon-upright("NN")$
+Nótese que el clasificador enunciado al inicio (k-NN, @eps-nn), tiene un pariente cercano, $epsilon-upright("NN")$
+#defn("k-vecinos más cercanos")[] <knn>
 
-#defn($epsilon-"NN"$)[] <eps-NN>
-
-@eps-NN es esencialmente equivalente a KDC con un núcleo "rectangular", $k(t) =  ind(d(x, t) < epsilon) / epsilon$, pero su definición es considerablemente más sencilla. Luego, propondremos también
+@eps-nn es esencialmente equivalente a KDC con un núcleo "rectangular", $k(t) = ind(d(x, t) < epsilon) / epsilon$, pero su definición es considerablemente más sencilla. Luego, propondremos también
 3. Implementar un clasificador cual @knn, pero con distancia muestral de Fermat en lugar de euclídea.
 
 === KDC con Distancia de Fermat Muestral
@@ -493,9 +502,7 @@ Nótese que el clasificador enunciado al inicio (k-NN, @knn), tiene un pariente 
 - Entrenar el clasificador por validación cruzada está OK: como $bu(X)_"train" subset.eq bu(X)$ y $bu(X)_"test" subset.eq bu(X)$, se sigue que $forall (a, b) in {bu(X)_"train" times in bu(X)_"test"} subset.eq {bu(X) times bu(X)}$ y $D_(bu(X), alpha) (a, b)$ está bien definida.  ¿Cómo sé la distancia _muestral_ de una _nueva_ observación $x_0$, a los elementos de cada clase?\
 
 
-Para cada una de las $g_i in cal(G)$ clases, definimos el conjunto $
-Q_i= {x_0} union {x_j : x_j in bu(X), g_j = g_i, j in {1, dots, N}}
-$
+Para cada una de las $g_i in GG$ clases, definimos el conjunto $ Q_i= {x_0} union {x_j : x_j in bu(X), g_j = g_i, j in {1, dots, N}} $
 y calculamos $D_(Q_i, alpha) (x_0, dot)$
 
 === Algunas dudas
@@ -504,51 +511,52 @@ y calculamos $D_(Q_i, alpha) (x_0, dot)$
 
 
 ¡Nadie! Pero
-1. No hace falta dicho supuesto, y en el peor de los casos, podemos asumir que la unión de las clases está soportada en _cierta_ variedad de Riemman, que resulta de (¿la clausura de?) la unión de sus soportes individuales. 
-2. Sí es cierto que si las variedades (y las densidades que soportan) difieren, tanto el $alpha_i^*$ como el $h_i*$ "óptimos" para los estimadores de densidad individuales no tienen por qué coincidir. 
+1. No hace falta dicho supuesto, y en el peor de los casos, podemos asumir que la unión de las clases está soportada en _cierta_ variedad de Riemman, que resulta de (¿la clausura de?) la unión de sus soportes individuales.
+2. Sí es cierto que si las variedades (y las densidades que soportan) difieren, tanto el $alpha_i^*$ como el $h_i*$ "óptimos" para los estimadores de densidad individuales no tienen por qué coincidir.
 3. Aunque las densidades individuales $f_i$ estén bien estimadas, el clasificador resultante puede ser mal(ard)o si no diferencia bien "en las fronteras". Por simplicidad, además, decidimos parametrizar el clasificador con dos únicos hiperparámetros globales: $alpha, h$.
 
 === Diseño experimental
 
-1. Desarrollamos un clasificador compatible con el _framework_ de #link("https://arxiv.org/abs/1309.0238", `scikit-learn`)  según los lineamientos de Loubes & Pelleteir, que apodamos `KDC`. 
-2. Implementamos el estimador de la distancia muestral de Fermat, y combinándolo con KDC, obtenemos la titular "Clasificación por KDE con Distancia de Fermat", `FKDC`. 
-3.  Evaluamos el _pseudo-$R^2$_ y la _exactitud_ ("accuracy") de los clasificadores propuestos en diferentes _datasets_, relativa a técnicas bien establecidas: 
+1. Desarrollamos un clasificador compatible con el _framework_ de #link("https://arxiv.org/abs/1309.0238", `scikit-learn`)  según los lineamientos de Loubes & Pelleteir, que apodamos `KDC`.
+2. Implementamos el estimador de la distancia muestral de Fermat, y combinándolo con KDC, obtenemos la titular "Clasificación por KDE con Distancia de Fermat", `FKDC`.
+3. Evaluamos el _pseudo-$R^2$_ y la _exactitud_ ("accuracy") de los clasificadores propuestos en diferentes _datasets_, relativa a técnicas bien establecidas:
 #columns(2)[
-- regresión logística (`LR`)
-- clasificador de  soporte vectorial (`SVC`) #footnote[sólo se consideró su exactitud. ya que no es un clasificador suave]
-- _gradient boosting trees_ (`GBT`)
-#colbreak()
-- k-vecinos-más-cercanos (`KN`)
-- Naive Bayes Gaussiano (`GNB`)]
+  - regresión logística (`LR`)
+  - clasificador de  soporte vectorial (`SVC`) #footnote[sólo se consideró su exactitud. ya que no es un clasificador suave]
+  - _gradient boosting trees_ (`GBT`)
+  #colbreak()
+  - k-vecinos-más-cercanos (`KN`)
+  - Naive Bayes Gaussiano (`GNB`)
+]
 
 
-- La implementación de `KNeighbors` de referencia acepta distancias precomputadas, así que incluimos una versión con distancia de Fermat, que apodamos `F(ermat)KN`. 
+- La implementación de `KNeighbors` de referencia acepta distancias precomputadas, así que incluimos una versión con distancia de Fermat, que apodamos `F(ermat)KN`.
 
-- Para ser "justos", se reservó una porción de los datos para la evaluación comparada, y del resto, cada algoritmo fue entrenado repetidas veces por validación cruzada de 5 pliegos, en una extensísima grilla de hiperparametrizaciones. Este procedimiento *se repitió 25 veces en cada dataset*. 
+- Para ser "justos", se reservó una porción de los datos para la evaluación comparada, y del resto, cada algoritmo fue entrenado repetidas veces por validación cruzada de 5 pliegos, en una extensísima grilla de hiperparametrizaciones. Este procedimiento *se repitió 25 veces en cada dataset*.
 
-- La función de score elegida fue `neg_log_loss` ($ = cal(l)$) para los clasificadores suaves, y `accuracy` para los duros.
+- La función de score elegida fue `neg_log_loss` ($= cal(l)$) para los clasificadores suaves, y `accuracy` para los duros.
 
-- Para tener una idea "sistémica" de la performance de los algoritmos, evaluaremos su performance con _datasets_ que varíen en el tamaño muestral $N$, la dimensión $p$ de las $X_i$, el nro. de clases $k$ y su origen ("real" o "sintético"). 
+- Para tener una idea "sistémica" de la performance de los algoritmos, evaluaremos su performance con _datasets_ que varíen en el tamaño muestral $N$, la dimensión $p$ de las $X_i$, el nro. de clases $k$ y su origen ("real" o "sintético").
 
 - Cuando creamos datos sintéticos en variedades  con dimensión intrínseca menor a la ambiente, (casi) cualquier clasificador competente alcanza exactitud perfecta; para complejizar la tarea, agegamos un poco de "ruido" a las observaciones, y también analizamos sus efectos.
 
 === Regla de Parsimonia
 
-- ¿Qué parametrización elegir cuando "en test da todo igual"? 
+- ¿Qué parametrización elegir cuando "en test da todo igual"?
 
 #align(center)[ #emoji.knife de Occam: la más "sencilla" (TBD)]
 
 
-- ¿Qué parametrización elegir cuando "en test da *casi* todo igual"? 
+- ¿Qué parametrización elegir cuando "en test da *casi* todo igual"?
 
 
 #align(center)[*Regla de $1sigma$*: De las que estén a $1sigma$ de la mejor, la más sencilla.]
 
- ¿Sabemos cuánto vale $sigma$?
+¿Sabemos cuánto vale $sigma$?
 
 === $R^2$ de McFadden
 Sea $cal(C)_0$ el clasificador "base", que asigna a cada observación y posible clase, la frecuencia empírica de clase encontrada en la muestra $bu(X)$. Para todo clasificador suave $cal(C)$, definimos el $R^2$ de McFadden como
-  $ op(R^2)(cal(C) | bu(X)) = 1 - (op(cal(l))(cal(C))) / (op(cal(l))(cal(C)_0)) $
+$ op(R^2)(cal(C) | bu(X)) = 1 - (op(cal(l))(cal(C))) / (op(cal(l))(cal(C)_0)) $
 
 
 donde $cal(l)(dot)$ es la log-verosimilitud clásica. Nótese que $op(R^2)(cal(C)_0) = 0$.  A su vez, para un clasificador perfecto $cal(C)^star$ que otorgue toda la masa de probabilidad a la clase correcta, tendrá $op(L)(cal(C)^star) = 1$ y log-verosimilitud igual a 0, de manera que $op(R^2)(cal(C)^star) = 1 - 0 = 1$.
@@ -569,15 +577,19 @@ En tareas de clasificación, la métrica más habitual es la _exactitud_ #footno
 #let clfh = $op(upright(R))$
 #let clfs = $op(cal(R))$
 
-#defn("exactitud")[Sean $bu(("X, y")) in RR^(n times p) times RR^n$ una matriz de $n$ observaciones de $p$ atributos y sus clases asociadas. Sea además $hat(bu(y)) = clfh(bu(X))$ las predicciones de clase resultado de una regla de clasificación #clfh. La _exactitud_ ($"exac"$) de #clfh en #bu("X") se define como la proporción de coincidencias con las clases verdaderas #bu("y"):
+#defn(
+  "exactitud",
+)[Sean $bu(("X, y")) in RR^(n times p) times RR^n$ una matriz de $n$ observaciones de $p$ atributos y sus clases asociadas. Sea además $hat(bu(y)) = clfh(bu(X))$ las predicciones de clase resultado de una regla de clasificación #clfh. La _exactitud_ ($"exac"$) de #clfh en #bu("X") se define como la proporción de coincidencias con las clases verdaderas #bu("y"):
   $ op("exac")(clfh | bu(X)) = n^(-1) sum_(i=1)^n ind(hat(y)_i = y_i) $
 ] <exactitud>
 
-La exactitud está bien definida para cualquier clasificador que provea una regla _dura_ de clasificación, segun @clf-dura. Ahora bien, cuando un clasificador provee una regla _suave_ (@clf-suave), la exactitud como métrica "pierde información": dos clasificadores binarios que asignen respectivamente 0.51 y 1.0 de probabilidad de pertenecer a la clase correcta a todas als observaciones tendrán la misma exactitud, $100%$, aunque el segundo es a las claras mejor. A la inversa, cuando un clasificador erra al asignar la clase: ¿lo hace con absoluta confianza, asignando una alta probabilidad a la clase equivocada, o con cierta incertidumbre, repartiendo la masa de probabilidad entre varias clases que considera factibles?
+La exactitud está bien definida para cualquier clasificador que provea una regla _dura_ de clasificación, segun clasi. Ahora bien, cuando un clasificador provee una regla _suave_ (clasificador-suave), la exactitud como métrica "pierde información": dos clasificadores binarios que asignen respectivamente 0.51 y 1.0 de probabilidad de pertenecer a la clase correcta a todas als observaciones tendrán la misma exactitud, $100%$, aunque el segundo es a las claras mejor. A la inversa, cuando un clasificador erra al asignar la clase: ¿lo hace con absoluta confianza, asignando una alta probabilidad a la clase equivocada, o con cierta incertidumbre, repartiendo la masa de probabilidad entre varias clases que considera factibles?
 
 Una métrica natural para evaluar una regla de clasificación suave, es la _verosimilitud_ (y su logaritmo) de las predicciones.
 
-#defn("verosimilitud")[Sean $bu(("X, y")) in RR^(n times p) times RR^n$ una matriz de $n$ observaciones de $p$ atributos y sus clases asociadas. Sea además $hat(bu(Y)) = clfs(bu(X)) in RR^(n times k)$ la matriz de probabilidades de clase resultado de una regla suave de clasificación #clfs. La _verosimilitud_ ($"vero"$) de #clfs en #bu("X") se define como la probabilidad conjunta que asigna #clfs a las clases verdaderas #bu("y"):
+#defn(
+  "verosimilitud",
+)[Sean $bu(("X, y")) in RR^(n times p) times RR^n$ una matriz de $n$ observaciones de $p$ atributos y sus clases asociadas. Sea además $hat(bu(Y)) = clfs(bu(X)) in RR^(n times k)$ la matriz de probabilidades de clase resultado de una regla suave de clasificación #clfs. La _verosimilitud_ ($"vero"$) de #clfs en #bu("X") se define como la probabilidad conjunta que asigna #clfs a las clases verdaderas #bu("y"):
   $
     op(L)(clfs) = op("vero")(
       clfs | bu(X)
@@ -590,7 +602,9 @@ Una métrica natural para evaluar una regla de clasificación suave, es la _vero
 
 La verosimilitud de una muestra varía en $[0, 1]$ y su log-verosimilitud, en $(-oo, 0]$, pero como métrica esta sólo se vuelve comprensible _relativa a otros clasificadores_. Una forma de "normalizar" la log-verosimilitud, se debe a @mcfaddenConditionalLogitAnalysis1974.
 
-#defn([$R^2$ de McFadden])[Sea $clfs_0$ el clasificador "nulo", que asigna a cada observación y posible clase, la frecuencia empírica de clase encontrada en la muestra de entrenamiento $bu(X)_("train")$. Para todo clasificador suave $clfs$, definimos el $R^2$ de McFadden como
+#defn(
+  [$R^2$ de McFadden],
+)[Sea $clfs_0$ el clasificador "nulo", que asigna a cada observación y posible clase, la frecuencia empírica de clase encontrada en la muestra de entrenamiento $bu(X)_("train")$. Para todo clasificador suave $clfs$, definimos el $R^2$ de McFadden como
   $ op(R^2)(clfs | bu(X)) = 1 - (op(cal(l))(clfs)) / (op(cal(l))(clfs_0)) $
 ] <R2-mcf>
 
@@ -628,7 +642,7 @@ Esta elección no pretende ser exhaustiva, sino que responde a un "capricho info
 
 La unidad de evaluación de los algoritmos a considerar es una `Tarea`, que se compone de:
 - un _diccionario de algoritmos_ a evaluar en condiciones idénticas, definidas por
-- un _dataset_ con el conjunto de $n$ observaciones en $d_x$ dimensiones repartidas en $k$ clases, ${bu(X)}_n in R^(n times d_x),  {bold(y)}_n in [k]^n$,
+- un _dataset_ con el conjunto de $n$ observaciones en $d_x$ dimensiones repartidas en $k$ clases, ${bu(X)}_n in R^(n times d_x), {bold(y)}_n in [k]^n$,
 - un _split de evaluación_ $r in (0, 1)$, que determina las proporciones de los datos a usar durante el entrenamiento ($1 - r$) y la evaluación ($r$), junto con
 - una _semilla_ $s in [2^32]$ que alimenta el generador de números aleatorios y define determinísticamente cómo realizar la división antedicha.
 
@@ -673,7 +687,9 @@ Consideremos ahora algunas curvas unidimensionales embebidas en $RR^2$:
 
 Resultará obvio al lector que los conjuntos de datos expuestos en @fig-2 no son exactamente variedades "1D" embebidas en "2D", sino que tienen un poco de "ruido blanco" agregado para incrementar la dificultad de la tarea.
 
-#defn("ruido blanco")[Sea $X = (X_1, dots, X_d) in RR^d$ una variable aleatoria tal que $"E"(X_i)=0, "Var"(X_i)=sigma thick forall i in [d]$. Llamaremos "ruido blanco con escala $sigma$" a toda realización de $X$.] <ruido-blanco>
+#defn(
+  "ruido blanco",
+)[Sea $X = (X_1, dots, X_d) in RR^d$ una variable aleatoria tal que $"E"(X_i)=0, "Var"(X_i)=sigma thick forall i in [d]$. Llamaremos "ruido blanco con escala $sigma$" a toda realización de $X$.] <ruido-blanco>
 
 Veamos entonces cómo les fue a los contendientes, considerando primero la exactitud. Recordemos que para cada experimento se realizaron #reps repeticiones: en cada celda reportaremos la exactitud _promedio_, y a su lado entre paréntesis el error estándar cpte.:
 
@@ -688,7 +704,7 @@ Veamos entonces cómo les fue a los contendientes, considerando primero la exact
 
 #figure(tabla_csv("data/exac-ds-2d.csv"), caption: flex-caption[ "mi caption, bo". ][])
 #let lsvc = `LSVC`
-KDC (en sus dos variantes), KNN y SVC (con kernel RBF) parecieran ser los métodos más competitivos, con mínimas diferencias de performance entre sí: sólo en "círculos" se observa un ligero ordenamiento de los métodos, $svc succ  kdc succ knn $, aunque la performance mediana de #svc está dentro de "los bigotes" de todos los métodos antedichos. La tarea "lunas" pareciera ser la más fácil de todas, en la que hasta una regresión logística sin modelado alguno es adecuada. Para "espirales" y "círculos", #gnb, #lr y #lsvc no logran performar significativamente mejor que el clasificador base.
+KDC (en sus dos variantes), KNN y SVC (con kernel RBF) parecieran ser los métodos más competitivos, con mínimas diferencias de performance entre sí: sólo en "círculos" se observa un ligero ordenamiento de los métodos, $svc succ kdc succ knn$, aunque la performance mediana de #svc está dentro de "los bigotes" de todos los métodos antedichos. La tarea "lunas" pareciera ser la más fácil de todas, en la que hasta una regresión logística sin modelado alguno es adecuada. Para "espirales" y "círculos", #gnb, #lr y #lsvc no logran performar significativamente mejor que el clasificador base.
 
 #defn("clasificador base")[] <clf-base>
 
@@ -700,7 +716,7 @@ KDC (en sus dos variantes), KNN y SVC (con kernel RBF) parecieran ser los métod
 )
 #figure(tabla_csv("data/r2-ds-2d.csv"), caption: flex-caption[ "mi caption, bo-bo". ][])
 
-Como los métodos basados en máquinas de soporte vectorial resultan en clasificadores _duros_ (@clf-dura), no es posible analizar la log-verosimilitud u otras métricas derivadas. De entre los dos métodos con exactitud similar a esos, es notoriamente mejor el $R^2$ que alcanzan ambos #kdc.
+Como los métodos basados en máquinas de soporte vectorial resultan en clasificadores _duros_ (clasificador-duro), no es posible analizar la log-verosimilitud u otras métricas derivadas. De entre los dos métodos con exactitud similar a esos, es notoriamente mejor el $R^2$ que alcanzan ambos #kdc.
 A primera vista, se ve que la dispersión de la métrica es considerable, pues las "cajas" del rango intercuartil son bastante amplias, y aún así se observan _outliers_. En las tres tareas, los clasificadores de estimación de densidad por núcleos tienen las cajas más angostas y los bigotes más cortos, con #kdc mostrando una dispersión menor o igual que #fkdc. En la @bp-exac-2d, observamos que la exactitud de los métodos de k vecinos más cercanos era muy similar a la de #kdc y #svc, sin embargo en términos de $R^2$,
 - en el dataset de "espirales" el $R^2$ promedio y mediano son _negativos_, y
 - en el de "círculos", aunque la locación #footnote[Entendemos tanto al _promedio_ o _media_ y la _mediana_ como _medidas de locación_] es positiva, la distribución tiene una pesada cola a izquierda, que entra de lleno en los negativos.
@@ -729,9 +745,7 @@ Concentrémosnos en un segundo en una corrida específica de un ecperimento part
 #{
   let d = (:)
   let from = params.best_params.kdc
-  for key in from.keys() {
-    d.insert(key, calc.round(float(from.at(key)), digits: 4))
-  }
+  for key in from.keys() { d.insert(key, calc.round(float(from.at(key)), digits: 4)) }
   d
 }. Los anchos de banda son diferentes, y el $alpha$ óptimo encontrado por #fkdc es distinto de 1. Sin embargo, la exactitud de #fkdc fue #params.exac.fkdc, y la de #kdc, #params.exac.kdc, prácticamente idénticas #footnote[Con 400 observaciones para evaluación, dichos porcentajes representan 352 y 354 observaciones correctamente clasificadas, resp.]. ¿Por qué? ¿Será que los algoritmos no son demasiado sensibles a los hiperparámetros elegidos?
 
@@ -762,7 +776,7 @@ Antes de avanzar hacia el siguiente conjunto de datos, una pregunta más: ¿qué
   #image("img/circulos_lo-overall.png")
   #colbreak()
   #image("img/espirales_lo-overall.png")
-  
+
 ]
 === Boxplot Accuracy
 #align(center)[#image("img/2d-lo-acc.png")]
@@ -775,14 +789,14 @@ Antes de avanzar hacia el siguiente conjunto de datos, una pregunta más: ¿qué
 - El uso de la distancia de Fermat muestral no hiere la performance, pero las mejoras son nulas o marginales. ¿Por qué?
 
 
-Si recordamos $hat(f)_(K,N)$ según Loubes & Pelletier, al núcleo $K$ se lo evalúa sobre 
+Si recordamos $hat(f)_(K,N)$ según Loubes & Pelletier, al núcleo $K$ se lo evalúa sobre
 $
- (d (x_0, X_i)) / h, quad d = D_(Q_i, alpha)
+  (d (x_0, X_i)) / h, quad d = D_(Q_i, alpha)
 $
 
 Lo que $alpha$ afecta a $hat(f)$ vía $d$, también se puede conseguir vía $h$.
 
-Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la euclídea), los efectos de $alpha$ y $h$ se "solapan" 
+Si $D_(Q_i, alpha) prop ||dot||$ (la distancia de fermat es proporcional a la euclídea), los efectos de $alpha$ y $h$ se "solapan"
 
 
 ... y sabemos que localmente, eso es cierto #emoji.face.tear
@@ -826,7 +840,7 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
   #colbreak()
   #image("img/helices_0-overall.png")
   #colbreak()
-  #image("img/hueveras_0-overall.png")  
+  #image("img/hueveras_0-overall.png")
 ]
 #align(center)[#image("img/pionono-eslabones-r2.png")]
 #align(center)[#image("img/helices-hueveras-r2.png")]
@@ -836,9 +850,9 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
 
 === Microindiferencia, macrodiferencia
 
-- En zonas con muchas observaciones (por tener alta $f$ o alto $N$) sampleadas, la distancia de Fermat y la euclídea coinciden. 
-- "Localmente", siempre van a coincidir, aunque sea en un vecindario muy pequeño. 
-- Si el algoritmo de clasificación sólo depende de ese vencindario local para clasificar, no hay ganancia en la distancia de Fermat. 
+- En zonas con muchas observaciones (por tener alta $f$ o alto $N$) sampleadas, la distancia de Fermat y la euclídea coinciden.
+- "Localmente", siempre van a coincidir, aunque sea en un vecindario muy pequeño.
+- Si el algoritmo de clasificación sólo depende de ese vencindario local para clasificar, no hay ganancia en la distancia de Fermat.
 - ¡Pero tampoco hay pérdida si se elige mal `n_neighbors`! #emoji.person.shrug
 
 
@@ -872,7 +886,7 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
   #colbreak()
   #image("img/helices_12-overall.png")
   #colbreak()
-  #image("img/hueveras_12-overall.png")  
+  #image("img/hueveras_12-overall.png")
 ]
 === Otros datasets: multiclase
 #columns(4)[
@@ -882,7 +896,7 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
   #colbreak()
   #image("img/pinguinos-overall.png")
   #colbreak()
-  #image("img/anteojos.png")  
+  #image("img/anteojos.png")
 ]
 === Otros datasets: `digitos` y `mnist`
 
