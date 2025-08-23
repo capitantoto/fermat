@@ -5,10 +5,11 @@
 // ################
 #let phi = math.phi.alt
 #let ind = $ op(bb(1)) $
+#let iid = "i.i.d."
 #let sop = $ op("sop") $
 #let Pr = $ op("Pr") $
 #let bu(x) = $bold(upright(#x))$
-
+#let GG = $ cal(G) $
 // Copetes flexibles para outline y texto, adaptado para 0.12 de
 // https://github.com/typst/typst/issues/1295#issuecomment-1853762154
 #let in-outline = state("in-outline", false)
@@ -41,7 +42,7 @@
 #show: thmrules
 #show raw: set text(font: "New Computer Modern Mono")
 #show heading: set block(above: 1.4em, below: 1em)
-#show link: it =>  underline(text(it, fill: blue))
+#show link: it => underline(text(it, fill: blue))
 
 // ### TOC y listados
 #outline(depth: 2)
@@ -94,7 +95,7 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / $RR$: los números reales
 / $d_x$: 
 / $RR^(d_x)$:
-/ $[k]$:  el conjunto de los k números enteros, ${1, dots, k}$
+/ $[k]$: el conjunto de los k números enteros, ${1, dots, k}$
 / $cal(M)$:
 / $bold(upright(H))$:
 / $norm(dot)$:
@@ -103,133 +104,143 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / $ind(x)$: la función indicadora, $ind(x)=cases(1 "si" x "es verdadero", 0 "si no")$
 / $Pr(x)$: función de probabilidad, 
 / $EE(x)$: esperanza,
+/ $iid$: independiente e idénticamente distribuido (suele aplicar a una muestra $bu(X)$
 
 = Preliminares
 
 == El problema de clasificación
 
 === Definición y vocabulario
-El _aprendizaje estadístico supervisado_ busca estimar (aprender) una variable _respuesta_ a partir de cierta(s) variable(s) _predictora(s)_. Cuando la _respuesta_ es una variable _cualitativa_, el problema de asignar cada observación $X$ a una clase $G in cal(G)={cal(g)^1, dots, cal(g)^K}$ se denomina _de clasificación_. En general, reemplazaremos los nombres o "etiquetas" de clases $g_i$ por los enteros correspondientes, $ G in [K]$. En esta definición del problema, las clases son mutuamente excluyentes y conjuntamente exhaustivas:
+El _aprendizaje estadístico supervisado_ busca estimar (aprender) una variable _respuesta_ a partir de cierta(s) variable(s) _predictora(s)_. Cuando la _respuesta_ es una variable _cualitativa_, el problema de asignar cada observación $X$ a una clase $G in GG={GG^1, dots, GG^K}$ se denomina _de clasificación_. En general, reemplazaremos los nombres o "etiquetas" de clases $g_i$ por los enteros correspondientes, $G in [K]$. En esta definición del problema, las clases son mutuamente excluyentes y conjuntamente exhaustivas:
+
 - mutuamente excluyentes: cada observación $X_i$ está asociada a lo sumo a una clase
 - conjuntamente exhaustivas: cada observación $X_i$ está asociada a alguna clase.
 
-Un _clasificador_ es una función $hat(G)(X)$ que para cada observación intenta aproximar su verdadera clase $G$ por $hat(G)$ ("ge sombrero"). Para construir $hat(G)$, contamos con un _conjunto de entrenamiento_ de pares $(x_i, g_i), i in {1, dots, N}$ conocidos.
+#defn("clasificador")[
+  Un _clasificador_ es una función $hat(G)(X)$ que para cada observación intenta aproximar su verdadera clase $G$ por $hat(G)$ ("ge sombrero").
+] <clasificador>
 
+Para construir $hat(G)$, contaremos con una muestra o _conjunto de entrenamiento_ $bu(X), bu(g)$,  de pares $(x_i, g_i), i in {1, dots, N}$ conocidos.
 
-=== El problema de clasificación
-
-
-#defn("problema de clasificación")[] <clf-prob>
-#defn("clasificador vecino más cercano")[] <nn-clf>
-
-=== Definición del problema unidimensional
-[muestra aleatoria]Sea
-
-#let dimx = $d_x$
-Consideremos el problema de clasificación:
-[problema de clasificación]<def:prob-clf-1> Sea $X={ X_{1},dots,X_{N}} , X_{i} in R^{"dimx"} forall i in [N]$
-una muestra de $N$ observaciones aleatorias $dimx-$dimensionales,
-repartidas en $M$ clases $C_{1},dots,C_{M}$ mutuamente excluyentes
-y conjuntamente exhaustivasfootnote{es decir, $forall i in[N]equiv{ 1,dots,N} ,X_{i}in C_{j} arrow.l.r.double<=> X_{i} not in C_{k},k in mu,k =/= j$.
-Asumamos además que la muestra está compuesta de observaciones independientes
-entre sí, y las observaciones de cada clase están idénticamente distribuidas
-según su propia ley: si $|C_{j}| =N_{j}$ y $X_{i}^{(j)}$representa
-la i-ésima observación de la clase $j$, resulta que $X_{i}^{(j)} {L}_{j}(X) forall j in mu,i in [N_{j}]$.
-
-Dada una nueva observación $x_{0}$ cuy
-
-
-=== Clasificadores "duros" y "suaves"
-#defn("clasificación dura")[¿a qué clase deberíamos asignarla? ] <clf-dura>
-#defn("clasificación suave")[ ¿qué probabilidad tiene de pertenecer a cada
-  clase $C_{j},j in [M]$ ?] <clf-suave>
-
-Cualquier método o algoritmo que pretenda responder el problema de
-clasificación, prescribe un modo u otro de combinar toda la información
-muestral disponible, ponderando las $N$ observaciones relativamente
-a su cercanía o similitud con $x_{0}$. Por caso, $k-$vecinos más
-cercanos ($k-$NN) asignará la nueva observación $x_{0}$ a la clase
-modal - la más frecuente - entre las $k$ observaciones de entrenamiento
-más cercanasemph{ }en distancia euclídea $norm{x_{0} - .}$. $k-$NN
-no menciona explícitamente las leyes de clase #math.cal("L")},
-lo cual lo mantiene sencillo a costa de ignorar la estructura del
-problema.
-#defn("k-NN")[k-Nearest Neighbors] <knn>
-=== Clasificador de Bayes
-
-Una posible estrategia de clasificación consiste en asignarle a cada observación $x_0$, la clase más probable en ese punto, dada la información disponible. 
+Para discernir cuán bien se "ajusta" un clasificador a los datos, la teoría requiere de una función de _pérdida_ $L(G, hat(G)(X))$. #footnote[_loss function_ en inglés. A veces también "función de riesgo" - _risk function_.]. Será de especial interés la función de clasificación $f$ que minimiza la _esperanza de predicción errada_ $"EPE"$:
 
 $
-hat(G)(x) = arg max_(g in cal(G)) Pr(G=g|X=x)
+  hat(G) = arg min_f "EPE"(f) =arg min_f EE(L(G, f(X)))
 $
-
-Esta razonable solución es conocida como el _clasificador de Bayes_, y se puede reescribir usando la regla homónima como
-
-$
-hat(G)(x) = g_i <=> Pr(g_i|X=x) &= max_(g in cal(G)) Pr(G=g|X=x) \
-&=max_(g in cal(G)) Pr(X=x|G=g) times Pr(G=g)
-$
-
-=== Clasificadores "suaves" y "duros"
-
-- Un clasificador que responda "¿_qué clase_ es la que más probablemente contenga esta observación" es un clasificador "duro".
-- Un clasificador que además puede responder "¿_cuán probable_ es que esta observación pertenezca a cada clase $g_j$?" es un clasificador "suave".
-- La regla de Bayes para clasificación nos puede dar un clasificador duro al maximizar la probabilidad; más aún, también puede construir un clasificador suave:
+donde la esperanza es contra la distribución conjunta $X, G)$. Por la ley de la probablidad total, podemos condicionar a X y expresar el EPE como
 
 $
-hat(Pr)(G=g_i|X=x) &= (hat(Pr)(x|G=g_i) times hat(Pr)(G=g_i)) / (hat(Pr)(X=x)) \
-&= (hat(Pr)(x|G=g_i) times hat(Pr)(G=g_i)) / (sum_(k in [K]) hat(Pr)(X=x, G=g_k)) \
+  "EPE"(f) & = EE(L(G, hat(G)(X))) \
+           & = sum_(k in [K]) EE(L(GG_k, hat(G)(X)) Pr(GG_k | X)) EE(X) \
+           & = EE(X) sum_(k in [K]) EE(L(GG_k, g) Pr(GG_k | X)) \
+$
+Y basta con minimizar punto a punto para obtener una expresión computable de $hat(G)$:
+$
+  hat(G)(x) & = arg min_(g in GG) sum_(k in [K]) L(GG_k, g) Pr(GG_k | X = x) \
+            & = arg min_(g in GG) sum_(k in [K]) L(GG_k, g) Pr(GG_k | X = x)
+$
+Con la _pérdida 0-1_ #footnote[que no es otra cosa que la función indicadora de un error en la predicción, $bu(01)(hat(G), G) = ind(hat(G) != G)$], la expresión se simplifica a
+$
+  hat(G)(x) & = arg min_(g in GG) sum_(k in [K]) ind(cal(G)_k != g) Pr(GG_k|X=x) \
+            & = arg min_(g in GG) [1-Pr(g|X=x)] \
+            & = arg max_(g in GG) Pr(g | X = x)
 $
 
-== Estimación de Densidad por Núcleos
+Esta razonable solución se conoce como el _clasificador de Bayes_, y sugiere que clasifiquemos a cada observación según la clase modal condicional a su distribución conjunta $Pr(G|X)$. Su error esperado de predicción $"EPE"$ se conoce como la _tasa de Bayes_. Un aproximador directo de este resultado es el clasificador de k vecinos más cercano #footnote[_k-nearest-neighbors classifier_]
+
+#defn("clasificador de k-vecinos-más-cercanos")[
+  Sean $x^((1)), dots, x^((k)))$ los $k$ vecinos más cercanos a $x$, y $GG^((1)), dots, GG^((k))$ sus respetivas clases. El clasificador de k-vecinos-más-cercanos le asignará a $x$ la clase más frecuente entre $GG^((1)), dots, GG^((k))$. Más formalmente:
+  $
+    hat(G)_("kNN")(x) & =GG_("kNN") = arg max_(g in GG) sum_(i in [k]) ind(GG^((i)) = g) \
+                      & <=> \#{i : GG^((i)) = GG_("kNN"), i in [k]} = max_(g in GG) \#{i : GG^((i)) = g, i in [k]} \
+  $
+
+] <knn-clf>
+
 === Clasificador de Bayes empírico
-- Si el conjunto de entrenamiento ${(x_1, g_1), dots, (x_N, g_N)}$ proviene de un muestreo aleatorio uniforme, las probablidades de clase $pi_i = Pr(G=g^((i)))$ se pueden aproximar razonablemente por las proporciones muestrales $ hat(pi)_i = \#{g_j :g_j = g^((i))}slash N$ 
 
-- Resta hallar una aproximación $Pr(x|G=g)$ para cada clase, ya sea a través de una función de densidad, de distribución, u otra manera.
+La _Regla de Bayes_,
+$
+  Pr(G|X) = (Pr(X| G) times Pr(G)) / (Pr(X))
+$
+nos sugiere una reescritura de $hat(G)$:
+$
+  hat(G)(x) = g & = arg max_(g in GG) Pr(g | X = x) \
+                & <=> Pr(g|X=x) = max_(g in GG) Pr(g|X=x) \
+                & <=> Pr(g|X=x) =max_(g in GG) Pr(X=x|g) times Pr(g) \
+                & <=> Pr(GG_k|X=x) =max_(k in [K]) Pr(X=x|GG_k) times Pr(GG_k) \
+$
 
-=== Estimación unidimensional
+A las probablidades "incondicionales" de clase $Pr(GG_k)$ se las suele llamar su "distribución a priori", y notarlas por $pi = (pi_1, dots, pi_K)^T$, con #box[$pi_k = Pr(GG_k) forall k in [K], quad sum pi_k = 1$]. Una aproximación razonable, si es que el conjunto de entrenamiento se obtuvo por muestreo aleatorio simple #footnote[_simple random sampling_, o s.r.s.], es tomar las proporciones muestrales
+$
+  forall k in [K], quad hat(pi)_k & = N^(-1) sum_(i in [N]) ind(g_i = GG_k) \
+                                  & = \#{g_i : g_i = GG_k, i in [N]} / N
+$
+
+
+Resta hallar una aproximación $hat(Pr)(X=x|GG_k)$ a las probabilidades condicionales $X|GG_k$ para cada clase.
+
+=== Estimación de densidad por núcleos
+
+==== Estimación unidimensional
 
 @hastieElementsStatisticalLearning2009[§6.6], @parzenEstimationProbabilityDensity1962
 @rosenblattRemarksNonparametricEstimates1956
 
 Para fijar ideas, asumamos que $X in RR$ y consideremos la estimación de densidad en una única clase para la que contamos con $N$ ejemplos ${x_1, dots, x_N}$. Una aproximación $hat(f)$ directa sería
-(1) $
+$
   hat(f)(x_0) = \#{x_i in cal(N)(x_0)} / (N times h)
 $ #label("eps-nn")
 
-donde $cal(N)$ es un vecindario métrico de $x_0$ de diámetro $h$. Esta estimación es irregular, con saltos discretos en el numerador, por lo que se prefiere el estimador suavizado por núcleos de Parzen-Rosenblatt
 
-$
-  hat(f)(x_0) = 1/N sum_(i=1)^N K (x_0, x_i)
-$ #label("parzen")
+donde $cal(N)$ es un vecindario métrico de $x_0$ de diámetro $h$.
 
-=== Función núcleo o "_kernel_"
+Esta estimación es irregular, con saltos discretos en el numerador, por lo que se prefiere el estimador "suavizado por núcleos" de Parzen-Rosenblatt @parzenEstimationProbabilityDensity1962 @rosenblattRemarksNonparametricEstimates1956. Pero primero: ¿qué es un núcleo?
 
-Se dice que $K(x) : RR-> RR$ es una _función núcleo_ si
 
-- toma valores reales no negativos: $K(u) >= 0 forall u in "sop"K$,
-- está normalizada: $integral_(-oo)^(+oo) K(u) d u = 1$,
-- es simétrica: $K(u) = K(-u)$ y
-- alcanza su máximo en el centro: $max_u K(u) = K(0)$
+#defn([función núcleo o _kernel_])[
 
-Observación 1: Todas las funciones de densidad simétricas centradas en 0 son núcleos; en particular, la densidad "normal estándar" $phi(x) = 1/sqrt(2 pi) exp(-x^2 / 2 )$ lo es.
+  Se dice que $K(x) : RR-> RR$ es una _función núcleo_ si  cumple que
 
-Observación 2: Si $K(u)$ es un núcleo, entonces $K_h (u) = 1/h op(K)(u / h)$ también lo es.
+  + toma valores reales no negativos: $K(u) >= 0$,
+  + está normalizada: $integral K(u) d u = 1$,
+  + es simétrica: $K(u) = K(-u)$ y
+  + alcanza su máximo en el centro: $max_u K(u) = K(0)$
+] <kernel>
 
-Observación 3: Si $ind(dot)$ es la función indicadora, resulta que $op(U_h)(x) = 1/h ind(-h/2 < x < h/2)$ es un núcleo válido, y el estimador de @parzen con núcleo $U_h$ devuelve el estimador @eps-nn
+#obs[Todas las funciones de densidad simétricas centradas en 0 son núcleos; en particular, la densidad "normal estándar" $phi(x) = 1/sqrt(2 pi) exp(-x^2 / 2)$ lo es.]
+
+#obs[Si $K(u)$ es un núcleo, entonces $K_h (u) = 1/h op(K)(u / h)$ también lo es.]
+
+Ahora sí estamos en condiciones de enunciar el
+#defn("estimador de Parzen-Rosenblatt")[
+
+
+  Sea $bu(x) = (x_1, dots, x_N)^T$ una muestra #iid de cierta variable aleatoria escalar $X in RR$ con función de densidad $f$. Su estimador de Parzen-Rosenblatt es
+  $
+    hat(f)(x_0) = 1/N sum_(i=1)^N K (x_0, x_i)
+  $
+
+  donde $K$ es una @kernel
+] <parzen>
 
 === Núcleo uniforme
 
+#obs[
+  La densidad de la distribución uniforme centrada en 0 de diámetro 1, $U(x) = ind(1/2 < x <= 1/2)$ es un núcleo.  Luego, $ U_h (x) = 1/h ind(-h/2 < x < h/2) $ también es un núcleo válido, y por ende el estimador de @eps-nn es un caso particular del estimador de Parzen-Rosenblatt.
+]
 
-#image("img/unif-gaus-kern.png")
+
+
+#figure(caption: [Estimación de densidad por núcleos con núcleo Gaussiano y Uniforme, para distintos tamaños de ventana $h$])[#image("img/unif-gaus-kern.png")]
 
 === Clasificador de densidad por núcleos
 [ESL §6.6.2]
 
 Si $hat(f)_k, k in 1, dots, K$ son estimadores de densidad por núcleos #footnote[KDEs ó _Kernel Density Estimators_, por sus siglas en inglés] según @parzen, la regla de Bayes nos provee un clasificador suave
 $
-hat(Pr)(G=g_i|X=x) &= (hat(Pr)(x|G=g_i) times hat(Pr)(G=g_i)) / (hat(Pr)(X=x)) \
-&=(hat(pi)_i hat(f)_i (x)  )/ (sum_(k=1)^K hat(pi)_k hat(f)_k (x)) \
+  hat(Pr)(G=g_i|X=x) & = (hat(Pr)(x|G=g_i) times hat(Pr)(G=g_i)) / (hat(Pr)(X=x)) \
+                     & =(hat(pi)_i hat(f)_i (x) )/ (sum_(k=1)^K hat(pi)_k hat(f)_k (x)) \
 $
 
 === Interludio: Naive Bayes
