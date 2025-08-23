@@ -182,10 +182,11 @@ Resta hallar una aproximación $hat(Pr)(X=x|GG_k)$ a las probabilidades condicio
 
 === Estimación de densidad por núcleos
 
+De conocer las $K$ densidades $f_(X|GG_k)$, el cómputo de las mentada probabilidades es directo. Tal vez la metodología más estudiada a tales fines es la _estimación de densidad por núcleos_, comprensivamente reseñada en @hastieElementsStatisticalLearning2009[§6.6]. Al estimador resultante, sobre todo en el caso unidimensional, se lo conoce con el nombre de Parzen-Rosenblatt, por sus contribuciones fundacionales en el área @parzenEstimationProbabilityDensity1962
+@rosenblattRemarksNonparametricEstimates1956
+.
 ==== Estimación unidimensional
 
-@hastieElementsStatisticalLearning2009[§6.6], @parzenEstimationProbabilityDensity1962
-@rosenblattRemarksNonparametricEstimates1956
 
 Para fijar ideas, asumamos que $X in RR$ y consideremos la estimación de densidad en una única clase para la que contamos con $N$ ejemplos ${x_1, dots, x_N}$. Una aproximación $hat(f)$ directa sería
 $
@@ -195,7 +196,7 @@ $ #label("eps-nn")
 
 donde $cal(N)$ es un vecindario métrico de $x_0$ de diámetro $h$.
 
-Esta estimación es irregular, con saltos discretos en el numerador, por lo que se prefiere el estimador "suavizado por núcleos" de Parzen-Rosenblatt @parzenEstimationProbabilityDensity1962 @rosenblattRemarksNonparametricEstimates1956. Pero primero: ¿qué es un núcleo?
+Esta estimación es irregular, con saltos discretos en el numerador, por lo que se prefiere el estimador "suavizado por núcleos" de Parzen-Rosenblatt. Pero primero: ¿qué es un núcleo?
 
 
 #defn([función núcleo o _kernel_])[
@@ -213,10 +214,10 @@ Esta estimación es irregular, con saltos discretos en el numerador, por lo que 
 #obs[Si $K(u)$ es un núcleo, entonces $K_h (u) = 1/h op(K)(u / h)$ también lo es.]
 
 Ahora sí estamos en condiciones de enunciar el
-#defn("estimador de Parzen-Rosenblatt")[
+#defn("estimador de densidad por núcleos")[
 
 
-  Sea $bu(x) = (x_1, dots, x_N)^T$ una muestra #iid de cierta variable aleatoria escalar $X in RR$ con función de densidad $f$. Su estimador de Parzen-Rosenblatt es
+  Sea $bu(x) = (x_1, dots, x_N)^T$ una muestra #iid de cierta variable aleatoria escalar $X in RR$ con función de densidad $f$. Su estimador de densidad por núcleos, o estimador de Parzen-Rosenblatt es
   $
     hat(f)(x_0) = 1/N sum_(i=1)^N K (x_0, x_i)
   $
@@ -224,23 +225,18 @@ Ahora sí estamos en condiciones de enunciar el
   donde $K$ es una @kernel
 ] <parzen>
 
-=== Núcleo uniforme
-
 #obs[
-  La densidad de la distribución uniforme centrada en 0 de diámetro 1, $U(x) = ind(1/2 < x <= 1/2)$ es un núcleo.  Luego, $ U_h (x) = 1/h ind(-h/2 < x < h/2) $ también es un núcleo válido, y por ende el estimador de @eps-nn es un caso particular del estimador de Parzen-Rosenblatt.
+  La densidad de la distribución uniforme centrada en 0 de diámetro 1, $U(x) = ind(1/2 < x <= 1/2)$ es un núcleo.  Luego, $ U_h (x) = 1/h ind(-h/2 < x < h/2) $ también es un núcleo válido, y por ende el estimador de @eps-nn es un caso particular del estimador de @parzen.
 ]
 
-
-
-#figure(caption: [Estimación de densidad por núcleos con núcleo Gaussiano y Uniforme, para distintos tamaños de ventana $h$])[#image("img/unif-gaus-kern.png")]
-
 === Clasificador de densidad por núcleos
-[ESL §6.6.2]
 
-Si $hat(f)_k, k in 1, dots, K$ son estimadores de densidad por núcleos #footnote[KDEs ó _Kernel Density Estimators_, por sus siglas en inglés] según @parzen, la regla de Bayes nos provee un clasificador suave
+Si $hat(f)_k, k in [K]$ son estimadores de densidad por núcleos #footnote[KDEs ó _Kernel Density Estimators_, por sus siglas en inglés] de cada una de las $K$ densidades condicionales $X|GG_k$ según @parzen, podemos construir el siguiente clasificador
+
 $
-  hat(Pr)(G=g_i|X=x) & = (hat(Pr)(x|G=g_i) times hat(Pr)(G=g_i)) / (hat(Pr)(X=x)) \
-                     & =(hat(pi)_i hat(f)_i (x) )/ (sum_(k=1)^K hat(pi)_k hat(f)_k (x)) \
+  hat(G)_"KD" (x) = g & = arg max_(i in [K]) hat(Pr)(GG_i | X = x) \
+                & = arg max_(i in [K]) hat(Pr)(X=x|GG_i) times hat(Pr)(GG_i) \
+                & = arg max_(i in [K]) hat(f)_i (x) times hat(pi)_i \
 $
 
 === Interludio: Naive Bayes
