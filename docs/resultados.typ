@@ -158,7 +158,7 @@ $
 
 Resta hallar una aproximación $hat(Pr)(X=x|GG_k)$ a las probabilidades condicionales $X|GG_k$ para cada clase.
 
-=== Estimación de densidad por núcleos
+== Estimación de densidad por núcleos
 
 De conocer las $K$ densidades $f_(X|GG_k)$, el cómputo de las mentada probabilidades es directo. Tal vez la metodología más estudiada a tales fines es la _estimación de densidad por núcleos_, comprensivamente reseñada en @hastieElementsStatisticalLearning2009[§6.6]. Al estimador resultante, sobre todo en el caso unidimensional, se lo conoce con el nombre de Parzen-Rosenblatt, por sus contribuciones fundacionales en el área @parzenEstimationProbabilityDensity1962
 @rosenblattRemarksNonparametricEstimates1956
@@ -204,36 +204,63 @@ Ahora sí estamos en condiciones de enunciar el
 ] <parzen>
 
 #obs[
-  La densidad de la distribución uniforme centrada en 0 de diámetro 1, $U(x) = ind(1/2 < x <= 1/2)$ es un núcleo.  Luego, $ U_h (x) = 1/h ind(-h/2 < x < h/2) $ también es un núcleo válido, y por ende el estimador de @eps-nn es un caso particular del estimador de @parzen.
-]
+  La densidad de la distribución uniforme centrada en 0 de diámetro 1, $U(x) = ind(1/2 < x <= 1/2)$ es un núcleo.  Luego, $ U_h (x) = 1/h ind(-h/2 < x < h/2) $ también es un núcleo válido, y por ende el estimador de @eps-nn es un caso particular del estimador de @parzen:
+  $
+      hat(f)(x_0) &= \#{x_i in cal(N)(x_0)} / (N times h) \
+       &= 1 / N sum_(i in [N]) 1/ h thick U((x_i - x_0) / h) \
+       &= 1 / N sum_(i = 1)^N U_h (x_i - x_0)
 
+  $
+]
 === Clasificador de densidad por núcleos
 
 Si $hat(f)_k, k in [K]$ son estimadores de densidad por núcleos #footnote[KDEs ó _Kernel Density Estimators_, por sus siglas en inglés] de cada una de las $K$ densidades condicionales $X|GG_k$ según @parzen, podemos construir el siguiente clasificador
 
+#defn("clasificador de densidad por núcleos")[ Sean $hat(f)_1, dots, hat(f)_K$ estimadores de densidad por núcleos según @parzen. Sean además $hat(pi)_1, dots, hat(pi)_K$ las estimaciones de la probabilidad incondicional de pertenecer a cada grupo $GG_1, dots, GG_k$. Luego, la siguiente regla constituye un clasificador de densidad por núcleos:
 $
   hat(G)_"KD" (x) = g & = arg max_(i in [K]) hat(Pr)(GG_i | X = x) \
                 & = arg max_(i in [K]) hat(Pr)(X=x|GG_i) times hat(Pr)(GG_i) \
                 & = arg max_(i in [K]) hat(f)_i (x) times hat(pi)_i \
+$] <kdc-duro>
+
+=== Clasificadores duros y suaves
+
+Un clasificador que asigna a cada observación _una clase_ - la más probable, se suele llamar _clasificador duro_. Un clasificador que asigna a cada observación _una distribución de probabilidades de clase_ $hat(gamma)$ #footnote[ Todas las restricciones habituales aplican: dado $ hat(gamma) = (hat(gamma)_1, dots, hat(gamma)_K)^T$, todas sus componentes deben pertenecer al intervalo $[0, 1]$ y su suma ser exactamente $1$.] se suele llamar _clasificador blando_. Dado un clasificador _blando_ $hat(G)_"Blando"$, es trivial construir el clasificador duro asociado $hat(G)_"Duro"$:
+$
+  hat(G)_"Duro" (x_0) = arg max_i hat(G)_"Blando" (x_0) = arg max_i hat(gamma)_i
 $
 
-=== Interludio: Naive Bayes
-[ESL §6.6.3]
+#obs[
+  El clasificador de de @kdc-duro es en realidad la versión dura de un clasificador blando $hat(G)_"KD" (x) = hat(gamma)$, donde $
+  hat(gamma)_i = (hat(f)_i (x) times hat(pi)_i) / (sum_(i in [K]) hat(f)_i (x) times hat(pi)_i)
+  $
+]
 
-¿Y si las $X$ son multivariadas ($X in RR^d, d>= 2$)? ¿Se puede adaptar el clasificador?
+#obs[
+  Algunos clasificadores sólo pueden ser duros, como $hat(G)_"1-NN"$, el clasificador de @knn-clf con $k=1$.
+]
 
-Sí, pero es complejo. Un camino sencillo: asumir que condicional a cada clase $G=j$, los predictores $X_1, X_2, dots, X_p$ se distribuyen indenpendientemente entre sí.
-
+Dos clasificadores _blandos_ pueden tener la misma pérdida $0-1$, pero "pintar" dos panoramas muy distintos respecto a cuán "seguros" están de cierta clasificación. Por caso, 
 $
-  f_j (X) = product_(i=1)^p f_(j,i) (X_i)
+  hat(G)_"C(onfiado)" (x_0) &: hat(Pr)(GG_i | X = x_0) = cases(1 - epsilon times (K - 1) &" si " i = 1, epsilon &" si " i != 1) \
+  hat(G)_"D(udoso)" (x_0) &: hat(Pr)(GG_i | X = x_0) = cases(1/K + epsilon  times (K - 1) &" si " i = 1, 1 / K - epsilon &" si " i != 1)
 $
+$hat(G)_C$ está "casi seguro" de que la clase correcta es $GG_1$, mientras que $hat(G)_D$ está prácticamente indeciso entre todas las clases. Para el entrenamiento y análisis de clasificadores blandos como el de densidad por núcleos, será relevanta encontrar funciones de pérdida que recompensen y penalicen adecuadamente esta capacidad.
 
-Cada densidad marginal $f_(j,i)$ condicional a la clase se puede estimar usando KDE univariado, y hasta se puede aplicar - usando histogramas - cuando algunas componentes $X_i$ son discretas.
+== Estimación de densidad multivariada
+=== Naive Bayes
+Una manera "ingenua" de adaptar el procedimiento de estimación de densidad ya mencionado a $X$ multivariadas, consiste en sostener el desde-luego-falso-pero-útil supuesto de que sus componentes $X_1, dots, X_p$ son independientes entre sí. De este modo, la estimación de densidad conjunta se reduce a la estimación de $p$ densidades marginales univariadas. Dada cierta clase $j$, podemos escribir la densidad condicional $X|j$ como
+$
+  f_j (X) = product_(k = 1)^p f_(j k) (X_k)
+$ <naive-bayes>
 
-A este procedimiento, se lo conoce cono "Naive Bayes".
+A este procedimiento se lo conoce como "Naive Bayes", y a pesar de su aparente ingenuidad es competitivo contra algoritmos mucho más sofisticados en un amplio rango de tareas. En términos de cómputo, permite resolver la estimación con $K times p$ KDE univariados. Además, permite que en $X$ se combinen variables cuantitativas y cualitativas: basta con reemplazar la estimación de densidad para los $X_k$ cualitativos por su correspondiente histograma.
 
-#defn("Naive Bayes")[] <gnb>
 === KDE multivariado
+
+#figure(caption: flex-caption("Dos círculos concéntricos y sus KDE marginales por clase: a pesar de que la frontera entre ambos grupos de puntos es muy clara, es casi imposible disinguirlas a partir de sus densidades marginales.", "Dos círculos concéntricos"))[#image("img/dos-circulos-jointplot.png", width: 75%)]
+
+En casos como este, el procedimiento de Naive Bayes falla miserablemente. 
 @wandKernelSmoothing1995[§4]
 
 En su forma más general, estimador de densidad por núcleos $d$-variado es
@@ -602,7 +629,7 @@ Además de medir qué (des)ventajas otorga el uso de una distancia aprendida de 
 #let svc = `SVC`
 
 Consideraremos a modo de referencia los siguientes algoritmos:
-- Naive Bayes Gaussiano (@gnb, #gnb),
+- Naive Bayes Gaussiano (gnb, #gnb),
 - Regresión Logistica (#lr) y
 - Clasificador de Soporte Vectorial (#svc)
 Esta elección no pretende ser exhaustiva, sino que responde a un "capricho informado" del investigador. #gnb es una elección natural, ya que es la simplificación que surge de asumir independencia en las dimensiones de ${bu(X)}$ para KDE multivariado (@kde-mv), y se puede computar para grandes conjuntos de datos en muy poco tiempo. #lr es "el" método para clasificación binaria, y su extensión a múltiples clases no es particularmente compleja: para que sea mínimamente valioso un nuevo algoritmo, necesita ser al menos tan bueno como #lr, que tiene ya más de 65 años en el campo (TODO REF bliss1935, cox1958). Por último, fue nuestro deseo incorporar algún método más cercano al estado del arte. A tal fin, consideramos incorporar alguna red neuronal (TODO REF), un método de _boosting_ (TODO REF) y el antedicho clasificador de soporte vectorial, #svc. Finalmente, por la sencillez de su implementación dentro del marco elegido #footnote[Utilizamos _scikit-learn_, un poderoso y extensible paquete para tareas de aprendizaje automático en Python] y por la calidad de los resultados obtenidos, decidimos incorporar #svc, en dos variantes: con núcleos (_kernels_) lineales y RBF.
