@@ -50,34 +50,12 @@
 = TODOs
 - [ ] Ponderar por $n^beta$
 - [ ] Evitar coma entre sujeto y predicado
-- [ ] Mensionar Rodríguez x2:
+- [ ] Mencionar Rodríguez x2:
   - @forzaniPenalizationMethodEstimate2022
   - @henryKernelDensityEstimation2009
 - Algo de densidad de volumen:
   - @berenfeldDensityEstimationUnknown2021
   - @bickelLocalPolynomialRegression2007
-
--
-= Sandbox
-
-Dado el soporte del núcelo $sop K$ para la probabilidad $Pr(a + b/(c/d + 1))$
-
-$vec(1, 2, 3)$
-#figure(
-  ```python
-  print("hello world")
-  print("iolii mundo")
-  ```,
-  caption: "Un cacho e' código",
-)
-#defn("La mar en coche")[
-  A natural number is called a #highlight[_prime number_] if it is greater
-  than 1 and cannot be written as the product of two smaller natural numbers.
-] <la-mar-en-coche>
-
-#obs[O sea, sería tremendo hundirse en medio de la mar]
-
-Como se explica en @la-mar-en-coche, es muy arriesgado cruzar el océano en un auto. O sea, no.
 
 = Vocabulario y Notación
 A lo largo de esta monografía tomaremos como referencia enciclopédica al _Elements of Statistical Learning_ @hastieElementsStatisticalLearning2009, de modo que en la medida de lo posible, basaremos nuestra notación en la suya también.
