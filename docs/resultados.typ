@@ -206,44 +206,43 @@ Ahora sí estamos en condiciones de enunciar el
 #obs[
   La densidad de la distribución uniforme centrada en 0 de diámetro 1, $U(x) = ind(1/2 < x <= 1/2)$ es un núcleo.  Luego, $ U_h (x) = 1/h ind(-h/2 < x < h/2) $ también es un núcleo válido, y por ende el estimador de @eps-nn es un caso particular del estimador de @parzen:
   $
-      hat(f)(x_0) &= \#{x_i in cal(N)(x_0)} / (N times h) \
-       &= 1 / N sum_(i in [N]) 1/ h thick U((x_i - x_0) / h) \
-       &= 1 / N sum_(i = 1)^N U_h (x_i - x_0)
-
+    hat(f)(x_0) & = \#{x_i in cal(N)(x_0)} / (N times h) \
+                & = 1 / N sum_(i in [N]) 1/ h thick U((x_i - x_0) / h) \
+                & = 1 / N sum_(i = 1)^N U_h (x_i - x_0)
   $
 ]
 === Clasificador de densidad por núcleos
 
 Si $hat(f)_k, k in [K]$ son estimadores de densidad por núcleos #footnote[KDEs ó _Kernel Density Estimators_, por sus siglas en inglés] de cada una de las $K$ densidades condicionales $X|GG_k$ según @parzen, podemos construir el siguiente clasificador
 
-#defn("clasificador de densidad por núcleos")[ Sean $hat(f)_1, dots, hat(f)_K$ estimadores de densidad por núcleos según @parzen. Sean además $hat(pi)_1, dots, hat(pi)_K$ las estimaciones de la probabilidad incondicional de pertenecer a cada grupo $GG_1, dots, GG_k$. Luego, la siguiente regla constituye un clasificador de densidad por núcleos:
-$
-  hat(G)_"KD" (x) = g & = arg max_(i in [K]) hat(Pr)(GG_i | X = x) \
-                & = arg max_(i in [K]) hat(Pr)(X=x|GG_i) times hat(Pr)(GG_i) \
-                & = arg max_(i in [K]) hat(f)_i (x) times hat(pi)_i \
-$] <kdc-duro>
+#defn(
+  "clasificador de densidad por núcleos",
+)[ Sean $hat(f)_1, dots, hat(f)_K$ estimadores de densidad por núcleos según @parzen. Sean además $hat(pi)_1, dots, hat(pi)_K$ las estimaciones de la probabilidad incondicional de pertenecer a cada grupo $GG_1, dots, GG_k$. Luego, la siguiente regla constituye un clasificador de densidad por núcleos:
+  $
+    hat(G)_"KD" (x) = g & = arg max_(i in [K]) hat(Pr)(GG_i | X = x) \
+                        & = arg max_(i in [K]) hat(Pr)(X=x|GG_i) times hat(Pr)(GG_i) \
+                        & = arg max_(i in [K]) hat(f)_i (x) times hat(pi)_i \
+  $] <kdc-duro>
 
 === Clasificadores duros y suaves
 
-Un clasificador que asigna a cada observación _una clase_ - la más probable, se suele llamar _clasificador duro_. Un clasificador que asigna a cada observación _una distribución de probabilidades de clase_ $hat(gamma)$ #footnote[ Todas las restricciones habituales aplican: dado $ hat(gamma) = (hat(gamma)_1, dots, hat(gamma)_K)^T$, todas sus componentes deben pertenecer al intervalo $[0, 1]$ y su suma ser exactamente $1$.] se suele llamar _clasificador blando_. Dado un clasificador _blando_ $hat(G)_"Blando"$, es trivial construir el clasificador duro asociado $hat(G)_"Duro"$:
+Un clasificador que asigna a cada observación _una clase_ - la más probable, se suele llamar _clasificador duro_. Un clasificador que asigna a cada observación _una distribución de probabilidades de clase_ $hat(gamma)$ #footnote[ Todas las restricciones habituales aplican: dado $hat(gamma) = (hat(gamma)_1, dots, hat(gamma)_K)^T$, todas sus componentes deben pertenecer al intervalo $[0, 1]$ y su suma ser exactamente $1$.] se suele llamar _clasificador blando_. Dado un clasificador _blando_ $hat(G)_"Blando"$, es trivial construir el clasificador duro asociado $hat(G)_"Duro"$:
 $
   hat(G)_"Duro" (x_0) = arg max_i hat(G)_"Blando" (x_0) = arg max_i hat(gamma)_i
 $
 
 #obs[
-  El clasificador de de @kdc-duro es en realidad la versión dura de un clasificador blando $hat(G)_"KD" (x) = hat(gamma)$, donde $
-  hat(gamma)_i = (hat(f)_i (x) times hat(pi)_i) / (sum_(i in [K]) hat(f)_i (x) times hat(pi)_i)
-  $
+  El clasificador de de @kdc-duro es en realidad la versión dura de un clasificador blando $hat(G)_"KD" (x) = hat(gamma)$, donde $ hat(gamma)_i = (hat(f)_i (x) times hat(pi)_i) / (sum_(i in [K]) hat(f)_i (x) times hat(pi)_i) $
 ]
 
 #obs[
   Algunos clasificadores sólo pueden ser duros, como $hat(G)_"1-NN"$, el clasificador de @knn-clf con $k=1$.
 ]
 
-Dos clasificadores _blandos_ pueden tener la misma pérdida $0-1$, pero "pintar" dos panoramas muy distintos respecto a cuán "seguros" están de cierta clasificación. Por caso, 
+Dos clasificadores _blandos_ pueden tener la misma pérdida $0-1$, pero "pintar" dos panoramas muy distintos respecto a cuán "seguros" están de cierta clasificación. Por caso,
 $
   hat(G)_"C(onfiado)" (x_0) &: hat(Pr)(GG_i | X = x_0) = cases(1 - epsilon times (K - 1) &" si " i = 1, epsilon &" si " i != 1) \
-  hat(G)_"D(udoso)" (x_0) &: hat(Pr)(GG_i | X = x_0) = cases(1/K + epsilon  times (K - 1) &" si " i = 1, 1 / K - epsilon &" si " i != 1)
+  hat(G)_"D(udoso)" (x_0) &: hat(Pr)(GG_i | X = x_0) = cases(1/K + epsilon times (K - 1) &" si " i = 1, 1 / K - epsilon &" si " i != 1)
 $
 $hat(G)_C$ está "casi seguro" de que la clase correcta es $GG_1$, mientras que $hat(G)_D$ está prácticamente indeciso entre todas las clases. Para el entrenamiento y análisis de clasificadores blandos como el de densidad por núcleos, será relevanta encontrar funciones de pérdida que recompensen y penalicen adecuadamente esta capacidad.
 
@@ -258,98 +257,116 @@ A este procedimiento se lo conoce como "Naive Bayes", y a pesar de su aparente i
 
 === KDE multivariado
 
-#figure(caption: flex-caption("Dos círculos concéntricos y sus KDE marginales por clase: a pesar de que la frontera entre ambos grupos de puntos es muy clara, es casi imposible disinguirlas a partir de sus densidades marginales.", "Dos círculos concéntricos"))[#image("img/dos-circulos-jointplot.png", width: 75%)]
+#figure(caption: flex-caption(
+  "Dos círculos concéntricos y sus KDE marginales por clase: a pesar de que la frontera entre ambos grupos de puntos es muy clara, es casi imposible disinguirlas a partir de sus densidades marginales.",
+  "Dos círculos concéntricos",
+))[#image("img/dos-circulos-jointplot.png", width: 75%)]
 
-En casos como este, el procedimiento de Naive Bayes falla miserablemente. 
-@wandKernelSmoothing1995[§4]
+En casos como este, el procedimiento de Naive Bayes falla miserablemente, y será necesario adaptar el procedimiento de KDE unidimensional a $d >= 2$ sin basarnos en el supuesto de independencia de las $X_1, dots, X_k$. A lo largo de las cuatro décadas posteriores a las publicaciones de Parzen y Rosenblatt, el estudio de los estimadores de densidad por núcleos avanzó considerablemente, de manera que ya para mediados de los '90 existen minuciosos libros de referencia como "Kernel Smoothing" @wandKernelSmoothing1995, que seguiremos en la presente sección
 
-En su forma más general, estimador de densidad por núcleos $d$-variado es
+#defn([KDE multivariada, @wandKernelSmoothing1995[§4]])[
+  En su forma más general, estimador de densidad por núcleos #box[$d-$ variado] es
 
-$
-  hat(f) (x; bu(H)) = N^(-1) sum_(i=1)^N K_bu(H)(x - x_i)
-$
+  $
+    hat(f) (x; bu(H)) = N^(-1) sum_(i=1)^N K_bu(H)(x - x_i)
+  $
 
-donde
-- $bu(H) in RR^(d times d)$ es una matriz simétrica def. pos. análoga a la ventana $h in RR$ para $d=1$,
-- $K_bu(H)(t) = abs(det bu(H))^(-1/2) K(bu(H)^(-1/2) t)$
-- $K$ es una función núcleo $d$-variada tal que $integral K(bu(x)) d bu(x) = 1$
+  donde
+  - $bu(H) in RR^(d times d)$ es una matriz simétrica def. pos. análoga a la ventana $h in RR$ para $d=1$,
+  - $K_bu(H)(t) = abs(det bu(H))^(-1/2) K(bu(H)^(-1/2) t)$
+  - $K$ es una función núcleo $d$-variada tal que $integral K(bu(x)) d bu(x) = 1$
+] <kde-mv>
+
 Típicamente, K es la densidad normal multivariada
 $
   Phi(x) : RR^d -> RR = (2 pi)^(-d/2) exp(- (||x||^2)/2)
 $
-#defn("KDE Multivariada")[] <kde-mv>
 
-=== Dificultades: elección de $bu(H)$
-Sean las clases de matrices pertenecientes a $RR^(d times d)$ ...
+=== La elección de $bu(H)$
+Sean las clases de matrices $RR^(d times d)$ ...
 - $cal(F)$, de matrices simétricas definidas positivas,
 - $cal(D)$, de matrices diagonales definidas positivas ($cal(D) subset.eq cal(F)$) y
 - $cal(S)$, de múltiplos escalares de la identidad: $cal(S) = {h^2 bu(I):h >0} subset.eq cal(D)$
 
-Aún tomando una única $bu(H)$ para _toda_ la muestra, $bu(H) in dots$
-- $cal(F)$, requiere definir $mat(d; 2) = d(d-1)/2$ parámetros de ventana,
-- $cal(D)$ requiere $d$ parámetros, y
-- $cal(S)$ tiene un único parámetro $h$.
 
-  A priori no es posible saber qué parametrización conviene, pero en general $bu(H) in cal(D)$ parece un compromiso razonable: no se pierde demasiado contra $cal(F)$, pero tampoco se padece la "rigidez" de $bu(H) in cal(S)$.
+Aún tomando una única $bu(H)$ para _toda_ la muestra, $bu(H) in dots$, la elección de $bu(H)$ en dimensión $d$ requiere definir...
+- $mat(d; 2) = (d^2 - d) slash 2$ parámetros de ventana si  $bu(H) in cal(F)$,
+- $d$ parámetros si $bu(H) in cal(D)$ y
+- un único parámetro $h$ si $bu(H) = h^2 bu(I)$.
 
-=== Dificultades: La maldición de la dimensionalidad
+La evaluación de la conveniencia relativa de cada parametrización se vuelve muy compleja, muy rápido. @wandComparisonSmoothingParameterizations1993 proveen un análisis detallado para el caso $d = 2$, y concluyen que aunque cada caso amerita su propio estudio, $bu(H) in cal(D)$ suele ser "adecuado". Sin embargo, este no es un gran consuelo para valores de $d$ verdaderamente altos, en cuyo caso existe aún un problema más fundamental.
 
-@hastieElementsStatisticalLearning2009[§2.5], @wandKernelSmoothing1995[§4.9 ej 4.1]
+=== La maldición de la dimensionalidad
 
-Sean $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d), i in {1, dots, N}$, y consideremos la estimación de la densidad en el origen, $f(bu(0))$. Suponga que el núcleo $K_(bu(H))$ es un "núcleo producto" basado en la distribución univariada $"Uniforme(-1, 1)"$, y $bu(H) = h^2 bu(I)$. Derive una expresión para la proporción esperada de puntos incluidos dentro del soporte del núcleo $K_bu(H)$ para $h, d$. arbitrarios.
+Uno estaría perdonado por suponer que el problema de estimar densidades en alta dimensión se resuelve con una buena elección de $bu(H)$, y una muestra "lo suficientemente grande". Considérese, sin embargo, el siguiente ejercicio, adaptado de  para ilustrar ese "suficientemente grande":
 
-(... interludio de pizarrón ...)
-
-$
-         Pr(X in [-h, h]^d) & = Pr(inter_(i=1)^d abs(X_i) <= h) \
-  Pr(X in [-0.95, 0.95]^50) & approx 0.0077 \
-$
-
-=== Dificultades: La maldición de la dimensionalidad
-
-#image("img/curse-dim.png")
-Para $h <=0.5, Pr(dot) < 1 times 10^(-15)$. Aún para $h=0.95, Pr(dot) approx 0.0077$ #emoji.face.shock
-
-== Clasificación en variedades
-@vincentManifoldParzenWindows2002
-=== La hipótesis de la variedad ("manifold hypothesis")
-@bengioRepresentationLearningReview2014
-@rifaiManifoldTangentClassifier2011
-@caytonAlgorithmsManifoldLearning2005
-@galleseRootsEmpathyShared2003 : shared manifold hypothesis
-#figure(
-  caption: flex-caption[La variedad $cal(U)$ con $dim(cal(U)) = 1$ embebida en $RR^2$. Nótese que en el espacio ambiente, el punto rojo está más cerca del verde, mientras que a través de $cal(U)$, el punto amarillo está más próximo que el rojo][Variedad $cal(U)$],
-)[#image("img/variedad-u.svg", width: 70%)]
-
-@bengioRepresentationLearningReview2014: representation learning y manifold hypthesis
-[Bengio Repr learning]
-[#link("https://www.reddit.com/r/MachineLearning/comments/mzjshl/d_who_first_advanced_the_manifold_hypothesis_to/")[Bengio en Reddit]
+#quote(attribution: [adaptado de @wandKernelSmoothing1995[§4.9 ej 4.1]])[
+  Sean $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d), thick i in [N]$, y consideremos la estimación de la densidad en el origen, $hat(f)(bu(0))$. Suponga que el núcleo $K_(bu(H))$ es un "núcleo producto" basado en la distribución univariada $"Uniforme"(-1, 1)$, y $bu(H) = h^2 bu(I)$. Derive una expresión para la proporción esperada de puntos incluidos dentro del soporte del núcleo $K_bu(H)$ para $h, d$. arbitrarios.
 ]
 
-La hipótesis de la variedad postula que los datos $X in RR^(d_X)$ muestreados soportados en un espacio de alta dimensionalidad #footnote[E.g.: imágenes, audio, video, secuencias de nucleótidos]. tenderán a concentarse sobre una _variedad_ $cal(M)$, potencialmente de mucha menor dimensión $d_(cal(M)) << d_X$, embebida en el espacio original $cal(M) subset.eq RR^(d_X)$.
+El "núcleo producto" multivariado basado en la ley $"Uniforme(-1, 1)"$ evaluado alrededor del origen es:
+$
+  K(x - 0)= K(x) = product_(i = 1)^d ind(-1 <= x_i <= 1) = ind(inter.big_(i=1)^d thick abs(x_i) <= 1) \
+$
+De la @kde-mv y el hecho de que $det bu(H) = h^(2d); thick bu(H)^(-1/2) = h^(-1) bu(I)$, se sigue que
+$
+  K_bu(H) (x) & = abs(h^(2d))^(-1/2) K(h^(-1)bu(I) x) = h^(-d) K(x/h) \
+              & = h^(-d) ind(inter.big_(i=1)^d thick abs(x_i / h) <= 1) = h^(-d) ind(inter_(i=1)^d thick abs(x_i) <= h) \
+              & = h^(-d) ind(x in [-h, h]^d)
+$
+De modo que $sop K_bu(H) = [-h, h]^d$, y ahora nos resta encontrar la esperanza. Como las componentes de una ley uniforme multivariada son independientes entre sí,
+$
+  Pr(X in [-h, h]^d) & = product_(i=1)^d Pr(X_i in [-h, h]) \
+                     & = Pr(-h <= X_1 <= h])^d \
+                     & = [(h - (-h))/(1-(-1))]^d = h^d quad square.stroked
+$
 
-- Well suited for AI tasks such as those involving images, sounds or text, for which most uniformly sampled input configurations are unlike natural stimuli.
-- archetypal manifold modeling algorithm is, not surprisingly, also the archetypal low dimensional representation learning algorithm: Principal Component Analysis, which models a linear manifold.
-- Data manifold for complex real world domains are however expected to be strongly nonlinear.
+#let h = 0.5
+#let d = 20
+
+Para $h =#h, d=#d, thick Pr(X in [-#h,#h]^#d) = #h^(-#d) approx #calc.round(calc.pow(h, d), digits: 8)$, ¡menos de uno en un millón! En general, la caída es muy rápida, aún para valores altos de $h$. Si $X$ representa un segundo de audio respete el estandar _mínimo_ de llamadas telefónicas  #footnote[De Wikipedia: La tasa #link("https://en.wikipedia.org/wiki/Digital_Signal_0")[DS0], o _Digital Signal 0_, fue introducida para transportar una sola llamada de voz "digitizada". La típica llamada de audio se digitiza a $8 "kHz"$, o a razón de 8.000 veces por segundo. se]
+#image("img/curse-dim.png")tiene $d=8000$.
+En tal espacio ambiente, aún con $h=0.999$,
+$Pr(dot) approx #calc.round(calc.pow(0.999, 8000), digits: 6)$, o 1:3.000.
+
+=== La hipótesis de la variedad ("manifold hypothesis")
+
+Ahora, si el espacio está _tan_, pero _tan_ vacío en alta dimensión, ¿cómo es que el aprendizaje supervisado _sirve de algo_? La reciente explosión en capacidades y herramientas de procesamiento (¡y generación!) de formatos de altísima dimensión #footnote[audio, video, texto y data genómica por citar sólo algunos] pareciera ser prueba fehaciente de que la tan mentada _maldición de la dimensionalidad_ no es más que un cuento de viejas.
+
+Pues bien, el ejemplo del segundo de audio antedicho _es_ sesgado, ya que simplemente no es cierto que si $X$ representa $1s$ de voz humana , su ley sea uniforme 8000 dimensiones #footnote[El audio se digitiza usando 8 bits para cada muestra, así que más precisamente, $sop X = [2^8]^8000$ o $64 "kbps"$, kilobits-por-segundo.]: si uno muestreara un segundo de audio siguiendo cualquier distribución en la que muestras consecutivas no tengan ninguna correlación, obtiene #link("https://es.wikipedia.org/wiki/Ruido_blanco")[_ruido blanco_]. La voz humana, por su parte, tiene _estructura_, y por ende correlación instante-a-instante. Cada voz tiene un _timbre_ característico, y las palabras enuncidas posibles están ceñidas por la _estructura fonológica_ de la lengua locutada.
+
+Sin precisar detalles, podríamos postular que las realizaciones de la variable de interés $X$ (el habla), que registramos en un soporte $cal(S) subset.eq RR^d$ de alta dimensión, en realidad se concentran en cierta _variedad_ #footnote[Término que ya precisaremos. Por ahora, $cal(M)$ es el _subespacio de realizaciones posibles_ de $X$] $cal(M) subset.eq cal(S)$ sobre , potencialmente de mucha menor dimensión $dim (M) = d_cal(M) << d$, en el la noción de distancia entre observaciones aún conserva significado. A tal postulado se lo conoce como "la hipótesis de la variedad", o _manifold hypothesis_. <hipotesis-variedad>
+
+La hipótesis de la variedad no es exactamente una hipótesis contrastable en el sentido tradicion al del método científico; de hecho, ni siquiera resulta obvio que de existir, sean bien definibles las variedades en las que existen los elementos del mundo real: un dígito manuscrito, el canto de un pájaro, o una flor. Y de existir, es de esperar que sean altamente #box[no-lineales].
+
+#figure(caption: flex-caption(
+  [Ejemplos de variedades en el mundo físico: tanto la hoja de un árbol como una bandera flameando al viento tienen dimensión intrínseca $d_cal(M) = 2$, están embedidas en $RR^3$, y son definitivamente no-lineales.],
+  "Ejemplos de variedades en el mundo físico",
+))[
+  #columns(2, [
+    #image("img/hormiga-petalo.jpg")
+    #colbreak()
+    #image("img/bandera-argentina.png")
+  ])
+]
 
 
-=== IRL
+Más bien, corresponde entenderla como un modelo mental, que nos permite aventurar ciertas líneas prácticas de trabajo en alta dimensión#footnote[@galleseRootsEmpathyShared2003 : shared manifold hypothesis y @bengioConsciousnessPrior2019]. Pero antes de profundizar en esta línea, debemos platearnos algunas preguntas básicas:
 
-#columns(2, [
-  #image("img/hormiga-petalo.jpg")
-  #colbreak()
-  #image("img/bandera-argentina.png")])
+#align(center)[
+  \
+  ¿Qué es, exactamente, una variedad? \ \
+  ¿Es posible construir un KDE con soporte en cierta variedad _conocida_? \ \
+  ¿Sirve de algo todo esto si _no conocemos_ la variedad en cuestión?
+]
+
+==  Variedades de Riemann
+
+A continuación, damos un recorrido sumario e idiosincrático por ciertos aspectos de las  variedades en general y las variedades de Riemann en particular que consideramos necesarios para avanzar nuestro argumento. A tal fin, seguimos la exposición del exigente clásico _Introduction to Riemannian Manifolds_ @leeIntroductionRiemannianManifolds2018. Un recurso sumamente relevante a nuestro objeto de estudio que sirve de puente entre esta investigación empírica y el texto de Lee, es la monografía _Estimación no paramétrica de la densidad en variedades Riemannianas_ @munozEstimacionNoParametrica2011.
 
 
-Pero: ¿en qué variedad vive un dígito, o su trazo, o una canción? #emoji.cigarette
+#defn("variedad topológica")[Una variedad $d$-dimensional $cal(M)$ es un espacio _topológico_ tal que cada punto $p in cal(M)$ tiene un vecindario $U$ que resulta _homeomórfico_ a un conjunto abierto en $RR^d$]
 
-=== Interludio: Variedades de Riemann [Wikipedia]
-@munozEstimacionNoParametrica2011
-pick one:
-@chavelRiemannianGeometryModern2006
-@leeIntroductionRiemannianManifolds2018 < este lo usa muñoz y Wikipedia, vamos por acá
-
-#quote[Una variedad $d$-dimensional $cal(M)$ es un espacio _topológico_ tal que cada punto $p in cal(M)$ tiene un vecindario $U$ que resulta _homeomórfico_ a un conjunto abierto en $RR^d$]
 
 - topológico: se puede definir cercanía (pero no necesariamente distancia), permite definir funciones continuas y límites
 - homeomórfico a $RR^d$: para cada punto $p in cal(M)$, existe un mapa _biyectivo_ y _suave_ entre el vecindario de $p$ y $RR^d$. El conjunto de tales mapas se denomina _atlas_.
@@ -388,7 +405,8 @@ $S^p$: @mardiaDistributionTheoryMisesFisher1975
   #colbreak()
   #image("img/henry-rodriguez-bolas.png")
 ]
-
+== Clasificación en variedades
+@vincentManifoldParzenWindows2002
 === Clasificación en variedades [Loubes y Pelletier 2008]
 @loubesKernelbasedClassifierRiemannian2008
 @hallBandwidthChoiceNonparametric2005 h optimo para clasificacion con KDE
@@ -406,7 +424,19 @@ $
 #align(center)[Pero... ¿y si la variedad es desconocida?]
 
 == Aprendizaje de distancias
+#figure(
+  caption: flex-caption[La variedad $cal(U)$ con $dim(cal(U)) = 1$ embebida en $RR^2$. Nótese que en el espacio ambiente, el punto rojo está más cerca del verde, mientras que a través de $cal(U)$, el punto amarillo está más próximo que el rojo][Variedad $cal(U)$],
+)[#image("img/variedad-u.svg", width: 70%)]
 
+En un extenso censo del campo de _aprendizaje de representaciones_, Bengio et ales la asocian directamente al campo de _aprendizaje de representaciones_:
+
+
+#quote(attribution: [ @bengioRepresentationLearningReview2014[§8]])[
+  (...) [L]a principal tarea del aprendizaje no-supervisado se considera entonces como el modelado de la estructura de la variedad que sustenta los datos. La representación asociada que se aprende puede asociarse con un sistema de coordenadas intrínseco en la variedad embebida. El algoritmo arquetípico de modelado de variedades es, como era de esperar, también el algoritmo arquetípico de aprendizaje de representaciones de baja dimensión: el Análisis de Componentes Principales, PCA.
+]
+El concepto, aunque no figure con ese nombre hasta principios de este siglo, existe desde mucho más atrás #footnote[estas referencias vienen del mismo Bengio #link("https://www.reddit.com/r/MachineLearning/comments/mzjshl/comment/gwq8szw/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button")[comentando en Reddit sobre el origen del término]].
+@rifaiManifoldTangentClassifier2011
+@caytonAlgorithmsManifoldLearning2005: PCA, SOMs, Isomap, etc.
 
 === El ejemplo canónica: Análisis de Componentes Principales (PCA)
 
@@ -910,15 +940,15 @@ Si $D_(Q_i, alpha) prop ||dot||$ (la distancia de fermat es proporcional a la eu
 
 === Conclusiones
 
-= Referencias
 
-Esto digo yo
 
-@rosenblattRemarksNonparametricEstimates1956
-@carpioFingerprintsCancerPersistent2019
-@chaconDatadrivenDensityDerivative2013
 
-== Glosario
+==== Para Patu
+Lo junan a @carpioFingerprintsCancerPersistent2019? "Fingerprints of cancer by persistent homology"
+#quote[
+  We have carried out a topological data analysis of gene expressions for diﬀerent databases based on the Fermat distance between the z scores of diﬀerent tissue samples. There is a critical value of the ﬁltration parameter at which all clusters collapse in a single one. This critical value for healthy samples is gapless and smaller than that for cancerous ones. After collapse in a single cluster, topological holes persist for larger ﬁltration parameter values in cancerous samples. Barcodes, persistence diagrams and Betti numbers as functions of the ﬁltration parameter are diﬀerent for diﬀerent types of cancer and constitute ﬁngerprints thereof.
+]
+= Glosario
 
 / clausura: ???
 / Riemanniana, métrica: sdfsdf
