@@ -10,6 +10,9 @@
 #let Pr = $ op("Pr") $
 #let bu(x) = $bold(upright(#x))$
 #let GG = $ cal(G) $
+#let MM = $ cal(M) $
+#let HH = $ bu(H) $
+#let KH = $ op(K_HH) $
 // Copetes flexibles para outline y texto, adaptado para 0.12 de
 // https://github.com/typst/typst/issues/1295#issuecomment-1853762154
 #let in-outline = state("in-outline", false)
@@ -83,7 +86,7 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / $Pr(x)$: función de probabilidad,
 / $EE(x)$: esperanza,
 / $iid$: independiente e idénticamente distribuido (suele aplicar a una muestra $bu(X)$
-
+/ $emptyset$: el conjunto vacío
 = Preliminares
 
 == El problema de clasificación
@@ -268,12 +271,12 @@ En casos como este, el procedimiento de Naive Bayes falla miserablemente, y ser�
   En su forma más general, estimador de densidad por núcleos #box[$d-$ variado] es
 
   $
-    hat(f) (x; bu(H)) = N^(-1) sum_(i=1)^N K_bu(H)(x - x_i)
+    hat(f) (x; HH) = N^(-1) sum_(i=1)^N K_H (x - x_i)
   $
 
   donde
-  - $bu(H) in RR^(d times d)$ es una matriz simétrica def. pos. análoga a la ventana $h in RR$ para $d=1$,
-  - $K_bu(H)(t) = abs(det bu(H))^(-1/2) K(bu(H)^(-1/2) t)$
+  - $HH in RR^(d times d)$ es una matriz simétrica def. pos. análoga a la ventana $h in RR$ para $d=1$,
+  - $KH(t) = abs(det HH)^(-1/2) K(HH^(-1/2) t)$
   - $K$ es una función núcleo $d$-variada tal que $integral K(bu(x)) d bu(x) = 1$
 ] <kde-mv>
 
@@ -282,39 +285,39 @@ $
   Phi(x) : RR^d -> RR = (2 pi)^(-d/2) exp(- (||x||^2)/2)
 $
 
-=== La elección de $bu(H)$
+=== La elección de $HH$
 Sean las clases de matrices $RR^(d times d)$ ...
 - $cal(F)$, de matrices simétricas definidas positivas,
 - $cal(D)$, de matrices diagonales definidas positivas ($cal(D) subset.eq cal(F)$) y
 - $cal(S)$, de múltiplos escalares de la identidad: $cal(S) = {h^2 bu(I):h >0} subset.eq cal(D)$
 
 
-Aún tomando una única $bu(H)$ para _toda_ la muestra, $bu(H) in dots$, la elección de $bu(H)$ en dimensión $d$ requiere definir...
-- $mat(d; 2) = (d^2 - d) slash 2$ parámetros de ventana si  $bu(H) in cal(F)$,
-- $d$ parámetros si $bu(H) in cal(D)$ y
-- un único parámetro $h$ si $bu(H) = h^2 bu(I)$.
+Aún tomando una única $HH$ para _toda_ la muestra, $HH in dots$, la elección de $HH$ en dimensión $d$ requiere definir...
+- $mat(d; 2) = (d^2 - d) slash 2$ parámetros de ventana si  $HH in cal(F)$,
+- $d$ parámetros si $HH in cal(D)$ y
+- un único parámetro $h$ si $HH = h^2 bu(I)$.
 
-La evaluación de la conveniencia relativa de cada parametrización se vuelve muy compleja, muy rápido. @wandComparisonSmoothingParameterizations1993 proveen un análisis detallado para el caso $d = 2$, y concluyen que aunque cada caso amerita su propio estudio, $bu(H) in cal(D)$ suele ser "adecuado". Sin embargo, este no es un gran consuelo para valores de $d$ verdaderamente altos, en cuyo caso existe aún un problema más fundamental.
+La evaluación de la conveniencia relativa de cada parametrización se vuelve muy compleja, muy rápido. @wandComparisonSmoothingParameterizations1993 proveen un análisis detallado para el caso $d = 2$, y concluyen que aunque cada caso amerita su propio estudio, $HH in cal(D)$ suele ser "adecuado". Sin embargo, este no es un gran consuelo para valores de $d$ verdaderamente altos, en cuyo caso existe aún un problema más fundamental.
 
 === La maldición de la dimensionalidad
 
-Uno estaría perdonado por suponer que el problema de estimar densidades en alta dimensión se resuelve con una buena elección de $bu(H)$, y una muestra "lo suficientemente grande". Considérese, sin embargo, el siguiente ejercicio, adaptado de  para ilustrar ese "suficientemente grande":
+Uno estaría perdonado por suponer que el problema de estimar densidades en alta dimensión se resuelve con una buena elección de $HH$, y una muestra "lo suficientemente grande". Considérese, sin embargo, el siguiente ejercicio, adaptado de  para ilustrar ese "suficientemente grande":
 
 #quote(attribution: [adaptado de @wandKernelSmoothing1995[§4.9 ej 4.1]])[
-  Sean $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d), thick i in [N]$, y consideremos la estimación de la densidad en el origen, $hat(f)(bu(0))$. Suponga que el núcleo $K_(bu(H))$ es un "núcleo producto" basado en la distribución univariada $"Uniforme"(-1, 1)$, y $bu(H) = h^2 bu(I)$. Derive una expresión para la proporción esperada de puntos incluidos dentro del soporte del núcleo $K_bu(H)$ para $h, d$. arbitrarios.
+  Sean $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d), thick i in [N]$, y consideremos la estimación de la densidad en el origen, $hat(f)(bu(0))$. Suponga que el núcleo $K_(HH)$ es un "núcleo producto" basado en la distribución univariada $"Uniforme"(-1, 1)$, y $HH = h^2 bu(I)$. Derive una expresión para la proporción esperada de puntos incluidos dentro del soporte del núcleo $KH$ para $h, d$. arbitrarios.
 ]
 
 El "núcleo producto" multivariado basado en la ley $"Uniforme(-1, 1)"$ evaluado alrededor del origen es:
 $
   K(x - 0)= K(x) = product_(i = 1)^d ind(-1 <= x_i <= 1) = ind(inter.big_(i=1)^d thick abs(x_i) <= 1) \
 $
-De la @kde-mv y el hecho de que $det bu(H) = h^(2d); thick bu(H)^(-1/2) = h^(-1) bu(I)$, se sigue que
+De la @kde-mv y el hecho de que $det HH = h^(2d); thick HH^(-1/2) = h^(-1) bu(I)$, se sigue que
 $
-  K_bu(H) (x) & = abs(h^(2d))^(-1/2) K(h^(-1)bu(I) x) = h^(-d) K(x/h) \
-              & = h^(-d) ind(inter.big_(i=1)^d thick abs(x_i / h) <= 1) = h^(-d) ind(inter_(i=1)^d thick abs(x_i) <= h) \
-              & = h^(-d) ind(x in [-h, h]^d)
+  KH(x) & = abs(h^(2d))^(-1/2) K(h^(-1)bu(I) x) = h^(-d) K(x/h) \
+        & = h^(-d) ind(inter.big_(i=1)^d thick abs(x_i / h) <= 1) = h^(-d) ind(inter_(i=1)^d thick abs(x_i) <= h) \
+        & = h^(-d) ind(x in [-h, h]^d)
 $
-De modo que $sop K_bu(H) = [-h, h]^d$, y ahora nos resta encontrar la esperanza. Como las componentes de una ley uniforme multivariada son independientes entre sí,
+De modo que $sop KH = [-h, h]^d$, y ahora nos resta encontrar la esperanza. Como las componentes de una ley uniforme multivariada son independientes entre sí,
 $
   Pr(X in [-h, h]^d) & = product_(i=1)^d Pr(X_i in [-h, h]) \
                      & = Pr(-h <= X_1 <= h])^d \
@@ -351,7 +354,7 @@ La hipótesis de la variedad no es exactamente una hipótesis contrastable en el
 ]
 
 
-Más bien, corresponde entenderla como un modelo mental, que nos permite aventurar ciertas líneas prácticas de trabajo en alta dimensión#footnote[@galleseRootsEmpathyShared2003 : shared manifold hypothesis y @bengioConsciousnessPrior2019]. Pero antes de profundizar en esta línea, debemos platearnos algunas preguntas básicas:
+Más bien, corresponde entenderla como un modelo mental, que nos permite aventurar ciertas líneas prácticas de trabajo en alta dimensión #footnote[TODO: @galleseRootsEmpathyShared2003 : shared manifold hypothesis y @bengioConsciousnessPrior2019]. Pero antes de profundizar en esta línea, debemos platearnos algunas preguntas básicas:
 
 #align(center)[
   \
@@ -360,21 +363,66 @@ Más bien, corresponde entenderla como un modelo mental, que nos permite aventur
   ¿Sirve de algo todo esto si _no conocemos_ la variedad en cuestión?
 ]
 
-==  Variedades de Riemann
+== Variedades de Riemann
 
-A continuación, damos un recorrido sumario e idiosincrático por ciertos aspectos de las  variedades en general y las variedades de Riemann en particular que consideramos necesarios para avanzar nuestro argumento. A tal fin, seguimos la exposición del exigente clásico _Introduction to Riemannian Manifolds_ @leeIntroductionRiemannianManifolds2018. Un recurso sumamente relevante a nuestro objeto de estudio que sirve de puente entre esta investigación empírica y el texto de Lee, es la monografía _Estimación no paramétrica de la densidad en variedades Riemannianas_ @munozEstimacionNoParametrica2011.
+Adelantando la respuesta a la segunda pregunta, resulta ser que si el soporte de $X$ es una "variedad de Riemann", bajo ciertas condiciones razonables sí es posible estimar su densidad por núcleos en la variedad @pelletierKernelDensityEstimation2005.
 
+A continuación, damos un recorrido sumario e idiosincrático por ciertos conceptos básicos de topología y variedades que consideramos necesarios para motivar la definición de variedades Riemannianas, que de paso precisarán la respuesta a la primer pregunta - ¿qué es una variedad? - en el contexto que nos interesa. A tal fin, seguimos la exposición de la monografía _Estimación no paramétrica de la densidad en variedades Riemannianas_ @munozEstimacionNoParametrica2011, que a su vez sigue, entre otros, el clásico _Introduction to Riemannian Manifolds_ @leeIntroductionRiemannianManifolds2018.
 
-#defn("variedad topológica")[Una variedad $d$-dimensional $cal(M)$ es un espacio _topológico_ tal que cada punto $p in cal(M)$ tiene un vecindario $U$ que resulta _homeomórfico_ a un conjunto abierto en $RR^d$]
+=== Variedades Diferenciables
 
+#defn([espacio topológico (TODO: ARROBA CITA WIKIPEDIA)])[
 
-- topológico: se puede definir cercanía (pero no necesariamente distancia), permite definir funciones continuas y límites
-- homeomórfico a $RR^d$: para cada punto $p in cal(M)$, existe un mapa _biyectivo_ y _suave_ entre el vecindario de $p$ y $RR^d$. El conjunto de tales mapas se denomina _atlas_.
+  Formalmente, se llama *espacio topológico* al par ordenado $(X, T)$ formado por un conjunto $X$ y una _topología_ $T$ sobre $X$, es decir una colección de subconjuntos de $X$ que cumple las siguientes tres propiedades:
+  + El conjunto vacío y $X$ están en T: $emptyset in T, X in T$
+  + La intersección de cualquier subcolección _finita_ de $T$ está en $T$:
+  $ X in T, Y in T => X inter Y in T $La unión de _cualquier_ subcolección de conjuntos de $T$
+  está en $T$:
+  $
+    forall S subset T, thick union.big_(O in S) O in T
+  $
+]
+A los conjuntos pertenecientes a la topología $T$ se les llama conjuntos abiertos o simplemente abiertos de $(X, T)$; y a sus complementos en $X$, conjuntos cerrados.
+
+#defn([entorno (TODO arroba wikipedia)])[
+  Si $(X,Τ)$ es un espacio topológico y $p$ es un punto perteneciente a X, un _entorno_ #footnote[ También se los conoce como "vecindarios" - por _neighborhoods_, su nombre en inglés.] de $p$ es un conjunto $V$ en el que está contenido un conjunto abierto $U$ que tiene como elemento al punto $p$: $ p in U subset.eq V $.
+]
+#defn([espacio de Hausdorff (TODO: ARROBA CITA WIKIPEDIA)])[
+
+  Sea $(X, T)$ un espacio topológico. Se dice que dos puntos $p, q in X$ cumplen la propiedad de Hausdorff si existen dos entornos $U_p$ de $p$ y $U_q$ de $q$ tales que $U_p inter U_q = emptyset$ (i.e., son disjuntos).
+
+  Se dice que un espacio topológico es un espacio de Hausdorff #footnote[o que verifica la propiedad de Hausdorff, o que es separado o que es $bu(T_2)$] si todo par de puntos distintos del espacio verifican la propiedad de Hausdorff.
+]
+En términos coloquiales, un espacio de Hausdorff es aquél donde todos sus puntos están "bien separados".
+
+#defn(
+  [variedad topológica @munozEstimacionNoParametrica2011[Def. 3.1.1], @leeIntroductionRiemannianManifolds2018[Apéndice A]],
+)[
+  Una variedad topológica de dimensión $d in NN$ es un espacio topológico $(MM, T)$ de Hausdorff, de base numerable, que es #strong[localmente homeomorfo a $RR^d$]. Es decir, para cada $p in MM$ existe un abierto $U in T$ y un abierto $A subset.eq RR^d$, tal que $p in U$ ($U$ es un entorno de $p$) y existe un homemorfismo $#sym.phi : U -> A$.
+]
+
+En una variedad topológica, cobra sentido cierto concepto de cercanía - pero no necesariamente de _distancia_, y es posible definir funciones continuas y límites.
+
+Un _homeomorfismo_ #footnote[del griego _homo-_: igual, _-morfo_: forma; de igual forma] es una función #sym.phi entre dos espacios topológicos si es biyectiva y tanto ella como su inversa son continuas. El par ordenado $(U, #sym.phi)$ es una _carta #footnote[_chart_ en inglés] alrededor de $p$_.
+
+A un conjunto numerable de tales cartas que cubran completamente la variedad se lo denomina "atlas". Simbólicamente, #box[$cal(A) = {(U_alpha, #sym.phi _alpha) : alpha in cal(I)}$] es un atlas sí y sólo si $MM = union_alpha U_alpha$.
+
+Cuando un homeomorfismo - y su inversa - es $r-$veces diferenciable, se le llama _$C^r$-difeomorfismo_, o simplemente difeomorfismo #footnote[Luego, un homeomorfismo es un $C^0-$difeomorfismo]. En particular, un $C^oo-$difeomorfismo es un difeomorfismo _suave_.
+
+Sean $(MM, T)$ una variedad topolóogica de dimensión $d$ y sean $(U, #sym.phi), (V, psi)$ dos cartas. Diremos que son _suavemente compatibles_ #footnote[_smoothly compatible_ según @leeIntroductionRiemannianManifolds2018[ § "Smooth Manifolds and Smooth Maps"]. @munozEstimacionNoParametrica2011 lo denomina _compatible_ a secas.] si $U inter V = emptyset$ o bien si la función cambio de coordenadas restringida a $U inter V$ es un difeormorfismo.
+
+La compatibilidad requiere que la transición entre mapas no sea sólo continua, sino también _suave_. El motivo de esta condición es asegurar que el concepto de _suavidad_ esté bien definido en toda la variedad $MM$, independientemente de qué carta se use: si una función es diferenciable vista a través de una carta, también lo será al analizarla desde cualquier carta compatible.
+
+#defn([estructura diferenciable @munozEstimacionNoParametrica2011[Def. 3.1.3]])[
+  Un atlas $cal(A) = {(U_alpha, #sym.phi _alpha) : alpha in cal(I)}$ es diferenciable si sus cartas son compatibles entre sí. Si un atlas diferenciable $cal(D)$ es _maximal_ lo llamaremos una _estructura diferenciable de la variedad $MM$ _. Con maximal queremos decir lo siguiente: Si $(U, #sym.phi)$ es una carta de $MM$ que es compatible con todas las cartas de $cal(D)$, entonces $(U, #sym.phi) in cal(D)$ #footnote[i.e., no existe otro atlas diferenciable que contenga propiamente a $cal(D)$, lo cual desambigua la referencia.] 
+]
+Definici ́ on 3.1.4. Una variedad diferenciable de dimensi ́on d es una terna (M, τ, D) donde (M, τ ) es una variedad topol ́ ogica de dimensi ́on d y D una estructura diferenciable.
+
 
 #grid(
   columns: (80%, 20%),
   [
-    Sea $T_p cal(M)$ el _espacio tangente_ a un punto $p in cal(M)$, y $g_p : T_p cal(M) times T_p cal(M) -> RR$ una forma _bilinear pos. def._ para cada $p$ que induce una _norma_ $||v||_p= sqrt(g_p(v, v))$.
+    Sea $T_p cal(M)$ el _espacio tangente_ a un punto $p in cal(M)$, y $g_p : T_p cal(M) times T_p cal(M) -> RR$ una forma _bilinear pos. def._ para cada $p$ que induce una _norma_ $||v||_p= sqrt(op(g_p)(v, v))$.
 
     Decimos entonces que $g_p$ es una métrica Riemanniana y el par $(cal(M), g)$ es una variedad de Riemann, donde las nociones de _distancia, ángulo y geodésica_ están bien definidas.],
   image("img/Tangent_plane_to_sphere_with_vectors.svg"),
