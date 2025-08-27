@@ -385,7 +385,7 @@ A continuación, damos un recorrido sumario e idiosincrático por ciertos concep
 A los conjuntos pertenecientes a la topología $T$ se les llama conjuntos abiertos o simplemente abiertos de $(X, T)$; y a sus complementos en $X$, conjuntos cerrados.
 
 #defn([entorno (TODO arroba wikipedia)])[
-  Si $(X,Τ)$ es un espacio topológico y $p$ es un punto perteneciente a X, un _entorno_ #footnote[ También se los conoce como "vecindarios" - por _neighborhoods_, su nombre en inglés.] de $p$ es un conjunto $V$ en el que está contenido un conjunto abierto $U$ que tiene como elemento al punto $p$: $ p in U subset.eq V $.
+  Si $(X,Τ)$ es un espacio topológico y $p$ es un punto perteneciente a X, un _entorno_ #footnote[ También se los conoce como "vecindarios" - por _neighborhoods_, su nombre en inglés.] del punto $p$ es un conjunto $V$ en el que está contenido un conjunto abierto $U$ que incluye al propio $p: p in U subset.eq V$.
 ]
 #defn([espacio de Hausdorff (TODO: ARROBA CITA WIKIPEDIA)])[
 
@@ -414,22 +414,57 @@ Sean $(MM, T)$ una variedad topolóogica de dimensión $d$ y sean $(U, #sym.phi)
 La compatibilidad requiere que la transición entre mapas no sea sólo continua, sino también _suave_. El motivo de esta condición es asegurar que el concepto de _suavidad_ esté bien definido en toda la variedad $MM$, independientemente de qué carta se use: si una función es diferenciable vista a través de una carta, también lo será al analizarla desde cualquier carta compatible.
 
 #defn([estructura diferenciable @munozEstimacionNoParametrica2011[Def. 3.1.3]])[
-  Un atlas $cal(A) = {(U_alpha, #sym.phi _alpha) : alpha in cal(I)}$ es diferenciable si sus cartas son compatibles entre sí. Si un atlas diferenciable $cal(D)$ es _maximal_ lo llamaremos una _estructura diferenciable de la variedad $MM$ _. Con maximal queremos decir lo siguiente: Si $(U, #sym.phi)$ es una carta de $MM$ que es compatible con todas las cartas de $cal(D)$, entonces $(U, #sym.phi) in cal(D)$ #footnote[i.e., no existe otro atlas diferenciable que contenga propiamente a $cal(D)$, lo cual desambigua la referencia.] 
+  Un atlas $cal(A) = {(U_alpha, #sym.phi _alpha) : alpha in cal(I)}$ es diferenciable si sus cartas son compatibles entre sí. Si un atlas diferenciable $cal(D)$ es _maximal_ lo llamaremos una _estructura diferenciable de la variedad $MM$ _. Con maximal queremos decir lo siguiente: Si $(U, #sym.phi)$ es una carta de $MM$ que es compatible con todas las cartas de $cal(D)$, entonces $(U, #sym.phi) in cal(D)$ #footnote[i.e., no existe otro atlas diferenciable que contenga propiamente a $cal(D)$, lo cual desambigua la referencia.]
 ]
-Definici ́ on 3.1.4. Una variedad diferenciable de dimensi ́on d es una terna (M, τ, D) donde (M, τ ) es una variedad topol ́ ogica de dimensi ́on d y D una estructura diferenciable.
+#defn([variedad diferenciable @munozEstimacionNoParametrica2011[Def. 3.1.4]])[
+  Una variedad diferenciable de dimensión $d$ es una terna $(MM, tau, cal(D))$ donde $(MM, tau)$ es una variedad topológica de dimensión $d$ y $cal(D)$ una estructura diferenciable.
+]
+
+Una variedad diferenciable entonces, es aquella en la que la operación de diferenciación tiene sentido no sólo punto a punto, sino globalmente. Nótese que de no poder diferenciar, tampoco podremos tomar integrales, y no sólo la _estimación_ de la densidad por núcleos sería imposible, sino que ni siquiera tendría sentido plantear una función densidad.
+
+Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métrica_. En particular, toda variedad diferenciable admite una "métrica de Riemann" (TODO arroba do carmo, Proposición 2.10).
+
+#defn(["métrica Riemannianaat Do carmo Def 2.1])[
+  Sea $T_p MM$ el _espacio tangente_ a un punto $p in MM$. Una métrica Riemanniana -  o estructura Riemanniana  - en una variedad diferenciable $MM$ es una correspondencia que asocia a cada punto $p in MM$ un producto interno $angle.l dot,dot angle.r_p$ (i.e., una forma bilinear simétrica positiva definida) en el espacio tangente $T_p MM$ que "varía diferenciablemente" en el entorno de $p$.
+]
+
+A dicho producto interno se lo suele denominar $g_p$ e induce naturalmente una norma: $norm(v)_p= sqrt(op(g_p)(v, v)) = sqrt(angle.l v \, v angle.r_p)$. Decimos entonces que $g_p$ es una métrica Riemanniana y el par $(cal(M), g)$ es una variedad de Riemann, donde las nociones de _distancia, ángulo y geodésica_ están bien definidas.
+
+Vale destacar que según TODO at do carmo Prop. 2.10 establece que "toda variedad diferenciable tiene una métrica Riemanniana", que se peude construir componiendo las métricas Riemannianas locales a cada carta de su estructura diferenciable según una "partición de la unidad" #footnote[cuya definición formal supera el alcance de esta monografía, pero intuitivamente, es una técnica que pondera con pesos que suman 1 las métricas locales a cada carta para obtener un resultado global coherente.]
+
+#obs[ Cuando $MM=RR^d$, el espacio es constante e idéntico a la variedad: $forall p in RR^d, thick T_p RR^d = RR^d$. La base canónica de $T_p RR^d = RR^d$ formada por las columnas de $bu(I)_d$ es una matriz positiva definida que da lugar al pructo interno "clásico" $angle.l u,v angle.r = u^T bu(I)_d v = sum_(i=1)^d u_i v_i$ es una métrica Riemanniana.]
 
 
-#grid(
-  columns: (80%, 20%),
-  [
-    Sea $T_p cal(M)$ el _espacio tangente_ a un punto $p in cal(M)$, y $g_p : T_p cal(M) times T_p cal(M) -> RR$ una forma _bilinear pos. def._ para cada $p$ que induce una _norma_ $||v||_p= sqrt(op(g_p)(v, v))$.
+#figure(image("img/Tangent_plane_to_sphere_with_vectors.svg"), caption: flex-caption(
+  [Espacio tangente  $T_p MM$ a una esfera $MM = S^2$ por $p$. Nótese que el espacio tangente varía con $p$, pero siempre mantiene la misma dimensión ($d=2$) que $MM$],
+  [Espacio tangente en $S^2$],
+))
 
-    Decimos entonces que $g_p$ es una métrica Riemanniana y el par $(cal(M), g)$ es una variedad de Riemann, donde las nociones de _distancia, ángulo y geodésica_ están bien definidas.],
-  image("img/Tangent_plane_to_sphere_with_vectors.svg"),
+Ahora sí, hemso arribado a un objeto lo suficientemente "bien portado" para soportar funciones diferenciables, una noción de distancia y todo aquello que precisamos para definir elementos aleatorios en una variedad _conocida_ $MM$.
+
+=== Probabilidad en Variedades
+Hemos definido una clase clase bastante general de variedades - las variedades de Riemann - que podr´na soportar funciones de densidad y sus estimaciones @pelletierKernelDensityEstimation2005. Estos desarrollos relativamente modernos #footnote[del siglo XXI, al menos], no constituyen sin embargo el origen de la probabilidad en variedades. Mucho antes de su sistematización, ciertos casos particulares habían sido bien estudiados y allanaron el camino para el interés en variedades más generales.
+Probablemente la referencia más antigua a un elemento aleatorio en una variedad distinta a $RR^d$, se deba a Richard von Mises, en _Sobre la naturaleza entera del peso atómico y cuestiones relacionadas_ @vonmisesUberGanzzahligkeitAtomgewicht1918 #footnote["Über die 'ganzzahligkeitwder' atomgewichte und verwandte fragen". en el original]. En él, von Mises se plantea la pregunta explícita de si los pesos atómicos - que empíricamente se observan siempre muy cercanos a la unidad para los elementos más livianos - son enteros con un cierto error de medición, y argumenta que para tal tratamiento, el "error gaussiano" clásico es inadecuado:
+
+#quote(attribution: [traducido de @vonmisesUberGanzzahligkeitAtomgewicht1918])[
+  (dots) Pues no es evidente desde el principio que, por ejemplo, para un peso atómico de $35,46$ (Cl), el error sea de $+0,46$ y no de $-0,54$: es muy posible que se logre una mejor concordancia con ciertos supuestos con la segunda determinación. A continuación, se desarrollan los elementos — esencialmente muy simples — de una "teoría del error cíclico", que se complementa con la teoría gaussiana o "lineal" y permite un tratamiento completamente inequívoco del problema de la "enteridad" y cuestiones similares.
+]
+
+#figure(
+  image("img/von-mises-s1.png"),
+  caption: [Pretendido "error" - diferencia módulo 1 - de los pesos atómicos medidos para ciertos elementos, sobre $S^1$. Nótese como la mayoría de las mediciones se agrupan en torno al $0.0$.],
 )
+Motivado también por un problema del mundo físico - las mediciones de posición en una esfera "clásica" $S^2 subset RR^3$, Ronald Fisher escribe "Dispersiones en la esfera" @fisherDispersionSphere1957, donde desarrolla una forma de teoría que parece ser apropiada para mediciones de posición en una esfera #footnote[y como era de esperar del padre del test de hipótesis, también un test de significancia análogo al t de Student.] y los ilustra utilizando mediciones de la dirección de la magnetización remanente de flujos de lava directa e inversamente magnetizados en Islandia.
 
-=== KDE en variedades de Riemann [Pelletier 2005]
-@pelletierKernelDensityEstimation2005
+
+Dos décadas más tarde, los casos particulare de von Mises ($S^1$) y Fisher ($S^2$) estaban integrados en el caso más general $S^n$ en lo que se conocería como "estadística direccional" #footnote[ya que la $n-$ esfera $S^n$ de radio $1$ con centro en $0$ contiene exactamente a todos los vectores unitarios, i.e. a todas las _direcciones_ posibles de un vector en su espacio ambiente $RR^(n+1)$]. En 1975 se habla ya de _teoría de la distribución_ para la distribución von Mises - Fisher @mardiaDistributionTheoryMisesFisher1975, la "más importante en el análisis de datos direccionales"; a fines de los '90 Jupp y Mardia plantean "una visión unificada de la teoría de de la estadística direccional" @juppUnifiedViewTheory1989 , relacionándola con conceptos claves en el "caso euclídeo" como las familias exponenciales y el teorema central del límite, entre otros.
+
+Aunque el caso particular de la $n-$esfera sí fue bien desarrollado a lo largo del siglo XX, el tratamiento más general de la estadística en variedades riemannianas conocidas pero arbitrarias aún no se hacía presente.
+
+=== KDE en variedades de Riemann
+
+Un trabajo sumamente interesante a principios del siglo XXI es el de Bruno Pelletier, que explícitamente se propone estudiar la estimación de densidad por núcleos en variedades de Riemann @pelletierKernelDensityEstimation2005.
+
 - Sea $(cal(M), g)$ una variedad de Riemann compacta y sin frontera de dimensión $d$, y usemos $d_g$ para denotar la distancia de Riemann.
 - Sea $K$ un _núcleo isotrópico en $cal(M)$ soportado en la bola unitaria_ (cf. conds. (i)-(v))
 - Sean $p, q in cal(M)$, y $theta_p (q)$ la _función de densidad de volumen en $cal(M)$_ #footnote[¡Ardua definición! Algo así como el cociente entre las medida de volumen en $cal(M)$, y su transformación via el mapa local a $RR^d$]
@@ -440,10 +475,7 @@ $
 
 con la restricción de que la ventana $h <= h_0 <= op("inj")(cal(M))$, el _radio de inyectividad_ de $cal(M)$ #footnote[el ínfimo entre el supremo del radio de una bola en cada $p$ tal que su mapa es un difeomorfismo]
 
-=== Algunas variedades conocidas
-$S^1$: @vonmisesUberGanzzahligkeitAtomgewicht1918
-$S^2$: @fisherDispersionSphere1957
-$S^p$: @mardiaDistributionTheoryMisesFisher1975
+
 === Interludio: densidad de volumen en la esfera [Henry y Rodríguez, 2009]
 
 #columns(2)[
