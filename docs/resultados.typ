@@ -4,15 +4,17 @@
 // # definiciones #
 // ################
 #let phi = math.phi.alt
-#let ind = $ op(bb(1)) $
+#let ind = $op(bb(1))$
 #let iid = "i.i.d."
-#let sop = $ op("sop") $
-#let Pr = $ op("Pr") $
+#let sop = $op("sop")$
+#let Pr = $op("Pr")$
 #let bu(x) = $bold(upright(#x))$
-#let GG = $ cal(G) $
-#let MM = $ cal(M) $
-#let HH = $ bu(H) $
-#let KH = $ op(K_HH) $
+#let GG = $cal(G)$
+#let MM = $cal(M)$
+#let HH = $bu(H)$
+#let XX = $bu(X)$
+#let KH = $op(K_HH)$
+#let dotp(x, y) = $lr(angle.l #x, #y angle.r)$
 // Copetes flexibles para outline y texto, adaptado para 0.12 de
 // https://github.com/typst/typst/issues/1295#issuecomment-1853762154
 #let in-outline = state("in-outline", false)
@@ -65,9 +67,9 @@ A lo largo de esta monografía tomaremos como referencia enciclopédica al _Elem
 
 Típicamente, denotaremos a las variables independientes #footnote[También conocidas como predictoras, o _inputs_] con $X$. Si $X$ es un vector, accederemos a sus componentes con subíndices, $X_j$. En el contexto del problema de clasificación, la variable _cualitativa_ dependiente #footnote[También conocida como variable respuesta u _output_] será $G$ (de $G$rupo). Usaremos letras mayúsculas como $X, G$ para referirnos a los aspectos genéricos de una variable. Los valores _observados_ se escribirán en minúscula, de manera que el i-ésimo valor observado de $X$ será $x_i$ (de nuevo, $x_i$ puede ser un escalar o un vector).
 
-Representaremos a las matrices con letras mayúsculas en negrita, $bu(X)$; e.g.: el conjunto de de $N$ vectores $p$-dimensionales ${x_i, i in {1, dots, N}}$ será representado por la matrix $bu(X)$ de dimensión $N times p$.
+Representaremos a las matrices con letras mayúsculas en negrita, #XX; e.g.: el conjunto de de $N$ vectores $p$-dimensionales ${x_i, i in {1, dots, N}}$ será representado por la matrix #XX de dimensión $N times p$.
 
-En general, los vectores _no_ estarán en negrita, excepto cuando tengan $N$ componentes; esta convención distingue el $p-$vector de _inputs_ para la i-ésima observación,  $x_i$, del $N-$vector $bu(x)_j$ con todas las observaciones de la variable $X_j$. Como todos los vectore se asumen vectores columna, la i-ésima fila de $bu(X)$ es $x_i^T$, la traspuesta de la i-ésima observación $x_i$.
+En general, los vectores _no_ estarán en negrita, excepto cuando tengan $N$ componentes; esta convención distingue el $p-$vector de _inputs_ para la i-ésima observación,  $x_i$, del $N-$vector $bu(x)_j$ con todas las observaciones de la variable $X_j$. Como todos los vectore se asumen vectores columna, la i-ésima fila de #XX es $x_i^T$, la traspuesta de la i-ésima observación $x_i$.
 
 A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 
@@ -77,7 +79,7 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / $d_x$:
 / $RR^(d_x)$:
 / $[k]$: el conjunto de los k números enteros, ${1, dots, k}$
-/ $cal(M)$:
+/ #MM:
 / $bold(upright(H))$:
 / $norm(dot)$:
 / ${bold(upright(X))}$:
@@ -85,7 +87,7 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / $ind(x)$: la función indicadora, $ind(x)=cases(1 "si" x "es verdadero", 0 "si no")$
 / $Pr(x)$: función de probabilidad,
 / $EE(x)$: esperanza,
-/ $iid$: independiente e idénticamente distribuido (suele aplicar a una muestra $bu(X)$
+/ $iid$: independiente e idénticamente distribuido (suele aplicar a una muestra #XX
 / $emptyset$: el conjunto vacío
 = Preliminares
 
@@ -101,7 +103,7 @@ El _aprendizaje estadístico supervisado_ busca estimar (aprender) una variable 
   Un _clasificador_ es una función $hat(G)(X)$ que para cada observación intenta aproximar su verdadera clase $G$ por $hat(G)$ ("ge sombrero").
 ] <clasificador>
 
-Para construir $hat(G)$, contaremos con una muestra o _conjunto de entrenamiento_ $bu(X), bu(g)$,  de pares $(x_i, g_i), i in {1, dots, N}$ conocidos.
+Para construir $hat(G)$, contaremos con una muestra o _conjunto de entrenamiento_ $XX, bu(g)$,  de pares $(x_i, g_i), i in {1, dots, N}$ conocidos.
 
 Para discernir cuán bien se "ajusta" un clasificador a los datos, la teoría requiere de una función de _pérdida_ $L(G, hat(G)(X))$. #footnote[_loss function_ en inglés. A veces también "función de riesgo" - _risk function_.]. Será de especial interés la función de clasificación $f$ que minimiza la _esperanza de predicción errada_ $"EPE"$:
 
@@ -338,12 +340,12 @@ Ahora, si el espacio está _tan_, pero _tan_ vacío en alta dimensión, ¿cómo 
 
 Pues bien, el ejemplo del segundo de audio antedicho _es_ sesgado, ya que simplemente no es cierto que si $X$ representa $1s$ de voz humana , su ley sea uniforme 8000 dimensiones #footnote[El audio se digitiza usando 8 bits para cada muestra, así que más precisamente, $sop X = [2^8]^8000$ o $64 "kbps"$, kilobits-por-segundo.]: si uno muestreara un segundo de audio siguiendo cualquier distribución en la que muestras consecutivas no tengan ninguna correlación, obtiene #link("https://es.wikipedia.org/wiki/Ruido_blanco")[_ruido blanco_]. La voz humana, por su parte, tiene _estructura_, y por ende correlación instante-a-instante. Cada voz tiene un _timbre_ característico, y las palabras enuncidas posibles están ceñidas por la _estructura fonológica_ de la lengua locutada.
 
-Sin precisar detalles, podríamos postular que las realizaciones de la variable de interés $X$ (el habla), que registramos en un soporte $cal(S) subset.eq RR^d$ de alta dimensión, en realidad se concentran en cierta _variedad_ #footnote[Término que ya precisaremos. Por ahora, $cal(M)$ es el _subespacio de realizaciones posibles_ de $X$] $cal(M) subset.eq cal(S)$ sobre , potencialmente de mucha menor dimensión $dim (M) = d_cal(M) << d$, en el la noción de distancia entre observaciones aún conserva significado. A tal postulado se lo conoce como "la hipótesis de la variedad", o _manifold hypothesis_. <hipotesis-variedad>
+Sin precisar detalles, podríamos postular que las realizaciones de la variable de interés $X$ (el habla), que registramos en un soporte $cal(S) subset.eq RR^d$ de alta dimensión, en realidad se concentran en cierta _variedad_ #footnote[Término que ya precisaremos. Por ahora, #MM es el _subespacio de realizaciones posibles_ de $X$] $MM subset.eq cal(S)$ sobre , potencialmente de mucha menor dimensión $dim (M) = d_MM << d$, en el la noción de distancia entre observaciones aún conserva significado. A tal postulado se lo conoce como "la hipótesis de la variedad", o _manifold hypothesis_. <hipotesis-variedad>
 
 La hipótesis de la variedad no es exactamente una hipótesis contrastable en el sentido tradicion al del método científico; de hecho, ni siquiera resulta obvio que de existir, sean bien definibles las variedades en las que existen los elementos del mundo real: un dígito manuscrito, el canto de un pájaro, o una flor. Y de existir, es de esperar que sean altamente #box[no-lineales].
 
 #figure(caption: flex-caption(
-  [Ejemplos de variedades en el mundo físico: tanto la hoja de un árbol como una bandera flameando al viento tienen dimensión intrínseca $d_cal(M) = 2$, están embedidas en $RR^3$, y son definitivamente no-lineales.],
+  [Ejemplos de variedades en el mundo físico: tanto la hoja de un árbol como una bandera flameando al viento tienen dimensión intrínseca $d_MM = 2$, están embedidas en $RR^3$, y son definitivamente no-lineales.],
   "Ejemplos de variedades en el mundo físico",
 ))[
   #columns(2, [
@@ -401,6 +403,9 @@ En términos coloquiales, un espacio de Hausdorff es aquél donde todos sus punt
   Una variedad topológica de dimensión $d in NN$ es un espacio topológico $(MM, T)$ de Hausdorff, de base numerable, que es #strong[localmente homeomorfo a $RR^d$]. Es decir, para cada $p in MM$ existe un abierto $U in T$ y un abierto $A subset.eq RR^d$, tal que $p in U$ ($U$ es un entorno de $p$) y existe un homemorfismo $#sym.phi : U -> A$.
 ]
 
+#obs("Sobre variedades con y sin frontera")[ Toda $n-$variedad #footnote[i.e. variedad de dimensión $n$] tiene puntos interiores, pero algunas además tienen una _frontera_; esta frontera es a su vez una variedad _sin_ frontera de dimensión $n - 1$. Por caso: un disco en el plano euclídeo $RR^2$ es una $2-$variedad _con_ frontera, cuya frontera es una variedad de dimensión $2 - 1 = 1$ sin frontera: el círculo $S^1$; una pelota de tenis es una $3-$variedad con frontera dada por su superficie, la variedad sin frontera $S^2$. De aquí en más, cuando hablemos de variedades topológicas, nos referiremos a variedades _sin_ frontera.]
+
+
 En una variedad topológica, cobra sentido cierto concepto de cercanía - pero no necesariamente de _distancia_, y es posible definir funciones continuas y límites.
 
 Un _homeomorfismo_ #footnote[del griego _homo-_: igual, _-morfo_: forma; de igual forma] es una función #sym.phi entre dos espacios topológicos si es biyectiva y tanto ella como su inversa son continuas. El par ordenado $(U, #sym.phi)$ es una _carta #footnote[_chart_ en inglés] alrededor de $p$_.
@@ -425,12 +430,13 @@ Una variedad diferenciable entonces, es aquella en la que la operación de difer
 Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métrica_. En particular, toda variedad diferenciable admite una "métrica de Riemann" (TODO arroba do carmo, Proposición 2.10).
 
 #defn(["métrica Riemannianaat Do carmo Def 2.1])[
-  Sea $T_p MM$ el _espacio tangente_ a un punto $p in MM$. Una métrica Riemanniana -  o estructura Riemanniana  - en una variedad diferenciable $MM$ es una correspondencia que asocia a cada punto $p in MM$ un producto interno $angle.l dot,dot angle.r_p$ (i.e., una forma bilinear simétrica positiva definida) en el espacio tangente $T_p MM$ que "varía diferenciablemente" en el entorno de $p$.
+  Sea $T_p MM$ el _espacio tangente_ a un punto $p in MM$. Una métrica Riemanniana -  o estructura Riemanniana  - en una variedad diferenciable $MM$ es una correspondencia que asocia a cada punto $p in MM$ un producto interno $dotp(dot, dot)$ (i.e., una forma bilinear simétrica positiva definida) en el espacio tangente $T_p MM$ que "varía diferenciablemente" en el entorno de $p$.
 ]
 
-A dicho producto interno se lo suele denominar $g_p$ e induce naturalmente una norma: $norm(v)_p= sqrt(op(g_p)(v, v)) = sqrt(angle.l v \, v angle.r_p)$. Decimos entonces que $g_p$ es una métrica Riemanniana y el par $(cal(M), g)$ es una variedad de Riemann, donde las nociones de _distancia, ángulo y geodésica_ están bien definidas.
+A dicho producto interno se lo suele denominar $g_p$ e induce naturalmente una norma: $norm(v)_p= sqrt(op(g_p)(v, v)) = sqrt(dotp(v, v))$. Decimos entonces que $g_p$ es una métrica Riemanniana y el par $(MM, g)$ es una variedad de Riemann, donde las nociones de _distancia, ángulo y geodésica_ están bien definidas.
 
-Vale destacar que según TODO at do carmo Prop. 2.10 establece que "toda variedad diferenciable tiene una métrica Riemanniana", que se peude construir componiendo las métricas Riemannianas locales a cada carta de su estructura diferenciable según una "partición de la unidad" #footnote[cuya definición formal supera el alcance de esta monografía, pero intuitivamente, es una técnica que pondera con pesos que suman 1 las métricas locales a cada carta para obtener un resultado global coherente.]
+Sea 
+#obs([según TODO at do carmo Prop. 2.10])[ Toda variedad diferenciable tiene una métrica Riemanniana, que se peude construir componiendo las métricas Riemannianas locales a cada carta de su estructura diferenciable según una "partición de la unidad" cuya definición formal supera el alcance de esta monografía, pero intuitivamente, es una técnica que pondera con pesos que suman 1 las métricas locales a cada carta para obtener un resultado global coherente.]
 
 #obs[ Cuando $MM=RR^d$, el espacio es constante e idéntico a la variedad: $forall p in RR^d, thick T_p RR^d = RR^d$. La base canónica de $T_p RR^d = RR^d$ formada por las columnas de $bu(I)_d$ es una matriz positiva definida que da lugar al pructo interno "clásico" $angle.l u,v angle.r = u^T bu(I)_d v = sum_(i=1)^d u_i v_i$ es una métrica Riemanniana.]
 
@@ -440,7 +446,10 @@ Vale destacar que según TODO at do carmo Prop. 2.10 establece que "toda varieda
   [Espacio tangente en $S^2$],
 ))
 
-Ahora sí, hemso arribado a un objeto lo suficientemente "bien portado" para soportar funciones diferenciables, una noción de distancia y todo aquello que precisamos para definir elementos aleatorios en una variedad _conocida_ $MM$.
+Ahora sí, hemos arribado a un objeto lo suficientemente "bien portado" para soportar funciones diferenciables, una noción de distancia y todo aquello que precisamos para definir elementos aleatorios en una variedad _conocida_ $MM$.
+
+
+#obs["variedad compacta"]
 
 === Probabilidad en Variedades
 Hemos definido una clase clase bastante general de variedades - las variedades de Riemann - que podr´na soportar funciones de densidad y sus estimaciones @pelletierKernelDensityEstimation2005. Estos desarrollos relativamente modernos #footnote[del siglo XXI, al menos], no constituyen sin embargo el origen de la probabilidad en variedades. Mucho antes de su sistematización, ciertos casos particulares habían sido bien estudiados y allanaron el camino para el interés en variedades más generales.
@@ -461,19 +470,25 @@ Dos décadas más tarde, los casos particulare de von Mises ($S^1$) y Fisher ($S
 
 Aunque el caso particular de la $n-$esfera sí fue bien desarrollado a lo largo del siglo XX, el tratamiento más general de la estadística en variedades riemannianas conocidas pero arbitrarias aún no se hacía presente.
 
+- variedad compacta
+- función de densidad de volumen
+- radio de inyectividad de $g$ en #MM
 === KDE en variedades de Riemann
 
 Un trabajo sumamente interesante a principios del siglo XXI es el de Bruno Pelletier, que explícitamente se propone estudiar la estimación de densidad por núcleos en variedades de Riemann @pelletierKernelDensityEstimation2005.
 
-- Sea $(cal(M), g)$ una variedad de Riemann compacta y sin frontera de dimensión $d$, y usemos $d_g$ para denotar la distancia de Riemann.
-- Sea $K$ un _núcleo isotrópico en $cal(M)$ soportado en la bola unitaria_ (cf. conds. (i)-(v))
-- Sean $p, q in cal(M)$, y $theta_p (q)$ la _función de densidad de volumen en $cal(M)$_ #footnote[¡Ardua definición! Algo así como el cociente entre las medida de volumen en $cal(M)$, y su transformación via el mapa local a $RR^d$]
-Luego, el estimador de densidad para $X_i tilde.op^("iid")f$ es $f_(N,K):cal(M) ->RR$ que a cada $p in cal(M)$ le asocia el valor
+
+Consideremos 
+- Sea $(MM, g)$ una variedad de Riemann compacta y sin frontera de dimensión $d$, y usemos $d_g$ para denotar la distancia de Riemann.
+- Sea $K$ un _núcleo isotrópico en #MM soportado en la bola unitaria_ (cf. conds. (i)-(v))
+- Sean $p, q in MM$, y $theta_p (q)$ la _función de densidad de volumen en_ #MM #footnote[¡Ardua definición! Algo así como el cociente entre las medida de volumen en #MM, y su transformación via el mapa local a $RR^d$]
+- Sea #XX
+Luego, el estimador de densidad para $X_i tilde.op^("iid")f$ es $f_(N,K):MM ->RR$ que a cada $p in MM$ le asocia el valor
 $
   f_(N,K) (p) = N^(-1) sum_(i=1)^N K_h (p,X_i) = N^(-1) sum_(i=1)^N 1/h^d 1/(theta_X_i (p))K((op(d_g)(p, X_i))/h)
 $
 
-con la restricción de que la ventana $h <= h_0 <= op("inj")(cal(M))$, el _radio de inyectividad_ de $cal(M)$ #footnote[el ínfimo entre el supremo del radio de una bola en cada $p$ tal que su mapa es un difeomorfismo]
+con la restricción de que la ventana $h <= h_0 <= op("inj")(MM)$, el _radio de inyectividad_ de #MM #footnote[el ínfimo entre el supremo del radio de una bola en cada $p$ tal que su mapa es un difeomorfismo]
 
 
 === Interludio: densidad de volumen en la esfera [Henry y Rodríguez, 2009]
@@ -494,7 +509,7 @@ con la restricción de que la ventana $h <= h_0 <= op("inj")(cal(M))$, el _radio
 
 ¡Clasificador de Bayes + KDE en Variedades = Clasificación (suave o dura) en variedades!
 
-Plantean una regla de clasificación $hat(G)$ para 2 clases adaptable a K clases de forma directa. Sea $p in cal(M)$ una variedad riemanniana como antes, y ${(x_1, g_1), dots, (x_N, g_N)}$ nuestras observaciones y sus clases. Luego,
+Plantean una regla de clasificación $hat(G)$ para 2 clases adaptable a K clases de forma directa. Sea $p in MM$ una variedad riemanniana como antes, y ${(x_1, g_1), dots, (x_N, g_N)}$ nuestras observaciones y sus clases. Luego,
 
 $
   hat(G) (p) = arg max_(g in GG) sum_(i=1)^N ind(g_i = g)K_h (p,X_i)
@@ -538,7 +553,7 @@ El concepto, aunque no figure con ese nombre hasta principios de este siglo, exi
   columns: (35%, 65%),
   column-gutter: 20pt,
   [
-    1. Construya el grafo de $k, epsilon$-vecinos, $bu(N N)=(bu(X), E)$
+    1. Construya el grafo de $k, epsilon$-vecinos, $bu(N N)=(XX, E)$
 
     2. Compute los caminos mínimos - las geodésicas entre observaciones, $d_(bu(N N))(x, y)$.
 
@@ -577,14 +592,14 @@ $
 Para $alpha >=1$ y $x, y in RR^d$, la _Distancia Muestral de Fermat_ se define como
 
 $
-  D_(bu(X), alpha) = inf {sum_(j=1)^(K-1) ||q_(j+1) - q_j||^alpha : (q_1, dots, q_K) "es un camino de de x a y", K>=1}
+  D_(XX, alpha) = inf {sum_(j=1)^(K-1) ||q_(j+1) - q_j||^alpha : (q_1, dots, q_K) "es un camino de de x a y", K>=1}
 $
 
-donde los $q_j$ son elementos de la muestra $bu(X)$. Nótese que $D_(bu(X), alpha)$ satisface la desigualdad triangular, define una métrica sobre $bu(X)$ y una pseudo-métrica sobre $RR^d$.
+donde los $q_j$ son elementos de la muestra #XX. Nótese que $D_(XX, alpha)$ satisface la desigualdad triangular, define una métrica sobre #XX y una pseudo-métrica sobre $RR^d$.
 
 En su paper, Groisman et al. muestran que
 $
-  lim_(N -> oo) n^beta D_(bu(X)_n, alpha) (x, y)= mu cal(D)_(f, beta)(x, y)
+  lim_(N -> oo) n^beta D_(XX_n, alpha) (x, y)= mu cal(D)_(f, beta)(x, y)
 $
 donde $beta = (a-1) slash d, thick n >= n_0$ y $mu$ es una constante adecuada.
 
@@ -610,15 +625,15 @@ Nótese que el clasificador enunciado al inicio (k-NN, @eps-nn), tiene un parien
 
 === Algunas dudas
 
-- Entrenar el clasificador por validación cruzada está OK: como $bu(X)_"train" subset.eq bu(X)$ y $bu(X)_"test" subset.eq bu(X)$, se sigue que $forall (a, b) in {bu(X)_"train" times in bu(X)_"test"} subset.eq {bu(X) times bu(X)}$ y $D_(bu(X), alpha) (a, b)$ está bien definida.  ¿Cómo sé la distancia _muestral_ de una _nueva_ observación $x_0$, a los elementos de cada clase?\
+- Entrenar el clasificador por validación cruzada está OK: como $XX_"train" subset.eq XX$ y $XX_"test" subset.eq XX$, se sigue que $forall (a, b) in {XX_"train" times in XX_"test"} subset.eq {XX times XX}$ y $D_(XX, alpha) (a, b)$ está bien definida.  ¿Cómo sé la distancia _muestral_ de una _nueva_ observación $x_0$, a los elementos de cada clase?\
 
 
-Para cada una de las $g_i in GG$ clases, definimos el conjunto $ Q_i= {x_0} union {x_j : x_j in bu(X), g_j = g_i, j in {1, dots, N}} $
+Para cada una de las $g_i in GG$ clases, definimos el conjunto $ Q_i= {x_0} union {x_j : x_j in XX, g_j = g_i, j in {1, dots, N}} $
 y calculamos $D_(Q_i, alpha) (x_0, dot)$
 
 === Algunas dudas
 
-- El clasificador de Loubes & Pelletier asume que todas las clases están soportadas en la misma variedad $cal(M)$. ¿Quién dice que ello vale para las diferentes clases?
+- El clasificador de Loubes & Pelletier asume que todas las clases están soportadas en la misma variedad #MM. ¿Quién dice que ello vale para las diferentes clases?
 
 
 ¡Nadie! Pero
@@ -666,8 +681,8 @@ y calculamos $D_(Q_i, alpha) (x_0, dot)$
 ¿Sabemos cuánto vale $sigma$?
 
 === $R^2$ de McFadden
-Sea $cal(C)_0$ el clasificador "base", que asigna a cada observación y posible clase, la frecuencia empírica de clase encontrada en la muestra $bu(X)$. Para todo clasificador suave $cal(C)$, definimos el $R^2$ de McFadden como
-$ op(R^2)(cal(C) | bu(X)) = 1 - (op(cal(l))(cal(C))) / (op(cal(l))(cal(C)_0)) $
+Sea $cal(C)_0$ el clasificador "base", que asigna a cada observación y posible clase, la frecuencia empírica de clase encontrada en la muestra #XX. Para todo clasificador suave $cal(C)$, definimos el $R^2$ de McFadden como
+$ op(R^2)(cal(C) | XX) = 1 - (op(cal(l))(cal(C))) / (op(cal(l))(cal(C)_0)) $
 
 
 donde $cal(l)(dot)$ es la log-verosimilitud clásica. Nótese que $op(R^2)(cal(C)_0) = 0$.  A su vez, para un clasificador perfecto $cal(C)^star$ que otorgue toda la masa de probabilidad a la clase correcta, tendrá $op(L)(cal(C)^star) = 1$ y log-verosimilitud igual a 0, de manera que $op(R^2)(cal(C)^star) = 1 - 0 = 1$.
@@ -690,8 +705,8 @@ En tareas de clasificación, la métrica más habitual es la _exactitud_ #footno
 
 #defn(
   "exactitud",
-)[Sean $bu(("X, y")) in RR^(n times p) times RR^n$ una matriz de $n$ observaciones de $p$ atributos y sus clases asociadas. Sea además $hat(bu(y)) = clfh(bu(X))$ las predicciones de clase resultado de una regla de clasificación #clfh. La _exactitud_ ($"exac"$) de #clfh en #bu("X") se define como la proporción de coincidencias con las clases verdaderas #bu("y"):
-  $ op("exac")(clfh | bu(X)) = n^(-1) sum_(i=1)^n ind(hat(y)_i = y_i) $
+)[Sean $bu(("X, y")) in RR^(n times p) times RR^n$ una matriz de $n$ observaciones de $p$ atributos y sus clases asociadas. Sea además $hat(bu(y)) = clfh(XX)$ las predicciones de clase resultado de una regla de clasificación #clfh. La _exactitud_ ($"exac"$) de #clfh en #bu("X") se define como la proporción de coincidencias con las clases verdaderas #bu("y"):
+  $ op("exac")(clfh | XX) = n^(-1) sum_(i=1)^n ind(hat(y)_i = y_i) $
 ] <exactitud>
 
 La exactitud está bien definida para cualquier clasificador que provea una regla _dura_ de clasificación, segun clasi. Ahora bien, cuando un clasificador provee una regla _suave_ (clasificador-suave), la exactitud como métrica "pierde información": dos clasificadores binarios que asignen respectivamente 0.51 y 1.0 de probabilidad de pertenecer a la clase correcta a todas als observaciones tendrán la misma exactitud, $100%$, aunque el segundo es a las claras mejor. A la inversa, cuando un clasificador erra al asignar la clase: ¿lo hace con absoluta confianza, asignando una alta probabilidad a la clase equivocada, o con cierta incertidumbre, repartiendo la masa de probabilidad entre varias clases que considera factibles?
@@ -700,10 +715,10 @@ Una métrica natural para evaluar una regla de clasificación suave, es la _vero
 
 #defn(
   "verosimilitud",
-)[Sean $bu(("X, y")) in RR^(n times p) times RR^n$ una matriz de $n$ observaciones de $p$ atributos y sus clases asociadas. Sea además $hat(bu(Y)) = clfs(bu(X)) in RR^(n times k)$ la matriz de probabilidades de clase resultado de una regla suave de clasificación #clfs. La _verosimilitud_ ($"vero"$) de #clfs en #bu("X") se define como la probabilidad conjunta que asigna #clfs a las clases verdaderas #bu("y"):
+)[Sean $bu(("X, y")) in RR^(n times p) times RR^n$ una matriz de $n$ observaciones de $p$ atributos y sus clases asociadas. Sea además $hat(bu(Y)) = clfs(XX) in RR^(n times k)$ la matriz de probabilidades de clase resultado de una regla suave de clasificación #clfs. La _verosimilitud_ ($"vero"$) de #clfs en #bu("X") se define como la probabilidad conjunta que asigna #clfs a las clases verdaderas #bu("y"):
   $
     op(L)(clfs) = op("vero")(
-      clfs | bu(X)
+      clfs | XX
     ) = Pr(hat(bu(y)) = bu(y)) = product_(i=1)^n Pr(hat(y)_i =y_i) = product_(i=1)^n hat(bu(Y))_((i, y_i))
   $
 
@@ -715,8 +730,8 @@ La verosimilitud de una muestra varía en $[0, 1]$ y su log-verosimilitud, en $(
 
 #defn(
   [$R^2$ de McFadden],
-)[Sea $clfs_0$ el clasificador "nulo", que asigna a cada observación y posible clase, la frecuencia empírica de clase encontrada en la muestra de entrenamiento $bu(X)_("train")$. Para todo clasificador suave $clfs$, definimos el $R^2$ de McFadden como
-  $ op(R^2)(clfs | bu(X)) = 1 - (op(cal(l))(clfs)) / (op(cal(l))(clfs_0)) $
+)[Sea $clfs_0$ el clasificador "nulo", que asigna a cada observación y posible clase, la frecuencia empírica de clase encontrada en la muestra de entrenamiento $XX_("train")$. Para todo clasificador suave $clfs$, definimos el $R^2$ de McFadden como
+  $ op(R^2)(clfs | XX) = 1 - (op(cal(l))(clfs)) / (op(cal(l))(clfs_0)) $
 ] <R2-mcf>
 
 #obs[ $op(R^2)(clfs_0) = 0$. A su vez, para un clasificador perfecto $clfs^star$ que otorgue toda la masa de probabilidad a la clase correcta, tendrá $op(L)(clfs^star) = 1$ y log-verosimilitud igual a 0, de manera que $op(R^2)(clfs^star) = 1 - 0 = 1$.
@@ -742,18 +757,18 @@ Consideraremos a modo de referencia los siguientes algoritmos:
 - Naive Bayes Gaussiano (gnb, #gnb),
 - Regresión Logistica (#lr) y
 - Clasificador de Soporte Vectorial (#svc)
-Esta elección no pretende ser exhaustiva, sino que responde a un "capricho informado" del investigador. #gnb es una elección natural, ya que es la simplificación que surge de asumir independencia en las dimensiones de ${bu(X)}$ para KDE multivariado (@kde-mv), y se puede computar para grandes conjuntos de datos en muy poco tiempo. #lr es "el" método para clasificación binaria, y su extensión a múltiples clases no es particularmente compleja: para que sea mínimamente valioso un nuevo algoritmo, necesita ser al menos tan bueno como #lr, que tiene ya más de 65 años en el campo (TODO REF bliss1935, cox1958). Por último, fue nuestro deseo incorporar algún método más cercano al estado del arte. A tal fin, consideramos incorporar alguna red neuronal (TODO REF), un método de _boosting_ (TODO REF) y el antedicho clasificador de soporte vectorial, #svc. Finalmente, por la sencillez de su implementación dentro del marco elegido #footnote[Utilizamos _scikit-learn_, un poderoso y extensible paquete para tareas de aprendizaje automático en Python] y por la calidad de los resultados obtenidos, decidimos incorporar #svc, en dos variantes: con núcleos (_kernels_) lineales y RBF.
+Esta elección no pretende ser exhaustiva, sino que responde a un "capricho informado" del investigador. #gnb es una elección natural, ya que es la simplificación que surge de asumir independencia en las dimensiones de ${XX}$ para KDE multivariado (@kde-mv), y se puede computar para grandes conjuntos de datos en muy poco tiempo. #lr es "el" método para clasificación binaria, y su extensión a múltiples clases no es particularmente compleja: para que sea mínimamente valioso un nuevo algoritmo, necesita ser al menos tan bueno como #lr, que tiene ya más de 65 años en el campo (TODO REF bliss1935, cox1958). Por último, fue nuestro deseo incorporar algún método más cercano al estado del arte. A tal fin, consideramos incorporar alguna red neuronal (TODO REF), un método de _boosting_ (TODO REF) y el antedicho clasificador de soporte vectorial, #svc. Finalmente, por la sencillez de su implementación dentro del marco elegido #footnote[Utilizamos _scikit-learn_, un poderoso y extensible paquete para tareas de aprendizaje automático en Python] y por la calidad de los resultados obtenidos, decidimos incorporar #svc, en dos variantes: con núcleos (_kernels_) lineales y RBF.
 === Uno complejo: SVC
 #defn("clasificador por sporte vectorial")[]
 === Uno conocido: LR - tal vez?
 #defn("regresión logística multinomial")[]
 
 === Metodología
-#let X = ${bu(X)}_n$
+#let X = ${XX}_n$
 
 La unidad de evaluación de los algoritmos a considerar es una `Tarea`, que se compone de:
 - un _diccionario de algoritmos_ a evaluar en condiciones idénticas, definidas por
-- un _dataset_ con el conjunto de $n$ observaciones en $d_x$ dimensiones repartidas en $k$ clases, ${bu(X)}_n in R^(n times d_x), {bold(y)}_n in [k]^n$,
+- un _dataset_ con el conjunto de $n$ observaciones en $d_x$ dimensiones repartidas en $k$ clases, ${XX}_n in R^(n times d_x), {bold(y)}_n in [k]^n$,
 - un _split de evaluación_ $r in (0, 1)$, que determina las proporciones de los datos a usar durante el entrenamiento ($1 - r$) y la evaluación ($r$), junto con
 - una _semilla_ $s in [2^32]$ que alimenta el generador de números aleatorios y define determinísticamente cómo realizar la división antedicha.
 
@@ -776,7 +791,7 @@ Antes de considerar ningún tipo de sofisticación, comenzamos asegurándonos qu
   caption: flex-caption[`make_blobs(n_features=2, centers=((0, 0), (10, 0)), random_state=1984)`][2 blobs],
 ) <2-blobs>
 
-En este ejemplo, $d_cal(M) = d_x = 2; thick k=2; thick n_1 = n_2 = 400$ tenemos dos clases perfectamente separables, con lo cual cualquier clasificador razonable debería alcanzar $op("exac") approx 1, thick cal(l) approx 0, R^2 approx 1$. La evaluación de nuestros clasificadores resulta ser:
+En este ejemplo, $d_MM = d_x = 2; thick k=2; thick n_1 = n_2 = 400$ tenemos dos clases perfectamente separables, con lo cual cualquier clasificador razonable debería alcanzar $op("exac") approx 1, thick cal(l) approx 0, R^2 approx 1$. La evaluación de nuestros clasificadores resulta ser:
 #let tabla_csv(path) = {
   let data = csv(path)
   let eval_scope = (fkdc: fkdc, kn: knn, fkn: fknn, kdc: kdc, lr: lr, svc: svc, lsvc: `LSVC`, gnb: gnb, base: "base")
@@ -793,7 +808,7 @@ Consideremos ahora algunas curvas unidimensionales embebidas en $RR^2$:
 
 #figure(
   image("img/datasets-lunas-circulos-espirales.svg", width: 125%),
-  caption: flex-caption["Lunas", "Círculos" y "Espirales", con $d_x = 2, d_(cal(M)) = 1$ y $s=4107$][ "Lunas", "Círculos" y "Espirales" ],
+  caption: flex-caption["Lunas", "Círculos" y "Espirales", con $d_x = 2, d_(MM) = 1$ y $s=4107$][ "Lunas", "Círculos" y "Espirales" ],
 ) <fig-2>
 
 Resultará obvio al lector que los conjuntos de datos expuestos en @fig-2 no son exactamente variedades "1D" embebidas en "2D", sino que tienen un poco de "ruido blanco" agregado para incrementar la dificultad de la tarea.
