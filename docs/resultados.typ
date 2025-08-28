@@ -15,6 +15,7 @@
 #let XX = $bu(X)$
 #let KH = $op(K_HH)$
 #let dotp(x, y) = $lr(angle.l #x, #y angle.r)$
+#let dg = $op(d_g)$
 // Copetes flexibles para outline y texto, adaptado para 0.12 de
 // https://github.com/typst/typst/issues/1295#issuecomment-1853762154
 #let in-outline = state("in-outline", false)
@@ -403,7 +404,9 @@ En términos coloquiales, un espacio de Hausdorff es aquél donde todos sus punt
   Una variedad topológica de dimensión $d in NN$ es un espacio topológico $(MM, T)$ de Hausdorff, de base numerable, que es #strong[localmente homeomorfo a $RR^d$]. Es decir, para cada $p in MM$ existe un abierto $U in T$ y un abierto $A subset.eq RR^d$, tal que $p in U$ ($U$ es un entorno de $p$) y existe un homemorfismo $#sym.phi : U -> A$.
 ]
 
-#obs("Sobre variedades con y sin frontera")[ Toda $n-$variedad #footnote[i.e. variedad de dimensión $n$] tiene puntos interiores, pero algunas además tienen una _frontera_; esta frontera es a su vez una variedad _sin_ frontera de dimensión $n - 1$. Por caso: un disco en el plano euclídeo $RR^2$ es una $2-$variedad _con_ frontera, cuya frontera es una variedad de dimensión $2 - 1 = 1$ sin frontera: el círculo $S^1$; una pelota de tenis es una $3-$variedad con frontera dada por su superficie, la variedad sin frontera $S^2$. De aquí en más, cuando hablemos de variedades topológicas, nos referiremos a variedades _sin_ frontera.]
+#obs(
+  "Sobre variedades con y sin frontera",
+)[ Toda $n-$variedad #footnote[i.e. variedad de dimensión $n$] tiene puntos interiores, pero algunas además tienen una _frontera_; esta frontera es a su vez una variedad _sin_ frontera de dimensión $n - 1$. Por caso: un disco en el plano euclídeo $RR^2$ es una $2-$variedad _con_ frontera, cuya frontera es una variedad de dimensión $2 - 1 = 1$ sin frontera: el círculo $S^1$; una pelota de tenis es una $3-$variedad con frontera dada por su superficie, la variedad sin frontera $S^2$. De aquí en más, cuando hablemos de variedades topológicas, nos referiremos a variedades _sin_ frontera.]
 
 
 En una variedad topológica, cobra sentido cierto concepto de cercanía - pero no necesariamente de _distancia_, y es posible definir funciones continuas y límites.
@@ -414,6 +417,7 @@ A un conjunto numerable de tales cartas que cubran completamente la variedad se 
 
 Cuando un homeomorfismo - y su inversa - es $r-$veces diferenciable, se le llama _$C^r$-difeomorfismo_, o simplemente difeomorfismo #footnote[Luego, un homeomorfismo es un $C^0-$difeomorfismo]. En particular, un $C^oo-$difeomorfismo es un difeomorfismo _suave_.
 
+#defn("")
 Sean $(MM, T)$ una variedad topolóogica de dimensión $d$ y sean $(U, #sym.phi), (V, psi)$ dos cartas. Diremos que son _suavemente compatibles_ #footnote[_smoothly compatible_ según @leeIntroductionRiemannianManifolds2018[ § "Smooth Manifolds and Smooth Maps"]. @munozEstimacionNoParametrica2011 lo denomina _compatible_ a secas.] si $U inter V = emptyset$ o bien si la función cambio de coordenadas restringida a $U inter V$ es un difeormorfismo.
 
 La compatibilidad requiere que la transición entre mapas no sea sólo continua, sino también _suave_. El motivo de esta condición es asegurar que el concepto de _suavidad_ esté bien definido en toda la variedad $MM$, independientemente de qué carta se use: si una función es diferenciable vista a través de una carta, también lo será al analizarla desde cualquier carta compatible.
@@ -429,27 +433,70 @@ Una variedad diferenciable entonces, es aquella en la que la operación de difer
 
 Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métrica_. En particular, toda variedad diferenciable admite una "métrica de Riemann" (TODO arroba do carmo, Proposición 2.10).
 
-#defn(["métrica Riemannianaat Do carmo Def 2.1])[
-  Sea $T_p MM$ el _espacio tangente_ a un punto $p in MM$. Una métrica Riemanniana -  o estructura Riemanniana  - en una variedad diferenciable $MM$ es una correspondencia que asocia a cada punto $p in MM$ un producto interno $dotp(dot, dot)$ (i.e., una forma bilinear simétrica positiva definida) en el espacio tangente $T_p MM$ que "varía diferenciablemente" en el entorno de $p$.
+#defn(["métrica Riemanniana TODO at Do carmo Def 2.1])[
+  Sea $T_p MM$ el _espacio tangente_ a un punto $p in MM$. Una métrica Riemanniana -  o estructura Riemanniana  - en una variedad diferenciable $MM$ es una correspondencia que asocia a cada punto $p in MM$ un producto interno $dotp(dot, dot)$ (i.e., una forma bilinear simétrica positiva definida) en el espacio tangente $T_p MM$ que "varía diferenciablemente" #footnote[para el lector curioso, do Carmo Def 2.1 define precisamente el sentido de esta expresión] en el entorno de $p$.
+
+  A dicho producto interno se lo denomina $g_p$ e induce naturalmente una norma: $norm(v)_p= sqrt(op(g_p)(v, v)) = sqrt(dotp(v, v))$. Decimos entonces que $g_p$ es una métrica Riemanniana y el par $(MM, g)$ es una variedad de Riemann.
 ]
-
-A dicho producto interno se lo suele denominar $g_p$ e induce naturalmente una norma: $norm(v)_p= sqrt(op(g_p)(v, v)) = sqrt(dotp(v, v))$. Decimos entonces que $g_p$ es una métrica Riemanniana y el par $(MM, g)$ es una variedad de Riemann, donde las nociones de _distancia, ángulo y geodésica_ están bien definidas.
-
-Sea 
-#obs([según TODO at do carmo Prop. 2.10])[ Toda variedad diferenciable tiene una métrica Riemanniana, que se peude construir componiendo las métricas Riemannianas locales a cada carta de su estructura diferenciable según una "partición de la unidad" cuya definición formal supera el alcance de esta monografía, pero intuitivamente, es una técnica que pondera con pesos que suman 1 las métricas locales a cada carta para obtener un resultado global coherente.]
-
-#obs[ Cuando $MM=RR^d$, el espacio es constante e idéntico a la variedad: $forall p in RR^d, thick T_p RR^d = RR^d$. La base canónica de $T_p RR^d = RR^d$ formada por las columnas de $bu(I)_d$ es una matriz positiva definida que da lugar al pructo interno "clásico" $angle.l u,v angle.r = u^T bu(I)_d v = sum_(i=1)^d u_i v_i$ es una métrica Riemanniana.]
-
 
 #figure(image("img/Tangent_plane_to_sphere_with_vectors.svg"), caption: flex-caption(
   [Espacio tangente  $T_p MM$ a una esfera $MM = S^2$ por $p$. Nótese que el espacio tangente varía con $p$, pero siempre mantiene la misma dimensión ($d=2$) que $MM$],
   [Espacio tangente en $S^2$],
 ))
 
-Ahora sí, hemos arribado a un objeto lo suficientemente "bien portado" para soportar funciones diferenciables, una noción de distancia y todo aquello que precisamos para definir elementos aleatorios en una variedad _conocida_ $MM$.
+#obs(
+  [según TODO at do carmo Prop. 2.10],
+)[ Toda variedad diferenciable tiene una métrica Riemanniana, que se peude construir componiendo las métricas Riemannianas locales a cada carta de su estructura diferenciable según una "partición de la unidad" cuya definición formal supera el alcance de esta monografía, pero intuitivamente, es una técnica que pondera con pesos que suman 1 las métricas locales a cada carta para obtener un resultado global coherente.]
+
+#obs[ Cuando $MM=RR^d$, el espacio es constante e idéntico a la variedad: $forall p in RR^d, thick T_p RR^d = RR^d$. La base canónica de $T_p RR^d = RR^d$ formada por las columnas de $bu(I)_d$ es una matriz positiva definida que da lugar al pructo interno "clásico" $angle.l u,v angle.r = u^T bu(I)_d v = sum_(i=1)^d u_i v_i$ es una métrica Riemanniana que induce la norma euclídea $norm(v) = sqrt(v^T v)$ y la distancia $d(x, y) = norm(x-y)$.]
+
+==== Geodésicas y mapa exponencial
+Dado este andamiaje, podemos reconstruir algunos conceptos básicos, como longitud, distancia y geodésica.
+Sea $gamma : [a, b] -> MM$ una _curva diferenciable_ en #MM, y $gamma'$ su derivada. La _longitud_ de $gamma$ está dada por
+$
+  L(gamma) = integral_a^b norm(gamma'(t)) dif t = integral_a^b sqrt(op(g_(gamma(t)))(gamma'(t), gamma'(t))) dif t
+$
+#defn("distancia en variedades de Riemann")[
+  Sea $(MM, g)$ una variedad de Riemann, y $p, q in MM$ dos puntos. Definimos la distancia entre ellos inducida por la métrica $g$ como
+  $
+    dg(p, q) = inf_(gamma) thick {L(gamma) : thick thick gamma: [0, 1] -> MM, thick gamma(0)=p,thick gamma(1)=q}
+  $
+]
+A la curva $gamma$ que minimiza la distancia entre $p$ y $q$ se la denomina _geodésica_, una generalización de la "línea recta" en la geometría euclídea.
+
+En efecto, considérese la siguiente analogía: en la física clásica, un objeto que no es sujeto a ninguna fuerza (no recibe _aceleración_ alguna), estará o quieto (con velocidad nula) o en movimiento rectilíneo uniforme ("MRU"). En variedades diferenciables, la geodésicas son exactamente eso: curvas parametrizables sin aceleración ($gamma''(t) = 0 forall t$). En esta línea "intuitiva", lo que sigue es una adaptación de "El flujo geodésico" TODO at docarmo §3.2.
+
+Sea $gamma : [0, 1] -> MM, gamma(0) = p, gamma(1)=q$  una curva parametrizable. Su derivada en el origen - su _velocidad inicial_ - $gamma'(0)$ es necesariamente tangente a $gamma(0) = p in MM$, o sea que $gamma'(0) in T_p MM$: el espacio tangente $T_p MM$ contiene todas las _velocidades_ posibles desde $p$. Dada una velocidad $v in T_p MM$, podemos descomponerla en su _magnitud_ $norm(v)$ y su _dirección_ $v / norm(v)$. Como la geodésica es una curva sin aceleración, $g''(t) = 0 forall t in [0, 1]$, y luego $g'(t) = g'(0) = v in T_p MM forall t in [0, 1]$. La geodésica de $p$ a $q$ es la única curva $gamma : [0, 1] -> MM, gamma(0) = p$ con velocidad inicial $gamma'(0) = v in T_p MM$, de modo que $L(gamma) = norm(v) = dg(p, q)$ y luego de "una unidad de tiempo", $gamma(1) = q$.
+
+Esta relación, entre vectores de $T_p MM$ y geodésicas de $MM$ con origen en $p$, nos permite relacionar una "bola" en $T_p MM$ con su análogo en $MM$.
+
+#defn("mapa exponencial")[
+  Sean $p in MM, v in T_p MM$. Se conoce como _mapa exponencial_ a la función
+  $ exp_p (v) : T_p MM -> MM = gamma_(p,v)(1) $
+  donde $gamma_(p,v)(t)$ es la única geodésica que en el instante $t=0$ pasa por $p$ con velocidad $v$.
+]
+
+#defn("bola normal")[
+  Sea $B_epsilon (x) subset RR^d$ la bola cerrada de radio $epsilon$ centrada en $x$:
+  $ B_(r) = {x in RR^d : dg(x, q) = norm(x - q) <= r} $
+  Si $exp_p$ es un difeomorfismo  en un vecindario (entorno) $V$ del origen en $T_p MM$, su imagen $U = exp_p (V)$ es un "vecindario normal" de $p$.
+  Si $B_epsilon(0)$ es tal que $B_epsilon(0) subset V$, llamamos a $exp_p B_epsilon (0) = B_epsilon (p)$ la _bola normal_ – o "bola geodésica" - con centro $p$ y radio $epsilon$.
+  La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geodésicas que irradian desde $p$.
+]
 
 
-#obs["variedad compacta"]
+
+#defn("variedad compacta")[
+  Decimos que una variedad es _acotada_ cuando $sup_((p, q) in MM^2) dg(p, q) = overline(d) < oo$ - no posee elemntos a distanciados infinitamente entre sí. Una variedad que incluya todos sus "puntos límite" es una variedad _cerrada_. Una variedad cerrada y compacta se denomina _compacta_.
+]
+
+#obs[
+  Un círculo en el plano, $S^1 subset RR^2 = {(x, y) : x^2 + y^2 = 1}$ es una variedad compacta: es acotada - ninguna distancia es mayor a medio gran círculo, $pi$ - y cerrada. $RR^2$ es una variedad cerrada pero no acotada. El "disco sin borde" ${(x, y) in RR^2 : x^2 + y^2 < 1}$ es acotado pero no cerrado - pues no incluye su borde $S^1$. El "cilindro infinito" ${(x, y, z) in RR^3 : x^2 + y^2 < 1}$ no es ni acotado ni compacto.
+]
+
+Ahora sí, hemos arribado a un objeto lo suficientemente "bien portado" para soportar funciones diferenciables, una noción de distancia y todo aquello que precisamos para definir elementos aleatorios: la variedad de Riemann compacta sin frontera. Cuando hablemos de una variedad de Riemann sin calificarla, nos referiremos a ésta.
+
+
 
 === Probabilidad en Variedades
 Hemos definido una clase clase bastante general de variedades - las variedades de Riemann - que podr´na soportar funciones de densidad y sus estimaciones @pelletierKernelDensityEstimation2005. Estos desarrollos relativamente modernos #footnote[del siglo XXI, al menos], no constituyen sin embargo el origen de la probabilidad en variedades. Mucho antes de su sistematización, ciertos casos particulares habían sido bien estudiados y allanaron el camino para el interés en variedades más generales.
@@ -470,22 +517,28 @@ Dos décadas más tarde, los casos particulare de von Mises ($S^1$) y Fisher ($S
 
 Aunque el caso particular de la $n-$esfera sí fue bien desarrollado a lo largo del siglo XX, el tratamiento más general de la estadística en variedades riemannianas conocidas pero arbitrarias aún no se hacía presente.
 
-- variedad compacta
-- función de densidad de volumen
-- radio de inyectividad de $g$ en #MM
 === KDE en variedades de Riemann
 
-Un trabajo sumamente interesante a principios del siglo XXI es el de Bruno Pelletier, que explícitamente se propone estudiar la estimación de densidad por núcleos en variedades de Riemann @pelletierKernelDensityEstimation2005.
+Un trabajo sumamente interesante a principios del siglo XXI es el de Bruno Pelletier, que se propone una adaptación directa del estimador de densidad por núcleos de @kde-mv en variedades de Riemann compactas sin frontera @pelletierKernelDensityEstimation2005. Antes de presentarlo, hemos de presentar algunas definiciones más:
 
+#defn("bola normal")[
+  B es una bola normal centrada en p si existe una bola V en Tp(M ) centrada en 0p tal que expp(V ) = B y expp|V : V → B es un difeomorfismo. Sabemos que f (p) > 0 para todo p ∈ M
+]
+#defn([radio de inyectividad de #MM])[
+  Sean
+]
 
-Consideremos 
-- Sea $(MM, g)$ una variedad de Riemann compacta y sin frontera de dimensión $d$, y usemos $d_g$ para denotar la distancia de Riemann.
+- función de densidad de volumen
+- radio de inyectividad de $g$ en #MM
+
+Consideremos
+- Sea $(MM, g)$ una variedad de Riemann compacta y sin frontera de dimensión $d$, y usemos $dg$ para denotar la distancia de Riemann.
 - Sea $K$ un _núcleo isotrópico en #MM soportado en la bola unitaria_ (cf. conds. (i)-(v))
 - Sean $p, q in MM$, y $theta_p (q)$ la _función de densidad de volumen en_ #MM #footnote[¡Ardua definición! Algo así como el cociente entre las medida de volumen en #MM, y su transformación via el mapa local a $RR^d$]
 - Sea #XX
 Luego, el estimador de densidad para $X_i tilde.op^("iid")f$ es $f_(N,K):MM ->RR$ que a cada $p in MM$ le asocia el valor
 $
-  f_(N,K) (p) = N^(-1) sum_(i=1)^N K_h (p,X_i) = N^(-1) sum_(i=1)^N 1/h^d 1/(theta_X_i (p))K((op(d_g)(p, X_i))/h)
+  f_(N,K) (p) = N^(-1) sum_(i=1)^N K_h (p,X_i) = N^(-1) sum_(i=1)^N 1/h^d 1/(theta_X_i (p))K((dg(p, X_i))/h)
 $
 
 con la restricción de que la ventana $h <= h_0 <= op("inj")(MM)$, el _radio de inyectividad_ de #MM #footnote[el ínfimo entre el supremo del radio de una bola en cada $p$ tal que su mapa es un difeomorfismo]
