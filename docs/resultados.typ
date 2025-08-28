@@ -16,6 +16,8 @@
 #let KH = $op(K_HH)$
 #let dotp(x, y) = $lr(angle.l #x, #y angle.r)$
 #let dg = $op(d_g)$
+#let var = $op("Var")$
+
 // Copetes flexibles para outline y texto, adaptado para 0.12 de
 // https://github.com/typst/typst/issues/1295#issuecomment-1853762154
 #let in-outline = state("in-outline", false)
@@ -88,9 +90,12 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / $ind(x)$: la función indicadora, $ind(x)=cases(1 "si" x "es verdadero", 0 "si no")$
 / $Pr(x)$: función de probabilidad,
 / $EE(x)$: esperanza,
+/ $var(x)$: varianza,
 / $iid$: independiente e idénticamente distribuido (suele aplicar a una muestra #XX
 / $emptyset$: el conjunto vacío
 / $overline(S)$: la _clausura_ de S; la unión de S y sus puntos límites.
+/ $lambda(x)$: la medida de Lebesgue de $x$ en $RR^d$
+/ $a |-> b$: la función que "toma" $a$ y "devuelve" $b$  en #link("https://en.wikipedia.org/wiki/Function_(mathematics)#Arrow_notation")[notación de flechas]
 = Preliminares
 
 == El problema de clasificación
@@ -438,7 +443,7 @@ Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métric
   Sea $T_p MM$ el _espacio tangente_ a un punto $p in MM$. Una métrica Riemanniana -  o estructura Riemanniana  - en una variedad diferenciable $MM$ es una correspondencia que asocia a cada punto $p in MM$ un producto interno $dotp(dot, dot)$ (i.e., una forma bilinear simétrica positiva definida) en el espacio tangente $T_p MM$ que "varía diferenciablemente" #footnote[para el lector curioso, do Carmo Def 2.1 define precisamente el sentido de esta expresión] en el entorno de $p$.
 
   A dicho producto interno se lo denomina $g_p$ e induce naturalmente una norma: $norm(v)_p= sqrt(op(g_p)(v, v)) = sqrt(dotp(v, v))$. Decimos entonces que $g_p$ es una métrica Riemanniana y el par $(MM, g)$ es una variedad de Riemann.
-]
+] <metrica-riemanniana>
 
 #figure(image("img/Tangent_plane_to_sphere_with_vectors.svg"), caption: flex-caption(
   [Espacio tangente  $T_p MM$ a una esfera $MM = S^2$ por $p$. Nótese que el espacio tangente varía con $p$, pero siempre mantiene la misma dimensión ($d=2$) que $MM$],
@@ -447,7 +452,7 @@ Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métric
 
 #obs(
   [según TODO at do carmo Prop. 2.10],
-)[ 
+)[
   *Toda variedad diferenciable admite una métrica Riemanniana*, que se peude construir componiendo las métricas Riemannianas locales a cada carta de su estructura diferenciable según la "partición de la unidad"#footnote[La definición formal de "partición de la unidad" la da - sin prueba de existencia - TODO at do carmo §0.5, p. 30. Intuitivamente, da una base funcional de #MM, en la que a cada entorno de la cobertura de #MM se le asigna una función $f_alpha$ de manera que $sum_alpha f_alpha (p) = 1 forall p in MM$. para  es una técnica que pondera con pesos que suman 1 las métricas locales a cada carta para obtener un resultado global coherente] ${bold(f)} = {f_alpha : alpha in cal(I)}$ subordinada a su cobertura.
 
   Es claro que podemos definir una métrica Riemanniana $dotp(dot, dot)^alpha$ en cada $V_alpha$: la métrica inducida por el sistema de coordenadas locales. Sea entonces el conjunto:
@@ -490,11 +495,33 @@ Esta relación, entre vectores de $T_p MM$ y geodésicas de $MM$ con origen en $
   $ B_epsilon (x) = {y in RR^d : dg(x, y) = norm(x - y) <= epsilon} $
   Si $exp_p$ es un difeomorfismo  en un vecindario (entorno) $V$ del origen en $T_p MM$, su imagen $U = exp_p (V)$ es un "vecindario normal" de $p$.
   Si $B_epsilon (0)$ es tal que $overline(B_epsilon (0)) subset V$, llamamos a $exp_p B_epsilon (0) = B_epsilon (p)$ la _bola normal_ – o "bola geodésica" - con centro $p$ y radio $epsilon$.
-  La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geodésicas que irradian desde $p$.
+]
+La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geodésicas que irradian desde $p$. UUna concepción intuitiva de qué es una bola normal, es "un entorno de $p$ en el que las geodésicas que pasan por $p$ son minimizadoras de distancias". El siguiente concepto es útil para entender "cuán lejos vale" la aproximación local a un espacio euclídeo en la variedad.
+
+#defn(
+  [radio de inyectividad #footnote[Basado en @munozEstimacionNoParametrica2011[Def. 3.3.16] Una definición a mi entender más esclarecedora se encuentra en TODO at do carmo, §13.2, _The cut locus_, que introducimos aquí informalmente. El _cut locus_ o _ligne de partage_ $C_m (p)$ - algo así como la línea de corte - de un punto $p$ es la unión de todos los puntos de corte: los puntos a lo largo de las geodésicas que irradian de $p$ donde éstas dejan de ser minizadoras de distancia. El ínfimo de la distancia entre $p$ y su línea de corte, es el radio de inyectividad de #MM en $p$, de modo podemos escribir $ "inj" MM = inf_(p in MM) d(p, C_m (p)) $
+      donde la distancia de un punto a una variedad es el ínfimo de la distancia a todos los puntos de la variedad.]],
+)[
+  Sea $(MM, g)$ una $d-$variedad Riemanniana. Llamamos "radio de inyectividad en $p$" a
+  $
+    "inj"_p MM = sup{s in RR > 0 : B_s (p) " es una bola normal"}
+  $
+  El ínfimo de los radios de inyectividad "puntuales", es el radio de inyectividad de la variedad #MM.
+  $
+    "inj"MM = inf_(p in MM) "inj"_p MM
+  $
 ]
 
-Agregamos una última definición para restringir la clase de variedades de Riemann que nos intesará:
+#obs[Si $MM = RR^d$ con la métrica canónica entonces$"inj" MM = oo$. Si $MM = RR^d - {p}$, con la métrica usual, entonces existe un punto arbitrariamente cerca de $p$ en el que la geodésica que irradia en dirección a $p$ se corta inmediatamente: entonces el radio de inyectividad es cero. Si $MM = S^1$ con radio unitario y la métrica inducida de $RR^2$, el radio de inyectividad es $pi$, puesto que si tomamos "el polo norte" $p_N$ como origen de un espacio tangente $T_p_N S^1$, todas (las dos) geodésicas que salen de él llegan al polo sur $p_S$ "al mismo tiempo" $pi$, y perdemos la inyectividad.
+]
 
+#figure(caption: flex-caption(
+  [Espacio tangente y mapa exponencial para $p_N in S^1$. Nótese que $"inj" S^1 = pi$. Prolongando una geodésica  $gamma(t)$ más allá de $t = pi$, ya no se obtiene un camino mínimo, pues hubiese sido más corto llegar por $-gamma(s), thick s = t mod pi$.],
+  [Espacio tangente y mapa exponencial para $p_N in S^1$],
+))[#image("img/mapa-exponencial-s1.svg")]
+
+
+Agregamos una última definición para restringir la clase de variedades de Riemann que nos intesará:
 #defn("variedad compacta")[
   Decimos que una variedad es _acotada_ cuando $sup_((p, q) in MM^2) dg(p, q) = overline(d) < oo$ - no posee elementos distanciados infinitamente entre sí. Una variedad que incluya todos sus "puntos límite" es una variedad _cerrada_. Una variedad cerrada y acotada se denomina _compacta_.
 ]
@@ -528,31 +555,60 @@ Aunque el caso particular de la $n-$esfera sí fue bien desarrollado a lo largo 
 
 === KDE en variedades de Riemann
 
-Un trabajo sumamente interesante a principios del siglo XXI es el de Bruno Pelletier, que se propone una adaptación directa del estimador de densidad por núcleos de @kde-mv en variedades de Riemann compactas sin frontera @pelletierKernelDensityEstimation2005. Antes de presentarlo, hemos de presentar algunas definiciones más:
+Un trabajo sumamente interesante a principios del siglo XXI es el de Bruno Pelletier, que se propone una adaptación directa del estimador de densidad por núcleos de @kde-mv en variedades de Riemann compactas sin frontera @pelletierKernelDensityEstimation2005. Lo presentamos directamente y ampliamos los detalles a continuaci´øn
 
-#defn("bola normal")[
-  B es una bola normal centrada en p si existe una bola V en Tp(M ) centrada en 0p tal que expp(V ) = B y expp|V : V → B es un difeomorfismo. Sabemos que f (p) > 0 para todo p ∈ M
-]
-#defn([radio de inyectividad de #MM])[
+
+#defn([KDE en variedades de Riemann @pelletierKernelDensityEstimation2005[Ecuación 1]])[
   Sean
+  - $(MM, g)$ una variedad de Riemann compacta y sin frontera de dimensión $d$, y $dg$ la distancia de Riemann,
+  - $K$ un _núcleo isotrópico_ en #MM soportado en la bola unitaria en $RR^d$
+  - dados $p, q in MM$, $theta_p (q)$ la _función de densidad de volumen en_ #MM
+  - Sea #XX una muestra de $N$ observaciones de una variable aleatoria $X$ con densidad $f$ soportada en #MM
+  Luego, el estimador de densidad por núcleos para $X$ es la #box[$hat(f) :MM ->RR$] que a cada $p in MM$ le asocia el valor
+  $
+    hat(f) (p) & = N^(-1) sum_(i=1)^N K_h (p,X_i) \
+               & = N^(-1) sum_(i=1)^N 1/h^d 1/(theta_X_i (p))K((dg(p, X_i))/h)
+  $
+]
+con la restricción de que la ventana $h <= h_0 <= "inj" MM$, el _radio de inyectividad_ de #MM #footnote[Esta restricción no es catastrófica. Para toda variedad compacta, el radio de inyectividad será estrictamente positivo @munozEstimacionNoParametrica2011[Prop. 3.3.18]. Como además $h$ es en realidad una sucesión ${h_n}_(n=1)^N$ decreciente como función del tamaño muestral, siempre existirá un cierto tamaño muestral a partir del cual $h_n < "inj" MM$.]
+
+#defn("núcleo isotrópico")[ Sea $K: RR_+ -> RR$ un mapa no-negativo tal que:
+  #table(
+    align: (left, right),
+    stroke: none,
+    columns: 2,
+    $integral_(RR^d) K(norm(x)) dif lambda(x) = 1$, [$K$ es función de densidad en $RR^d$],
+    $integral_(RR^d) x K(norm(x)) dif lambda(x) = 0$, [Si $Y~K, thick EE Y = 0$],
+    $integral_(RR^d) norm(x)^2 K(norm(x)) dif lambda(x) < oo$, [Si $Y~K, thick var Y = 0$],
+    $sop K = [0, 1]$, "",
+    $sup_x K(x) = K(0)$, [$K$ se maximiza en el origen],
+  )
+
+  Decimos entonces que el mapa $RR^d in.rev x -> K(norm(x)) in RR$ es un "núcleo isotrópico" en $RR^d$ soportado en la bola unitaria.
 ]
 
-- función de densidad de volumen
-- radio de inyectividad de $g$ en #MM
+#obs[Todo núcleo válido en @kde-mv también es un núcleo isotrópico. A nuestros fines, continuaremos utilizando el núcleo normal.]
+#defn(
+  [función de densidad de volumen TODO at besse 78 §6.2],
+)[
+  Sean $p, q in MM$; le llamaremos _función de densidad de volumen_ en #MM a $theta_p (q)$ definida como
+  $
+    theta_p (q) : q |-> theta_p (q) = mu_(exp_p^*g) / mu_g_p (exp_p^(-1)(q))
+  $
+  es decir, el cociente de la medida canónica de la métrica  Riemanniana $exp_p^*$ sobre $T_p MM$ (la métrica _pullback_ que resulta de transferir $g$ de $MM$ a $T_p MM$ a través del mapa exponencial $exp_p$), por la medida de Lebesgue de la estructura euclídea en $T_p MM$.
+] <vol-dens>
 
-Consideremos
-- Sea $(MM, g)$ una variedad de Riemann compacta y sin frontera de dimensión $d$, y usemos $dg$ para denotar la distancia de Riemann.
-- Sea $K$ un _núcleo isotrópico en #MM soportado en la bola unitaria_ (cf. conds. (i)-(v))
-- Sean $p, q in MM$, y $theta_p (q)$ la _función de densidad de volumen en_ #MM #footnote[¡Ardua definición! Algo así como el cociente entre las medida de volumen en #MM, y su transformación via el mapa local a $RR^d$]
-- Sea #XX
-Luego, el estimador de densidad para $X_i tilde.op^("iid")f$ es $f_(N,K):MM ->RR$ que a cada $p in MM$ le asocia el valor
-$
-  f_(N,K) (p) = N^(-1) sum_(i=1)^N K_h (p,X_i) = N^(-1) sum_(i=1)^N 1/h^d 1/(theta_X_i (p))K((dg(p, X_i))/h)
-$
+#obs[$theta_p (q)$ está bien definida "cerca" de $p$: por ejemplo, es idénticamente igual a $1$ en el entorno siempre y cuando #MM sea "plano" #footnote[Es decir que el tensor métrico es constante en toda la variedad $forall p in MM, thick g_p = g$]. Ciertamente está definida dentro del radio de inyectividad de $p$, $dg(p, q) < "inj"_p MM$, pero su definición global es compleja y escapa al tema de esta monografía #footnote[Besse y Pelletier consideran factible extenderla a todo #MM utilizando _campos de Jacobi_ TODO besse pelletier].
+]
 
-con la restricción de que la ventana $h <= h_0 <= op("inj")(MM)$, el _radio de inyectividad_ de #MM #footnote[el ínfimo entre el supremo del radio de una bola en cada $p$ tal que su mapa es un difeomorfismo]
+La definición de @vol-dens es harto técnica, así que avanzaremos una intuición sobre su significado. El mapa exponencial alrededor de $p, thick exp_p : T_p MM -> MM$ es un difeomorfismo en cierta bola normal alrededor de $p$, así que admite una inversa continua y biyectiva al menos en tal bola; lo llamaremos $exp_p^(-1) : MM -> T_p MM$. Así, $exp_p^(-1) (q) in T_p MM$ es la representación de $q$ en las coordenadas localmente euclídeas de $p$. De esta cantidad, estamos el cociente entre dos medidas:
+- el _pullback_ de $g$ - la métrica riemanniana en #MM de @metrica-riemanniana y
+- la medida de lebesgue en la estructura euclídea de $T_p MM$.
+En otras palabras, $theta_p (q)$ representa cuánto se infla / encoge - el espacio en la variedad #MM alrededor de $p$, relativo al volumen "euclídeo estándar". Esta función está bien definida  A continuación, algunos comentarios pedagógicos:
 
+#obs[En el entorno de $p$ en que el espacio es localmente análogo a $RR^d$, $theta_p (q) = 1$.]
 
+#obs[]
 === Interludio: densidad de volumen en la esfera [Henry y Rodríguez, 2009]
 
 #columns(2)[
