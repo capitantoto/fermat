@@ -90,6 +90,7 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / $EE(x)$: esperanza,
 / $iid$: independiente e idénticamente distribuido (suele aplicar a una muestra #XX
 / $emptyset$: el conjunto vacío
+/ $overline(S)$: la _clausura_ de S; la unión de S y sus puntos límites.
 = Preliminares
 
 == El problema de clasificación
@@ -413,7 +414,7 @@ En una variedad topológica, cobra sentido cierto concepto de cercanía - pero n
 
 Un _homeomorfismo_ #footnote[del griego _homo-_: igual, _-morfo_: forma; de igual forma] es una función #sym.phi entre dos espacios topológicos si es biyectiva y tanto ella como su inversa son continuas. El par ordenado $(U, #sym.phi)$ es una _carta #footnote[_chart_ en inglés] alrededor de $p$_.
 
-A un conjunto numerable de tales cartas que cubran completamente la variedad se lo denomina "atlas". Simbólicamente, #box[$cal(A) = {(U_alpha, #sym.phi _alpha) : alpha in cal(I)}$] es un atlas sí y sólo si $MM = union_alpha U_alpha$.
+A un conjunto numerable de tales cartas que cubran completamente la variedad se lo denomina "atlas". Simbólicamente, #box[$cal(A) = {(U_alpha, #sym.phi _alpha) : alpha in cal(I)}$] es un atlas sí y sólo si $MM = union_alpha U_alpha$. Al conjunto de entornos ${bu(U)_alpha} = {U_alpha : (U_alpha, #sym.phi _alpha) in cal(A)}$ que componen un atlas se lo denomina "cobertura" de #MM.
 
 Cuando un homeomorfismo - y su inversa - es $r-$veces diferenciable, se le llama _$C^r$-difeomorfismo_, o simplemente difeomorfismo #footnote[Luego, un homeomorfismo es un $C^0-$difeomorfismo]. En particular, un $C^oo-$difeomorfismo es un difeomorfismo _suave_.
 
@@ -446,7 +447,15 @@ Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métric
 
 #obs(
   [según TODO at do carmo Prop. 2.10],
-)[ Toda variedad diferenciable tiene una métrica Riemanniana, que se peude construir componiendo las métricas Riemannianas locales a cada carta de su estructura diferenciable según una "partición de la unidad" cuya definición formal supera el alcance de esta monografía, pero intuitivamente, es una técnica que pondera con pesos que suman 1 las métricas locales a cada carta para obtener un resultado global coherente.]
+)[ 
+  *Toda variedad diferenciable admite una métrica Riemanniana*, que se peude construir componiendo las métricas Riemannianas locales a cada carta de su estructura diferenciable según la "partición de la unidad"#footnote[La definición formal de "partición de la unidad" la da - sin prueba de existencia - TODO at do carmo §0.5, p. 30. Intuitivamente, da una base funcional de #MM, en la que a cada entorno de la cobertura de #MM se le asigna una función $f_alpha$ de manera que $sum_alpha f_alpha (p) = 1 forall p in MM$. para  es una técnica que pondera con pesos que suman 1 las métricas locales a cada carta para obtener un resultado global coherente] ${bold(f)} = {f_alpha : alpha in cal(I)}$ subordinada a su cobertura.
+
+  Es claro que podemos definir una métrica Riemanniana $dotp(dot, dot)^alpha$ en cada $V_alpha$: la métrica inducida por el sistema de coordenadas locales. Sea entonces el conjunto:
+  $
+    dotp(u, v)_p = sum_alpha f_alpha (p) dotp(u, v)_p^alpha quad forall p in MM, thick u,v in T_p MM
+  $
+  es posible verificar que esta construcción define una métrica Riemanniana en todo #MM.
+]
 
 #obs[ Cuando $MM=RR^d$, el espacio es constante e idéntico a la variedad: $forall p in RR^d, thick T_p RR^d = RR^d$. La base canónica de $T_p RR^d = RR^d$ formada por las columnas de $bu(I)_d$ es una matriz positiva definida que da lugar al pructo interno "clásico" $angle.l u,v angle.r = u^T bu(I)_d v = sum_(i=1)^d u_i v_i$ es una métrica Riemanniana que induce la norma euclídea $norm(v) = sqrt(v^T v)$ y la distancia $d(x, y) = norm(x-y)$.]
 
@@ -478,16 +487,16 @@ Esta relación, entre vectores de $T_p MM$ y geodésicas de $MM$ con origen en $
 
 #defn("bola normal")[
   Sea $B_epsilon (x) subset RR^d$ la bola cerrada de radio $epsilon$ centrada en $x$:
-  $ B_(r) = {x in RR^d : dg(x, q) = norm(x - q) <= r} $
+  $ B_epsilon (x) = {y in RR^d : dg(x, y) = norm(x - y) <= epsilon} $
   Si $exp_p$ es un difeomorfismo  en un vecindario (entorno) $V$ del origen en $T_p MM$, su imagen $U = exp_p (V)$ es un "vecindario normal" de $p$.
-  Si $B_epsilon(0)$ es tal que $B_epsilon(0) subset V$, llamamos a $exp_p B_epsilon (0) = B_epsilon (p)$ la _bola normal_ – o "bola geodésica" - con centro $p$ y radio $epsilon$.
+  Si $B_epsilon (0)$ es tal que $overline(B_epsilon (0)) subset V$, llamamos a $exp_p B_epsilon (0) = B_epsilon (p)$ la _bola normal_ – o "bola geodésica" - con centro $p$ y radio $epsilon$.
   La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geodésicas que irradian desde $p$.
 ]
 
-
+Agregamos una última definición para restringir la clase de variedades de Riemann que nos intesará:
 
 #defn("variedad compacta")[
-  Decimos que una variedad es _acotada_ cuando $sup_((p, q) in MM^2) dg(p, q) = overline(d) < oo$ - no posee elemntos a distanciados infinitamente entre sí. Una variedad que incluya todos sus "puntos límite" es una variedad _cerrada_. Una variedad cerrada y compacta se denomina _compacta_.
+  Decimos que una variedad es _acotada_ cuando $sup_((p, q) in MM^2) dg(p, q) = overline(d) < oo$ - no posee elementos distanciados infinitamente entre sí. Una variedad que incluya todos sus "puntos límite" es una variedad _cerrada_. Una variedad cerrada y acotada se denomina _compacta_.
 ]
 
 #obs[
