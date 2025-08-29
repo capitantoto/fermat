@@ -3,7 +3,6 @@
 // ################
 // # definiciones #
 // ################
-#let phi = math.phi.alt
 #let ind = $op(bb(1))$
 #let iid = "i.i.d."
 #let sop = $op("sop")$
@@ -17,7 +16,7 @@
 #let dotp(x, y) = $lr(angle.l #x, #y angle.r)$
 #let dg = $op(d_g)$
 #let var = $op("Var")$
-
+#let SS = $bu(Sigma)$
 // Copetes flexibles para outline y texto, adaptado para 0.12 de
 // https://github.com/typst/typst/issues/1295#issuecomment-1853762154
 #let in-outline = state("in-outline", false)
@@ -134,9 +133,10 @@ $
   hat(G)(x) & = arg min_(g in GG) sum_(k in [K]) ind(cal(G)_k != g) Pr(GG_k|X=x) \
             & = arg min_(g in GG) [1-Pr(g|X=x)] \
             & = arg max_(g in GG) Pr(g | X = x)
-$
+ $<clf-bayes>
 
-Esta razonable solución se conoce como el _clasificador de Bayes_, y sugiere que clasifiquemos a cada observación según la clase modal condicional a su distribución conjunta $Pr(G|X)$. Su error esperado de predicción $"EPE"$ se conoce como la _tasa de Bayes_. Un aproximador directo de este resultado es el clasificador de k vecinos más cercano #footnote[_k-nearest-neighbors classifier_]
+Esta razonable solución se conoce como el _clasificador de Bayes_ , y sugiere que clasifiquemos a cada observación según la clase modal condicional a su distribución conjunta $Pr(G|X)$. 
+Su error esperado de predicción $"EPE"$ se conoce como la _tasa de Bayes_. Un aproximador directo de este resultado es el clasificador de k vecinos más cercano #footnote[_k-nearest-neighbors classifier_]
 
 #defn("clasificador de k-vecinos-más-cercanos")[
   Sean $x^((1)), dots, x^((k)))$ los $k$ vecinos más cercanos a $x$, y $GG^((1)), dots, GG^((k))$ sus respetivas clases. El clasificador de k-vecinos-más-cercanos le asignará a $x$ la clase más frecuente entre $GG^((1)), dots, GG^((k))$. Más formalmente:
@@ -199,7 +199,7 @@ Esta estimación es irregular, con saltos discretos en el numerador, por lo que 
   + alcanza su máximo en el centro: $max_u K(u) = K(0)$
 ] <kernel>
 
-#obs[Todas las funciones de densidad simétricas centradas en 0 son núcleos; en particular, la densidad "normal estándar" $phi(x) = 1/sqrt(2 pi) exp(-x^2 / 2)$ lo es.]
+#obs[Todas las funciones de densidad simétricas centradas en 0 son núcleos; en particular, la densidad "normal estándar" $phi.alt(x) = 1/sqrt(2 pi) exp(-x^2 / 2)$ lo es.]
 
 #obs[Si $K(u)$ es un núcleo, entonces $K_h (u) = 1/h op(K)(u / h)$ también lo es.]
 
@@ -407,7 +407,7 @@ En términos coloquiales, un espacio de Hausdorff es aquél donde todos sus punt
 #defn(
   [variedad topológica @munozEstimacionNoParametrica2011[Def. 3.1.1], @leeIntroductionRiemannianManifolds2018[Apéndice A]],
 )[
-  Una variedad topológica de dimensión $d in NN$ es un espacio topológico $(MM, T)$ de Hausdorff, de base numerable, que es #strong[localmente homeomorfo a $RR^d$]. Es decir, para cada $p in MM$ existe un abierto $U in T$ y un abierto $A subset.eq RR^d$, tal que $p in U$ ($U$ es un entorno de $p$) y existe un homemorfismo $#sym.phi : U -> A$.
+  Una variedad topológica de dimensión $d in NN$ es un espacio topológico $(MM, T)$ de Hausdorff, de base numerable, que es #strong[localmente homeomorfo a $RR^d$]. Es decir, para cada $p in MM$ existe un abierto $U in T$ y un abierto $A subset.eq RR^d$, tal que $p in U$ ($U$ es un entorno de $p$) y existe un homemorfismo $phi : U -> A$.
 ]
 
 #obs(
@@ -417,19 +417,19 @@ En términos coloquiales, un espacio de Hausdorff es aquél donde todos sus punt
 
 En una variedad topológica, cobra sentido cierto concepto de cercanía - pero no necesariamente de _distancia_, y es posible definir funciones continuas y límites.
 
-Un _homeomorfismo_ #footnote[del griego _homo-_: igual, _-morfo_: forma; de igual forma] es una función #sym.phi entre dos espacios topológicos si es biyectiva y tanto ella como su inversa son continuas. El par ordenado $(U, #sym.phi)$ es una _carta #footnote[_chart_ en inglés] alrededor de $p$_.
+Un _homeomorfismo_ #footnote[del griego _homo-_: igual, _-morfo_: forma; de igual forma] es una función phi entre dos espacios topológicos si es biyectiva y tanto ella como su inversa son continuas. El par ordenado $(U, phi)$ es una _carta #footnote[_chart_ en inglés] alrededor de $p$_.
 
-A un conjunto numerable de tales cartas que cubran completamente la variedad se lo denomina "atlas". Simbólicamente, #box[$cal(A) = {(U_alpha, #sym.phi _alpha) : alpha in cal(I)}$] es un atlas sí y sólo si $MM = union_alpha U_alpha$. Al conjunto de entornos ${bu(U)_alpha} = {U_alpha : (U_alpha, #sym.phi _alpha) in cal(A)}$ que componen un atlas se lo denomina "cobertura" de #MM.
+A un conjunto numerable de tales cartas que cubran completamente la variedad se lo denomina "atlas". Simbólicamente, #box[$cal(A) = {(U_alpha, phi_alpha) : alpha in cal(I)}$] es un atlas sí y sólo si $MM = union_alpha U_alpha$. Al conjunto de entornos ${bu(U)_alpha} = {U_alpha : (U_alpha, phi_alpha) in cal(A)}$ que componen un atlas se lo denomina "cobertura" de #MM.
 
 Cuando un homeomorfismo - y su inversa - es $r-$veces diferenciable, se le llama _$C^r$-difeomorfismo_, o simplemente difeomorfismo #footnote[Luego, un homeomorfismo es un $C^0-$difeomorfismo]. En particular, un $C^oo-$difeomorfismo es un difeomorfismo _suave_.
 
 #defn("")
-Sean $(MM, T)$ una variedad topolóogica de dimensión $d$ y sean $(U, #sym.phi), (V, psi)$ dos cartas. Diremos que son _suavemente compatibles_ #footnote[_smoothly compatible_ según @leeIntroductionRiemannianManifolds2018[ § "Smooth Manifolds and Smooth Maps"]. @munozEstimacionNoParametrica2011 lo denomina _compatible_ a secas.] si $U inter V = emptyset$ o bien si la función cambio de coordenadas restringida a $U inter V$ es un difeormorfismo.
+Sean $(MM, T)$ una variedad topolóogica de dimensión $d$ y sean $(U, phi), (V, psi)$ dos cartas. Diremos que son _suavemente compatibles_ #footnote[_smoothly compatible_ según @leeIntroductionRiemannianManifolds2018[ § "Smooth Manifolds and Smooth Maps"]. @munozEstimacionNoParametrica2011 lo denomina _compatible_ a secas.] si $U inter V = emptyset$ o bien si la función cambio de coordenadas restringida a $U inter V$ es un difeormorfismo.
 
 La compatibilidad requiere que la transición entre mapas no sea sólo continua, sino también _suave_. El motivo de esta condición es asegurar que el concepto de _suavidad_ esté bien definido en toda la variedad $MM$, independientemente de qué carta se use: si una función es diferenciable vista a través de una carta, también lo será al analizarla desde cualquier carta compatible.
 
 #defn([estructura diferenciable @munozEstimacionNoParametrica2011[Def. 3.1.3]])[
-  Un atlas $cal(A) = {(U_alpha, #sym.phi _alpha) : alpha in cal(I)}$ es diferenciable si sus cartas son compatibles entre sí. Si un atlas diferenciable $cal(D)$ es _maximal_ lo llamaremos una _estructura diferenciable de la variedad $MM$ _. Con maximal queremos decir lo siguiente: Si $(U, #sym.phi)$ es una carta de $MM$ que es compatible con todas las cartas de $cal(D)$, entonces $(U, #sym.phi) in cal(D)$ #footnote[i.e., no existe otro atlas diferenciable que contenga propiamente a $cal(D)$, lo cual desambigua la referencia.]
+  Un atlas $cal(A) = {(U_alpha, phi_alpha) : alpha in cal(I)}$ es diferenciable si sus cartas son compatibles entre sí. Si un atlas diferenciable $cal(D)$ es _maximal_ lo llamaremos una _estructura diferenciable de la variedad $MM$ _. Con maximal queremos decir lo siguiente: Si $(U, phi)$ es una carta de $MM$ que es compatible con todas las cartas de $cal(D)$, entonces $(U, phi) in cal(D)$ #footnote[i.e., no existe otro atlas diferenciable que contenga propiamente a $cal(D)$, lo cual desambigua la referencia.]
 ]
 #defn([variedad diferenciable @munozEstimacionNoParametrica2011[Def. 3.1.4]])[
   Una variedad diferenciable de dimensión $d$ es una terna $(MM, tau, cal(D))$ donde $(MM, tau)$ es una variedad topológica de dimensión $d$ y $cal(D)$ una estructura diferenciable.
@@ -499,24 +499,24 @@ Esta relación, entre vectores de $T_p MM$ y geodésicas de $MM$ con origen en $
 La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geodésicas que irradian desde $p$. UUna concepción intuitiva de qué es una bola normal, es "un entorno de $p$ en el que las geodésicas que pasan por $p$ son minimizadoras de distancias". El siguiente concepto es útil para entender "cuán lejos vale" la aproximación local a un espacio euclídeo en la variedad.
 
 #defn(
-  [radio de inyectividad #footnote[Basado en @munozEstimacionNoParametrica2011[Def. 3.3.16] Una definición a mi entender más esclarecedora se encuentra en TODO at do carmo, §13.2, _The cut locus_, que introducimos aquí informalmente. El _cut locus_ o _ligne de partage_ $C_m (p)$ - algo así como la línea de corte - de un punto $p$ es la unión de todos los puntos de corte: los puntos a lo largo de las geodésicas que irradian de $p$ donde éstas dejan de ser minizadoras de distancia. El ínfimo de la distancia entre $p$ y su línea de corte, es el radio de inyectividad de #MM en $p$, de modo podemos escribir $ "inj" MM = inf_(p in MM) d(p, C_m (p)) $
+  [radio de inyectividad #footnote[Basado en @munozEstimacionNoParametrica2011[Def. 3.3.16] Una definición a mi entender más esclarecedora se encuentra en TODO at do carmo, §13.2, _The cut locus_, que introducimos aquí informalmente. El _cut locus_ o _ligne de partage_ $C_m (p)$ - algo así como la línea de corte - de un punto $p$ es la unión de todos los puntos de corte: los puntos a lo largo de las geodésicas que irradian de $p$ donde éstas dejan de ser minizadoras de distancia. El ínfimo de la distancia entre $p$ y su línea de corte, es el radio de inyectividad de #MM en $p$, de modo podemos escribir $ "iny" MM = inf_(p in MM) d(p, C_m (p)) $
       donde la distancia de un punto a una variedad es el ínfimo de la distancia a todos los puntos de la variedad.]],
 )[
   Sea $(MM, g)$ una $d-$variedad Riemanniana. Llamamos "radio de inyectividad en $p$" a
   $
-    "inj"_p MM = sup{s in RR > 0 : B_s (p) " es una bola normal"}
+    "iny"_p MM = sup{s in RR > 0 : B_s (p) " es una bola normal"}
   $
   El ínfimo de los radios de inyectividad "puntuales", es el radio de inyectividad de la variedad #MM.
   $
-    "inj"MM = inf_(p in MM) "inj"_p MM
+    "iny"MM = inf_(p in MM) "iny"_p MM
   $
 ]
 
-#obs[Si $MM = RR^d$ con la métrica canónica entonces$"inj" MM = oo$. Si $MM = RR^d - {p}$, con la métrica usual, entonces existe un punto arbitrariamente cerca de $p$ en el que la geodésica que irradia en dirección a $p$ se corta inmediatamente: entonces el radio de inyectividad es cero. Si $MM = S^1$ con radio unitario y la métrica inducida de $RR^2$, el radio de inyectividad es $pi$, puesto que si tomamos "el polo norte" $p_N$ como origen de un espacio tangente $T_p_N S^1$, todas (las dos) geodésicas que salen de él llegan al polo sur $p_S$ "al mismo tiempo" $pi$, y perdemos la inyectividad.
+#obs[Si $MM = RR^d$ con la métrica canónica entonces$"iny" MM = oo$. Si $MM = RR^d - {p}$, con la métrica usual, entonces existe un punto arbitrariamente cerca de $p$ en el que la geodésica que irradia en dirección a $p$ se corta inmediatamente: entonces el radio de inyectividad es cero. Si $MM = S^1$ con radio unitario y la métrica inducida de $RR^2$, el radio de inyectividad es $pi$, puesto que si tomamos "el polo norte" $p_N$ como origen de un espacio tangente $T_p_N S^1$, todas (las dos) geodésicas que salen de él llegan al polo sur $p_S$ "al mismo tiempo" $pi$, y perdemos la inyectividad.
 ]
 
 #figure(caption: flex-caption(
-  [Espacio tangente y mapa exponencial para $p_N in S^1$. Nótese que $"inj" S^1 = pi$. Prolongando una geodésica  $gamma(t)$ más allá de $t = pi$, ya no se obtiene un camino mínimo, pues hubiese sido más corto llegar por $-gamma(s), thick s = t mod pi$.],
+  [Espacio tangente y mapa exponencial para $p_N in S^1$. Nótese que $"iny" S^1 = pi$. Prolongando una geodésica  $gamma(t)$ más allá de $t = pi$, ya no se obtiene un camino mínimo, pues hubiese sido más corto llegar por $-gamma(s), thick s = t mod pi$.],
   [Espacio tangente y mapa exponencial para $p_N in S^1$],
 ))[#image("img/mapa-exponencial-s1.svg")]
 
@@ -569,8 +569,8 @@ Un trabajo sumamente interesante a principios del siglo XXI es el de Bruno Pelle
     hat(f) (p) & = N^(-1) sum_(i=1)^N K_h (p,X_i) \
                & = N^(-1) sum_(i=1)^N 1/h^d 1/(theta_X_i (p))K((dg(p, X_i))/h)
   $
-]
-con la restricción de que la ventana $h <= h_0 <= "inj" MM$, el _radio de inyectividad_ de #MM #footnote[Esta restricción no es catastrófica. Para toda variedad compacta, el radio de inyectividad será estrictamente positivo @munozEstimacionNoParametrica2011[Prop. 3.3.18]. Como además $h$ es en realidad una sucesión ${h_n}_(n=1)^N$ decreciente como función del tamaño muestral, siempre existirá un cierto tamaño muestral a partir del cual $h_n < "inj" MM$.]
+] <kde-variedad>
+con la restricción de que la ventana $h <= h_0 <= "iny" MM$, el _radio de inyectividad_ de #MM #footnote[Esta restricción no es catastrófica. Para toda variedad compacta, el radio de inyectividad será estrictamente positivo @munozEstimacionNoParametrica2011[Prop. 3.3.18]. Como además $h$ es en realidad una sucesión ${h_n}_(n=1)^N$ decreciente como función del tamaño muestral, siempre existirá un cierto tamaño muestral a partir del cual $h_n < "iny" MM$.]
 
 #defn("núcleo isotrópico")[ Sea $K: RR_+ -> RR$ un mapa no-negativo tal que:
   #table(
@@ -598,30 +598,92 @@ con la restricción de que la ventana $h <= h_0 <= "inj" MM$, el _radio de inyec
   es decir, el cociente de la medida canónica de la métrica  Riemanniana $exp_p^*$ sobre $T_p MM$ (la métrica _pullback_ que resulta de transferir $g$ de $MM$ a $T_p MM$ a través del mapa exponencial $exp_p$), por la medida de Lebesgue de la estructura euclídea en $T_p MM$.
 ] <vol-dens>
 
-#obs[$theta_p (q)$ está bien definida "cerca" de $p$: por ejemplo, es idénticamente igual a $1$ en el entorno siempre y cuando #MM sea "plano" #footnote[Es decir que el tensor métrico es constante en toda la variedad $forall p in MM, thick g_p = g$]. Ciertamente está definida dentro del radio de inyectividad de $p$, $dg(p, q) < "inj"_p MM$, pero su definición global es compleja y escapa al tema de esta monografía #footnote[Besse y Pelletier consideran factible extenderla a todo #MM utilizando _campos de Jacobi_ TODO besse pelletier].
+#obs[
+
+  $theta_p (q)$ está bien definida "cerca" de $p$: por ejemplo, es idénticamente igual a $1$ en el entorno $U$ localmente "plano" de $p$ donde las geodésicas $gamma subset MM$ coinciden con sus representaciones en $T_p MM$,coinciden con su representación. Ciertamente está definida para todo $q$ dentro del radio de inyectividad de $p$, $dg(p, q) < "iny"_p MM$ #footnote[ su definición global es compleja y escapa al tema de esta monografía #footnote[Besse y Pelletier consideran factible extenderla a todo #MM utilizando _campos de Jacobi_ TODO besse pelletier].]. Con $N$ "suficientemente grande", siempre podremos elegir $h_N < "iny"_p MM$  que mapee "suficientes" observaciones al soporte de K, $[0, 1]$  en las que el cálculo de $theta_p (q)$ sea factible, y las más lejanas queden por fuera, de modo que su cálculo _no sea necesario_.
 ]
 
-La definición de @vol-dens es harto técnica, así que avanzaremos una intuición sobre su significado. El mapa exponencial alrededor de $p, thick exp_p : T_p MM -> MM$ es un difeomorfismo en cierta bola normal alrededor de $p$, así que admite una inversa continua y biyectiva al menos en tal bola; lo llamaremos $exp_p^(-1) : MM -> T_p MM$. Así, $exp_p^(-1) (q) in T_p MM$ es la representación de $q$ en las coordenadas localmente euclídeas de $p$. De esta cantidad, estamos el cociente entre dos medidas:
-- el _pullback_ de $g$ - la métrica riemanniana en #MM de @metrica-riemanniana y
+
+El mapa exponencial alrededor de $p, thick exp_p : T_p MM -> MM$ es un difeomorfismo en cierta bola normal alrededor de $p$, así que admite una inversa continua y biyectiva al menos en tal bola; lo llamaremos $exp_p^(-1) : MM -> T_p MM$. Así, $exp_p^(-1) (q) in T_p MM$ es la representación de $q$ en las coordenadas localmente euclídeas del espacio tangente a $p$ (o sencillamente "locales a $p$"). De esta cantidad $x = exp_p^(-1) (q)$, queremos conocer el cociente entre dos medidas:
+- la métrica _pullback_ de $g$:  la métrica inducida en $T_p MM$ por la métrica riemanniana $g$ en #MM
 - la medida de lebesgue en la estructura euclídea de $T_p MM$.
-En otras palabras, $theta_p (q)$ representa cuánto se infla / encoge - el espacio en la variedad #MM alrededor de $p$, relativo al volumen "euclídeo estándar". Esta función está bien definida  A continuación, algunos comentarios pedagógicos:
+
+En otras palabras, $theta_p (q)$ representa cuánto se infla / encoge - el espacio en la variedad #MM alrededor de $p$, relativo al volumen "natural" del espacio tangente.
+
+=== La densidad de volumen $theta_p (p)$ en variedades "planas"
 
 #obs[En el entorno de $p$ en que el espacio es localmente análogo a $RR^d$, $theta_p (q) = 1$.]
+En los espacios "planos" la métrica $g$ es constante a través de toda la variedad $g_p$. El espacio euclídeo $RR^d$ acompañado de la métrica habitual dotado de la métrica habitual tiene por distancia $d_I (x, y) = sqrt(norm(x-y)) = sqrt((x-y)^T bu(I)_d (x-y))$. El espacio euclídeo con distancia $d_SS$ de Mahalanobis también es plano, sólo que con distancia $op(d_SS)(x, y) = sqrt((x -y)^T SS^(-1) (x-y)) = sqrt(norm(SS^(-1/2)(x-y)))$. $d_SS$ no es "isotrópica": en algunas direcciones cambia más rápido: tiene mayor _velocidad_.
 
-#obs[]
-=== Interludio: densidad de volumen en la esfera [Henry y Rodríguez, 2009]
+El _tensor métrico_ $g$ es constante y de dimensión finita en ambos casos, así que esta "forma bilinear simétrica positiva definida" se puede representar con única matriz definida positiva $g=g_(i j), g in RR^(d times d)$ que se conoce como _tensor métrico_. A la distancia "habitual" en $RR^d$ le corresponde $g=bu(I)_d$, a la distancia de mahalanobis $g=SS$.
 
-#columns(2)[
-  En _"Kernel Density Estimation on Riemannian Manifolds: Asymptotic Results" (2009)_, Guillermo Henry y Daniela Rodriguez estudian algunas propiedades asintótica de este estimador, y las ejemplifican con datos de sitios volcánicos en la superficie terrestre.
-  En particular, calculan la densidad de volumen $theta_p(q)$
-  #image("img/densidad-volumen-esfera.png")
-  #colbreak()
-  #image("img/henry-rodriguez-bolas.png")
-]
+Al tener radio de inyectividad infinito, basta con una única carta para cubrir el espacio euclídeo, de manera que su atlas maximal será de la forma $A = {(RR^d, phi)$. De todos los homeomorfismos $phi$ posibles, resulta tal vez el más "conveniente" $exp_p^(-1) : MM -> T_p MM$ el difeomorfismo inverso al mapa exponencial.
+
+Nótese que la distancia cuadrada $op(d_SS)^2(p, q) = norm(SS^(-1/2)(q - p))$ no es más que la norma de $q - p$ luego de una transformación lineal $SS^(-1/2)$, que "manda" los puntos $ MM in.rev (p, q) |-> (x, y) = exp_p (p, q) = (0, exp q) in T_p MM $ de la variedad $MM = RR^d$ a los puntos $(0, exp_x y)$ del espacio tangente a #MM en $p, thick T_p MM = RR^d$. Usamos $(p, q)$ para referirnos a los puntos en #MM y $(x, y)$ para $T_p MM$.
+
+$SS^(-1/2)$ no es otra cosa más que el mapa exponencial inverso, $forall p in MM, thick exp_p^(-1) q = SS^(-1/2) (q - p)$ y su "directo" es, entonces:
+$ exp_x y : T_p MM -> MM = SS^(1/2) (y - x) $
+
+Habiendo obtenido $SS^(1/2) (q - p) = exp_p^(-1) (q)$, reemplazamos en la definición de densidad de volumen y obtenemos
+$
+  theta_p (q) = mu_(exp_p^*g) / mu_g_p (SS^(-1/2)(q - p))
+$
+Consideremos $s = q - p$. El elemento de volumen según la estructura euclídea no es otro más que $mu_g_p (SS^(-1/2) s) = abs(det SS^(-1/2)) norm(s)$. La medida del _pullback_ de $g$ hacia el espacio tangente, resulta de
++ transportar $s$ de $T_p MM$ con el mapa exponencial a $MM, thick$ y
++ tomar la medida $mu_g_p$ de $exp s$
+$
+  mu_(exp_p^*g)(SS^(-1/2)s) & = mu_g_p (exp_p (SS^(-1/2)s)) = mu_g_p (bu(I) s) = norm(s)
+$
+de manera que para $p, q in MM, s = SS^(-1/2)(q - p)$,
+$
+  theta_p (q) = (mu_(exp_p^* g) (s)) / (mu_g_p (s)) = norm(s)/(abs(det SS^(-1/2)) norm(s) ) = abs(det SS)^(1/2)
+$
+para todo $p, q in MM$
+Recordemos de la definición de @kde-mv que el estimador de densidad por núcleos multivariado con matrix de suavización #HH es
+$ hat(f) (t; HH) & = N^(-1) sum_(i=1)^N abs(det HH)^(-1/2) K(HH^(-1/2) (t - x_i)) $
+consideremos $HH = h^2 SS, thick h in RR, SS in RR^(d times d)$:
+$
+  hat(f) (t; HH) & = N^(-1) sum_(i=1)^N h^(-d) abs(det SS)^(-1/2) K ((SS^(-1/2) (t - x_i))/h)
+$
+donde $abs(det SS)^(1/2) = theta_p (q)$ del espacio euclídeo con métrica de Mahalanobis #SS y usábamos el núcleo normal $Phi(x) : RR^d -> RR = (2 pi)^(-d/2) exp(- (||x||^2)/2)$ que depende de $x$ sólo a través de su norma euclídea. Tomando la norma del argumento de $K(dot)$ vemos que
+$ norm((SS^(-1/2) (t - x_i)) / h) = 1 / abs(h) norm(SS^(-1/2) (t - x_i)) = (d_SS (t, x_i)) / h $.
+De manera que $K$ sólo depende de $t$ a través de $d_SS (t, x_i) slash h$. Tomemos $ tilde(K)((d_SS (t, x_i)) / h) = K (h^(-1) SS^(-1/2) (t - x_i)) $
+y recordemos que además $theta_p (q) = abs(det SS)^(1/2)$ cuando $g = SS$. Luego,
+$
+  hat(f) (t; HH) & = N^(-1) sum_(i=1)^N 1/h^d 1 / (theta_X_i (t)) tilde(K)((dg(t, x_i)) / h)
+$
+y resulta que @kde-mv es una caso especial de @kde-variedad.
+
+=== Densidad de volumen en la esfera
+
+Una variedad plana tiene _curvatura_ #footnote[la _curvatura_ de un espacio es una de las propiedades fundamentales que estudia la geometría riemanniana; en este contexto, basta con la comprensión intuitiva de que una v variedad no-plana tiene _cierta_ curvatura] nula en todo punto. De entre las variedades curvas, las $d-$ esferas son de las más sencillas, y tienen curvatura _positiva y constante_.
+
+Esta estructura vuelven _razonable_ el cómputo de $theta_p (q)$ en $S^d$.
+
+En _Kernel Density Estimation on Riemannian Manifolds: Asymptotic Results_ @henryKernelDensityEstimation2009, Guillermo Henry y Daniela Rodriguez estudian algunas propiedades asintótica de este estimador, y las ejemplifican con datos de sitios volcánicos en la superficie terrestre. Para ello, calculan $theta_p (q)$ y llegan a que
+$
+  theta_p (q) = cases(
+    R abs(sin(dg(p, q) slash R)) / dg(p, q) &"si" q != p\, -p #footnote[Recordemos que la antípoda de $p, -p$ cae justo fuera de $"iny"_p S^d$],
+    1 &"si" q = p
+  )
+  
+$
+
+#figure(caption: flex-caption([KDE en $S^2$ para $X =$ sth sth los flujos de lava de Fisher TODO mejorar imagen], "asdf"))[#image("img/henry-rodriguez-bolas.png", width: 85%)]
+
 == Clasificación en variedades
-@vincentManifoldParzenWindows2002
-=== Clasificación en variedades [Loubes y Pelletier 2008]
-@loubesKernelbasedClassifierRiemannian2008
+
+Un desarrollo directo del estimador de @kde-variedad consta en  _A kernel based classifier on a Riemannian manifold_ @loubesKernelbasedClassifierRiemannian2008, 
+donde construyen un clasificador para un objetivo de dos clases $GG in {0, 1}$ con inputs $X$ soportadas sobre una variedad de Riemann. A tal fin, minimizan la pérdida $0-1$ y siguen la regla de Bayes, de manera que su clasificador _duro_ resulta:
+
+$
+  hat(G)(X) = cases(1 "si" hat(Pr)(G=1|X) > hat(Pr)(G=0|X), 0 "si no")
+$
+que está de acuerdo con el clasificador de Bayes blando para $K$ clases propuesto en @clf-bayes
+#defn([clasificador por KDE en variedades de Riemann @loubesKernelbasedClassifierRiemannian2008[Ecuación 1.1]])[
+
+]
+
 @hallBandwidthChoiceNonparametric2005 h optimo para clasificacion con KDE
 @devroyeProbabilisticTheoryPattern1996[§6 Consistencia]
 
@@ -637,6 +699,7 @@ $
 #align(center)[Pero... ¿y si la variedad es desconocida?]
 
 == Aprendizaje de distancias
+@vincentManifoldParzenWindows2002
 #figure(
   caption: flex-caption[La variedad $cal(U)$ con $dim(cal(U)) = 1$ embebida en $RR^2$. Nótese que en el espacio ambiente, el punto rojo está más cerca del verde, mientras que a través de $cal(U)$, el punto amarillo está más próximo que el rojo][Variedad $cal(U)$],
 )[#image("img/variedad-u.svg", width: 70%)]
@@ -794,9 +857,9 @@ y calculamos $D_(Q_i, alpha) (x_0, dot)$
 - ¿Qué parametrización elegir cuando "en test da *casi* todo igual"?
 
 
-#align(center)[*Regla de $1sigma$*: De las que estén a $1sigma$ de la mejor, la más sencilla.]
+#align(center)[*Regla de $1SS$*: De las que estén a $1SS$ de la mejor, la más sencilla.]
 
-¿Sabemos cuánto vale $sigma$?
+¿Sabemos cuánto vale $SS$?
 
 === $R^2$ de McFadden
 Sea $cal(C)_0$ el clasificador "base", que asigna a cada observación y posible clase, la frecuencia empírica de clase encontrada en la muestra #XX. Para todo clasificador suave $cal(C)$, definimos el $R^2$ de McFadden como
@@ -933,7 +996,7 @@ Resultará obvio al lector que los conjuntos de datos expuestos en @fig-2 no son
 
 #defn(
   "ruido blanco",
-)[Sea $X = (X_1, dots, X_d) in RR^d$ una variable aleatoria tal que $"E"(X_i)=0, "Var"(X_i)=sigma thick forall i in [d]$. Llamaremos "ruido blanco con escala $sigma$" a toda realización de $X$.] <ruido-blanco>
+)[Sea $X = (X_1, dots, X_d) in RR^d$ una variable aleatoria tal que $"E"(X_i)=0, "Var"(X_i)=SS thick forall i in [d]$. Llamaremos "ruido blanco con escala $SS$" a toda realización de $X$.] <ruido-blanco>
 
 Veamos entonces cómo les fue a los contendientes, considerando primero la exactitud. Recordemos que para cada experimento se realizaron #reps repeticiones: en cada celda reportaremos la exactitud _promedio_, y a su lado entre paréntesis el error estándar cpte.:
 
@@ -1007,7 +1070,7 @@ Ahora bien, esto es sólo en _un_ dataset, con _una_ semilla especfíca. ¿Se re
 
 #figure(image("img/many-heatmaps-fkdc-2d-lo.svg", width: 140%), caption: "It does replicate")
 
-Antes de avanzar hacia el siguiente conjunto de datos, una pregunta más: ¿qué sucede si aumentamos el nivel de ruido? Es decir, mantenemos los dataset hasta aquí considerados, pero subimos $sigma$ de @ruido-blanco?
+Antes de avanzar hacia el siguiente conjunto de datos, una pregunta más: ¿qué sucede si aumentamos el nivel de ruido? Es decir, mantenemos los dataset hasta aquí considerados, pero subimos $SS$ de @ruido-blanco?
 
 
 === 2D, 2 clases: excelente $R^2$ con exactitud competitiva
