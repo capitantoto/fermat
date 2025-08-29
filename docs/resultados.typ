@@ -95,6 +95,7 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / $overline(S)$: la _clausura_ de S; la unión de S y sus puntos límites.
 / $lambda(x)$: la medida de Lebesgue de $x$ en $RR^d$
 / $a |-> b$: la función que "toma" $a$ y "devuelve" $b$  en #link("https://en.wikipedia.org/wiki/Function_(mathematics)#Arrow_notation")[notación de flechas]
+/ $y prop x$: "y es proporcional a x", existe una constance $c : y = c times x$
 = Preliminares
 
 == El problema de clasificación
@@ -133,9 +134,9 @@ $
   hat(G)(x) & = arg min_(g in GG) sum_(k in [K]) ind(cal(G)_k != g) Pr(GG_k|X=x) \
             & = arg min_(g in GG) [1-Pr(g|X=x)] \
             & = arg max_(g in GG) Pr(g | X = x)
- $<clf-bayes>
+$<clf-bayes>
 
-Esta razonable solución se conoce como el _clasificador de Bayes_ , y sugiere que clasifiquemos a cada observación según la clase modal condicional a su distribución conjunta $Pr(G|X)$. 
+Esta razonable solución se conoce como el _clasificador de Bayes_ , y sugiere que clasifiquemos a cada observación según la clase modal condicional a su distribución conjunta $Pr(G|X)$.
 Su error esperado de predicción $"EPE"$ se conoce como la _tasa de Bayes_. Un aproximador directo de este resultado es el clasificador de k vecinos más cercano #footnote[_k-nearest-neighbors classifier_]
 
 #defn("clasificador de k-vecinos-más-cercanos")[
@@ -664,36 +665,66 @@ En _Kernel Density Estimation on Riemannian Manifolds: Asymptotic Results_ @henr
 $
   theta_p (q) = cases(
     R abs(sin(dg(p, q) slash R)) / dg(p, q) &"si" q != p\, -p #footnote[Recordemos que la antípoda de $p, -p$ cae justo fuera de $"iny"_p S^d$],
-    1 &"si" q = p
+    1 & "si" q = p
   )
-  
 $
 
-#figure(caption: flex-caption([KDE en $S^2$ para $X =$ sth sth los flujos de lava de Fisher TODO mejorar imagen], "asdf"))[#image("img/henry-rodriguez-bolas.png", width: 85%)]
+#figure(caption: flex-caption(
+  [KDE en $S^2$ para $X =$ sth sth los flujos de lava de Fisher TODO mejorar imagen],
+  "asdf",
+))[#image("img/henry-rodriguez-bolas.png", width: 85%)]
 
 == Clasificación en variedades
 
-Un desarrollo directo del estimador de @kde-variedad consta en  _A kernel based classifier on a Riemannian manifold_ @loubesKernelbasedClassifierRiemannian2008, 
+Un desarrollo directo del estimador de @kde-variedad consta en  _A kernel based classifier on a Riemannian manifold_ @loubesKernelbasedClassifierRiemannian2008,
 donde construyen un clasificador para un objetivo de dos clases $GG in {0, 1}$ con inputs $X$ soportadas sobre una variedad de Riemann. A tal fin, minimizan la pérdida $0-1$ y siguen la regla de Bayes, de manera que su clasificador _duro_ resulta:
 
 $
   hat(G)(X) = cases(1 "si" hat(Pr)(G=1|X) > hat(Pr)(G=0|X), 0 "si no")
 $
-que está de acuerdo con el clasificador de Bayes blando para $K$ clases propuesto en @clf-bayes
-#defn([clasificador por KDE en variedades de Riemann @loubesKernelbasedClassifierRiemannian2008[Ecuación 1.1]])[
+que está de acuerdo con el estimador del clasificador de Bayes basado en densidad por núcleos para $K$ clases propuesto @kdc-duro.
 
+Una notación simplificada surge de estudiar la expresión que el clasificador intenta maximizar. Para todo $i in [K]$,
+$
+  hat(Pr)(G=i|X) &= (hat(f)_i (x) times hat(pi)_i) / underbrace((sum_(i in [K]) hat(f)_i (x) times hat(pi)_i), =c) = c^(-1) times hat(f)_i (x) times hat(pi)_i
+$
+de modo que la tarea es equivalente a maximizar $hat(f)_i (x) times hat(pi)_i$ sobre $i in [K]$. Es fácil ver que podemos escribir el estimador de densidad de la clase $k$ como:
+$
+  hat(f)_k (x) & = N_k^(-1) sum_(i=1)^N K_h (x,X_i) \
+               & = (sum_(i=1)^N ind(G_i = k) K_h (x,X_i)) / (sum_(i=1)^N ind(G_i = k)) \
+$
+como además $hat(pi)_k = N_k slash N =N^(-1) sum_(i=1)^N ind(G_i = k)$, resulta que
+$
+  hat(f)_i (x) times hat(pi)_i& = (sum_(i=1)^N ind(G_i = k) K_h (x,X_i)) / (sum_(i=1)^N ind(G_i = k)) times (sum_(i=1)^N ind(G_i = k)) / N \
+               & = N^(-1) sum_(i=1)^N ind(G_i = k) K_h (x,X_i)
+$
+Y suprimiendo la constante $N$ concluimos que la regla de clasificación resulta equivalente a:
+$
+  hat(G)(p) = arg max_(k in [K]) sum_(i=1)^N ind(G_i = k) K_h (p,X_i)
+$
+para todo $p in MM$ con $K_h_n$ un núcleo isotrópico con sucesión de ventanas $h_n$ @loubesKernelbasedClassifierRiemannian2008[Ecuación 3.1].
+
+La belleza de esta regla, es que combina "sin costuras" el peso de los _priors_ $hat(pi)_i$ - a través de los elementos no nulos de la suma cuando $ind(G_i = k) = 1$) - con el peso de la "evidencia" - vía su cercanía "suavizada" al punto de interés $K_h (p, X_i)$.
+
+Los autores toman de @devroyeProbabilisticTheoryPattern1996 el siguiente concepto de _consistencia fuerte_:
+
+#defn([consistencia de un clasificador @devroyeProbabilisticTheoryPattern1996[§6.1]])[
+  Sea $hat(G)_1, dots, hat(G)_n$ una secuencia de clasificadores #footnote[A veces también llama una _regla_ de clasificación] de modo que el $i-$ésimo clasificador está construido con las primeras $i$ observaciones de la muestra $XX, bu(g)$. Sea $L_n$ la pérdida $0-1$ que alcanza el n-ésimo clasificador de la regla, y $L^*$ la pérdida que alcanza el clasificador de Bayes de @clf-bayes.
+
+  Diremos que la regla $hat(G)_n$ es (débilmente) consistente - o asintóticamente eficiente en el sentido del riesgo de Bayes - para cierta distribución $(X, G)$ si cuando $n-> oo$
+  $
+    EE L_n = Pr(hat(G)_n (X) != G) -> L^* 
+  $
+  y fuertemente consistente si
+  $
+    lim_(n -> oo) L_n = L^* "con probabilidad 1"
+  $
 ]
 
+En el trabajo, se prueba que el clasificador propuesto es fuertemente consistente _para $K=2$_.
+
 @hallBandwidthChoiceNonparametric2005 h optimo para clasificacion con KDE
-@devroyeProbabilisticTheoryPattern1996[§6 Consistencia]
 
-¡Clasificador de Bayes + KDE en Variedades = Clasificación (suave o dura) en variedades!
-
-Plantean una regla de clasificación $hat(G)$ para 2 clases adaptable a K clases de forma directa. Sea $p in MM$ una variedad riemanniana como antes, y ${(x_1, g_1), dots, (x_N, g_N)}$ nuestras observaciones y sus clases. Luego,
-
-$
-  hat(G) (p) = arg max_(g in GG) sum_(i=1)^N ind(g_i = g)K_h (p,X_i)
-$
 
 
 #align(center)[Pero... ¿y si la variedad es desconocida?]
