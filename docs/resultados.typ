@@ -27,10 +27,9 @@
     long
   }
 )
-
 #let defn = thmbox("definition", "Definición", inset: (x: 1.2em, top: 1em))
 #let obs = thmplain("observation", "Observación").with(numbering: none)
-
+#let thm = thmbox("theorem", "Teorema", inset: (x: 1.2em, top: 1em))
 // ##############
 // ### estilo ###
 // ##############
@@ -58,8 +57,6 @@
 - [ ] Ponderar por $n^beta$
 - [ ] Evitar coma entre sujeto y predicado
 - [ ] Mencionar Rodríguez x2:
-  - @forzaniPenalizationMethodEstimate2022
-  - @henryKernelDensityEstimation2009
 - Algo de densidad de volumen:
   - @berenfeldDensityEstimationUnknown2021
   - @bickelLocalPolynomialRegression2007
@@ -96,6 +93,7 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / $lambda(x)$: la medida de Lebesgue de $x$ en $RR^d$
 / $a |-> b$: la función que "toma" $a$ y "devuelve" $b$  en #link("https://en.wikipedia.org/wiki/Function_(mathematics)#Arrow_notation")[notación de flechas]
 / $y prop x$: "y es proporcional a x", existe una constance $c : y = c times x$
+/  c.s. : "casi seguramente", al referirse a convergencia de v.v.a.a.
 = Preliminares
 
 == El problema de clasificación
@@ -371,7 +369,7 @@ Más bien, corresponde entenderla como un modelo mental, que nos permite aventur
   ¿Qué es, exactamente, una variedad? \ \
   ¿Es posible construir un KDE con soporte en cierta variedad _conocida_? \ \
   ¿Sirve de algo todo esto si _no conocemos_ la variedad en cuestión?
-]
+] <preguntas>
 
 == Variedades de Riemann
 
@@ -556,7 +554,7 @@ Aunque el caso particular de la $n-$esfera sí fue bien desarrollado a lo largo 
 
 === KDE en variedades de Riemann
 
-Un trabajo sumamente interesante a principios del siglo XXI es el de Bruno Pelletier, que se propone una adaptación directa del estimador de densidad por núcleos de @kde-mv en variedades de Riemann compactas sin frontera @pelletierKernelDensityEstimation2005. Lo presentamos directamente y ampliamos los detalles a continuaci´øn
+Un trabajo sumamente interesante a principios del siglo XXI es el de Bruno Pelletier, que se propone una adaptación directa del estimador de densidad por núcleos de @kde-mv en variedades de Riemann compactas sin frontera @pelletierKernelDensityEstimation2005. Lo presentamos directamente y ampliamos los detalles a continuación
 
 
 #defn([KDE en variedades de Riemann @pelletierKernelDensityEstimation2005[Ecuación 1]])[
@@ -571,7 +569,23 @@ Un trabajo sumamente interesante a principios del siglo XXI es el de Bruno Pelle
                & = N^(-1) sum_(i=1)^N 1/h^d 1/(theta_X_i (p))K((dg(p, X_i))/h)
   $
 ] <kde-variedad>
-con la restricción de que la ventana $h <= h_0 <= "iny" MM$, el _radio de inyectividad_ de #MM #footnote[Esta restricción no es catastrófica. Para toda variedad compacta, el radio de inyectividad será estrictamente positivo @munozEstimacionNoParametrica2011[Prop. 3.3.18]. Como además $h$ es en realidad una sucesión ${h_n}_(n=1)^N$ decreciente como función del tamaño muestral, siempre existirá un cierto tamaño muestral a partir del cual $h_n < "iny" MM$.]
+con la restricción de que la ventana $h <= h_0 <= "iny" MM$, el _radio de inyectividad_ de #MM. #footnote[
+  Esta restricción no es catastrófica. Para toda variedad compacta, el radio de inyectividad será estrictamente positivo @munozEstimacionNoParametrica2011[Prop. 3.3.18]. Como además $h$ es en realidad una sucesión ${h_n}_(n=1)^N$ decreciente como función del tamaño muestral, siempre existirá un cierto tamaño muestral a partir del cual $h_n < "iny" MM$.
+].
+El autor prueba la convergencia en $L^2(MM)$:
+
+#thm([convergencia de $hat(f)$ en $L^2$ @pelletierKernelDensityEstimation2005[§3 Teorema 5]])[
+  Sea $f$ una densidad de probabilidad dos veces diferenciable en #MM con segunda derivada covariante acotada. Sea $hat(f)_n$ el estimador de densidad definido en @kde-variedad con ventana $h_n < h_0 < "iny" MM$. Luego, existe una constante $C_f$ tal que 
+  $
+    EE norm(hat(f)_n - f)_(L^2(MM))^2 <= C_f (1/ (n h^d)+ r^4).
+  $
+  En consecuencia, para $h tilde n^(-1/(d+4))$, tenemos $ EE norm(hat(f)_n - f)_(L^2(MM))^2 = O(n^(-4/(d+4))) $
+]
+Nótese que esta formulación revela una buena sugerencia de en qué orden comenzar la búsqueda de $h$.
+@henryKernelDensityEstimation2009[Teorema 3.2] prueba la consistencia fuerte de $hat(f)$: bajo los mismos  @pelletierKernelDensityEstimation2005, obtienen que
+$
+  sup_(p in MM) abs(hat(f)_n(p) - f(p)) attach(->, t: "c.s.") 0
+$
 
 #defn("núcleo isotrópico")[ Sea $K: RR_+ -> RR$ un mapa no-negativo tal que:
   #table(
@@ -696,7 +710,7 @@ $
 como además $hat(pi)_k = N_k slash N =N^(-1) sum_(i=1)^N ind(G_i = k)$, resulta que
 $
   hat(f)_i (x) times hat(pi)_i& = (sum_(i=1)^N ind(G_i = k) K_h (x,X_i)) / (sum_(i=1)^N ind(G_i = k)) times (sum_(i=1)^N ind(G_i = k)) / N \
-               & = N^(-1) sum_(i=1)^N ind(G_i = k) K_h (x,X_i)
+  & = N^(-1) sum_(i=1)^N ind(G_i = k) K_h (x,X_i)
 $
 Y suprimiendo la constante $N$ concluimos que la regla de clasificación resulta equivalente a:
 $
@@ -713,7 +727,7 @@ Los autores toman de @devroyeProbabilisticTheoryPattern1996 el siguiente concept
 
   Diremos que la regla $hat(G)_n$ es (débilmente) consistente - o asintóticamente eficiente en el sentido del riesgo de Bayes - para cierta distribución $(X, G)$ si cuando $n-> oo$
   $
-    EE L_n = Pr(hat(G)_n (X) != G) -> L^* 
+    EE L_n = Pr(hat(G)_n (X) != G) -> L^*
   $
   y fuertemente consistente si
   $
@@ -723,17 +737,31 @@ Los autores toman de @devroyeProbabilisticTheoryPattern1996 el siguiente concept
 
 En el trabajo, se prueba que el clasificador propuesto es fuertemente consistente _para $K=2$_.
 
-@hallBandwidthChoiceNonparametric2005 h optimo para clasificacion con KDE
-
-
-
-#align(center)[Pero... ¿y si la variedad es desconocida?]
-
 == Aprendizaje de distancias
-@vincentManifoldParzenWindows2002
+
+La hipótesis de la variedad nos ofrece un marco teórico en el que abordar la clasificación en alta dimensión, y encontramos en la literatura que la estimación de densidad por núcleos en variedades está estudiada y tiene buenas garantías de convergencia. Por alentador que resulte, nos resta un problema fundamental: *no solemos conocer la variedad que soporta las $X$*. Salvo que los datasets estén generados sintéticamente o el dominio de estudio tenga historia de trabajar con ciertas variedades bien definidas, tendremos problemas tanto para definir adecuadamente la distancia $d_g$ como en el cómputo de la densidad de volumen $theta_p (q)$ de @kde-variedad.
+
+#figure(caption: flex-caption(
+  [Data espacial con dimensiones bien definidas. Los datos geoespaciales están sobre la corteza terrestre, que es aproximadamente la $2-$esfera $S^2 in RR^3$ que representa la frontera de nuestra "canica azul" (izq.), una $3-$bola. La clasificación clásica de Hubble distingue literalmente _variedades_ "elípticas","espirales" e "irregulares" de galaxias (der.).#footnote[Se me perdonará la simplificación; es bien sabido que en realidad la #link("https://en.wikipedia.org/wiki/Spacetime_topology")[topología del espacio-tiempo] es un tópico de estudio clave en la relatividad general.]],
+  "Data espacial con dimensiones bien definidas. "
+))[
+  #columns(2, [
+    #image("img/blue-marble.jpg")
+    #colbreak()
+    #image("img/tipos-de-galaxia-secuencia-hubble.png")
+  ])
+]
+
+
+
+Considere el diagrama de @variedad-u una $1-$variedad - una curva - $cal(U) subset RR^2$. El hecho de que la distancia del punto verde al rojo sea mayor que del verde al amarillo, es que el amarillo está en la dirección del espacio tangente al punto verde, mientras que la geodésica en $RR^3$ del verde al rojo es exactamente perpendicular al espacio tangente del verde.
+
+Nótese que a los fines de estimar la densidad de $X$, lo que nos importa es contar con una noción de distancia apropiada en #MM. Por ende, "conocer la variedad" $(MM, g) = sop X$, es sustituoble la distancia de Riemann $dg$ son esencialmente la misma tarea. Aunque no sean _exactamente_ lo mismo, utilizaremos las formulaciones intercambiablemente.
+
 #figure(
   caption: flex-caption[La variedad $cal(U)$ con $dim(cal(U)) = 1$ embebida en $RR^2$. Nótese que en el espacio ambiente, el punto rojo está más cerca del verde, mientras que a través de $cal(U)$, el punto amarillo está más próximo que el rojo][Variedad $cal(U)$],
-)[#image("img/variedad-u.svg", width: 70%)]
+)[#image("img/variedad-u.svg", width: 70%)] <variedad-u>
+
 
 En un extenso censo del campo de _aprendizaje de representaciones_, Bengio et ales la asocian directamente al campo de _aprendizaje de representaciones_:
 
@@ -752,8 +780,10 @@ El concepto, aunque no figure con ese nombre hasta principios de este siglo, exi
   size: 12pt,
 )[@pearsonLIIILinesPlanes1901, _"LIII. On lines and planes of closest fit to systems of points in space."_]
 
+Aprovechando que al menos las observaciones de entrenamiento son puntos conocidos de la variedad #footnote[_módulo_ el error de medición y/o el efecto de covariables no medidas], y que en la variedad el espacio es _localmente euclídeo_ @vincentManifoldParzenWindows2002 parten del estimador de @kde-mv pero en lugar de utilizar un núcleo fijo en cada observación $x_i$, se proponen hacer análisis 
 
 === El algoritmo más _cool_: Isomap
+
 ==== previo: self-organizing mapas
 @kohonenSelforganizedFormationTopologically1982
 @kohonenSelfOrganizationAssociativeMemory1988
@@ -853,6 +883,7 @@ y calculamos $D_(Q_i, alpha) (x_0, dot)$
 2. Sí es cierto que si las variedades (y las densidades que soportan) difieren, tanto el $alpha_i^*$ como el $h_i*$ "óptimos" para los estimadores de densidad individuales no tienen por qué coincidir.
 3. Aunque las densidades individuales $f_i$ estén bien estimadas, el clasificador resultante puede ser mal(ard)o si no diferencia bien "en las fronteras". Por simplicidad, además, decidimos parametrizar el clasificador con dos únicos hiperparámetros globales: $alpha, h$.
 
+@hallBandwidthChoiceNonparametric2005 h optimo para clasificacion con KDE
 === Diseño experimental
 
 1. Desarrollamos un clasificador compatible con el _framework_ de #link("https://arxiv.org/abs/1309.0238", `scikit-learn`)  según los lineamientos de Loubes & Pelleteir, que apodamos `KDC`.
