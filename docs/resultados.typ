@@ -838,7 +838,11 @@ La pieza clave del algoritmo, es la estimación de la distancia geodésica en #M
 
 === Distancias basadas en densidad
 
-Hasta aquí, por más que definimos con precisión las variedades que nos interesan - compactas, riemannianas y sin frontera - y las condiciones para una estimación de una densidad $f_X$ sobre ésta, no hemos tomado en cuenta la geometría de las $X$ a la hora de aprender una distancia. De manera intuitiva, si $X ~ f_X, f_X : MM -> RR$ y tenemos tres puntos $a, b, c in sop X$, con geodésicas $gamma: [0, 1] -> MM, gamma(0) = a, gamma(1) = b$ y $zeta: [0, 1] -> MM, zeta(0) = a, zeta(1) = c$ tales que $L(gamma) = L(zeta)$, es razonable pensar que si $gamma$ transita por una zona de _mayor_ densidad $f_X$ que $zeta$, en cierto sentido "$b$ está más cerca de $a$ que $c$". Cuando por ejemplo $X ~ cal(N)_d (mu, SS)$, este mismo argumento nos lleva a preferir la distancia de Mahalanobis a la distancia euclídea: la normal multivariada tiene distintas tasas de cambio en distintas direcciones, y medir distancia ignorando este hecho puede llevar a conclusiones erróneas.
+Hasta aquí, por más que definimos con precisión las variedades que nos interesan - compactas, riemannianas y sin frontera - y las condiciones para una estimación de una densidad $f_X$ sobre ésta, no hemos tomado en cuenta la geometría de las $X$ a la hora de aprender una distancia. De manera intuitiva, si $X ~ f_X, f_X : MM -> RR$ y tenemos tres puntos $a, b, c in sop X$, con geodésicas $gamma: [0, 1] -> MM, gamma(0) = a, gamma(1) = b$ y $zeta: [0, 1] -> MM, zeta(0) = a, zeta(1) = c$ tales que $L(gamma) = L(zeta)$, es razonable pensar que si $gamma$ transita por una zona de _menos_ densidad $f_X$ que $zeta$, en cierto sentido "$b$ está más _lejos_ de $a$ que $c$".
+
+#figure(image("img/distancia-basada-en-densidad.svg"), caption: [Cuando por ejemplo $MM = (RR^2, bu(I)), thick X ~ cal(N)_d (a, SS)$, tenemos que $L(gamma) = L(zeta)=r$, mientras que $d_SS (a, b) < d_SS (a, c)$: la normal multivariada tiene distintas tasas de cambio en distintas direcciones, y medir distancia ignorando este hecho puede llevar a conclusiones erróneas.])
+
+
 
 - Bijral @bijralSemisupervisedLearningDensity2012
 @chuExactComputationManifold2019
