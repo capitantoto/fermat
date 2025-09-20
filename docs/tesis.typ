@@ -25,6 +25,11 @@
 #let gnb = `GNB` // $("GNB")$
 #let lr = `LR`
 #let svc = `SVC`
+#let gbt = `GBT`
+// calsificador genérico
+#let clf = $op(hat(G))$
+#let reps = 25
+
 // Copetes flexibles para outline y texto, adaptado para 0.12 de
 // https://github.com/typst/typst/issues/1295#issuecomment-1853762154
 #let in-outline = state("in-outline", false)
@@ -1098,43 +1103,41 @@ A nuestro entender resulta imposible hacer declaraciones demasiado generales al 
 
 En tareas de clasificación, la métrica más habitual es la _exactitud_ #footnote([Más conocida por su nombre en inglés, _accuracy_.])
 
-#let clfh = $op(upright(R))$
-#let clfs = $op(cal(R))$
 
 #defn(
   "exactitud",
-)[Sean $bu(("X, y")) in RR^(n times p) times RR^n$ una matriz de $n$ observaciones de $p$ atributos y sus clases asociadas. Sea además $hat(bu(y)) = clfh(XX)$ las predicciones de clase resultado de una regla de clasificación #clfh. La _exactitud_ ($"exac"$) de #clfh en #bu("X") se define como la proporción de coincidencias con las clases verdaderas #bu("y"):
-  $ op("exac")(clfh | XX) = n^(-1) sum_(i=1)^n ind(hat(y)_i = y_i) $
+)[Sean $(XX, bu(g)) in RR^(n times p) times RR^n$ una matriz de $n$ observaciones de $p$ atributos y sus clases asociadas. Sea además $hat(bu(g)) = hat(G)(XX)$ las predicciones de clase resultado de una regla de clasificación $hat(G)$. La _exactitud_ ($"exac"$) de $hat(G)$ en #XX se define como la proporción de coincidencias con las clases verdaderas $bu(g)$:
+  $ op("exac")(hat(G) | XX) = n^(-1) sum_(i=1)^n ind(hat(g)_i = g_i) $
 ] <exactitud>
 
-La exactitud está bien definida para cualquier clasificador que provea una regla _dura_ de clasificación, segun clasi. Ahora bien, cuando un clasificador provee una regla _suave_ (clasificador-suave), la exactitud como métrica "pierde información": dos clasificadores binarios que asignen respectivamente 0.51 y 1.0 de probabilidad de pertenecer a la clase correcta a todas als observaciones tendrán la misma exactitud, $100%$, aunque el segundo es a las claras mejor. A la inversa, cuando un clasificador erra al asignar la clase: ¿lo hace con absoluta confianza, asignando una alta probabilidad a la clase equivocada, o con cierta incertidumbre, repartiendo la masa de probabilidad entre varias clases que considera factibles?
+La exactitud está bien definida para cualquier clasificador que provea una regla _dura_ de clasificación. Ahora bien, cuando un clasificador provee una regla suave, la exactitud como métrica "pierde información": dos clasificadores binarios que asignen respectivamente 0.51 y 1.0 de probabilidad de pertenecer a la clase correcta a todas las observaciones tendrán la misma exactitud, $100%$, aunque el segundo es a las claras mejor. A la inversa, cuando un clasificador erra al asignar la clase: ¿lo hace con absoluta confianza, asignando una alta probabilidad a la clase equivocada, o con cierta incertidumbre, repartiendo la masa de probabilidad entre varias clases que considera factibles?
 
 Una métrica natural para evaluar una regla de clasificación suave, es la _verosimilitud_ (y su logaritmo) de las predicciones.
 
 #defn(
   "verosimilitud",
-)[Sean $bu(("X, y")) in RR^(n times p) times RR^n$ una matriz de $n$ observaciones de $p$ atributos y sus clases asociadas. Sea además $hat(bu(Y)) = clfs(XX) in RR^(n times k)$ la matriz de probabilidades de clase resultado de una regla suave de clasificación #clfs. La _verosimilitud_ ($"vero"$) de #clfs en #bu("X") se define como la probabilidad conjunta que asigna #clfs a las clases verdaderas #bu("y"):
+)[Sean $bu(("X, y")) in RR^(n times p) times RR^n$ una matriz de $n$ observaciones de $p$ atributos y sus clases asociadas. Sea además $hat(bu(Y)) = clf(XX) in RR^(n times k)$ la matriz de probabilidades de clase resultado de una regla suave de clasificación #clf. La _verosimilitud_ ($"vero"$) de #clf en #bu("X") se define como la probabilidad conjunta que asigna #clf a las clases verdaderas #bu("y"):
   $
-    op(L)(clfs) = op("vero")(
-      clfs | XX
+    op(L)(clf) = op("vero")(
+      clf | XX
     ) = Pr(hat(bu(y)) = bu(y)) = product_(i=1)^n Pr(hat(y)_i =y_i) = product_(i=1)^n hat(bu(Y))_((i, y_i))
   $
 
   Por conveniencia, se suele considerar la _log-verosimilitud promedio_,
-  $ op(cal(l))(clfs) = n^(-1) log(op("L")(clfs)) = n^(-1)sum_(i=1)^n log(hat(bu(Y))_((i, y_i))) $
+  $ op(cal(l))(clf) = n^(-1) log(op("L")(clf)) = n^(-1)sum_(i=1)^n log(hat(bu(Y))_((i, y_i))) $
 ] <vero>
 
 La verosimilitud de una muestra varía en $[0, 1]$ y su log-verosimilitud, en $(-oo, 0]$, pero como métrica esta sólo se vuelve comprensible _relativa a otros clasificadores_. Una forma de "normalizar" la log-verosimilitud, se debe a @mcfaddenConditionalLogitAnalysis1974.
 
 #defn(
   [$R^2$ de McFadden],
-)[Sea $clfs_0$ el clasificador "nulo", que asigna a cada observación y posible clase, la frecuencia empírica de clase encontrada en la muestra de entrenamiento $XX_("train")$. Para todo clasificador suave $clfs$, definimos el $R^2$ de McFadden como
-  $ op(R^2)(clfs | XX) = 1 - (op(cal(l))(clfs)) / (op(cal(l))(clfs_0)) $
+)[Sea $clf_0$ el clasificador "nulo", que asigna a cada observación y posible clase, la frecuencia empírica de clase encontrada en la muestra de entrenamiento $XX_("train")$. Para todo clasificador suave $clf$, definimos el $R^2$ de McFadden como
+  $ op(R^2)(clf | XX) = 1 - (op(cal(l))(clf)) / (op(cal(l))(clf_0)) $
 ] <R2-mcf>
 
-#obs[ $op(R^2)(clfs_0) = 0$. A su vez, para un clasificador perfecto $clfs^star$ que otorgue toda la masa de probabilidad a la clase correcta, tendrá $op(L)(clfs^star) = 1$ y log-verosimilitud igual a 0, de manera que $op(R^2)(clfs^star) = 1 - 0 = 1$.
+#obs[ $op(R^2)(clf_0) = 0$. A su vez, para un clasificador perfecto $clf^star$ que otorgue toda la masa de probabilidad a la clase correcta, tendrá $op(L)(clf^star) = 1$ y log-verosimilitud igual a 0, de manera que $op(R^2)(clf^star) = 1 - 0 = 1$.
 
-  Sin embargo, un clasificador _peor_ que $clfs_0$ en tanto asigne bajas probabilidades a las clases correctas, puede tener un $R^2$ infinitamente negativo.
+  Sin embargo, un clasificador _peor_ que $clf_0$ en tanto asigne bajas probabilidades a las clases correctas, puede tener un $R^2$ infinitamente negativo.
 ]
 
 Visto y considerando que tanto #fkdc como #fknn son clasificadores suaves, evaluaremos su comportamiento en comparación con ambas métricas, la exactitud y el $R^2$ de McFadden #footnote[de aquí en más, $R^2$ para abreviar]
@@ -1144,26 +1147,24 @@ Visto y considerando que tanto #fkdc como #fknn son clasificadores suaves, evalu
 Además de medir qué (des)ventajas otorga el uso de una distancia aprendida de los datos en la tarea de clasificación, quisiéramos entender (a) por qué sucede, y (b) si tal (des)ventaja es significativa en el amplio abanico de algoritmos disponibles. Pírrica victoria sería mejorar con la distancia de Fermat la _performance_ de cierto algoritmo, para encontrar que aún con la mejora, el algoritmo no es competitivo en la tarea de referencia.
 
 Consideraremos a modo de referencia los siguientes algoritmos:
-- Naive Bayes Gaussiano (gnb, #gnb),
+- Naive Bayes Gaussiano (#gnb),
 - Regresión Logistica (#lr) y
 - Clasificador de Soporte Vectorial (#svc)
-Esta elección no pretende ser exhaustiva, sino que responde a un "capricho informado" del investigador. #gnb es una elección natural, ya que es la simplificación que surge de asumir independencia en las dimensiones de ${XX}$ para KDE multivariado (@kde-mv), y se puede computar para grandes conjuntos de datos en muy poco tiempo. #lr es "el" método para clasificación binaria, y su extensión a múltiples clases no es particularmente compleja: para que sea mínimamente valioso un nuevo algoritmo, necesita ser al menos tan bueno como #lr, que tiene ya más de 65 años en el campo (TODO REF bliss1935, cox1958). Por último, fue nuestro deseo incorporar algún método más cercano al estado del arte. A tal fin, consideramos incorporar alguna red neuronal (TODO REF), un método de _boosting_ (TODO REF) y el antedicho clasificador de soporte vectorial, #svc. Finalmente, por la sencillez de su implementación dentro del marco elegido #footnote[Utilizamos _scikit-learn_, un poderoso y extensible paquete para tareas de aprendizaje automático en Python] y por la calidad de los resultados obtenidos, decidimos incorporar #svc, en dos variantes: con núcleos (_kernels_) lineales y RBF.
+Esta elección no pretende ser exhaustiva, sino que responde a un "capricho informado" del investigador. #gnb es una elección natural, ya que es la simplificación que surge de asumir independencia en las dimensiones de $X$ para KDE multivariado (@kde-mv), y se puede computar para grandes conjuntos de datos en muy poco tiempo. #lr es "el" método para clasificación binaria, y su extensión a múltiples clases no es particularmente compleja: para que sea mínimamente valioso un nuevo algoritmo, necesita ser al menos tan bueno como #lr, que tiene ya más de 65 años en el campo (TODO REF bliss1935, cox1958). Por último, fue nuestro deseo incorporar algún método más cercano al estado del arte. A tal fin, consideramos incorporar alguna red neuronal (TODO REF), un método de _boosting_ (TODO REF) y el antedicho clasificador de soporte vectorial, #svc. Finalmente, por la sencillez de su implementación dentro del marco elegido #footnote[Utilizamos _scikit-learn_, un poderoso y extensible paquete para tareas de aprendizaje automático en Python] y por la calidad de los resultados obtenidos, decidimos dejar fuera las redes neuronales, pero introdujimos #svc, en dos variantes: con núcleos (_kernels_) lineales y RBF; y #gbt.
 
 
 === Metodología
-#let X = ${XX}_n$
 
 La unidad de evaluación de los algoritmos a considerar es una `Tarea`, que se compone de:
 - un _diccionario de algoritmos_ a evaluar en condiciones idénticas, definidas por
-- un _dataset_ con el conjunto de $n$ observaciones en $d_x$ dimensiones repartidas en $k$ clases, ${XX}_n in R^(n times d_x), {bold(y)}_n in [k]^n$,
+- un _dataset_ con el conjunto de $N$ observaciones en $D$ dimensiones repartidas en $K$ clases, $(XX, bu(g))$,
 - un _split de evaluación_ $r in (0, 1)$, que determina las proporciones de los datos a usar durante el entrenamiento ($1 - r$) y la evaluación ($r$), junto con
 - una _semilla_ $s in [2^32]$ que alimenta el generador de números aleatorios y define determinísticamente cómo realizar la división antedicha.
 
 === Entrenamiento de los algoritmos
-La especificación completa de un clasificador, requiere, además de la elección del algoritmo, la especificación de sus _hiperparámetros_, de manera tal de optimizar su rendimiento bajo ciertas condiciones de evaluación. Para ello, se definió de antemano para cada clasificador una _grilla_ de hiperparámetros: durante el proceso de entrenamiento, la elección de los "mejores" hiperparámetros se efectuó maximizando la exactitud (@exactitud) con una búsqueda exhaustiva por convalidación cruzada de 5 pliegos #footnote[Conocida en inglés como _Grid Search 5-fold Cross-Validation_] sobre la grilla entera.
+La especificación completa de un clasificador, requiere, además de la elección del algoritmo, la especificación de sus _hiperparámetros_, de manera tal de optimizar su rendimiento bajo ciertas condiciones de evaluación. Para ello, se definió de antemano para cada clasificador una _grilla_ de hiperparámetros: durante el proceso de entrenamiento, la elección de los "mejores" hiperparámetros se efectuó maximizando la log-verosimilitud @vero para los clasificadores suaves, y la exactitud @exactitud para los duros #footnote[Entre los mencionados, el único clasificador duro es #svc. Técnicamente es posible entrenar un clasificador suave a partir de uno duro con un _segundo_ estimador que toma como _input_ el resultado "crudo" del clasificador duro y da como _output_ una probabilidad calibrada (cf. #link("https://scikit-learn.org/stable/modules/calibration.html")[Calibración] en la documentacion de `scikit-learn` TODO citar scikit-learn), pero es un proceso computacionalmente costoso.] con una búsqueda exhaustiva por convalidación cruzada de 5 pliegos #footnote[Conocida en inglés como _Grid Search 5-fold Cross-Validation_] sobre la grilla entera.
 
 === Estimación de la variabilidad en la _performance_ reportada
-#let reps = 16
 En última instancia, cualquier métrica evaluada, no es otra cosa que un _estadístico_ que representa la "calidad" del clasificador en la Tarea a mano. A fines de conocer no sólo su estimación puntual sino también darnos una idea de la variabilidad de su performance, para cada dataset y colección de algoritmos, se entrenaron y evaluaron #reps Tareas idénticas salvo por la semilla $s$, que luego se usaron para estimar la varianza y el desvío estándar en la exactitud (@exactitud) y el pseudo-$R^2$ (@R2-mcf).
 
 Cuando el conjunto de datos proviene del mundo real y por lo tanto _preexiste a nuestro trabajo_, las #reps semillas $s_1, dots, s_#reps$ fueron utilizadas para definir el split de entrenamiento/evaluación. Por el contrario, cuando el conjunto de datos fue generado sintéticamente, las semillas se utilizaron para generar #reps versiones distintas pero perfectamente replicables del dataset, y en todas se utilizó una misma semilla maestra $s^star$ para definir el split de evaluación.
