@@ -64,10 +64,6 @@
 = TODOs
 - [ ] Ponderar por $n^beta$
 - [ ] Evitar coma entre sujeto y predicado
-- [ ] Mencionar Rodríguez x2:
-- Algo de densidad de volumen:
-  - @berenfeldDensityEstimationUnknown2021
-  - @bickelLocalPolynomialRegression2007
 
 = Vocabulario y Notación
 A lo largo de esta monografía tomaremos como referencia enciclopédica al _Elements of Statistical Learning_ @hastieElementsStatisticalLearning2009, de modo que en la medida de lo posible, basaremos nuestra notación en la suya también.
@@ -632,7 +628,16 @@ El mapa exponencial alrededor de $p, thick exp_p : T_p MM -> MM$ es un difeomorf
 - la métrica _pullback_ de $g$:  la métrica inducida en $T_p MM$ por la métrica riemanniana $g$ en #MM
 - la medida de lebesgue en la estructura euclídea de $T_p MM$.
 
-En otras palabras, $theta_p (q)$ representa cuánto se infla / encoge - el espacio en la variedad #MM alrededor de $p$, relativo al volumen "natural" del espacio tangente.
+En otras palabras, $theta_p (q)$ representa cuánto se infla / encoge - el espacio en la variedad #MM alrededor de $p$, relativo al volumen "natural" del espacio tangente. En general, su cómputo resulta sumamente complejo, salvo en casos particulares como las variedades "planas" o de curvatura constante. En un trabajo reciente, por ejemplo, se reseña:
+
+#quote(
+  attribution: [@berenfeldDensityEstimationUnknown2021[§1.2, "Resultados Principales"]],
+)[
+  Un problema restante a esta altura es el de entender cómo la _regularidad_ #footnote[En este contexto, se entiende que una variedad es más regular mientras menos varíe su densidad de volumen punto a punto] de #MM afecta las tasas de convergencia de funciones suaves (...).
+  Luego, en el caso especial en que la dimensión de #MM es conocida e igual a $1$, podemos construir un estimador que alcanza la tasa [propuesta anteriormente]. Así, se establece que en dimensión $1$ al menos, la regularidad de la variedad #MM no afecta la tasa para estimar $f$ aún cuando #MM es desconocida. Sin embargo, la función de densidad de volumen $theta_p (q)$ _no_ es constante tan pronto como $d >= 2$ y obtener un panorama global en mayores dimensiones es todavía un problema abierto y presumiblemente muy desafiante.
+]
+
+Para ganar en intuición, consideraremos $theta_p (q)$ para algunas variedades profusamente estudiadas.
 
 === La densidad de volumen $theta_p (p)$ en variedades "planas"
 
