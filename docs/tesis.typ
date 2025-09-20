@@ -17,6 +17,14 @@
 #let dg = $op(d_g)$
 #let var = $op("Var")$
 #let SS = $bu(Sigma)$
+// nombres de clasificadores
+#let fkdc = $cal(F)"-KDC"$
+#let kdc = "KDC"
+#let fknn = $cal(F)"-kNN"$
+#let knn = $k-"NN"$
+#let gnb = `GNB` // $("GNB")$
+#let lr = `LR`
+#let svc = `SVC`
 // Copetes flexibles para outline y texto, adaptado para 0.12 de
 // https://github.com/typst/typst/issues/1295#issuecomment-1853762154
 #let in-outline = state("in-outline", false)
@@ -1076,79 +1084,6 @@ Nótese que el clasificador de $k-$vecinos más cercanos de @knn-clf (k-NN, @eps
 3. Implementar un clasificador cual @knn-clf, pero con distancia muestral de Fermat en lugar de euclídea.
 
 
-=== KDC con Distancia de Fermat Muestral
-
-=== f-KNN
-
-=== Algunas dudas
-
-- Entrenar el clasificador por validación cruzada está OK: como $XX_"train" subset.eq XX$ y $XX_"test" subset.eq XX$, se sigue que $forall (a, b) in {XX_"train" times in XX_"test"} subset.eq {XX times XX}$ y $D_(XX, alpha) (a, b)$ está bien definida.  ¿Cómo sé la distancia _muestral_ de una _nueva_ observación $x_0$, a los elementos de cada clase?\
-
-
-Para cada una de las $g_i in GG$ clases, definimos el conjunto $ Q_i= {x_0} union {x_j : x_j in XX, g_j = g_i, j in {1, dots, N}} $
-y calculamos $D_(Q_i, alpha) (x_0, dot)$
-
-=== Algunas dudas
-
-- El clasificador de Loubes & Pelletier asume que todas las clases están soportadas en la misma variedad #MM. ¿Quién dice que ello vale para las diferentes clases?
-
-
-¡Nadie! Pero
-1. No hace falta dicho supuesto, y en el peor de los casos, podemos asumir que la unión de las clases está soportada en _cierta_ variedad de Riemman, que resulta de (¿la clausura de?) la unión de sus soportes individuales.
-2. Sí es cierto que si las variedades (y las densidades que soportan) difieren, tanto el $alpha_i^*$ como el $h_i*$ "óptimos" para los estimadores de densidad individuales no tienen por qué coincidir.
-3. Aunque las densidades individuales $f_i$ estén bien estimadas, el clasificador resultante puede ser mal(ard)o si no diferencia bien "en las fronteras". Por simplicidad, además, decidimos parametrizar el clasificador con dos únicos hiperparámetros globales: $alpha, h$.
-
-@hallBandwidthChoiceNonparametric2005 h optimo para clasificacion con KDE
-=== Diseño experimental
-
-1. Desarrollamos un clasificador compatible con el _framework_ de #link("https://arxiv.org/abs/1309.0238", `scikit-learn`)  según los lineamientos de Loubes & Pelleteir, que apodamos `KDC`.
-2. Implementamos el estimador de la distancia muestral de Fermat, y combinándolo con KDC, obtenemos la titular "Clasificación por KDE con Distancia de Fermat", `FKDC`.
-3. Evaluamos el _pseudo-$R^2$_ y la _exactitud_ ("accuracy") de los clasificadores propuestos en diferentes _datasets_, relativa a técnicas bien establecidas:
-#columns(2)[
-  - regresión logística (`LR`)
-  - clasificador de  soporte vectorial (`SVC`) #footnote[sólo se consideró su exactitud. ya que no es un clasificador suave]
-  - _gradient boosting trees_ (`GBT`)
-  #colbreak()
-  - k-vecinos-más-cercanos (`KN`)
-  - Naive Bayes Gaussiano (`GNB`)
-]
-
-
-- La implementación de `KNeighbors` de referencia acepta distancias precomputadas, así que incluimos una versión con distancia de Fermat, que apodamos `F(ermat)KN`.
-
-- Para ser "justos", se reservó una porción de los datos para la evaluación comparada, y del resto, cada algoritmo fue entrenado repetidas veces por validación cruzada de 5 pliegos, en una extensísima grilla de hiperparametrizaciones. Este procedimiento *se repitió 25 veces en cada dataset*.
-
-- La función de score elegida fue `neg_log_loss` ($= cal(l)$) para los clasificadores suaves, y `accuracy` para los duros.
-
-- Para tener una idea "sistémica" de la performance de los algoritmos, evaluaremos su performance con _datasets_ que varíen en el tamaño muestral $N$, la dimensión $p$ de las $X_i$, el nro. de clases $k$ y su origen ("real" o "sintético").
-
-- Cuando creamos datos sintéticos en variedades  con dimensión intrínseca menor a la ambiente, (casi) cualquier clasificador competente alcanza exactitud perfecta; para complejizar la tarea, agegamos un poco de "ruido" a las observaciones, y también analizamos sus efectos.
-
-=== Regla de Parsimonia
-
-- ¿Qué parametrización elegir cuando "en test da todo igual"?
-
-#align(center)[ #emoji.knife de Occam: la más "sencilla" (TBD)]
-
-
-- ¿Qué parametrización elegir cuando "en test da *casi* todo igual"?
-
-
-#align(center)[*Regla de $1SS$*: De las que estén a $1SS$ de la mejor, la más sencilla.]
-
-¿Sabemos cuánto vale $SS$?
-
-=== $R^2$ de McFadden
-Sea $cal(C)_0$ el clasificador "base", que asigna a cada observación y posible clase, la frecuencia empírica de clase encontrada en la muestra #XX. Para todo clasificador suave $cal(C)$, definimos el $R^2$ de McFadden como
-$ op(R^2)(cal(C) | XX) = 1 - (op(cal(l))(cal(C))) / (op(cal(l))(cal(C)_0)) $
-
-
-donde $cal(l)(dot)$ es la log-verosimilitud clásica. Nótese que $op(R^2)(cal(C)_0) = 0$.  A su vez, para un clasificador perfecto $cal(C)^star$ que otorgue toda la masa de probabilidad a la clase correcta, tendrá $op(L)(cal(C)^star) = 1$ y log-verosimilitud igual a 0, de manera que $op(R^2)(cal(C)^star) = 1 - 0 = 1$.
-
-
-Sin embargo, un clasificador _peor_ que $cal(C)_0$ en tanto asigne bajas probabilidades ($approx 0$) a las clases correctas, puede tener un $R^2$ infinitamente negativo.
-
-
 == Evaluación
 
 Nos interesa conocer en qué circunstancias, si es que hay alguna, la distancia muestral de Fermat provee ventajas a la hora de clasificar por sobre la distancia euclídea. Además, en caso de existir, quisiéramos en la medida de lo posible comprender por qué (o por qué no) es que tal ventaja existe.
@@ -1196,20 +1131,12 @@ La verosimilitud de una muestra varía en $[0, 1]$ y su log-verosimilitud, en $(
 
   Sin embargo, un clasificador _peor_ que $clfs_0$ en tanto asigne bajas probabilidades a las clases correctas, puede tener un $R^2$ infinitamente negativo.
 ]
-#let fkdc = $cal(F)"-KDC"$
-#let kdc = "KDC"
-#let fknn = $cal(F)"-kNN"$
-#let knn = $k-"NN"$
 
 Visto y considerando que tanto #fkdc como #fknn son clasificadores suaves, evaluaremos su comportamiento en comparación con ambas métricas, la exactitud y el $R^2$ de McFadden #footnote[de aquí en más, $R^2$ para abreviar]
 
 === Algoritmos de referencia
 
 Además de medir qué (des)ventajas otorga el uso de una distancia aprendida de los datos en la tarea de clasificación, quisiéramos entender (a) por qué sucede, y (b) si tal (des)ventaja es significativa en el amplio abanico de algoritmos disponibles. Pírrica victoria sería mejorar con la distancia de Fermat la _performance_ de cierto algoritmo, para encontrar que aún con la mejora, el algoritmo no es competitivo en la tarea de referencia.
-
-#let gnb = `GNB` // $("GNB")$
-#let lr = `LR`
-#let svc = `SVC`
 
 Consideraremos a modo de referencia los siguientes algoritmos:
 - Naive Bayes Gaussiano (gnb, #gnb),
@@ -1516,3 +1443,79 @@ Lo junan a @carpioFingerprintsCancerPersistent2019? "Fingerprints of cancer by p
 #outline(target: figure.where(kind: raw), title: "Listado de código")
 
 #bibliography("../bib/references.bib", style: "harvard-cite-them-right")
+
+== Slides sobre diseño experimental
+
+
+=== KDC con Distancia de Fermat Muestral
+
+=== f-KNN
+
+=== Algunas dudas
+
+- Entrenar el clasificador por validación cruzada está OK: como $XX_"train" subset.eq XX$ y $XX_"test" subset.eq XX$, se sigue que $forall (a, b) in {XX_"train" times in XX_"test"} subset.eq {XX times XX}$ y $D_(XX, alpha) (a, b)$ está bien definida.  ¿Cómo sé la distancia _muestral_ de una _nueva_ observación $x_0$, a los elementos de cada clase?\
+
+
+Para cada una de las $g_i in GG$ clases, definimos el conjunto $ Q_i= {x_0} union {x_j : x_j in XX, g_j = g_i, j in {1, dots, N}} $
+y calculamos $D_(Q_i, alpha) (x_0, dot)$
+
+=== Algunas dudas
+
+- El clasificador de Loubes & Pelletier asume que todas las clases están soportadas en la misma variedad #MM. ¿Quién dice que ello vale para las diferentes clases?
+
+
+¡Nadie! Pero
+1. No hace falta dicho supuesto, y en el peor de los casos, podemos asumir que la unión de las clases está soportada en _cierta_ variedad de Riemman, que resulta de (¿la clausura de?) la unión de sus soportes individuales.
+2. Sí es cierto que si las variedades (y las densidades que soportan) difieren, tanto el $alpha_i^*$ como el $h_i*$ "óptimos" para los estimadores de densidad individuales no tienen por qué coincidir.
+3. Aunque las densidades individuales $f_i$ estén bien estimadas, el clasificador resultante puede ser mal(ard)o si no diferencia bien "en las fronteras". Por simplicidad, además, decidimos parametrizar el clasificador con dos únicos hiperparámetros globales: $alpha, h$.
+
+@hallBandwidthChoiceNonparametric2005 h optimo para clasificacion con KDE
+=== Diseño experimental
+
+1. Desarrollamos un clasificador compatible con el _framework_ de #link("https://arxiv.org/abs/1309.0238", `scikit-learn`)  según los lineamientos de Loubes & Pelleteir, que apodamos `KDC`.
+2. Implementamos el estimador de la distancia muestral de Fermat, y combinándolo con KDC, obtenemos la titular "Clasificación por KDE con Distancia de Fermat", `FKDC`.
+3. Evaluamos el _pseudo-$R^2$_ y la _exactitud_ ("accuracy") de los clasificadores propuestos en diferentes _datasets_, relativa a técnicas bien establecidas:
+#columns(2)[
+  - regresión logística (`LR`)
+  - clasificador de  soporte vectorial (`SVC`) #footnote[sólo se consideró su exactitud. ya que no es un clasificador suave]
+  - _gradient boosting trees_ (`GBT`)
+  #colbreak()
+  - k-vecinos-más-cercanos (`KN`)
+  - Naive Bayes Gaussiano (`GNB`)
+]
+
+
+- La implementación de `KNeighbors` de referencia acepta distancias precomputadas, así que incluimos una versión con distancia de Fermat, que apodamos `F(ermat)KN`.
+
+- Para ser "justos", se reservó una porción de los datos para la evaluación comparada, y del resto, cada algoritmo fue entrenado repetidas veces por validación cruzada de 5 pliegos, en una extensísima grilla de hiperparametrizaciones. Este procedimiento *se repitió 25 veces en cada dataset*.
+
+- La función de score elegida fue `neg_log_loss` ($= cal(l)$) para los clasificadores suaves, y `accuracy` para los duros.
+
+- Para tener una idea "sistémica" de la performance de los algoritmos, evaluaremos su performance con _datasets_ que varíen en el tamaño muestral $N$, la dimensión $p$ de las $X_i$, el nro. de clases $k$ y su origen ("real" o "sintético").
+
+- Cuando creamos datos sintéticos en variedades  con dimensión intrínseca menor a la ambiente, (casi) cualquier clasificador competente alcanza exactitud perfecta; para complejizar la tarea, agegamos un poco de "ruido" a las observaciones, y también analizamos sus efectos.
+
+=== Regla de Parsimonia
+
+- ¿Qué parametrización elegir cuando "en test da todo igual"?
+
+#align(center)[ #emoji.knife de Occam: la más "sencilla" (TBD)]
+
+
+- ¿Qué parametrización elegir cuando "en test da *casi* todo igual"?
+
+
+#align(center)[*Regla de $1SS$*: De las que estén a $1SS$ de la mejor, la más sencilla.]
+
+¿Sabemos cuánto vale $SS$?
+
+=== $R^2$ de McFadden
+Sea $cal(C)_0$ el clasificador "base", que asigna a cada observación y posible clase, la frecuencia empírica de clase encontrada en la muestra #XX. Para todo clasificador suave $cal(C)$, definimos el $R^2$ de McFadden como
+$ op(R^2)(cal(C) | XX) = 1 - (op(cal(l))(cal(C))) / (op(cal(l))(cal(C)_0)) $
+
+
+donde $cal(l)(dot)$ es la log-verosimilitud clásica. Nótese que $op(R^2)(cal(C)_0) = 0$.  A su vez, para un clasificador perfecto $cal(C)^star$ que otorgue toda la masa de probabilidad a la clase correcta, tendrá $op(L)(cal(C)^star) = 1$ y log-verosimilitud igual a 0, de manera que $op(R^2)(cal(C)^star) = 1 - 0 = 1$.
+
+
+Sin embargo, un clasificador _peor_ que $cal(C)_0$ en tanto asigne bajas probabilidades ($approx 0$) a las clases correctas, puede tener un $R^2$ infinitamente negativo.
+
