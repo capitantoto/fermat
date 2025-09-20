@@ -988,58 +988,93 @@ Una utilidad de este resultado, es que permite calcular con precisión para qué
 Lo que Chu et al llaman $d_bu(2)$ y figura en @chuExactComputationManifold2019 @vincentDensitySensitiveMetrics2003 como "distancia de arista-cuadrada", es la misma distancia $D_r$ que @bijralSemisupervisedLearningDensity2012 considera, con $p = 2$ (norma euclídea) y $r = 1/d$ (de modo que $q=r d+1=2$).
 A nuestro entender, no hay pruebas de tal equivalencia para valores arbitrarios de $p, q$, pero sí existen resultados asintóticos para casos más generales.
 
-=== Distancia de Fermat [Groisman, Jonckheere, Sapienza (2019); Little et al (2021)]
-@groismanNonhomogeneousEuclideanFirstpassage2019
-@littleBalancingGeometryDensity2021
-@mckenziePowerWeightedShortest2019
-#defn("Distancia Muestral de Fermat")[]<sample-fermat-distance>
+=== Distancia de Fermat
+
 
 #quote(attribution: "P. Groisman et al (2019)")[
   #set text(size: 12pt)
   _We tackle the problem of learning a distance between points, able to capture both the geometry of the manifold and the underlying density. We define such a sample distance and prove the convergence, as the sample size goes to infinity, to a macroscopic one that we call Fermat distance as it minimizes a path functional, resembling Fermat principle in optics._]
 
 
-
-Sea $f$ una función continua y positiva, $beta >=0$
-y $x, y in S subset.eq RR^d$. Definimos la _Distancia de Fermat_ $cal(D)_(f, beta)(x, y)$ como:
-
+El trabajo de @groismanNonhomogeneousEuclideanFirstpassage2019 considera la misma familia de distancias basadas en funciones monótonamente decrecientes de la densidad que @bijralSemisupervisedLearningDensity2012, $g = 1 / f^r$, salvo que en @groismanNonhomogeneousEuclideanFirstpassage2019,
 $
-  cal(T)_(f, beta)(gamma) = integral_gamma f^(-beta) space, quad quad quad cal(D)_(f, beta)(x, y) = inf_(gamma in Gamma) cal(T)_(f, beta)(gamma) quad #emoji.face.shock
+  p = 2; quad q = alpha; quad r = beta = (alpha - 1) / d
 $
 
-... donde el ínfimo se toma sobre el conjunto $Gamma$ de todos los caminos rectificables entre $x$ e $y$ contenidos en $overline(S)$, la clausura de $S$, y la integral es entendida con respecto a la longitud de arco dada por la distancia euclídea.
+y no se limita a sugerir que la distancia en el espacio ambiente, $D_r = D_(g compose f)$ se puede aproximar a través de la distancia basada en el grafo completo de #XX con aristas pesadas por $norm(dot)_2^alpha$, sino que precisan en qué sentido la una converge a la otra, y a qué tasa.#footnote[Con respecto a fijar $p=2$, en la "Observación 2.6" los autores mencionan que es posible y hasta sería interesante reemplazar la norma euclídea -- $2-$norma -- por otra distancia -- otra $p-$norma, por ejemplo --, reemplazando las integrales con respecto a la longitud de arco, por integrales con respecto a la distancia involucrada. Entendemos de ello que no es una condición _necesaria_ para el desarrolo del trabajo, sino sólo _conveniente_.]
 
-=== Distancia de Fermat muestral
+#defn([Distancia "macroscrópica" de Fermat @groismanNonhomogeneousEuclideanFirstpassage2019[Definición 2.2]])[
 
-Para $alpha >=1$ y $x, y in RR^d$, la _Distancia Muestral de Fermat_ se define como
+  Sea $f$ una función continua y positiva, $beta >=0$
+  y $x, y in S subset.eq RR^D$. Definimos la _Distancia de Fermat_ $cal(D)_(f, beta)(x, y)$ como:
 
-$
-  D_(XX, alpha) = inf {sum_(j=1)^(K-1) ||q_(j+1) - q_j||^alpha : (q_1, dots, q_K) "es un camino de de x a y", K>=1}
-$
+  $
+    cal(T)_(f, beta)(gamma) = integral_gamma f^(-beta) dif s, quad cal(D)_(f, beta)(x, y) = inf_gamma cal(T)_(f, beta)(gamma)
+  $
 
-donde los $q_j$ son elementos de la muestra #XX. Nótese que $D_(XX, alpha)$ satisface la desigualdad triangular, define una métrica sobre #XX y una pseudo-métrica sobre $RR^d$.
+  ... donde el ínfimo se toma sobre el conjunto de todos los "senderos" o curvas rectificables entre $x$ e $y$ contenidos en $overline(S)$, la clausura de $S$, y la integral es entendida con respecto a la longitud de arco $dif s$ dada por la distancia euclídea como siempre.
+]
 
-En su paper, Groisman et al. muestran que
-$
-  lim_(N -> oo) n^beta D_(XX_n, alpha) (x, y)= mu cal(D)_(f, beta)(x, y)
-$
-donde $beta = (a-1) slash d, thick n >= n_0$ y $mu$ es una constante adecuada.
+Este objeto "macroscópico" se puede aproximar a partir de una versión "microscópica" del mismo, que en límite converge a $cal(D)_(f, beta)$:
 
+#defn("Distancia muestral de Fermat")[<sample-fermat-distance>
 
-¡Esta sí la podemos aprender de los datos! #emoji.arm.muscle
+  Sea $Q$ un conjunto no-vacío, _localmente finito_ #footnote[Es decir, que para todo compacto $U subset RR^D$, la cardinalidad de $Q inter U$ es finita, $abs(Q inter U) < oo$.] de $RR^D$. Para $alpha >=1$ y $x, y in RR^d$, la _Distancia Muestral de Fermat_ se define como
 
+  $
+    D_(Q, alpha) = inf { & sum_(j=1)^(K-1) ||q_(j+1) - q_j||^alpha : (q_1, dots, q_K) \
+                         & "es un camino de de x a y", K>=1}
+  $
+
+  donde los $q_j$ son elementos $Q$. Nótese que $D_(Q, alpha)$ satisface la desigualdad triangular, define una métrica sobre $Q$ y una pseudo-métrica #footnote[una métrica tal que la distancia puede ser nula entre puntos no-idénticos $exists a != b : d(a, b) = 0$] sobre $RR^d$.
+]
+
+#defn([variedad isométrica])[
+  Diremos que #MM es una variedad $d-$dimensional $C^1$ _isométrica_ embebida en $RR^D$ si existe un conjunto abierto y conexo $S subset RR^D$ y $phi : S -> RR^D$ una transformación isométrica #footnote[Que preserva las métricas o distancias; del griego "isos" (igual) y "metron" (medida)] tal que $phi(overline(S)) = MM$. Como se mencionó con anterioridad, se espera que $d << D$, pero no es necesario.
+]
+
+#defn([Convergencia de $D_(Q, alpha)$, @groismanNonhomogeneousEuclideanFirstpassage2019[Teorema 2.7]])[
+
+  Asuma que #MM es una variedad $C^1$ $d$-dimensional isométrica embebida en $RR^D$ y $f: M -> R_+$ es una función de densidad de probabilidad continua. Sea $Q_n = {q_1, ..., q_n}$ un conjunto de elementos aleatorios independientes con densidad común $f$. Entonces, para $alpha > 1$ y $x,y in M$ tenemos:
+
+  $ lim_(n->oo) n^beta D_(Q_n,alpha)(x,y) = mu D_(f,beta)(x,y) " casi seguramente." $
+
+  Aquí,
+  - $beta = (alpha-1) slash d$,
+  - $mu$ es una constante que depende únicamente de $alpha$ y $d$ y
+  - la minimización se realiza sobre todas las curvas rectificables $gamma subset M$ que comienzan en $x$ y terminan en $y$.
+]
+
+#obs[
+  El factor de escala $beta = (alpha-1)/d$ depende de la dimensión intrínseca $d$ de la variedad, y no de la dimensión $D$ del espacio ambiente.
+]
+
+La distancia muestral de Fermat $D_(Q, alpha)$:
+- se puede aproximar a partir de una muestra "lo suficientemente grande"
+- sin conocer ni la variedad #MM ni su dimensión intrínseca; además
+- tiene garantías de convergencia a una distancia basada en densidad (DBD) "macroscópica" (la distancia de Fermat "a secas" $cal(D),(f, beta)$) y
+- por definición, aprende "a la vez" la geometría del dominio y la densidad de la variable aleatoria objetivo sobre éste.
+
+Es decir, que pareciéramos haber conseguido la pieza faltante para nuestro clasificador en variedades _desconocidas_ y estaríamos en condiciones de proponer un algoritmo de clasificación que reúna todos los cabos del tejido teórico hasta aquí desplegado.
+
+Nobleza obliga, hemos de mencionar que los trabajos de @littleBalancingGeometryDensity2021 @mckenziePowerWeightedShortest2019 , contemporáneos a Groisman et al, también consideran lo que ellos llaman "distancias de caminos mínimos pesadas por potencias" #footnote["power-weighted shortest-path distances" o PWSPDs por sus siglas en inglés], y las aplican no a problemas de clasificación, sino de _clustering_ #footnote[de identificación de grupos en datos no etiquetados]. Hay algunas diferencias en la minucia del tratamiento #footnote[En particular, la distancias microscópica que plantean Little et al no es la suma de las aristas pesadas por $q=alpha$ como hacen Bijral et al y Groisman et al, sino la raíz $alpha$-ésima de tal suma, en una especia de reversión de la distancia de Minkowski. Además, el contexto de _clustering_ los lleva a considerar una muestra compuesta de elementos provenientes de variedad disjuntas, una representando a cada _cluster_.], mas no así en la sustancia, por lo cual pasaremos directamente a la próxima sección.
 == Propuesta Original
-== Todo junto
 
-Habiendo andado este sendero teórico, la pregunta natural que asoma es: ¿es posible mejorar un algoritmo de clasificación reemplazando la distancia euclídea por una aprendida de los datos, como la de Fermat? Para investigar la cuestión, nos propusimos:
-1. Implementar un clasificador basado en estimación de densidad por núcleos (TODO: ref) según @loubesKernelbasedClassifierRiemannian2008, que llamaremos "KDC". Además,
+Al comienzo de este sendero teórico nos preguntamos: ¿es posible mejorar un algoritmo de clasificación reemplazando la distancia euclídea por una aprendida de los datos? Habiendo explorado el área en profundidad, entendemos que sí pareciera ser posible, y en particular la distancia muestral de Fermat es un buen candidato de reemplazo.
+
+Para saldar la cuestión, nos propusimos:
+1. Implementar un clasificador basado en estimación de densidad por núcleos como el de @kde-variedad @loubesKernelbasedClassifierRiemannian2008, que llamaremos "KDC". Además,
 2. Implementar un estimador de densidad por núcleos basado en la distancia de Fermat, a fines de poder comparar la _performance_ de KDC con distancia euclídea y de Fermat.
 
-Nótese que el clasificador enunciado al inicio (k-NN, @eps-nn), tiene un pariente cercano, $epsilon-upright("NN")$
-#defn("k-vecinos más cercanos")[] <knn>
+Nótese que el clasificador de $k-$vecinos más cercanos de @knn-clf (k-NN, @eps-nn), tiene un pariente cercano, $epsilon-upright("NN")$
+#defn([clasificador de $epsilon-$vecinos-más-cercanos])[
+  Sean $B_epsilon(x)$ una bola normal de radio $epsilon$ centrada en $x$, y $cal(N)_epsilon (x) = XX inter B_epsilon(x)$ el $epsilon-$vencindario de $x$. El clasificador de $epsilon-$vecinos-más-cercanos $epsilon-N N$ le asignará a $x$ la clase más frecuente entre la de sus vecinos $y in cal(N)_epsilon (x)$
+] <epsnn-clf>
 
-@eps-nn es esencialmente equivalente a KDC con un núcleo "rectangular", $k(t) = ind(d(x, t) < epsilon) / epsilon$, pero su definición es considerablemente más sencilla. Luego, propondremos también
-3. Implementar un clasificador cual @knn, pero con distancia muestral de Fermat en lugar de euclídea.
+@eps-nn es esencialmente equivalente a KDC con un núcleo "rectangular", $k(t) = ind(d(x, t) < epsilon) / epsilon$, pero su implementación es considerablemente más sencilla. Para comprender más cabalmente el efecto de la distancia de Fermat en _la tarea de clasificación_, y no solamente en _cierto_ algoritmo de clasificación, nos propusimos también
+
+3. Implementar un clasificador cual @knn-clf, pero con distancia muestral de Fermat en lugar de euclídea.
+
 
 === KDC con Distancia de Fermat Muestral
 
