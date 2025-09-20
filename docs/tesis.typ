@@ -922,18 +922,14 @@ donde la minimización es con respecto a todos los senderos rectificables con ex
 
 ¿Es posible estimar $D_(g compose f)$ de manera consistente? Intuitivamente, consideremos dos puntos $a, b in U subset MM, thick dim MM = d$ en un vecindaro $U$ de $a$ lo "suficientemente pequeño" como para que $f$ sea esencialmente uniforme en él, y en particular en el segmento $gamma_(a b) = overline(a b)$ y tomemos $g = 1 slash f^r$:
 
-$
-  J_(r)(gamma_(a b)) = D_r (a, b) & approx g("alrededor de " a " y " b) norm(b - a)_p \
-  &prop g(norm(b -a)_p^(-d)) norm(b-a)_p \
-             & = norm(b -a)_p^(r d + 1) = norm(b-a)_p^q
-$,
+$ J_(r)(gamma_(a b)) = D_r (a, b) & approx g("alrededor de " a " y " b) norm(b - a)_p \
+                                & prop g(norm(b -a)_p^(-d)) norm(b-a)_p \
+                                & = norm(b -a)_p^(r d + 1) = norm(b-a)_p^q $,
 
 donde $q = r times d+1$. Nótese que como ya mencionamos, tomar $q=1$ (o $r = 0$) devuelve la distancia de Minkowski.
 
 Luego, el costo de un paseo de $k$ pasos por el grafo completo de #XX, $gamma = (pi_0, pi_1, dots, pi_(i_k)), thick pi_(j)^T in XX forall j in [k]$ por el grafo completo de #XX se puede computar con una simple suma:
-$
-  J_r (gamma) = sum_(j=1)^k D_r (pi_(j-1), pi_(j)) approx prop sum_(j=1)^k norm(pi_(j) - pi_(j-1))_p^q
-$ se puede computar similarmente, 
+$ J_r (gamma) = sum_(j=1)^k D_r (pi_(j-1), pi_(j)) approx prop sum_(j=1)^k norm(pi_(j) - pi_(j-1))_p^q $ se puede computar similarmente,
 
 que a su vez nos permite estimar las distancias geodésicas $D_r$ como los "caminos mínimos" en el grafo completo de $XX$ con aristas pesadas por $norm(b - a)_p^q), thick a^T, b^T in XX$.
 
@@ -942,15 +938,12 @@ Esta estimación es particularmente atractiva, en tanto no depende para nada de 
 Queda de manifiesto que hay una estrecha relación entre las distancias de caminos mínimos con aristas pesadas por una potencia $q= r d +1$ - que sólo está definida entre observaciones de #XX, con la distancia $D_r = inf_gamma (integral_gamma 1/f^r dif s)$, que a priori está definida globalmente en #MM.
 
 Un resultado interesante por lo exacto, aparece en @chuExactComputationManifold2019. Dado un conjunto de puntos $P = {p_1, dots, p_N}, p_i in MM forall i in [N]$, Considérese la "métrica de vecino más cercano"
-$
-  r_P(q) = 4 min_(p in P) norm(q - p)
-$,
+$ r_P(q) = 4 min_(p in P) norm(q - p) $,
 
 que da lugar a la función de costo
-$
-  J_(r_P) (gamma) = integral_0^1 r_P (gamma(t)) norm(gamma'(t)) dif t
-$,
+$ J_(r_P) (gamma) = integral_0^1 r_P (gamma(t)) norm(gamma'(t)) dif t $,
 que a su vez define la distancia
+
 $
   D_(r_P) = inf_gamma J_(r_P) (gamma)
 $
@@ -960,18 +953,41 @@ Considérese además la distancia de arista-cuadrada:
 $
   d_bu(2)(a, b) = inf_((p_0, dots, p_k)) sum_(i=1)^k norm(p_i - p_(i-1))^2
 $
-donde el ínfimo se toma sobre toda posible secuencia de puntos $ p_0, dots, p_k in P, p_0 = a, p_k = b$. Resulta entonces que la distancia de vecino más cercano $d_bu(N)$ y la métrica de arista cuadrada $d_bu(2)$ son equivalentes para todo conjunto de puntos $P$ en dimensión arbitraria. @chuExactComputationManifold2019[Teorema 1.1] #footnote[De hecho, la prueba que ofrecen es un poco más general: los elementos de $P$ no tienen por qué ser puntos en #MM, sino que pueden ser conjuntos compactos, con costo cero al atravesarlos, cf. @chuExactComputationManifold2019[Figura 2]].
+donde el ínfimo se toma sobre toda posible secuencia de puntos $p_0, dots, p_k in P, p_0 = a, p_k = b$. Resulta entonces que la distancia de vecino más cercano $d_bu(N)$ y la métrica de arista cuadrada $d_bu(2)$ son equivalentes para todo conjunto de puntos $P$ en dimensión arbitraria. @chuExactComputationManifold2019[Teorema 1.1] #footnote[De hecho, la prueba que ofrecen es un poco más general: los elementos de $P$ no tienen por qué ser puntos en #MM, sino que pueden ser conjuntos compactos, con costo cero al atravesarlos, cf. @chuExactComputationManifold2019[Figura 2]].
 
 Probar la equivalencia para el caso trivial con $P = {a, b} subset RR^D$ se convierte en un ejercicio de análisis muy sencillo, que cementa la intuición y explica el factor de $4$ original:
-#figure(image("img/equivalencia-d2-dN.svg"), caption:[Ejemplo trivial de la equivalencia $d_bu(N) equiv d_bu(2)$ para $P = {a, b}$]) <equiv-d2-dn>
+#figure(
+  image("img/equivalencia-d2-dN.svg"),
+  caption: [Ejemplo trivial de la equivalencia $d_bu(N) equiv d_bu(2)$ para $P = {a, b}$],
+) <equiv-d2-dn>
 
-Para ir de $a$ a $b$, en algún momento hay que cruzar la mediatriz de $gamma = overline(a b)$.
+En la mitad del segmento $overline(a b)$ más cercana a $a$ (región azul), $d_bu(N)$ es $norm(z - a)^2$; análogamente, en la región naranja $d_bu(N) = norm(z - b)^2$.
 $
-  d_bu(N)(a, b) = 
+  gamma(t) : [0, 1] -> RR^D, thick gamma(t) = (1 - t) a + t b, thick gamma'(t) = b - a \ \
 $
- Considere
-Un resultado particularmente interesante por lo exacto, lo 
-@chuExactComputationManifold2019
+$
+  d_bu(N)(a, b) & = J_(r_P) (gamma) = integral_0^1 r_{a, b} (gamma(t)) times norm(gamma'(t)) dif t \
+  & = integral_0^1 4 min_(p in {a, b}) norm((a + (b -a)t) - p) norm(b-a) dif t \
+  & = 4 norm(b-a) (integral_0^(1/2) norm(a + (b -a)t - a) dif t + integral_(1/2)^1 norm(a + (b -a)t - b) dif t )\
+  & = 4 norm(b-a) (integral_0^(1/2) norm((b -a)t) dif t + integral_(1/2)^1 norm((a-b)(1-t)) dif t )\
+  & = 4 norm(b-a)^2 (integral_0^(1/2) t dif t + integral_(1/2)^1 (1-t) dif t ) = 4 norm(b-a) (1/8 + 1/8) \
+  & = norm(b-a)^2
+  = d_bu(2)(a, b)
+$
+
+El grueso del trabajo de Chu et al consiste en una prueba más general de esta igualdad, que se desarrolla en tres partes:
+1. Para toda colección finita de puntos $P = {p_i : p_i in RR^D}$,
+
+  1.a. $d_bu(N) <= d_bu(2)$
+
+  1.b. $d_bu(N) >= d_bu(2)$
+2. (1) también es válido para toda colección de compactos $P$ de $RR^D$.
+
+Una utilidad de este resultado, es que permite calcular con precisión para qué valores de $k$, estimar $d_bu(N)$ sobre el grafo pesado por aristas cuadradas $bu(N N)_k (XX)$  es "suficientemente buen sustituto" por el más costoso $bu(C)(XX)$. En @chuExactComputationManifold2019[Theorema 1.3], observan que basta $k = O(2^d ln n)$
+
+Lo que Chu et al llaman $d_bu(2)$ y figura en @chuExactComputationManifold2019 @vincentDensitySensitiveMetrics2003 como "distancia de arista-cuadrada", es la misma distancia $D_r$ que @bijralSemisupervisedLearningDensity2012 considera, con $p = 2$ (norma euclídea) y $r = 1/d$ (de modo que $q=r d+1=2$).
+A nuestro entender, no hay pruebas de tal equivalencia para valores arbitrarios de $p, q$, pero sí existen resultados asintóticos para casos más generales.
+
 === Distancia de Fermat [Groisman, Jonckheere, Sapienza (2019); Little et al (2021)]
 @groismanNonhomogeneousEuclideanFirstpassage2019
 @littleBalancingGeometryDensity2021
