@@ -18,12 +18,13 @@
 #let var = $op("Var")$
 #let SS = $bu(Sigma)$
 // nombres de clasificadores
-#let fkdc = $cal(F)"-KDC"$
-#let kdc = "KDC"
-#let fknn = $cal(F)"-kNN"$
-#let knn = $k-"NN"$
+#let fkdc = [$f$`-KDC`]
+#let kdc = `KDC`
+#let fkn = [$f$`-KN`]
+#let kn = `KN`
 #let gnb = `GNB` // $("GNB")$
 #let lr = `LR`
+#let slr = [$s$`-LR`]
 #let svc = `SVC`
 #let gbt = `GBT`
 // calsificador genérico
@@ -43,6 +44,8 @@
 #let defn = thmbox("definition", "Definición", inset: (x: 1.2em, top: 1em))
 #let obs = thmplain("observation", "Observación").with(numbering: none)
 #let thm = thmbox("theorem", "Teorema", inset: (x: 1.2em, top: 1em))
+
+
 // ##############
 // ### estilo ###
 // ##############
@@ -69,6 +72,47 @@
 = TODOs
 - [ ] Ponderar por $n^beta$
 - [ ] Evitar coma entre sujeto y predicado
+
+#json("../sandbox/v5/data/sanity-check.json")
+
+= Arenero
+== Tablas
+#let tabla_csv(path) = {
+  let data = csv(path)
+  let eval_scope = (fkdc: fkdc, kn: kn, fkn: fkn, kdc: kdc, lr: lr, svc: svc, lsvc: `LSVC`, gnb: gnb, base: "base")
+  table(columns: data.at(0).len(), ..data.flatten().map(eval.with(mode: "markup", scope: eval_scope)))
+}
+
+#tabla_csv("data/2-blobs.csv")
+#let best(..contents) = {
+  contents.pos().map(content => table.cell(fill: rgb("#7cff9dc9"), content))
+}
+
+#let bad(..contents) = {
+  contents.pos().map(content => text(fill: black.transparentize(70%), content))
+}
+
+#show table.cell.where(y: 0): set text(weight: "bold")
+#let na = align(center)[--]
+#table(
+  columns: 3,
+  stroke: none,
+  align: (x, y) => if y == 0 { center } else { if x == 0 { right } else { top } },
+  table.header[clf][$R^2$][exac],
+  table.hline(stroke: 1pt),
+  table.vline(x: 1, start: 1, stroke: .5pt),
+  [#fkdc],[1.0],[1.0],
+  [#kdc], [1.0], [1.0],
+[#gnb], [1.0], [1.0],
+  [#kn], [1.0], [1.0],
+  [#fkn], [1.0], [1.0],
+  [#lr], [0.99994], [1.0],
+  ..best([#slr],[0.99952],[1.0]),
+  ..bad([#gbt], [0.9995], [1.0]),
+  ..bad([#svc], [#na], [1.0]),
+)
+
+#include("mi-tabla.typ")
 
 = Vocabulario y Notación
 A lo largo de esta monografía tomaremos como referencia enciclopédica al _Elements of Statistical Learning_ @hastieElementsStatisticalLearning2009, de modo que en la medida de lo posible, basaremos nuestra notación en la suya también.
@@ -149,11 +193,11 @@ Su error esperado de predicción $"EPE"$ se conoce como la _tasa de Bayes_. Un a
 #defn("clasificador de k-vecinos-más-cercanos")[
   Sean $x^((1)), dots, x^((k)))$ los $k$ vecinos más cercanos a $x$, y $GG^((1)), dots, GG^((k))$ sus respetivas clases. El clasificador de k-vecinos-más-cercanos le asignará a $x$ la clase más frecuente entre $GG^((1)), dots, GG^((k))$. Más formalmente:
   $
-    hat(G)_("kNN")(x) & =GG_("kNN") = arg max_(g in GG) sum_(i in [k]) ind(GG^((i)) = g) \
-                      & <=> \#{i : GG^((i)) = GG_("kNN"), i in [k]} = max_(g in GG) \#{i : GG^((i)) = g, i in [k]} \
+    hat(G)_("kn")(x) & =GG_("kn") = arg max_(g in GG) sum_(i in [k]) ind(GG^((i)) = g) \
+                     & <=> \#{i : GG^((i)) = GG_("kn"), i in [k]} = max_(g in GG) \#{i : GG^((i)) = g, i in [k]} \
   $
 
-] <knn-clf>
+] <kn-clf>
 
 === Clasificador de Bayes empírico
 
@@ -256,7 +300,7 @@ $
 ]
 
 #obs[
-  Algunos clasificadores sólo pueden ser duros, como $hat(G)_"1-NN"$, el clasificador de @knn-clf con $k=1$.
+  Algunos clasificadores sólo pueden ser duros, como $hat(G)_"1-NN"$, el clasificador de @kn-clf con $k=1$.
 ]
 
 Dos clasificadores _blandos_ pueden tener la misma pérdida $0-1$, pero "pintar" dos panoramas muy distintos respecto a cuán "seguros" están de cierta clasificación. Por caso,
@@ -824,7 +868,7 @@ En un trabajo contemporáneo a @vincentManifoldParzenWindows2002, "Charting a Ma
 El procedimiento para estimar $d_MM$ es ingenioso, pero costoso. Sean $XX = (x_1^T, dots, x_N^T)$ observaciones $p-$dimensionales, que han sido muestreados de una distribución en $(MM, g), dim MM = d < p$ con algo de ruido _isotrópico_ #footnote[Del griego _iso-_, "igual" y _-tropos_, "dirección"; "igual en todas als direcciones"] $p-$dimensional. Consideremos una bola $B_r (0)$ centrada en un punto cualquiera de #MM, y consideremos la tasa $t(r)$ a la que incorpora observaciones vecinas. Cuando $r$ está en la escala del ruido, la bola incorpora puntos "rápidamente", pues hay dispersión en todas las direcciones. A medida que $r$ llega a la escala en la que el espacio es localmente análogo a $RR^d$, la incorporación de nuevos puntos disminuye, pues sólo habrá neuvas observaciones en las $d$ direcciones tangentes. Si $r$ sigue creciendo la bola $B_r (0)$ eventualmente alcanzará la escala de la _curvatura_ de la variedad, momento en el que comenzará a acelerarse nuevamente la incorporación de puntos. Analizando $arg max_r t(r)$ podemos identificar la dimensión intrínseca de la variedad. #footnote[Más precisamente, el _paper_ utiliza otra función de $r$, $c(r)$ que se _maximiza_ cuando $r approx 1/d$, y considera las dificultades entre estimar $d$ punto a punto o globalmente.]
 
 #figure(
-  image("img/scale-behavior-1d-curve-w-noise.png"),
+  image("img/scale-behavior-1d-curve-w-noise.png", width: 60%),
   caption: [Una bola de radio $r$ creciente centrada en un punto de una $1-$variedad muestreada con ruido en $RR^2$ _minimiza_ la tasa a la que incorpora observaciones cuando $r$ está en la escala "localmente lineal" de la variedad.],
 )
 
@@ -1035,7 +1079,7 @@ y no se limita a sugerir que la distancia en el espacio ambiente, $D_r = D_(g co
 
 Este objeto "macroscópico" se puede aproximar a partir de una versión "microscópica" del mismo, que en límite converge a $cal(D)_(f, beta)$:
 
-#defn("Distancia muestral de Fermat")[<sample-fermat-distance>
+#defn("Distancia muestral de Fermat")[
 
   Sea $Q$ un conjunto no-vacío, _localmente finito_ #footnote[Es decir, que para todo compacto $U subset RR^D$, la cardinalidad de $Q inter U$ es finita, $abs(Q inter U) < oo$.] de $RR^D$. Para $alpha >=1$ y $x, y in RR^d$, la _Distancia Muestral de Fermat_ se define como
 
@@ -1045,7 +1089,7 @@ Este objeto "macroscópico" se puede aproximar a partir de una versión "microsc
   $
 
   donde los $q_j$ son elementos $Q$. Nótese que $D_(Q, alpha)$ satisface la desigualdad triangular, define una métrica sobre $Q$ y una pseudo-métrica #footnote[una métrica tal que la distancia puede ser nula entre puntos no-idénticos $exists a != b : d(a, b) = 0$] sobre $RR^d$.
-]
+] <sample-fermat-distance>
 
 #defn([variedad isométrica])[
   Diremos que #MM es una variedad $d-$dimensional $C^1$ _isométrica_ embebida en $RR^D$ si existe un conjunto abierto y conexo $S subset RR^D$ y $phi : S -> RR^D$ una transformación isométrica #footnote[Que preserva las métricas o distancias; del griego "isos" (igual) y "metron" (medida)] tal que $phi(overline(S)) = MM$. Como se mencionó con anterioridad, se espera que $d << D$, pero no es necesario.
@@ -1084,14 +1128,14 @@ Para saldar la cuestión, nos propusimos:
 1. Implementar un clasificador basado en estimación de densidad por núcleos como el de @kde-variedad @loubesKernelbasedClassifierRiemannian2008, que llamaremos "KDC". Además,
 2. Implementar un estimador de densidad por núcleos basado en la distancia de Fermat, a fines de poder comparar la _performance_ de KDC con distancia euclídea y de Fermat.
 
-Nótese que el clasificador de $k-$vecinos más cercanos de @knn-clf (k-NN, @eps-nn), tiene un pariente cercano, $epsilon-upright("NN")$
+Nótese que el clasificador de $k-$vecinos más cercanos de @kn-clf (k-NN, @eps-nn), tiene un pariente cercano, $epsilon-upright("NN")$
 #defn([clasificador de $epsilon-$vecinos-más-cercanos])[
   Sean $B_epsilon(x)$ una bola normal de radio $epsilon$ centrada en $x$, y $cal(N)_epsilon (x) = XX inter B_epsilon(x)$ el $epsilon-$vencindario de $x$. El clasificador de $epsilon-$vecinos-más-cercanos $epsilon-N N$ le asignará a $x$ la clase más frecuente entre la de sus vecinos $y in cal(N)_epsilon (x)$
 ] <epsnn-clf>
 
 @eps-nn es esencialmente equivalente a KDC con un núcleo "rectangular", $k(t) = ind(d(x, t) < epsilon) / epsilon$, pero su implementación es considerablemente más sencilla. Para comprender más cabalmente el efecto de la distancia de Fermat en _la tarea de clasificación_, y no solamente en _cierto_ algoritmo de clasificación, nos propusimos también
 
-3. Implementar un clasificador cual @knn-clf, pero con distancia muestral de Fermat en lugar de euclídea.
+3. Implementar un clasificador cual @kn-clf, pero con distancia muestral de Fermat en lugar de euclídea.
 
 === Estiamción de distancia out-of-sample
 
@@ -1157,7 +1201,7 @@ La verosimilitud de una muestra varía en $[0, 1]$ y su log-verosimilitud, en $(
   Sin embargo, un clasificador _peor_ que $clf_0$ en tanto asigne bajas probabilidades a las clases correctas, puede tener un $R^2$ infinitamente negativo.
 ]
 
-Visto y considerando que tanto #fkdc como #fknn son clasificadores suaves, evaluaremos su comportamiento en comparación con ambas métricas, la exactitud y el $R^2$ de McFadden #footnote[de aquí en más, $R^2$ para abreviar]
+Visto y considerando que tanto #fkdc como #fkn son clasificadores suaves, evaluaremos su comportamiento en comparación con ambas métricas, la exactitud y el $R^2$ de McFadden #footnote[de aquí en más, $R^2$ para abreviar]
 
 === Algoritmos de referencia
 
@@ -1211,11 +1255,6 @@ Antes de considerar ningún tipo de sofisticación, comenzamos asegurándonos qu
 ) <2-blobs>
 
 En este ejemplo, $d_MM = d_x = 2; thick k=2; thick n_1 = n_2 = 400$ tenemos dos "manchas" #footnote[_blobs_] perfectamente separables, con lo cual cualquier clasificador razonable debería alcanzar $op("exac") approx 1, thick cal(l) approx 0, R^2 approx 1$. La evaluación de nuestros clasificadores resulta ser:
-#let tabla_csv(path) = {
-  let data = csv(path)
-  let eval_scope = (fkdc: fkdc, kn: knn, fkn: fknn, kdc: kdc, lr: lr, svc: svc, lsvc: `LSVC`, gnb: gnb, base: "base")
-  table(columns: data.at(0).len(), ..data.flatten().map(eval.with(mode: "markup", scope: eval_scope)))
-}
 
 #figure(tabla_csv("data/2-blobs.csv"), caption: [Resultados de entrenamiento en @2-blobs])
 
@@ -1249,7 +1288,7 @@ Veamos entonces cómo les fue a los contendientes, considerando primero la exact
 
 #figure(tabla_csv("data/exac-ds-2d.csv"), caption: flex-caption[ "mi caption, bo". ][])
 #let lsvc = `LSVC`
-KDC (en sus dos variantes), KNN y SVC (con kernel RBF) parecieran ser los métodos más competitivos, con mínimas diferencias de performance entre sí: sólo en "círculos" se observa un ligero ordenamiento de los métodos, $svc succ kdc succ knn$, aunque la performance mediana de #svc está dentro de "los bigotes" de todos los métodos antedichos. La tarea "lunas" pareciera ser la más fácil de todas, en la que hasta una regresión logística sin modelado alguno es adecuada. Para "espirales" y "círculos", #gnb, #lr y #lsvc no logran performar significativamente mejor que el clasificador base.
+KDC (en sus dos variantes), kn y SVC (con kernel RBF) parecieran ser los métodos más competitivos, con mínimas diferencias de performance entre sí: sólo en "círculos" se observa un ligero ordenamiento de los métodos, $svc succ kdc succ kn$, aunque la performance mediana de #svc está dentro de "los bigotes" de todos los métodos antedichos. La tarea "lunas" pareciera ser la más fácil de todas, en la que hasta una regresión logística sin modelado alguno es adecuada. Para "espirales" y "círculos", #gnb, #lr y #lsvc no logran performar significativamente mejor que el clasificador base.
 
 #defn("clasificador base")[] <clf-base>
 
