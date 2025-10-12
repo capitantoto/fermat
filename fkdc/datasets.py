@@ -3,7 +3,7 @@ import logging
 import pickle
 from numbers import Number
 from pathlib import Path
-from typing import Optional
+from typing import Optional, TypeVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,6 +26,8 @@ from sklearn.utils.multiclass import unique_labels
 
 from fkdc import config
 from fkdc.utils import eyeglasses, sample
+
+T = TypeVar("T")
 
 
 def _dos_muestras(n_samples, random_state=None, shuffle=False):
@@ -259,7 +261,7 @@ class Dataset:
             pickle.dump(self, file)
 
     @classmethod
-    def cargar(cls, path: Path):
+    def cargar(cls: T, path: Path) -> T:
         return pickle.load(open(path, "rb"))
 
 
@@ -271,7 +273,8 @@ def make_datasets(
 ):
     data_dir.mkdir(parents=True, exist_ok=True)
     np.random.default_rng(main_seed)
-    main_seed = main_seed or (hash(dt.datetime.now()) % 2**32)  # Larger seeds return an error
+    # Larger seeds return an error
+    main_seed = main_seed or (hash(dt.datetime.now()) % 2**32)
     run_seeds = config._get_run_seeds(main_seed, repetitions)
     logging.basicConfig(
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",

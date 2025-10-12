@@ -189,10 +189,6 @@ def parse_basic_info(infos: dict, main_seed: int | None = None):
     for k, v in infos.items():
         clf = k[2]
         basic_infos[k] = {k: v for k, v in v[clf].items() if k in basic_fields}
-        if clf == "fkdc":
-            basic_infos[(k[0], k[1], "base", k[3], k[4])] = {
-                k: v for k, v in v["base"].items() if k in basic_fields
-            }
 
     basic_info = pd.DataFrame.from_records(
         list(basic_infos.values()),
