@@ -76,6 +76,13 @@
 #json("../sandbox/v5/data/sanity-check.json")
 
 = Arenero
+
+```
+    config_2d = Bunch(
+        lunas=Bunch(factory=make_moons, noise_levels=Bunch(lo=0.25, hi=0.5)),
+        circulos=Bunch(factory=make_circles, noise_levels=Bunch(lo=0.08, hi=0.2)),
+        espirales=Bunch(factory=hacer_espirales, noise_levels=Bunch(lo=0.1, hi=0.2)),
+```
 == Tablas
 #let tabla_csv(path) = {
   let data = csv(path)
@@ -101,18 +108,18 @@
   table.header[clf][$R^2$][exac],
   table.hline(stroke: 1pt),
   table.vline(x: 1, start: 1, stroke: .5pt),
-  [#fkdc],[1.0],[1.0],
+  [#fkdc], [1.0], [1.0],
   [#kdc], [1.0], [1.0],
-[#gnb], [1.0], [1.0],
+  [#gnb], [1.0], [1.0],
   [#kn], [1.0], [1.0],
   [#fkn], [1.0], [1.0],
   [#lr], [0.99994], [1.0],
-  ..best([#slr],[0.99952],[1.0]),
+  ..best([#slr], [0.99952], [1.0]),
   ..bad([#gbt], [0.9995], [1.0]),
   ..bad([#svc], [#na], [1.0]),
 )
 
-#include("mi-tabla.typ")
+#include "mi-tabla.typ"
 
 = Vocabulario y Notación
 A lo largo de esta monografía tomaremos como referencia enciclopédica al _Elements of Statistical Learning_ @hastieElementsStatisticalLearning2009, de modo que en la medida de lo posible, basaremos nuestra notación en la suya también.
@@ -1225,55 +1232,125 @@ La unidad de evaluación de los algoritmos a considerar es una `Tarea`, que se c
 === Entrenamiento de los algoritmos
 La especificación completa de un clasificador, requiere, además de la elección del algoritmo, la especificación de sus _hiperparámetros_, de manera tal de optimizar su rendimiento bajo ciertas condiciones de evaluación. Para ello, se definió de antemano para cada clasificador una _grilla_ de hiperparámetros: durante el proceso de entrenamiento, la elección de los "mejores" hiperparámetros se efectuó maximizando la log-verosimilitud @vero para los clasificadores suaves, y la exactitud @exactitud para los duros #footnote[Entre los mencionados, el único clasificador duro es #svc. Técnicamente es posible entrenar un clasificador suave a partir de uno duro con un _segundo_ estimador que toma como _input_ el resultado "crudo" del clasificador duro y da como _output_ una probabilidad calibrada (cf. #link("https://scikit-learn.org/stable/modules/calibration.html")[Calibración] en la documentacion de `scikit-learn` TODO citar scikit-learn), pero es un proceso computacionalmente costoso.] con una búsqueda exhaustiva por convalidación cruzada de 5 pliegos #footnote[Conocida en inglés como _Grid Search 5-fold Cross-Validation_] sobre la grilla entera.
 
-=== Regla de Parsimonia
-
-- ¿Qué parametrización elegir cuando "en test da todo igual"?
-
-#align(center)[ Navaja de Occam: la más "sencilla" (TBD)]
-
-
-- ¿Qué parametrización elegir cuando "en test da *casi* todo igual"?
-
-
-#align(center)[*Regla de $1 sigma$*: De las que estén a $sigma$ de la mejor, la más sencilla.]
-
-¿Sabemos cuánto vale $sigma$?
-
 === Estimación de la variabilidad en la _performance_ reportada
 En última instancia, cualquier métrica evaluada, no es otra cosa que un _estadístico_ que representa la "calidad" del clasificador en la Tarea a mano. A fines de conocer no sólo su estimación puntual sino también darnos una idea de la variabilidad de su performance, para cada dataset y colección de algoritmos, se entrenaron y evaluaron #reps tareas idénticas salvo por la semilla $s$, que luego se usaron para estimar la varianza y el desvío estándar en la exactitud (@exactitud) y el pseudo-$R^2$ (@R2-mcf).
 
 Cuando el conjunto de datos proviene del mundo real y por lo tanto _preexiste a nuestro trabajo_, las #reps semillas $s_1, dots, s_#reps$ fueron utilizadas para definir el split de entrenamiento/evaluación. Por el contrario, cuando el conjunto de datos fue generado sintéticamente, las semillas se utilizaron para generar #reps versiones distintas pero perfectamente replicables del dataset, y en todas se utilizó una misma semilla maestra $s^star$ para definir el split de evaluación.
 
+
+=== Regla de Parsimonia
+
+La estrategia de validación cruzada intenta evitar que los algoritmos sobreajusten durante el entrenamiento, evaluando su comportamiento en $XX_"test"$ que es MECE a $XX_"train"$.
+No todas las parametrizaciones son equivalentes: en general, para cada hiperparámetro se puede establecer una dirección en la que el modelo se complejiza, en tanto se ajusta más y más a los datos de entrenamiento: un estimador #kn entrenado con _menos vecinos_  cambia sus predicciones más seguido que uno con _más vecinos_ - considere $50-"NN"$ y $1-"NN"$.
+
+#obs(link("https://es.wikipedia.org/wiki/Navaja_de_Ockham")[Navaja de Occam])[
+  "cuando dos teorías en igualdad de condiciones tienen las mismas consecuencias, la teoría más simple tiene más probabilidades de ser correcta que la compleja"
+]
+Reformulando, diremos que sujeto a la implementación de _cierto_ algoritno,
+- cuando dos teorías - i.e. hiperparametrizaciones $h_0, h_1$ del algoritmo
+- tienen _casi_ las mismas consecuencias - alcanzan $R^2$ tales que $abs(R^2(h_0) - R^2(h_1)) <= epsilon$
+entonces la teoría más sencilla - la de menor _complejidad_ $op(C)(p)$ para cierta función $C$ a definir.
+
+La validación cruzada de $k$ pliegos nos provee naturalmente de $k$ pliegos - realizaciones -  de la métrica a optimizar, para la hiperparametrización que minimiza la pérdida de evaluación $h^"opt" = (h^"opt"_1, dots, h^"opt"_k)$, $hat(s^2)(h^"opt")$ y sobre ella implementar una regla de sentido común:
+#defn([regla de $1 sigma$])[
+  Sea $hat(s^2)(L(h))$ una estimación "razonable" de la varianza de la pérdida $L(h)$ pérdida del modelo parametrizado en $h$, y $h^"opt"$ la que alcanza la mínima perdida. De entre todas las hiperparametrizaciones, elíjase $h^star = arg min_(h in cal(H)) C(h)), \ cal(H) = {h : L(h) <= L(h^"opt") + sqrt(hat(s^2)(L(h^"opt"))) }$, _la más sencilla_.
+]
+
+Para definir una $C$ factible en modelos con dim(h) > 1, definimos el orden de complejidad creciente _para cada clasificador_, como una lista ordenada de 2-tuplas con los nombres de cada hiperparámetro, y una dirección de crecimiento en cada uno. Para #fkdc, por ejemplo, $C(h) = [(alpha, "ascendente"), (h, "descendente"))]$. La decisión de ordenar así los parámetros, con $alpha$ primero y $C$ _ascendente_ en $alpha$, hace que la evaluación "prefiera" naturalmente a #kdc por sobre #fkdc #footnote[$#kdc = op(#fkdc)(alpha=1))$] el mínimo $alpha=1$ estudiado) es mejor. En consiguiente, cuando veamos que #fkdc elije un $alpha != 1$, sabremos que no es por pura casualidad.
+
+#obs([complejidad en $h$])[
+  La complejidad es _descendente_ en el tamaño de la ventana $h$ TODO: cambiar nombre hiperparametrizacion a algo != h, algo griego?), en tanto a mayor $h$, tanto más grande se vuelve el vecindario donde $K_h (d(x, x_i)) >> 0$ y por ende pesa en la asignación. Análogamente, $k-"NN"$ y su primo $epsilon- "NN"$ tiene complejidad descendente en $k, epsilon$.
+]
+
+=== Medidas de locación y dispersión no-paramétricas:
+Siendo el "setting" (DBD en variedad de Riemann desconocida) tan poco ortodoxo, parece razonable comparar performance con medidas de locación robustas. Por eso comapramos la performance _mediana_ (y no media) por semilla de c/ clasificador, y las visualizamos con un _boxplot_, y no un IC $mu plus.minus n times sigma$.
 = Resultados
 
-== Chequeo de sanidad: `blobs`
-Antes de considerar ningún tipo de sofisticación, comenzamos asegurándonos que en condiciones benignas, nuestros clasificadores funcionan correctamente.
-// #set figure(supplement: "Figura")
+== In Totis
+
+En total, ejecutamos unas 4,500 tareas, producto de #reps repeticiones por dataset y clasificador, sobre un total de 20 datasets y 9 clasificadores diferentes. Recordemos que todos los estimadores se entrenaron con _score_ `neg_log_loss` (para optimizar por $R^2$), salvo #svc que al ser un clasificador duro, se entrenó con `accuracy`. Así, entre los clasificadores blandos la distancia de Fermat rindió frutos, con el máximo $R^2$ mediano en 10 de los 20 experimentos: 7 preseas fueron para #fkdc y 3 para #fkn.
+
+#gbt "ganó" en 5 datasets, entre ellos en varios con mucho ruido (`_hi`, y `_12`. #kdc resultó óptimo en 2 datasets, cementando la técnica del @kde-variedad como competitiva de por sí. Por último, tanto #kn como #lr (en su versión escalada, #slr) resultaron medianamente mejores que todos los demás en ciertos dataset, y sólo #gnb no consiguió ningún podio - aunque resultó competitivo en casi todo el tablero.
+La amplia distribución de algoritmos óptimos según las condiciones del dataset, remarcan la existencia de ventajas relativas en todos ellos.
+
+#let data = csv("../sandbox/v5/data/mejor-clf-por-dataset-segun-r2-mediano.csv")
+
+#let headers = data.at(0)
+#let rows = data.slice(1, count: data.len() - 1)
+#table(columns: headers.len(), table.header(..headers), ..rows.flatten())
+
+El mismo análisis con métrica de exactitud es, desde luego, menos favorable a nuestros métodos entrenados para otra cosa. #svc, entrenado a tono,resulta algoritmo casi imbatible, con sólidos números en todo tipo de datasets y máximos en 6 datasets. #gbt vuelve a en datasets con mucho ruido y siguen figurando como competitivos un amplio abanico de estimadores: hasta #fkdc retiene su título en 1 dataset, `espirales_lo`.
+
+#let data = csv("../sandbox/v5/data/mejor-clf-por-dataset-segun-accuracy-mediano.csv")
+#let headers = data.at(0)
+#let rows = data.slice(1, count: data.len() - 1)
+#table(columns: headers.len(), table.header(..headers), ..rows.flatten())
+
+
+Sólo considerar la performance de #fkdc y #fkn en los 20 datasets daría unas 40 unidades de análisis, y en el espíritu de indagación curiosa que lleva esta tesis, existen aún más tendencias y patrones interesantes en los 4,500 experimentos realizados. No es mi intención matar de aburrimiento al lector, con lo cual a continuación haremos un paneo arbitrario por algunos de los resultados que (a) me resultaron más llamativos o (b) se acercan lo suficiente a alguno de la literatura previa como para merecer un comentario aparte. Quien desee corroborar que no hice un uso injustificado de la discrecionalidad para elegir resultados, puede referirse al @apendice-a[Apéndice A].
+== Lunas, círculos y espirales ($D=2, d=1, k=2$)
+
+Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=1, k=2$, y exploramos tres curvas sampleadas en con un poco de "ruido blanco" #footnote[TODO: paper que habla de "sampleo en el tubo de radio $r$ alredededor de la variedad #MM".]:
+#let plotting_seed = 1075
+#let datasets = ("lunas", "circulos", "espirales")
 #figure(
-  image("img/2-blobs.png"),
-  caption: flex-caption[`make_blobs(n_features=2, centers=((0, 0), (10, 0)), random_state=1984)`][2 blobs],
-) <2-blobs>
-
-En este ejemplo, $d_MM = d_x = 2; thick k=2; thick n_1 = n_2 = 400$ tenemos dos "manchas" #footnote[_blobs_] perfectamente separables, con lo cual cualquier clasificador razonable debería alcanzar $op("exac") approx 1, thick cal(l) approx 0, R^2 approx 1$. La evaluación de nuestros clasificadores resulta ser:
-
-#figure(tabla_csv("data/2-blobs.csv"), caption: [Resultados de entrenamiento en @2-blobs])
-
-¡Excelentes noticias! Todos los clasificadores bajo estudio tienen exactitud perfecta, y salvo por una ligeramente negativa $cal(l)$ para #lr, el resto da exactamente 0. Pasemos entonces a algunos dataset mínimamente más complejos.
-
-=== Datasets sintéticos baja dimensión
-
-Consideremos ahora algunas curvas unidimensionales embebidas en $RR^2$:
-
-#figure(
-  image("img/datasets-lunas-circulos-espirales.svg", width: 125%),
-  caption: flex-caption["Lunas", "Círculos" y "Espirales", con $d_x = 2, d_(MM) = 1$ y $s=4107$][ "Lunas", "Círculos" y "Espirales" ],
+  table(
+    columns: 3, stroke: none,
+    ..datasets.map(ds => image("../sandbox/v5/img/" + ds + "_lo-" + str(plotting_seed) + "-scatter.svg"))
+  ),
+  caption: flex-caption["Lunas", "Círculos" y "Espirales", con $d_x = 2, d_(MM) = 1$ y $s=#plotting_seed$][ "Lunas", "Círculos" y "Espirales" ],
 ) <fig-2>
 
-Resultará obvio al lector que los conjuntos de datos expuestos en @fig-2 no son exactamente variedades "1D" embebidas en "2D", sino que tienen un poco de "ruido blanco" agregado para incrementar la dificultad de la tarea.
+#defn("ruido blanco")[Sea $X = (X_1, dots, X_d) in RR^d$ una variable aleatoria tal que $"E"(X_i)=0, "Var"(X_i)=SS thick forall i in [d]$. Llamaremos "ruido blanco con escala $SS$" a toda realización de $X$.] <ruido-blanco>.
 
-#defn(
-  "ruido blanco",
-)[Sea $X = (X_1, dots, X_d) in RR^d$ una variable aleatoria tal que $"E"(X_i)=0, "Var"(X_i)=SS thick forall i in [d]$. Llamaremos "ruido blanco con escala $SS$" a toda realización de $X$.] <ruido-blanco>
+En una primera variación "`_lo`" #footnote[en inglés, _low_ y _high_ - baja y alta - son casi homófonos de _lo_ y _hi_] utilizamos por ruido blanco una normal estándar $cal(N)_2(0, sigma^2 bu(I))$ bivariada con parámetro de ruido $sigma$ ajustado a cada dataset para resultar "poco".
+$ sigma_"lunas" = 0.25 quad sigma_"circulos" = 0.08 quad sigma_"espirales" = 0.1 $.
+
+En los tres datasets, el resultado es muy similar: #fkdc es el estimador que mejor $R^2$ reporta, y en todos tiene una exactitud comparable a la del mejor para el dataset. En ninguno de los tres datasets #fkdc tiene una exactitud muy distinta a la de #kdc, pero saca ventaja en $R^2$ para `lunas_lo` y `espirales_lo`.
+
+Sin mayor pérdida de generalización, nos referiremos sólo a `espirales_lo`.
+
+#let highlights_figure(dataset) = {
+  let highlights = json("../sandbox/v5/data/" + dataset + "-r2-highlights.json")
+  let csv_string = highlights.at("summary")
+  let lines = csv_string.split("\n")
+  let data = ()
+  for line in lines {
+    let fields = line.split(",")
+    data.push(fields)
+  }
+  let headers = data.at(0)
+  let rows = data.slice(1, count: data.len() - 2)
+  // TODO: pintar de color fermat, negrita best acc, grisar mal R2
+  let tabla_resumen = table(columns: headers.len(), stroke: 0.5pt, table.header(..headers), ..rows.flatten())
+
+
+  figure(
+    table(
+      columns: 2,
+      rows: 2,
+      stroke: 0pt,
+      image("../sandbox/v5/img/" + dataset + "-scatter.svg"), text(size: 8pt)[#tabla_resumen],
+      image("../sandbox/v5/img/" + dataset + "-r2-boxplot.svg"),
+      image("../sandbox/v5/img/" + dataset + "-accuracy-boxplot.svg"),
+    ),
+    caption: flex-caption[Resumen para #dataset][ "Lunas", "Círculos" y "Espirales" ],
+  )
+}
+
+
+#highlights_figure("lunas_lo")
+hola
+#pagebreak()
+
+#highlights_figure("circulos_lo")
+
+#pagebreak()
+
+#highlights_figure("espirales_lo")
+
+
+
 
 Veamos entonces cómo les fue a los contendientes, considerando primero la exactitud. Recordemos que para cada experimento se realizaron #reps repeticiones: en cada celda reportaremos la exactitud _promedio_, y a su lado entre paréntesis el error estándar cpte.:
 
@@ -1491,7 +1568,7 @@ Si $D_(Q_i, alpha) prop ||dot||$ (la distancia de fermat es proporcional a la eu
 ]
 
 
-=== Conclusiones
+== Conclusiones
 
 
 = Listados
@@ -1504,4 +1581,6 @@ Si $D_(Q_i, alpha) prop ||dot||$ (la distancia de fermat es proporcional a la eu
 #bibliography("../bib/references.bib", style: "harvard-cite-them-right")
 
 
+
+== Apéndice A: Fichas de resultados por dataset <apendice-a>
 
