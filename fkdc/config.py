@@ -15,6 +15,7 @@ from sklearn.svm import SVC
 from sklearn.utils import Bunch
 from typing_extensions import Annotated
 
+from fkdc import root_dir
 from fkdc.fermat import FermatKNeighborsClassifier, KDClassifier
 from fkdc.utils import yaml
 
@@ -59,6 +60,7 @@ split_evaluacion = 0.5
 cv = 5
 scoring = "neg_log_loss"
 repetitions = 25
+run_dir = root_dir / "sandbox/v5/infos"
 
 
 def _get_run_seeds(main_seed=main_seed, repetitions=repetitions):

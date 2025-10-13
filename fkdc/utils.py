@@ -1,9 +1,7 @@
 """Funciones auxiliares varias. `_ellipse_length`, `eyeglasses` y `arc` son autoría del Ing. Diego Battochio."""
 
 import hashlib
-import pickle
 from itertools import product
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -168,39 +166,3 @@ def refit_parsimoniously(cv_results_: dict, std_ratio: float = 1) -> int:
     regularizers = [reg for reg in regularize_ascending if reg[0] in results.columns]
     by, ascending = map(list, zip(*regularizers))
     return results.sort_values(by=by, ascending=ascending).index[0]
-
-
-def load_infos(dir_or_paths: list[Path] | Path):
-    if isinstance(dir_or_paths, Path):
-        assert dir_or_paths.is_dir()
-        paths = dir_or_paths.glob("*.pkl")
-    elif isinstance(dir_or_paths, list):
-        paths = dir_or_paths
-    else:
-        raise ValueError(
-            "`dir_or_paths` debe ser un directorio con pickles de info o una lista de rutas a pickles de info"
-        )
-    return {tuple(fn.stem.split("-")): pickle.load(open(fn, "rb")) for fn in paths}
-
-
-def parse_basic_info(infos: dict, main_seed: int | None = None):
-    basic_fields = ["accuracy", "r2", "logvero"]
-    basic_infos = {}
-    for k, v in infos.items():
-        clf = k[2]
-        basic_infos[k] = {k: v for k, v in v[clf].items() if k in basic_fields}
-
-    basic_info = pd.DataFrame.from_records(
-        list(basic_infos.values()),
-        index=pd.MultiIndex.from_tuples(
-            basic_infos.keys(), names=["dataset", "ds_seed", "clf", "run_seed", "score"]
-        ),
-    ).reset_index()
-    if main_seed:  # Valida que las semillas se correspondan
-        assert all(
-            (basic_info.ds_seed == "None") | (basic_info.run_seed == str(main_seed))
-        )
-    basic_info["semilla"] = np.where(
-        basic_info.ds_seed == "None", basic_info.run_seed, basic_info.ds_seed
-    ).astype(int)
-    return basic_info.drop(columns=["ds_seed", "run_seed"])
