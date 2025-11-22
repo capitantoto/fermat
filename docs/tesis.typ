@@ -1401,15 +1401,18 @@ Por último, observamos las fronteras de #svc, que no tienen gradiente de color 
 Sirvan como panorama para concentrar la atención en esta diferencia, los gráficos de dispersión del $R^2$ alcanzado en $XX_"test"$ para #kn y #kdc con y sin distancia de Fermat, en las #reps repeticiones de cada Tarea.
 
 #let curvas = ("lunas", "circulos", "espirales")
-#figure(columns(2)[
-  #for c in curvas {
-    image("img/" + c + "_lo-kdc-fkdc-r2-scatter.svg")
-  }
-  #colbreak()
-  #for c in curvas {
-    image("img/" + c + "_lo-kn-fkn-r2-scatter.svg")
-  }
-], caption: [Gráficos de dispoersión (_scatterplots_) de $R^2$ para #kdc (izq.) y #kn (der.) con (eje $y$) y sin (eje $x$) distancia de Fermat.]) <fig-17>
+#figure(
+  columns(2)[
+    #for c in curvas {
+      image("img/" + c + "_lo-kdc-fkdc-r2-scatter.svg")
+    }
+    #colbreak()
+    #for c in curvas {
+      image("img/" + c + "_lo-kn-fkn-r2-scatter.svg")
+    }
+  ],
+  caption: [Gráficos de dispoersión (_scatterplots_) de $R^2$ para #kdc (izq.) y #kn (der.) con (eje $y$) y sin (eje $x$) distancia de Fermat.],
+) <fig-17>
 
 Para #kn y #fkn, los resultados son casi exactamente iguales para todas las semillas; con ciertas semillas saca ventaja #fkn en `espirales_lo`, pero también tiene dos muy malos resultados con $R^2 approx 0$ que #kn evita.
 
@@ -1421,7 +1424,10 @@ Veamos primero qué sucede durante el entrenamiento para `circulos_lo`: ¿es que
   "unidades de la pérdida",
 )[ Si bien nosotros estamos considerando como _score_ (a más, mejor) $R^2$, durante el entrenamiento se entrenó con `neg_log_loss`, que aunque tiene la misma monotonicidad que $R^2$, está en otras unidades, entre $-oo, 0$]
 
-#figure(image("img/circulos_lo-8527-fkdc-bandwidth-alpha-loss_contour.svg"), caption: [Superficie de _score_: para cada valor de $alpha$ considerado, una cruz roja marca el valor de $h$ que maximizó el _score_.])
+#figure(
+  image("img/circulos_lo-8527-fkdc-bandwidth-alpha-loss_contour.svg"),
+  caption: [Superficie de _score_: para cada valor de $alpha$ considerado, una cruz roja marca el valor de $h$ que maximizó el _score_.],
+)
 Nótese que la región amarilla, que representa los máximos puntajes durante el entrenamiento, se extiende diagonalmente a través de todos los valores de $alpha$. Es decir, no hay un _par_ de hiperparámetros óptimos $(alpha^star, h^star)$, sino que fijando $alpha$, siempre pareciera existir un(os) $h^star (alpha)$ que alcanza (o aproxima) la máxima exactitud _posible_ con el método en el dataset. En este ejemplo en particular, hasta pareciera ser que una relación log-lineal captura bastante bien el fenómeno, $log(h^star) prop alpha$. En particular, entonces, $"exac"(h^star (1), 1) approx "exac"(h^star, alpha^star)$, y se entiende que el algoritmo #fkdc, que agrega el hiperparámetro $alpha$ a #kdc no mejore significativamente su exactitud.
 
 // TODO: agregar referencia al paper que dice que "todo alfa da OK", que tomaba p=2 q=8 (bijral?)
@@ -1442,7 +1448,10 @@ Ahora bien, esto es sólo en _un_ dataset, con _una_ semilla especfíca. ¿Se re
 
 #align(center)[
   #box(width: 150%)[
-    #figure(grid(columns: semillas.len(), stroke: 0pt, ..imgs), caption: [Superficies de pérdica para tres semillas y cada uno de los tres dataset. El patrón log-lineal previamente observado se replica casi perfectamente en todos los casos.]) <fig-19>
+    #figure(
+      grid(columns: semillas.len(), stroke: 0pt, ..imgs),
+      caption: [Superficies de pérdica para tres semillas y cada uno de los tres dataset. El patrón log-lineal previamente observado se replica casi perfectamente en todos los casos.],
+    ) <fig-19>
   ]
 ]
 
@@ -1451,6 +1460,36 @@ Ahora bien, esto es sólo en _un_ dataset, con _una_ semilla especfíca. ¿Se re
 Estamos ahora frente a una contradicción: en la @fig-17 vimos que por ejemplo, para `lunas_lo`, #fkdc alcanzaba un $R^2$ consistentemente mejor que #kdc; mientras que de los paneles superiores de la @fig-19 observamos que los score que se alcanzan limitados a $alpha = 1$ son tan altos como los de $alpha > 1$. Es cierto que los resultados de @fig-17 son a través de _todas_ las semillas, y en el conjunto de _evaluación_, mientras que en la @fig-19 observamos _algunas semillas_ y sobre los datos de entrenamiento, pero la pregunta es válida: ¿de dónde proviene la ventaja de #fkdc en estos datasets?
 
 ==== Hiperparámetros óptimos en `lunas_lo` para #kdc, #fkdc
+
+Hacemos entonces una comprobación fundamental: ¿qué parametrizaciones están siendo elegidas en el esquema de validación cruzada con regla de parsimonia? Hete aquí el detalle para las #reps repeticiones de `lunas_lo`:
+
+#tabla_csv("data/lunas_lo-best_params.csv")
+Resulta ser que
+- al entrenar #fkdc se está eligiendo $alpha=1$ para _todas_ las semillas, y
+- el ancho de banda seleccionado es ligera pero consistentemente _menor_ que el que toma #kdc.
+
+Veamos cómo se comparan los valores de $R^2$ que alcanza cada algoritmo en cada semilla:
+#figure(
+  columns(2)[
+    #image("img/lunas_lo-[f]kdc-score-vs-bandwidth.png")
+    #colbreak()
+    #image("img/lunas_lo-[f]kdc-delta_r2-vs-delta_h.png")],
+  caption: [
+    (izq.) Dispersión de $R^2$ en función de $h$ por clasificador y semilla en lunas_lo, para #fkdc, #kdc;
+    (der.) Dispersión de $Delta_(R^2) = R^2_#kdc - R^2_#fkdc$ en función de $Delta_h = h^star_#fkdc - h^star_#kdc$ para cada semilla.]
+)
+En el panel izquierdo se observa una clara tendencia a mejorar ligeramente el $R^2$ a medida que disminuye el ancho de la ventana $h$ (en el rango en cuestión). En el panel derecho, para confirmar que la tendencia sucede _en cada repetición del experimento_, comparamos no los valores absolutos sino las diferencias _relativas_ en $R^2, h$ para #fkdc, #kdc, y vemos que a mayor diferencia en $h$, peor es la caída en $R^2$.
+
+Cabe aquí una crítica al diseño experimental: si #fkdc está tomando siempre $alpha =1$, por qué #kdc no puede elegir el mismo $h$ que #fkdc y así "empatar" su performance? ¿Se exploró una grilla de hiperparámetros a propósito desfavorable para #kdc? Pues no, todo lo contario #footnote[La definición exacta está en `fkdc/config.py`, y es `np.logspace(-5, 6, 45)` para #fkdc y `np.logspace(-5, 6, 136)` para #kdc]: las grillas de $h$ para #kdc y #fkdc
+- cubren de manera "logarítmicamente equidistante" el mismo rango de $h: [10^(-5), 10^6]$ y
+- la grilla de #kdc cuenta con $approx$ el triple de puntos de #fkdc ($136 "vs." 45$).
+
+Como en el entrenamiento de #fkdc se gastaron 13 veces más recursos evaluando 13 valores distintos de $alpha$ #footnote[$alpha in {1 + 0.25 i, thick i in [13]} subset [1, 4]$], consideramos oportuno permitirle a #kdc explorar más valores de $h$, y la cantidad se eligió para que la grilla de #kdc coincida en lo posible con la de #fkdc, y tenga además otros dos valores "entre medio" de dos valores cualesquiera de la grilla de #fkdc. En efecto, en el rango de interés, las grillas contaban con los valores:
+$
+  #fkdc: &[0.1, 0.178, 0.316, 0.562] \
+  #kdc: &[0.119, 0.143, 0.173, 0.208, 0.251, 0.303, 0.366, 0.441, 0.532] \
+$
+con lo cual #kdc _podría_ haber encontrado el ligeramente más conveniente $h^star approx 0.17$, pero la convalidación cruzada se inclinó por valores concentrados en el rango $[0.25, 0.3]$. De repetir el experimento toando una grilla más fina en este rango crucial, es posible que $Delta_h^star approx 0$ y por ende $Delta_(R^2)$ también, aunque por el mismo argumento de tomar una grilla más fina para $alpha approx 1$ terminaríamos encontrando un $alpha^star > 1$ para #fkdc #footnote[Hete aquí la dificultad de enunciar propiedades generales a partir de experimentos particulares: siempre hay _un experimento más_ para hacer, pero lamentablemente, en algún momento había que culminar la etapa experimental.]
 
 
 === Hi noise
