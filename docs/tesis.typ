@@ -1310,7 +1310,6 @@ En los tres datasets, el resultado es muy similar: #fkdc es el estimador que mej
 
 Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #fkn y #gbt, mientras que a #gnb, #slr, #lr rinden mal pues las _fronteras de decisión_ que pueden representar no cortan bien a los datos.
 
-Sin mayor pérdida de generalización, nos referiremos sólo a `espirales_lo`.
 
 #let highlights_figure(dataset) = {
   let highlights = json("data/" + dataset + "-r2-highlights.json")
@@ -1395,9 +1394,9 @@ Entre #kn y #fkn casi no observamos diferencias, asunto en el que ahondaremos m�
   #image("img/espirales_lo-svc-decision_boundary.svg")
 ])
 
-Por último, observamos las fronteras de #svc, que no tienen gradiente de color sino sólo una frontera lineal #footnote[Como aprendimos: la frontera de una variedad riemanniana de dimensión intrínseca $d$ es una variedad sin frontera de dimensión intrínseca $d-1$; la frontera de estas regiones en R^2 es una curva parametrizable en $R^1$ embebida en $R^2$]. Es sorprendente la flexibilidad del algoritmo, que consigue dibujar una única frontera sumamente no-lineal que separa los datos con altísima exactitud. La ventaja que #fkdc pareciera tener sobre #svc aquí, es que la frontera que dibuja pasa "más lejos" de las observaciones de clase, mientras que la #svc parece estar muy pegada a los brazos de la espiral, particularmente en el giro más interno.
+Por último, observamos las fronteras de #svc, que no tienen gradiente de color sino sólo una frontera lineal #footnote[Como aprendimos: la frontera de una variedad riemanniana de dimensión intrínseca $d$ es una variedad sin frontera de dimensión intrínseca $d-1$; la frontera de estas regiones en $R^2$ es una curva parametrizable en $RR^1$ embebida en $RR^2$]. Es sorprendente la flexibilidad del algoritmo, que consigue dibujar una única frontera sumamente no-lineal que separa los datos con altísima exactitud. La ventaja que #fkdc pareciera tener sobre #svc aquí, es que la frontera que dibuja pasa "más lejos" de las observaciones de clase, mientras que la #svc parece estar muy pegada a los brazos de la espiral, particularmente en el giro más interno.
 
-=== Estudio de ablación: $R^2$ para #kdc/ #kn con y sin distancia de Fermat.
+=== Estudio de ablación #footnote[Según la #link("https://dle.rae.es/ablaci%C3%B3n")[RAE], "Del lat. tardío ablatio, -ōnis 'acción de quitar'."; ¿qué se pierde en términos de $R^2$ al _no_ usar #sfd en estos algoritmos?]: $R^2$ para #kdc/ #kn con y sin distancia de Fermat.
 
 Sirvan como panorama para concentrar la atención en esta diferencia, los gráficos de dispersión del $R^2$ alcanzado en $XX_"test"$ para #kn y #kdc con y sin distancia de Fermat, en las #reps repeticiones de cada Tarea.
 
@@ -1410,19 +1409,19 @@ Sirvan como panorama para concentrar la atención en esta diferencia, los gráfi
   #for c in curvas {
     image("img/" + c + "_lo-kn-fkn-r2-scatter.svg")
   }
-])
+], caption: [Gráficos de dispoersión (_scatterplots_) de $R^2$ para #kdc (izq.) y #kn (der.) con (eje $y$) y sin (eje $x$) distancia de Fermat.]) <fig-17>
 
 Para #kn y #fkn, los resultados son casi exactamente iguales para todas las semillas; con ciertas semillas saca ventaja #fkn en `espirales_lo`, pero también tiene dos muy malos resultados con $R^2 approx 0$ que #kn evita.
 
-Para #fkdc, pareciera evidenciarse alguna ventaja consistentemente para muchas semillas en `lunas_lo, espirales_lo`, menos así para `circulos_lo`.
+Para #fkdc, pareciera evidenciarse alguna ventaja para varias semillas en `lunas_lo, espirales_lo`, menos así para `circulos_lo`.
 
-Veamos qué sucede durante el entrenamiento para `circulos_lo`: ¿es que no hay ninguna ventaja en usar #sfd? Consideremos la _superficie de pérdida_ que resulta de graficar en 2D la pérdida $L$ usada _durante el entrenamiento_ para cada hiperparametrización considerada:
+Veamos primero qué sucede durante el entrenamiento para `circulos_lo`: ¿es que no hay ninguna ventaja en usar #sfd? Consideremos la _superficie de pérdida_ que resulta de graficar en 2D la pérdida $L$ usada _durante el entrenamiento_ para cada hiperparametrización considerada:
 
 #obs(
   "unidades de la pérdida",
 )[ Si bien nosotros estamos considerando como _score_ (a más, mejor) $R^2$, durante el entrenamiento se entrenó con `neg_log_loss`, que aunque tiene la misma monotonicidad que $R^2$, está en otras unidades, entre $-oo, 0$]
 
-#figure(image("img/circulos_lo-8527-fkdc-bandwidth-alpha-loss_contour.svg"))
+#figure(image("img/circulos_lo-8527-fkdc-bandwidth-alpha-loss_contour.svg"), caption: [Superficie de _score_: para cada valor de $alpha$ considerado, una cruz roja marca el valor de $h$ que maximizó el _score_.])
 Nótese que la región amarilla, que representa los máximos puntajes durante el entrenamiento, se extiende diagonalmente a través de todos los valores de $alpha$. Es decir, no hay un _par_ de hiperparámetros óptimos $(alpha^star, h^star)$, sino que fijando $alpha$, siempre pareciera existir un(os) $h^star (alpha)$ que alcanza (o aproxima) la máxima exactitud _posible_ con el método en el dataset. En este ejemplo en particular, hasta pareciera ser que una relación log-lineal captura bastante bien el fenómeno, $log(h^star) prop alpha$. En particular, entonces, $"exac"(h^star (1), 1) approx "exac"(h^star, alpha^star)$, y se entiende que el algoritmo #fkdc, que agrega el hiperparámetro $alpha$ a #kdc no mejore significativamente su exactitud.
 
 // TODO: agregar referencia al paper que dice que "todo alfa da OK", que tomaba p=2 q=8 (bijral?)
@@ -1443,11 +1442,17 @@ Ahora bien, esto es sólo en _un_ dataset, con _una_ semilla especfíca. ¿Se re
 
 #align(center)[
   #box(width: 150%)[
-    #figure(grid(columns: semillas.len(), stroke: 0pt, ..imgs))
+    #figure(grid(columns: semillas.len(), stroke: 0pt, ..imgs), caption: [Superficies de pérdica para tres semillas y cada uno de los tres dataset. El patrón log-lineal previamente observado se replica casi perfectamente en todos los casos.]) <fig-19>
   ]
 ]
 
-Pues sí replica. En `lunas_lo` y `circulos_lo`, vemos que En `(circulos_lo, 7354)`, vemos como la regla de parsimonia ayuda a elegir, dentro de la gran "meseta color lima" donde todas las hiperparametrizaciones alcanzan resultados similares, para cada $h$ el mínimo $alpha$ que no "cae" hacia la región azul de menores scores.
+¡Pues sí replica! Podemos observar también en datasets como `(circulos_lo, 7354)`, cómo la regla de parsimonia nos ayuda a elegir, dentro de la gran "meseta color lima" en que todas las hiperparametrizaciones alcanzan resultados similares, para cada $h$ el mínimo $alpha$ que no "cae" hacia la región azul de menores scores.
+
+Estamos ahora frente a una contradicción: en la @fig-17 vimos que por ejemplo, para `lunas_lo`, #fkdc alcanzaba un $R^2$ consistentemente mejor que #kdc; mientras que de los paneles superiores de la @fig-19 observamos que los score que se alcanzan limitados a $alpha = 1$ son tan altos como los de $alpha > 1$. Es cierto que los resultados de @fig-17 son a través de _todas_ las semillas, y en el conjunto de _evaluación_, mientras que en la @fig-19 observamos _algunas semillas_ y sobre los datos de entrenamiento, pero la pregunta es válida: ¿de dónde proviene la ventaja de #fkdc en estos datasets?
+
+==== Hiperparámetros óptimos en `lunas_lo` para #kdc, #fkdc
+
+
 === Hi noise
 #highlights_figure("lunas_hi")
 #pagebreak()
