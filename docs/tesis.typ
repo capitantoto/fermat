@@ -13,7 +13,7 @@
 #let HH = $bu(H)$
 #let XX = $bu(X)$
 #let KH = $op(K_HH)$
-#let dotp(x, y) = $lr(angle.l #x, #y angle.r)$
+#let dotp(x, y) = $lr(chevron.l #x, #y chevron.r)$
 #let dg = $op(d_g)$
 #let var = $op("Var")$
 #let SS = $bu(Sigma)$
@@ -520,7 +520,7 @@ Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métric
   es posible verificar que esta construcción define una métrica Riemanniana en todo #MM.
 ]
 
-#obs[ Cuando $MM=RR^d$, el espacio es constante e idéntico a la variedad: $forall p in RR^d, thick T_p RR^d = RR^d$. La base canónica de $T_p RR^d = RR^d$ formada por las columnas de $bu(I)_d$ es una matriz positiva definida que da lugar al pructo interno "clásico" $angle.l u,v angle.r = u^T bu(I)_d v = sum_(i=1)^d u_i v_i$ es una métrica Riemanniana que induce la norma euclídea $norm(v) = sqrt(v^T v)$ y la distancia $d(x, y) = norm(x-y)$.]
+#obs[ Cuando $MM=RR^d$, el espacio es constante e idéntico a la variedad: $forall p in RR^d, thick T_p RR^d = RR^d$. La base canónica de $T_p RR^d = RR^d$ formada por las columnas de $bu(I)_d$ es una matriz positiva definida que da lugar al pructo interno "clásico" $chevron.l u,v chevron.r = u^T bu(I)_d v = sum_(i=1)^d u_i v_i$ es una métrica Riemanniana que induce la norma euclídea $norm(v) = sqrt(v^T v)$ y la distancia $d(x, y) = norm(x-y)$.]
 
 ==== Geodésicas y mapa exponencial
 Dado este andamiaje, podemos reconstruir algunos conceptos básicos, como longitud, distancia y geodésica.
@@ -962,7 +962,7 @@ Si $gamma$ tiene longitud finita y $f$ es continua -- como en nuestro caso de us
 Sea entonces $X ~ f, thick f : MM -> RR_+$ un elemento aleatorio destribuido según $f$ sobre una variedad de Riemann compacta y sin frontera -- potencialmente desconocida --  #MM. Sea además $g(t) : RR_+ -> RR$ una función _monótonicamente decreciente_ en su parámetro. Consideraremos el _costo_$J_f$  de un camino $gamma : [0, 1] -> MM, gamma(0)=p, gamma(1)=q$ entre $p, q$ como la integral de $g compose f$ a lo largo de $gamma$:
 
 $
-  op(J_(g compose f))(gamma) = integral_0^1 op(g)lr((f(gamma(t))), size: #150%) norm(gamma'(t))_p dif t
+  op(J_(g compose f))(gamma) = integral_0^1 op(g)lr((f(gamma(t)))) norm(gamma'(t))_p dif t
 $
 
 Y la distancia basada en la densidad $f$ pesada por $g$ entre dos puntos cualesquiera $p, q in MM$ como
