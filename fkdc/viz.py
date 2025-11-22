@@ -41,7 +41,8 @@ def load_infos(dir_or_paths: list[Path] | Path):
         paths = dir_or_paths
     else:
         raise ValueError(
-            "`dir_or_paths` debe ser un directorio con pickles de info o una lista de rutas a pickles de info"
+            "`dir_or_paths` debe ser un directorio con pickles de info o una lista"
+            "de rutas a pickles de info"
         )
     return {tuple(fn.stem.split("-")): pickle.load(open(fn, "rb")) for fn in paths}
 
@@ -260,7 +261,7 @@ if __name__ == "__main__":
     run_seeds = config._get_run_seeds()
     logger.info(run_seeds)
     plotting_seed = run_seeds[0]
-    # TODO: run anteojos como 25-sample? poder se puede, pero no es que no está estudiado...
+    # TODO: run anteojos como 25-sample? poder se puede...
     # datasets' scatterplots for fixed seed
     for dataset in datasets:
         if dataset in synth_datasets:

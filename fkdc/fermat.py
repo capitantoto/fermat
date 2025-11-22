@@ -41,9 +41,10 @@ class SampleFermatDistance:
         self.N, self.D = Q.shape
         self.groups = np.array(np.zeros(self.N) if groups is None else groups)
         self.labels = unique_labels(self.groups)
-        assert (
-            len(self.groups) == self.N
-        ), "`groups` debe ser None, o de la misma longitud que el número de filas de Q"
+        if len(self.groups) != self.N:
+            raise ValueError(
+                "`groups` debe ser None, o de igual númnero que las filas de Q"
+            )
         self.alpha = alpha
         self.A = {
             lbl: sample_fermat(Q[self.groups == lbl], alpha) for lbl in self.labels

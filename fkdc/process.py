@@ -25,8 +25,9 @@ logger.info("Logging inicializado")
 
 def main(
     config_file: Path = Path("config.yaml"),
-    workdir: Path = Path.cwd(),
+    workdir: Path | None = None,
 ):
+    workdir = workdir or Path.cwd()
     workdir.mkdir(parents=True, exist_ok=True)
     logger.info("Leyendo config %s", config_file)
     cfg = yaml.safe_load(open(config_file))

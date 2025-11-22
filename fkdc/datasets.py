@@ -307,8 +307,9 @@ def make_datasets(
     n_samples: int = config.n_samples,
     main_seed: int | None = config.main_seed,
     repetitions: int = config.repetitions,
-    data_dir: Path = Path.cwd() / "datasets",
+    data_dir: Path | None = None,
 ):
+    data_dir = data_dir or Path.cwd() / "datasets"
     data_dir.mkdir(parents=True, exist_ok=True)
     np.random.default_rng(main_seed)
     # Larger seeds return an error
