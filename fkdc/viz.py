@@ -30,7 +30,7 @@ datasets = [*synth_datasets, *found_datasets]
 clfs = list(config.clasificadores.keys())
 infos = None
 basic_info = None
-default_palette = dict(clfs, sns.color_palette("Set3"))
+default_palette = dict(zip(clfs, sns.color_palette("Set3")))
 
 
 def load_infos(dir_or_paths: list[Path] | Path):
@@ -234,7 +234,7 @@ def loss_contour(
     left_index = max(np.where(X == min(best_X))[0][0] - 1, 0)
     right_index = min(np.where(X == max(best_X))[0][0] + 1, len(X) - 1)
     logger.info([left_index, X[left_index], right_index, X[right_index]])
-    ax.set_xlim(X[left_index][0], X[right_index][0])
+    ax.set_xlim(X[left_index], X[right_index])
     # Make a colorbar for the ContourSet returned by the contourf call.
     cbar = fig.colorbar(CS)
     cbar.ax.set_ylabel("Score")
@@ -244,11 +244,12 @@ def loss_contour(
 if __name__ == "__main__":
     logging.basicConfig(
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        level=logging.INFO,
+        level=logging.DEBUG,
         handlers=[logging.StreamHandler()],
     )
 
     run_dir = config.run_dir
+    logger.info(run_dir)
     infos = load_infos(run_dir)
     basic_info = parse_basic_info(infos, config.main_seed)
     datasets_dir = run_dir / "../datasets"
@@ -257,6 +258,7 @@ if __name__ == "__main__":
     for directory in [data_dir, img_dir, run_dir, datasets_dir]:
         directory.mkdir(exist_ok=True)
     run_seeds = config._get_run_seeds()
+    logger.info(run_seeds)
     plotting_seed = run_seeds[0]
     # TODO: run anteojos como 25-sample? poder se puede, pero no es que no está estudiado...
     # datasets' scatterplots for fixed seed
@@ -272,7 +274,9 @@ if __name__ == "__main__":
         fig, ax = plt.subplots(layout="tight")
         ds.scatter(ax=ax)
         ax.set_title(dataset)
-        fig.savefig(img_dir / f"{dataset}-scatter.svg")
+        fpath = img_dir / f"{dataset}-scatter.svg"
+        logger.debug(fpath)
+        fig.savefig(fpath)
         close(fig)
         plt.close()
     # "Highlights" by R^2
@@ -281,8 +285,10 @@ if __name__ == "__main__":
         hl = get_highlights(dataset, by=highlights_by, info=basic_info)
         hl["summary"] = hl["summary"].round(4).to_csv()
         fname = f"{dataset}-{highlights_by}-highlights.json"
-        with open(data_dir / fname, "w") as fpath:
-            json.dump(hl, fpath, indent=4)
+        fpath = data_dir / fname
+        logger.debug(fpath)
+        with open(fpath, "w") as fp:
+            json.dump(hl, fp, indent=4)
     # Boxplots by R^2 + Accuracy
     for dataset, metric in product(datasets, ["r2", "accuracy"]):
         logger.debug(f"{dataset}-{metric}")
