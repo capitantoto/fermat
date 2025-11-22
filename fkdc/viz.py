@@ -26,6 +26,11 @@ from fkdc.tarea import Tarea
 warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
 
 logger = logging.getLogger(__name__)
+run_dir = config.run_dir
+datasets_dir = run_dir / "../datasets"
+img_dir = root_dir / "docs/img"
+data_dir = root_dir / "docs/data"
+
 datasets = [*synth_datasets, *found_datasets]
 clfs = list(config.clasificadores.keys())
 infos = None
@@ -41,8 +46,8 @@ def load_infos(dir_or_paths: list[Path] | Path):
         paths = dir_or_paths
     else:
         raise ValueError(
-            "`dir_or_paths` debe ser un directorio con pickles de info o una lista"
-            "de rutas a pickles de info"
+            "`dir_or_paths` debe ser un directorio con pickles de info "
+            "o una lista de rutas a pickles de info"
         )
     return {tuple(fn.stem.split("-")): pickle.load(open(fn, "rb")) for fn in paths}
 
@@ -249,13 +254,9 @@ if __name__ == "__main__":
         handlers=[logging.StreamHandler()],
     )
 
-    run_dir = config.run_dir
     logger.info(run_dir)
     infos = load_infos(run_dir)
     basic_info = parse_basic_info(infos, config.main_seed)
-    datasets_dir = run_dir / "../datasets"
-    img_dir = root_dir / "docs/img"
-    data_dir = root_dir / "docs/data"
     for directory in [data_dir, img_dir, run_dir, datasets_dir]:
         directory.mkdir(exist_ok=True)
     run_seeds = config._get_run_seeds()
