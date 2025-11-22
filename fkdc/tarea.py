@@ -116,9 +116,5 @@ class Tarea:
                 logger.warning(exc, exc_info=True)
 
     def guardar(self, path=None):
-        path = path or "%s-%s-%s.pkl" % (
-            self.dataset.nombre,
-            self.seed,
-            self.split_evaluacion,
-        )
+        path = path or f"{self.dataset.nombre}-{self.seed}-{self.split_evaluacion}.pkl"
         pickle.dump(self, open(path, "wb"))

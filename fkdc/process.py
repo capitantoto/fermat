@@ -29,7 +29,7 @@ def main(
 ):
     workdir.mkdir(parents=True, exist_ok=True)
     logger.info("Leyendo config %s", config_file)
-    cfg = yaml.safe_load(open(config_file, "r"))
+    cfg = yaml.safe_load(open(config_file))
     dataset = Dataset.cargar(cfg["dataset"])
     clf = cfg["clasificador"]
     clasificador = config.clasificadores.get(clf)
@@ -62,7 +62,7 @@ def main(
         tarea.guardar(workdir / f"tarea-{config_file.stem}.pkl")
     logger.info("Resumen resultados")
     campos = ["logvero", "r2", "accuracy", "t_entrenar", "t_evaluar"]
-    logger.info("\n%s" % pd.DataFrame(tarea.info).T[campos].to_markdown())
+    logger.info(f"\n{pd.DataFrame(tarea.info).T[campos].to_markdown()}")
     pickle.dump(tarea.info, open(workdir / f"{config_file.stem}.pkl", "wb"))
 
 

@@ -164,5 +164,5 @@ def refit_parsimoniously(cv_results_: dict, std_ratio: float = 1) -> int:
     score_threshold = top_score - std_ratio * top_std
     results = results[results.mean_test_score.ge(score_threshold)]
     regularizers = [reg for reg in regularize_ascending if reg[0] in results.columns]
-    by, ascending = map(list, zip(*regularizers))
+    by, ascending = map(list, zip(*regularizers, strict=True))
     return results.sort_values(by=by, ascending=ascending).index[0]

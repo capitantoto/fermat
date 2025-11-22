@@ -30,7 +30,7 @@ datasets = [*synth_datasets, *found_datasets]
 clfs = list(config.clasificadores.keys())
 infos = None
 basic_info = None
-default_palette = dict(zip(clfs, sns.color_palette("Set3")))
+default_palette = dict(zip(clfs, sns.color_palette("Set3"), strict=False))
 
 
 def load_infos(dir_or_paths: list[Path] | Path):

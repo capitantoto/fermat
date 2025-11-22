@@ -392,7 +392,7 @@ def make_datasets(
         **datasets_mnist,
     }.items():
         key = "-".join(map(str, key)) if isinstance(key, tuple) else key
-        pickle.dump(dataset, open(data_dir / ("%s.pkl" % key), "wb"))
+        pickle.dump(dataset, open(data_dir / (f"{key}.pkl"), "wb"))
 
 
 if __name__ == "__main__":

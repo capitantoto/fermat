@@ -1,7 +1,7 @@
 import logging
 from math import floor
 from pathlib import Path
-from typing import List, Optional
+from typing import Annotated
 
 import numpy as np
 import typer
@@ -13,7 +13,6 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.utils import Bunch
-from typing_extensions import Annotated
 
 from fkdc import root_dir
 from fkdc.fermat import FermatKNeighborsClassifier, KDClassifier
@@ -30,17 +29,17 @@ espacio_kn = {
     "n_neighbors": np.unique(np.logspace(0, np.log10(500), num=21, dtype=int)),
     "weights": ["uniform", "distance"],
 }
-grillas = dict(
-    fkdc={"alpha": np.linspace(1, 4, 13), "bandwidth": np.logspace(-5, 6, 45)},
-    kdc={"bandwidth": np.logspace(-5, 6, 136)},
-    gnb={"var_smoothing": np.logspace(-12, 1, 40)},
-    kn=espacio_kn,
-    fkn={**espacio_kn, "alpha": np.linspace(1, 4, 13)},
-    lr={"C": np.logspace(-5, 2, 36)},
-    slr={"logreg__C": np.logspace(-5, 2, 36)},
-    svc={"C": np.logspace(-4, 6, 61), "gamma": ["scale", "auto"]},
-    gbt={"learning_rate": [0.025, 0.05, 0.1], "max_depth": [3, 5, 8, 13]},
-)
+grillas = {
+    "fkdc": {"alpha": np.linspace(1, 4, 13), "bandwidth": np.logspace(-5, 6, 45)},
+    "kdc": {"bandwidth": np.logspace(-5, 6, 136)},
+    "gnb": {"var_smoothing": np.logspace(-12, 1, 40)},
+    "kn": espacio_kn,
+    "fkn": {**espacio_kn, "alpha": np.linspace(1, 4, 13)},
+    "lr": {"C": np.logspace(-5, 2, 36)},
+    "slr": {"logreg__C": np.logspace(-5, 2, 36)},
+    "svc": {"C": np.logspace(-4, 6, 61), "gamma": ["scale", "auto"]},
+    "gbt": {"learning_rate": [0.025, 0.05, 0.1], "max_depth": [3, 5, 8, 13]},
+}
 clasificadores = Bunch(
     fkdc=KDClassifier(metric="fermat"),
     kdc=KDClassifier(metric="euclidean"),
@@ -72,7 +71,7 @@ def make_configs(
     main_seed: int = main_seed,
     split_evaluacion: float = split_evaluacion,
     cv: int = cv,
-    run_seeds: Optional[List[int]] = None,
+    run_seeds: list[int] | None = None,
     repetitions: int = repetitions,
     datasets_dir: Path = Path("datasets"),
     configs_dir: Path = Path("configs"),
@@ -95,13 +94,13 @@ def make_configs(
                 n_samples_fit = floor(ds.n * (cv - 1) / cv * (1 - split_evaluacion))
                 n_neighbors = [n for n in n_neighbors if n < n_samples_fit]
                 grilla_hipers["n_neighbors"] = n_neighbors
-            base_config = dict(
-                dataset=str(dataset_path),
-                clasificador=nombre_clf,
-                grilla_hipers=grilla_hipers,
-                cv=cv,
-                split_evaluacion=split_evaluacion,
-            )
+            base_config = {
+                "dataset": str(dataset_path),
+                "clasificador": nombre_clf,
+                "grilla_hipers": grilla_hipers,
+                "cv": cv,
+                "split_evaluacion": split_evaluacion,
+            }
             partes = nombre_dataset.split("-")
             run_seeds = run_seeds or _get_run_seeds(main_seed, repetitions)
             if len(partes) == 2:
@@ -113,7 +112,7 @@ def make_configs(
                 semilla_dataset = None
                 task_seeds = run_seeds
             else:
-                raise ValueError("Nombre de dataset invalido: %s" % nombre_dataset)
+                raise ValueError(f"Nombre de dataset invalido: {nombre_dataset}")
             for task_seed in task_seeds:
                 scoring = (
                     "neg_log_loss" if hasattr(clf, "predict_proba") else "accuracy"
