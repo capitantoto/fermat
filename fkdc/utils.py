@@ -126,7 +126,7 @@ def sample(*arrays, n_samples, random_state=None):
         array.shape[0] == n_arrays for array in arrays
     ), "Todo elemento en *arrays deben tener igual dimensión 0 ('n')."
     if isinstance(n_samples, float):
-        assert (0 <= n_samples) and (n_samples <= 1), "El ratio debe estar entre 0 y 1"
+        assert 0 <= n_samples <= 1, "El ratio debe estar entre 0 y 1"
         n_samples = int(n_arrays * n_samples)
     if isinstance(n_samples, int):
         assert (
