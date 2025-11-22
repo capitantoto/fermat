@@ -3,7 +3,7 @@ import logging
 import pickle
 from numbers import Number
 from pathlib import Path
-from typing import Optional, TypeVar
+from typing import TypeVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,6 +28,44 @@ from fkdc import config
 from fkdc.utils import eyeglasses, sample
 
 T = TypeVar("T")
+
+synth_datasets = [
+    ## D=2, d=1, k=2, "low noise"
+    "lunas_lo",
+    "circulos_lo",
+    "espirales_lo",
+    ### ibid, "hi noise"
+    "lunas_hi",
+    "circulos_hi",
+    "espirales_hi",
+    ## D=3, d=1, k=2, 0 noise dims
+    "eslabones_0",
+    "helices_0",
+    ## D=3, d=2, k=2
+    "hueveras_0",
+    ## D=3, d=2, k=4
+    "pionono_0",
+    ### ibid, 12 noise dims
+    "eslabones_12",
+    "helices_12",
+    "hueveras_12",
+    "pionono_12",
+    # OG is found, this is a PCA(n=~90) reduction that captures >90% variance
+    "mnist",
+]
+found_datasets = [
+    ## k=3, d=?
+    ### D=2
+    "anteojos",
+    ### D=4
+    "iris",
+    "pinguinos",
+    ## D=11, k=?
+    "vino",
+    ## D "large", k=10
+    "digitos",
+]
+datasets = [*synth_datasets, *found_datasets]
 
 
 def _dos_muestras(n_samples, random_state=None, shuffle=False):
@@ -249,14 +287,14 @@ class Dataset:
             ax.scatter(X, Y, Z, c=f"C{i}", label=str(lbl), **plot_kws)
         ax.legend(title="Clase")
 
-    def pairplot(self, dims: Optional[list[int]] = None, **plot_kws):
+    def pairplot(self, dims: list[int] | None = None, **plot_kws):
         if dims is None:
             dims = list(range(self.p))
         data = pd.DataFrame(self.X[:, dims])
         data["y"] = self.y
         pairplot(data=data, hue="y", **plot_kws)
 
-    def guardar(self, archivo: Optional[Path] = None):
+    def guardar(self, archivo: Path | None = None):
         with open(archivo or f"{hash(self)}.pkl", "wb") as file:
             pickle.dump(self, file)
 
@@ -267,7 +305,7 @@ class Dataset:
 
 def make_datasets(
     n_samples: int = config.n_samples,
-    main_seed: Optional[int] = config.main_seed,
+    main_seed: int | None = config.main_seed,
     repetitions: int = config.repetitions,
     data_dir: Path = Path.cwd() / "datasets",
 ):
