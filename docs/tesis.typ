@@ -1290,12 +1290,14 @@ Sólo considerar la performance de #fkdc y #fkn en los 20 datasets daría unas 4
 
 Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=1, k=2$, y exploramos tres curvas sampleadas en con un poco de "ruido blanco" #footnote[TODO: paper que habla de "sampleo en el tubo de radio $r$ alredededor de la variedad #MM".]:
 #let plotting_seed = 1075
-#let datasets = ("lunas", "circulos", "espirales")
 #figure(
-  table(
-    columns: 3, stroke: none,
-    ..datasets.map(ds => image("img/" + ds + "_lo-scatter.svg"))
-  ),
+  columns(3)[
+    #image("img/lunas_lo-scatter.svg")
+    #colbreak()
+    #image("img/circulos_lo-scatter.svg")
+    #colbreak()
+    #image("img/espirales_lo-scatter.svg")
+  ],
   caption: flex-caption["Lunas", "Círculos" y "Espirales", con $d_x = 2, d_(MM) = 1$ y $s=#plotting_seed$][ "Lunas", "Círculos" y "Espirales" ],
 ) <fig-2>
 
@@ -1334,7 +1336,7 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
       image("img/" + dataset + "-scatter.svg"), text(size: 8pt)[#tabla_resumen],
       image("img/" + dataset + "-r2-boxplot.svg"), image("img/" + dataset + "-accuracy-boxplot.svg"),
     ),
-    caption: flex-caption[Resumen para #dataset][ "Lunas", "Círculos" y "Espirales" ],
+    caption: flex-caption[Resumen para #dataset][],
   )
 }
 
@@ -1411,7 +1413,7 @@ Sirvan como panorama para concentrar la atención en esta diferencia, los gráfi
       image("img/" + c + "_lo-kn-fkn-r2-scatter.svg")
     }
   ],
-  caption: [Gráficos de dispoersión (_scatterplots_) de $R^2$ para #kdc (izq.) y #kn (der.) con (eje $y$) y sin (eje $x$) distancia de Fermat.],
+  caption: [Gráficos de dispersión (_scatterplots_) de $R^2$ para #kdc (izq.) y #kn (der.) con (eje $y$) y sin (eje $x$) distancia de Fermat.],
 ) <fig-17>
 
 Para #kn y #fkn, los resultados son casi exactamente iguales para todas las semillas; con ciertas semillas saca ventaja #fkn en `espirales_lo`, pero también tiene dos muy malos resultados con $R^2 approx 0$ que #kn evita.
@@ -1464,6 +1466,12 @@ Estamos ahora frente a una contradicción: en la @fig-17 vimos que por ejemplo, 
 Hacemos entonces una comprobación fundamental: ¿qué parametrizaciones están siendo elegidas en el esquema de validación cruzada con regla de parsimonia? Hete aquí el detalle para las #reps repeticiones de `lunas_lo`:
 
 #tabla_csv("data/lunas_lo-best_params.csv")
+
+#obs(
+  "mejores corridas de _test_",
+)[ TODO: aclarar que en test a veces el mejor puntaje lo obtienen _otros_ $alpha$, pero la diferencia no es lo suficientemente grande para descartar alguna opción con $alpha = 1$ .
+  #tabla_csv("data/lunas_lo-best_test_params.csv")
+]
 Resulta ser que
 - al entrenar #fkdc se está eligiendo $alpha=1$ para _todas_ las semillas, y
 - el ancho de banda seleccionado es ligera pero consistentemente _menor_ que el que toma #kdc.
@@ -1476,7 +1484,7 @@ Veamos cómo se comparan los valores de $R^2$ que alcanza cada algoritmo en cada
     #image("img/lunas_lo-[f]kdc-delta_r2-vs-delta_h.png")],
   caption: [
     (izq.) Dispersión de $R^2$ en función de $h$ por clasificador y semilla en lunas_lo, para #fkdc, #kdc;
-    (der.) Dispersión de $Delta_(R^2) = R^2_#kdc - R^2_#fkdc$ en función de $Delta_h = h^star_#fkdc - h^star_#kdc$ para cada semilla.]
+    (der.) Dispersión de $Delta_(R^2) = R^2_#kdc - R^2_#fkdc$ en función de $Delta_h = h^star_#fkdc - h^star_#kdc$ para cada semilla.],
 )
 En el panel izquierdo se observa una clara tendencia a mejorar ligeramente el $R^2$ a medida que disminuye el ancho de la ventana $h$ (en el rango en cuestión). En el panel derecho, para confirmar que la tendencia sucede _en cada repetición del experimento_, comparamos no los valores absolutos sino las diferencias _relativas_ en $R^2, h$ para #fkdc, #kdc, y vemos que a mayor diferencia en $h$, peor es la caída en $R^2$.
 
@@ -1486,13 +1494,31 @@ Cabe aquí una crítica al diseño experimental: si #fkdc está tomando siempre 
 
 Como en el entrenamiento de #fkdc se gastaron 13 veces más recursos evaluando 13 valores distintos de $alpha$ #footnote[$alpha in {1 + 0.25 i, thick i in [13]} subset [1, 4]$], consideramos oportuno permitirle a #kdc explorar más valores de $h$, y la cantidad se eligió para que la grilla de #kdc coincida en lo posible con la de #fkdc, y tenga además otros dos valores "entre medio" de dos valores cualesquiera de la grilla de #fkdc. En efecto, en el rango de interés, las grillas contaban con los valores:
 $
-  #fkdc: &[0.1, 0.178, 0.316, 0.562] \
-  #kdc: &[0.119, 0.143, 0.173, 0.208, 0.251, 0.303, 0.366, 0.441, 0.532] \
+  #fkdc: & [0.1, 0.178, 0.316, 0.562] \
+   #kdc: & [0.119, 0.143, 0.173, 0.208, 0.251, 0.303, 0.366, 0.441, 0.532] \
 $
-con lo cual #kdc _podría_ haber encontrado el ligeramente más conveniente $h^star approx 0.17$, pero la convalidación cruzada se inclinó por valores concentrados en el rango $[0.25, 0.3]$. De repetir el experimento toando una grilla más fina en este rango crucial, es posible que $Delta_h^star approx 0$ y por ende $Delta_(R^2)$ también, aunque por el mismo argumento de tomar una grilla más fina para $alpha approx 1$ terminaríamos encontrando un $alpha^star > 1$ para #fkdc #footnote[Hete aquí la dificultad de enunciar propiedades generales a partir de experimentos particulares: siempre hay _un experimento más_ para hacer, pero lamentablemente, en algún momento había que culminar la etapa experimental.]
+con lo cual #kdc _podría_ haber encontrado el ligeramente más conveniente $h^star approx 0.17$, pero la convalidación cruzada se inclinó por valores concentrados en el rango $[0.25, 0.3]$. De repetir el experimento toando una grilla más fina en este rango crucial, es posible que $Delta_h^star approx 0$ y por ende $Delta_(R^2)$ también, aunque por el mismo argumento de tomar una grilla más fina para $alpha approx 1$ terminaríamos tal vez encontrando un $alpha^star > 1$ para #fkdc #footnote[Hete aquí la dificultad de enunciar propiedades generales a partir de experimentos particulares: siempre hay _un experimento más_ para hacer, pero lamentablemente, en algún momento había que culminar la etapa experimental.]. En cualquier caso, hemos de aceptar que la ventaja de #fkdc en `lunas_lo` (y también en `espirales_lo`, aunque de menor magnitud) sobre #kdc _no_ se debe a la inclusión del hiperparámetro $alpha$, sino a una convalidación cruzada aleatoriamente favorable.
+
+=== Efectos de aumentar el ruido
+
+Consideremos ahora los mismos datasets que hasta ahora, pero sampleando las observaciones sobre la variedad con "más ruido"; i.e., aumentando el valor de $sigma$ en el ruido blanco (@ruido-blanco) que le agregamos a los $X in MM$ según
+
+$ sigma_"lunas" = 0.5 quad sigma_"circulos" = 0.2 quad sigma_"espirales" = 0.2 $.
+
+#figure(
+  columns(3)[
+    #image("img/lunas_hi-scatter.svg")
+    #colbreak()
+    #image("img/circulos_hi-scatter.svg")
+    #colbreak()
+    #image("img/espirales_hi-scatter.svg")
+  ],
+  caption: flex-caption["Lunas", "Círculos" y "Espirales" con "alto ruido"][ "Lunas", "Círculos" y "Espirales", alto ruido ],
+) <fig-22>
+
+En general, #fkdc y #fkn siguen siendo competitivos, pero el "tereno de juego" se ha nivelado considerablemente, y las ventajas antes vistas disminuyen. En particular, en `lunas_hi, circulos_hi` observamos que #gbt alcanza un $R^2$ marginalmente mejor que el #fkdc, y en el segundo tambien lo supera ligeramente en exactitud. En `espirales_hi` todos los métodos basados en densidad por núcleos (#fkdc, #kdc, #fkn, #kn) alcanzan un $R^2$ muy similar mientras todos los demás quedan alrgamente atrás (#gbt) o no se distinguen del $0$, pero #svc obtiene la mejor exactitud. Las ventajas de #fkdc por sobre #kdc son casi nulas en este contexto.
 
 
-=== Hi noise
 #highlights_figure("lunas_hi")
 #pagebreak()
 
@@ -1503,57 +1529,61 @@ con lo cual #kdc _podría_ haber encontrado el ligeramente más conveniente $h^s
 
 
 
-#let params = json("data/best_params-2d-lo.json")
-==== Comparación entre #kdc y #fkdc para #params.corrida
-Concentrémosnos en un segundo en una corrida específica de un ecperimento particular. Por caso, tomemos el dataset "#params.corrida.at(0)", con la semilla #params.corrida.at(1). Los parámetros óptimos de #fkdc resultaron ser
-#{
-  let from = params.best_params.fkdc
-  let d = (:)
-  for key in from.keys() {
-    d.insert(key, calc.round(float(from.at(key)), digits: 4))
-  }
-  d
-}
-, mientras que los de #kdc fueron
-#{
-  let d = (:)
-  let from = params.best_params.kdc
-  for key in from.keys() { d.insert(key, calc.round(float(from.at(key)), digits: 4)) }
-}. Los anchos de banda son diferentes, y el $alpha$ óptimo encontrado por #fkdc es distinto de 1. Sin embargo, la exactitud de #fkdc fue #params.exac.fkdc, y la de #kdc, #params.exac.kdc, prácticamente idénticas #footnote[Con 400 observaciones para evaluación, dichos porcentajes representan 352 y 354 observaciones correctamente clasificadas, resp.]. ¿Por qué? ¿Será que los algoritmos no son demasiado sensibles a los hiperparámetros elegidos?
-
-Recordemos que la elección de hiperparámetros se hizo con una búsqueda exhaustiva por convalidación cruzada de 5 pliegos. Por lo tanto, _durante el entrenamiento_ se generaron suficientes datos como para graficar la exactitud promedio en los pliegos, en función de $(alpha, h)$. A esta función de los hiperparámetros a una función de pérdida #footnote[En realidad, la exactitud es un "score" o puntaje - mientras más alto mejor-, pero el negativo de cualquier puntaje es una pérdida - mientras más bajo, mejor.] se la suele denominar _superficie de pérdida_.
-
+El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los estimadores, pero los métodos basados en densidad por núcleos parecen sufrirlo particularmente, aunque sólo sean porque "caen desde más alto", a un nivel de performance similar al de otros métodos.
 
 #figure(
-  image("img/heatmap-fkdc-2d-lo.svg"),
-  caption: flex-caption()[Exactitud promedio en entrenamiento para la corrida #params.corrida. Las cruces rojas indican la ventana $h$ óptima para cada $alpha$.][Superficie de pérdida para #params.corrida],
+  columns(3)[
+    #image("img/lunas-caida_r2.svg")
+    #colbreak()
+    #image("img/circulos-caida_r2.svg")
+    #colbreak()
+    #image("img/espirales-caida_r2.svg")
+  ],
+  caption: [
+    $R^2$ mediano por clasificador y dataset, comparado entre la variante con bajo (`_lo`) y alto (`_hi`) ruido en el sampleo.
+  ],
 )
 
-Nótese que la región amarilla, que representa los máximos puntajes durante el entrenamiento, se extiende diagonalmente a través de todos los valores de $alpha$. Es decir, no hay un _par_ de hiperparámetros óptimos $(alpha^star, h^star)$, sino que fijando $alpha$, siempre pareciera existir un(os) $h^star (alpha)$ que alcanza (o aproxima) la máxima exactitud _posible_ con el método en el dataset. En este ejemplo en particular, hasta pareciera ser que una relación log-lineal captura bastante bien el fenómeno, $log(h^star) prop alpha$. En particular, entonces, $"exac"(h^star (1), 1) approx "exac"(h^star, alpha^star)$, y se entiende que el algoritmo #fkdc, que agrega el hiperparámetro $alpha$ a #kdc no mejore significativamente su exactitud.
 
-Ahora bien, esto es sólo en _un_ dataset, con _una_ semilla especfíca. ¿Se replicará el fenómeno en los otros datasets estudiados? Y si tomásemos datasets con otras características?
+Por último, veamos las fronteras de decisión que resultan para nuestro método, #fkdc, y los más competitivos en términos de $R^2$ (#gbt) y exactitud (#svc).
+#align(center)[#box(width: 160%)[
+  #figure(
+    columns(3)[
+      #image("img/lunas_hi-fkdc-decision_boundary.svg")
+      #image("img/circulos_hi-fkdc-decision_boundary.svg")
+      #image("img/espirales_hi-fkdc-decision_boundary.svg")
+      #colbreak()
+      #image("img/lunas_hi-gbt-decision_boundary.svg")
+      #image("img/circulos_hi-gbt-decision_boundary.svg")
+      #image("img/espirales_hi-gbt-decision_boundary.svg")
+      #colbreak()
+      #image("img/lunas_hi-svc-decision_boundary.svg")
+      #image("img/circulos_hi-svc-decision_boundary.svg")
+      #image("img/espirales_hi-svc-decision_boundary.svg")
+    ],
+    caption: [Fronteras de decisión para #fkdc, #gbt, #svc en regímenes de alto ruido, $s = #plotting_seed$],
+  )]]
 
-#figure(image("img/many-heatmaps-fkdc-2d-lo.svg", width: 140%), caption: "It does replicate")
+Al ojo humano, queda claro que las fronteras y regiones de confianza que "dibuja" #fkdc se alinean "en espíritu" con la forma de las variedades que buscamos descubrir: la "región de indiferencia" gris en `lunas_hi` es una especie de curva casi-cúbica que efectivamente separa las lunas, el "huevo frito" de `circulos_hi` efectivamente tiene máxima confianza a favor de la clase interna en el centro de ambos círculos (y se va deformando progresivamente a medida que nos alejamos de él), y en `espirales_hi` casi logra dibujar la espiral. Sin embargo, esta deseable propiedad no es fácilmente reducible a una métrica en $RR$, y se desdibuja en las comparaciones puramente numéricas.
 
-Antes de avanzar hacia el siguiente conjunto de datos, una pregunta más: ¿qué sucede si aumentamos el nivel de ruido? Es decir, mantenemos los dataset hasta aquí considerados, pero subimos $SS$ de @ruido-blanco?
+=== Pionono, Eslabones, Helices y Hueveras (3D, 2 clases + piononos
 
-
-=== 2D, 2 clases: excelente $R^2$ con exactitud competitiva
-
-=== Con Bajo Ruido
-#align(center)[#image("img/2d-lo-datasets.png")]
-#columns(3)[
-  #image("img/lunas_lo-overall.png")
+#align(center)[#image("img/3d.png")]
+#align(center)[#image("img/pionono.png")]
+#columns(4)[
+  #image("img/pionono_0-overall.png")
   #colbreak()
-  #image("img/circulos_lo-overall.png")
+  #image("img/eslabones_0-overall.png")
   #colbreak()
-  #image("img/espirales_lo-overall.png")
-
+  #image("img/helices_0-overall.png")
+  #colbreak()
+  #image("img/hueveras_0-overall.png")
 ]
-=== Boxplot Accuracy
-#align(center)[#image("img/2d-lo-acc.png")]
-=== Boxplot $R^2$
-#align(center)[#image("img/2d-lo-r2.png")]
+#align(center)[#image("img/pionono-eslabones-r2.png")]
+#align(center)[#image("img/helices-hueveras-r2.png")]
+
+=== Parámetros óptimos para $"(F)KDC"$ en `helices_0`
+#align(center)[#image("img/optimos-helices_0.png")]
 
 === Superposición de parámetros: $alpha$ y $h$
 
@@ -1573,58 +1603,9 @@ Si $D_(Q_i, alpha) prop ||dot||$ (la distancia de fermat es proporcional a la eu
 
 ... y sabemos que localmente, eso es cierto #emoji.face.tear
 
-=== Parámetros óptimos para $"(F)KDC"$ en `espirales_lo`
-#align(center)[#image("img/optimos-espirales_lo.png")]
-
-
-=== Superficies (o paisajes) de _score_ para `(espirales_lo, 1434)`
-
-#align(center)[#image("img/heatmap-fkdc-2d-lo-new.svg")]
-
-=== Alt-viz: Perfiles de pérdida para `(espirales_lo, 1434)`
-
-#align(center)[#image("img/perfiles-perdida-espirales-1434.png")]
-
-=== Fronteras de decisión para `(espirales_lo, 1434)`
-
-#align(center)[#image("img/gbt-lr-espirales.png")]
-#align(center)[#image("img/kn-espirales.png")]
-#align(center)[#image("img/kdc-espirales.png")]
-#align(center)[#image("img/gnb-svc-espirales.png")]
-
-==== Efecto del ruido en la performance de clasificación
-#columns(3)[
-  #image("img/lunas_hi-overall.png")
-  #colbreak()
-  #image("img/circulos_hi-overall.png")
-  #colbreak()
-  #image("img/espirales_hi-overall.png")
-]
-
-=== 3D, 2 clases + piononos
-
-#align(center)[#image("img/3d.png")]
-#align(center)[#image("img/pionono.png")]
-#columns(4)[
-  #image("img/pionono_0-overall.png")
-  #colbreak()
-  #image("img/eslabones_0-overall.png")
-  #colbreak()
-  #image("img/helices_0-overall.png")
-  #colbreak()
-  #image("img/hueveras_0-overall.png")
-]
-#align(center)[#image("img/pionono-eslabones-r2.png")]
-#align(center)[#image("img/helices-hueveras-r2.png")]
-
-=== Parámetros óptimos para $"(F)KDC"$ en `helices_0`
-#align(center)[#image("img/optimos-helices_0.png")]
-
-=== Microindiferencia, macrodiferencia
-
 - En zonas con muchas observaciones (por tener alta $f$ o alto $N$) sampleadas, la distancia de Fermat y la euclídea coinciden.
 - "Localmente", siempre van a coincidir, aunque sea en un vecindario muy pequeño.
-- Si el algoritmo de clasificación sólo depende de ese vencindario local para clasificar, no hay ganancia en la distancia de Fermat.
+- Si el algoritmo de clasificación sólo depende de ese vencindario apapaasda. asd local para clasificar, no hay ganancia en la distancia de Fermat DALE BOKEH.
 - ¡Pero tampoco hay pérdida si se elige mal `n_neighbors`! #emoji.person.shrug
 
 
