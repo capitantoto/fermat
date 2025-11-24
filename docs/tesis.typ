@@ -1566,21 +1566,25 @@ Por último, veamos las fronteras de decisión que resultan para nuestro método
 
 Al ojo humano, queda claro que las fronteras y regiones de confianza que "dibuja" #fkdc se alinean "en espíritu" con la forma de las variedades que buscamos descubrir: la "región de indiferencia" gris en `lunas_hi` es una especie de curva casi-cúbica que efectivamente separa las lunas, el "huevo frito" de `circulos_hi` efectivamente tiene máxima confianza a favor de la clase interna en el centro de ambos círculos (y se va deformando progresivamente a medida que nos alejamos de él), y en `espirales_hi` casi logra dibujar la espiral. Sin embargo, esta deseable propiedad no es fácilmente reducible a una métrica en $RR$, y se desdibuja en las comparaciones puramente numéricas.
 
-=== Pionono, Eslabones, Helices y Hueveras (3D, 2 clases + piononos
+=== Pionono, Eslabones, Helices y Hueveras ($D=3$)
 
-#align(center)[#image("img/3d.png")]
-#align(center)[#image("img/pionono.png")]
-#columns(4)[
-  #image("img/pionono_0-overall.png")
+#image("img/pionono-scatter-3d.svg")
+#highlights_figure("pionono_0")
+excelente R^2 para KDC, fkdc slightly better; de nuevo casualidad?
+No! De hecho mete un par de alpha > 1 con ex
+#highlights_figure("eslabones_0")
+#highlights_figure("pionono_0")
+#highlights_figure("pionono_0")
+
+A continuación, 
+
+#columns(2)[
+  #image("img/pionono-scatter-3d.svg")
+  #image("img/eslabones-scatter-3d.svg")
   #colbreak()
-  #image("img/eslabones_0-overall.png")
-  #colbreak()
-  #image("img/helices_0-overall.png")
-  #colbreak()
-  #image("img/hueveras_0-overall.png")
+  #image("img/helices-scatter-3d.svg")
+  #image("img/hueveras-scatter-3d.svg")
 ]
-#align(center)[#image("img/pionono-eslabones-r2.png")]
-#align(center)[#image("img/helices-hueveras-r2.png")]
 
 === Parámetros óptimos para $"(F)KDC"$ en `helices_0`
 #align(center)[#image("img/optimos-helices_0.png")]

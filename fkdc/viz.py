@@ -281,6 +281,15 @@ if __name__ == "__main__":
         fig.savefig(fpath)
         close(fig)
         plt.close()
+        if ds.p == 3:
+            fig, ax = plt.subplots(layout="tight")
+            ds.scatter_3d(ax=ax)
+            ax.set_title(dataset)
+            fpath = img_dir / f"{dataset}-scatter-3d.svg"
+            logger.debug(fpath)
+            fig.savefig(fpath)
+            close(fig)
+            plt.close()
     # "Highlights" by R^2
     highlights_by = "r2"
     for dataset in datasets:
