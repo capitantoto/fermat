@@ -1,0 +1,14 @@
+{
+    "dataset": "espirales_lo",
+    "summary": "clf,accuracy,r2\nfkdc,0.9775,0.874\nkdc,0.975,0.8303\nfkn,0.97,0.7787\nkn,0.9625,0.7501\ngbt,0.7875,0.2997\ngnb,0.5225,0.0024\nlr,0.4975,0.0001\nslr,0.4975,0.0\nsvc,0.975,\n",
+    "best": "fkdc",
+    "bad": [
+        "kdc",
+        "fkn",
+        "kn",
+        "gbt",
+        "gnb",
+        "lr",
+        "slr"
+    ]
+}

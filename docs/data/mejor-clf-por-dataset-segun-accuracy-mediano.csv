@@ -1,0 +1,8 @@
+clf,cant,datasets
+svc,6,"circulos_lo, eslabones_0, espirales_hi, hueveras_0, mnist, pionono_0"
+gbt,4,"circulos_hi, eslabones_12, hueveras_12, pionono_12"
+kdc,3,"anteojos, digitos, helices_0"
+fkn,2,"iris, lunas_lo"
+kn,2,"helices_12, lunas_hi"
+slr,2,"pinguinos, vino"
+fkdc,1,espirales_lo

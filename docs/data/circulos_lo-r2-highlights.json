@@ -1,0 +1,11 @@
+{
+    "dataset": "circulos_lo",
+    "summary": "clf,accuracy,r2\nfkdc,0.865,0.4863\nkdc,0.8675,0.4799\nfkn,0.86,0.4675\nkn,0.8625,0.4675\ngbt,0.84,0.4333\ngnb,0.7025,0.0522\nlr,0.4875,-0.0\nslr,0.4875,-0.0\nsvc,0.8875,\n",
+    "best": "fkdc",
+    "bad": [
+        "gbt",
+        "gnb",
+        "lr",
+        "slr"
+    ]
+}
