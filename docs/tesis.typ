@@ -1252,7 +1252,7 @@ entonces la teoría más sencilla - la de menor _complejidad_ $op(C)(p)$ para ci
 La validación cruzada de $k$ pliegos nos provee naturalmente de $k$ pliegos - realizaciones -  de la métrica a optimizar, para la hiperparametrización que minimiza la pérdida de evaluación $h^"opt" = (h^"opt"_1, dots, h^"opt"_k)$, $hat(s^2)(h^"opt")$ y sobre ella implementar una regla de sentido común:
 #defn([regla de $1 sigma$])[
   Sea $hat(s^2)(L(h))$ una estimación "razonable" de la varianza de la pérdida $L(h)$ pérdida del modelo parametrizado en $h$, y $h^"opt"$ la que alcanza la mínima perdida. De entre todas las hiperparametrizaciones, elíjase $h^star = arg min_(h in cal(H)) C(h)), \ cal(H) = {h : L(h) <= L(h^"opt") + sqrt(hat(s^2)(L(h^"opt"))) }$, _la más sencilla_.
-]
+] <r1sd>
 
 Para definir una $C$ factible en modelos con dim(h) > 1, definimos el orden de complejidad creciente _para cada clasificador_, como una lista ordenada de 2-tuplas con los nombres de cada hiperparámetro, y una dirección de crecimiento en cada uno. Para #fkdc, por ejemplo, $C(h) = [(alpha, "ascendente"), (h, "descendente"))]$. La decisión de ordenar así los parámetros, con $alpha$ primero y $C$ _ascendente_ en $alpha$, hace que la evaluación "prefiera" naturalmente a #kdc por sobre #fkdc #footnote[$#kdc = op(#fkdc)(alpha=1))$] el mínimo $alpha=1$ estudiado) es mejor. En consiguiente, cuando veamos que #fkdc elije un $alpha != 1$, sabremos que no es por pura casualidad.
 
@@ -1516,7 +1516,7 @@ $ sigma_"lunas" = 0.5 quad sigma_"circulos" = 0.2 quad sigma_"espirales" = 0.2 $
   caption: flex-caption["Lunas", "Círculos" y "Espirales" con "alto ruido"][ "Lunas", "Círculos" y "Espirales", alto ruido ],
 ) <fig-22>
 
-En general, #fkdc y #fkn siguen siendo competitivos, pero el "tereno de juego" se ha nivelado considerablemente, y las ventajas antes vistas disminuyen. En particular, en `lunas_hi, circulos_hi` observamos que #gbt alcanza un $R^2$ marginalmente mejor que el #fkdc, y en el segundo tambien lo supera ligeramente en exactitud. En `espirales_hi` todos los métodos basados en densidad por núcleos (#fkdc, #kdc, #fkn, #kn) alcanzan un $R^2$ muy similar mientras todos los demás quedan alrgamente atrás (#gbt) o no se distinguen del $0$, pero #svc obtiene la mejor exactitud. Las ventajas de #fkdc por sobre #kdc son casi nulas en este contexto.
+En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" se ha nivelado considerablemente, y las ventajas antes vistas disminuyen. En particular, en `lunas_hi, circulos_hi` observamos que #gbt alcanza un $R^2$ marginalmente mejor que el #fkdc, y en el segundo tambien lo supera ligeramente en exactitud. En `espirales_hi` todos los métodos basados en densidad por núcleos (#fkdc, #kdc, #fkn, #kn) alcanzan un $R^2$ muy similar mientras todos los demás quedan alrgamente atrás (#gbt) o no se distinguen del $0$, pero #svc obtiene la mejor exactitud. Las ventajas de #fkdc por sobre #kdc son casi nulas en este contexto.
 
 
 #highlights_figure("lunas_hi")
@@ -1566,14 +1566,78 @@ Por último, veamos las fronteras de decisión que resultan para nuestro método
 
 Al ojo humano, queda claro que las fronteras y regiones de confianza que "dibuja" #fkdc se alinean "en espíritu" con la forma de las variedades que buscamos descubrir: la "región de indiferencia" gris en `lunas_hi` es una especie de curva casi-cúbica que efectivamente separa las lunas, el "huevo frito" de `circulos_hi` efectivamente tiene máxima confianza a favor de la clase interna en el centro de ambos círculos (y se va deformando progresivamente a medida que nos alejamos de él), y en `espirales_hi` casi logra dibujar la espiral. Sin embargo, esta deseable propiedad no es fácilmente reducible a una métrica en $RR$, y se desdibuja en las comparaciones puramente numéricas.
 
-=== Pionono, Eslabones, Helices y Hueveras ($D=3$)
+== Pionono, Eslabones, Helices y Hueveras ($D=3$)
+
+Consideraremos a continuación datasets sintéticos embebidos en 3 dimensiones ($D = 3$), con variedades de dimensión intrínseca  $1$ (`eslabones, helices`) y $2$ (`pionono, hueveras`).
+
+=== Eslabones
+#image("img/eslabones-scatter-3d.svg")
+
+TODO poner scatter 3D en highlight por dataset para $D=3$
+#highlights_figure("eslabones_0")
+
+Toda la familia de estimadores de densidad por núcleos alcanza un $R^2 approx 1$, y aún Naive Bayes tiene una performance aceptable: con este nivel de ruido blanco en el sampleo, el "margen de separación" entre ambos anillos es tan amplio que el problema resulta sencillo. Dicho esto, este dataset resulta ser particularmente fácil para (casi) todos los clasificadores.
+
+Un punto en contra de #fkdc aquí, es que el boxplot de $R^2$ - no así el de exactitud - revela un fuerte outlier de $approx 0.65$ para la semilla $2411$, que no corresponde a una parametrización particularmente extraña.
+
+#tabla_csv("data/eslabones_0-params-2411.csv")
+
+==== Hélices
+#image("img/helices-scatter-3d.svg")
+Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la misma dirección, una de ellas empezando a "media altura" entre dos brazos consecutivos de la otra. El dataset es particualrmente desafiante para #slr, #lr, y Naive Bayes, que no logran diferenciarse en nada de un clasificador trivial que prediga siempre la misma clase.
+
+#highlights_figure("helices_0")
+Que a #gnb le result complejo no es sorprendente, ya que las distribuciones marginales son prácticamente idénticas:
+
+#image("img/helices-pairplot.svg")
+
+La clasificación dura con estimación de densidad por núcleos - con distancia de Fermat o sin ella resulta ser superior a todas las alternativas en términos de exactitud, pero encima de ello, #fkdc saca una diferencia significativa en términos de $R^2$, que ya es visible en un boxplot pero se ve aún más claramente en el gráfico de dispersión de los $R^2$ alcanzados por semilla:
+
+#image("img/helices_0-r2-fkdc-vs-kdc.svg")
+
+En prácticamente todas las semillas el $R^2$ de #fkdc es estrictamente mejor al "control" de #kdc. ¿Con qué parámetros sucede?
+
+#tabla_csv("data/helices_0-parametros_comparados-kdc.csv")
+
+Ordenados por $Delta_(R^2) = R^2_#fkdc - R^2_#kdc$, la semilla con mayor diferencia a favor del resultado con distancia de Fermat, es para un no-trivial $(alpha = 1.25, h =0.006)$ que resulta en un $R^2$ $.237 (= 0.953 - 0.716)$ puntos _en términos absolutos_ (#footnote([I.e., "un montón"]) por encima de #kdc con $h=0.208$, usando una ventana unas 35 veces más ancha.
+Salta a la vista también que tales parametrzaciones tienen muy variada performance "out-of-sample", pues para $s=8096$ _también_ se eligió  $(alpha = 1.25, h =0.006)$ contra $h_#kdc=0.143 approx 25h_#fkdc$ y se dió la segunda diferencia _negativa_ más amplia en contra de #fkdc ($Delta_R^2 = -0.098$) .
+
+Gracias a la regla de parsimonia, sabemos con cierta seguridad que no hay, por ejemplo, que para $s=1188$ - con el segundo-mayor $Delta_R^2 = 0,227$ - parametrizaciones con un $alpha < 2.5$ a menos de 1SD de la mejor parametrización en test - con $alpha = 3$.
+
+#image("img/helices_0-1188-fkdc-bandwidth-alpha-loss_contour.svg")
+Nótese la mínima isla alrededor de $alpha=3; h = 0,000562$.
+
+
+Lo tercero, es que en unos cuantos casos en que $alpha_#fkdc = alpha_#kdc = 1$, #fkdc todavía performa un poco mejor que #kdc al elegir anchos de banda mucho más pequeños. Ya hemos visto que aún ligeras diferencas en la ventana $h$ podían llevar a mejoras en $R^2$ a favor de #fkdc por el detalle fino de la búsqueda en grilla que se definió. Sin embargo,aquí se encuentran sunstanciales diferencias de $R^2$ como la tercera más alta ($Delta_R^2=0.111, alpha_#fkdc = alpha_#kdc = 1; h_#fkdc / h_#kdc approx 14)$, o la séptima ($Delta_R^2=0.111, h_#fkdc / h_#kdc approx 17$), que cuesta explicar como una ligera discrepancia en la grilla de $h$. Nuestra hipótesis, es que el dominio ampliado de hiperparámetros de #fkdc junto con la regla de parsimonia trabajan en tándem:
+
+#image("img/r1sd+alpha.svg")
+
+Nuestro control, #kdc enciuentra durante su entrenamiento y posterior testeo con R1SD la solución $h=0.143$ (cf. posición $(1)$ del diagrama). Presumiblemente, la varianza de la performance en testeo para dicha solución fue tal que ningún punto en el entorno de $h=0.01$ (cf. $(3)$) estaba a menos de 1SD de $(1)$. Cuando entrenamos #fkdc y ampliamos el dominio de la parametrización a $RR^2$ con $(h, alpha)$, la validación cruzada alcanza un máximo en $alpha=3; h = 0,000562$ (cf. $(2)$). Esta nueva solución, potenicalmente "sobreparametrizada" con un $R^2_"train" = ; R^2_"test" = 0.988$, también tiene más varianza en sus resultados a través de cada pliego de CV, por lo que de repente ahora la cota inferior para ser considerada dentro de $cal(h)$ de @r1sd se vuelve más permisiva, en tanto se contrae menos por el aumento en el $R^2$ óptimo que lo que se relaja por el incremento en su varianza.
+En ese rango ampliado de parametrizaciones "suficientemente buenas", ahora sí se encuentra $alpha=1; h=0.01$, y la CV "se mueve" de $(2) " a " (3)$, encontrando un ótpimo en el espacio reducido de #kdc que éste no llegó a considerar.
+
+Es de hecho este fenómeno  que se repite en muchas semillas, el que termina corriendo la mediana del $R^2$, que se repite con las semillas `4286, 1182, 6610, 2411, 8527, 7060, 8591` de $alpha <= 1.25$ el que termina desplaando la mediana de la distribución de $R^2$ hasta $0.97$ _por fuera de la "caja" de _#footnote[el rango intercuartil en el boxplot] $R^2_#kdc$.
+
+#image("img/helices_0-boxplot-r2-zoomed.svg")
+
+
+
+. En este subconjunto de las semillas en que la regla de 1SD derivó en el mínimo $alpha$, aún así #fkdc pareciera preferir ventanas muchísimo menores. La mayor diferencia 
+
+#image("img/helices_0-1182-fkdc-bandwidth-alpha-loss_contour.svg")
+El abogado del diablo diría que un $R^2$ tan alto 
+
+#image("img/helices_0-1188-fkdc-bandwidth-alpha-loss_contour.svg")
+
+
+
+#image("img/helices_0-r2-boxplot.svg")
+
+
 
 #image("img/pionono-scatter-3d.svg")
 #highlights_figure("pionono_0")
 excelente R^2 para KDC, fkdc slightly better; de nuevo casualidad?
 No! De hecho mete un par de alpha > 1 con ex
-#highlights_figure("eslabones_0")
-#highlights_figure("pionono_0")
 #highlights_figure("pionono_0")
 
 A continuación, 
