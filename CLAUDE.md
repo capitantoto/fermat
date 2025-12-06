@@ -62,12 +62,24 @@ El historial de commits de este repositorio permite verificar:
 
 ## Reglas de estilo (según RAE)
 
+**Regla general**: Ante dudas de estilo no cubiertas explícitamente en este
+documento, buscar la mejor práctica según la RAE (Diccionario panhispánico
+de dudas, Libro de estilo de la lengua española, u otras fuentes oficiales).
+
 ### Extranjerismos y términos técnicos
 - **Cursiva** para extranjerismos no adaptados: _kernel_, _bandwidth_, _overfitting_
 - En Typst usar `#emph[término]` o `_término_`
 - Excepción: en textos técnicos, términos de uso muy asentado en la disciplina
   pueden ir en redonda (ej: software, hardware en informática)
 - Si no se puede usar cursiva, usar comillas dobles: "kernel"
+
+### Traducciones de términos extranjeros
+- **SIEMPRE** ofrecer traducción o equivalente español en nota al pie
+  la **primera vez** que aparece un extranjerismo
+- En apariciones subsiguientes, usar el término sin nota
+- Formato: `#footnote[del inglés _term_, "traducción"]`
+- El término original en cursiva (según RAE), la traducción entre comillas
+- Ejemplo: _overfitting_ #footnote[del inglés _overfitting_, "sobreajuste"]
 
 ### Citas textuales
 
