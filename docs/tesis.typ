@@ -382,7 +382,11 @@ La hipótesis de la variedad no es exactamente una hipótesis contrastable en el
 ]
 
 
-Más bien, corresponde entenderla como un modelo mental, que nos permite aventurar ciertas líneas prácticas de trabajo en alta dimensión #footnote[TODO: @galleseRootsEmpathyShared2003 : shared manifold hypothesis y @bengioConsciousnessPrior2019]. Pero antes de profundizar en esta línea, debemos plantearnos algunas preguntas básicas:
+Más bien, corresponde entenderla como un modelo mental, que nos permite aventurar ciertas líneas prácticas de trabajo en alta dimensión #footnote[El concepto de "variedad" para denotar un espacio no-euclídeo con ciertas características intuitivas está bastante extendido en literatura no estrictamente matemática. Para el lector ávido, mencionamos dos _papers_ interesantes al de respecto de potenciales modelos "varietales" de fenómenos como la empatía y la conciencia.
+
+ Uno es @galleseRootsEmpathyShared2003 ("Las Raíces de la Empatía: La Hipótesis de la Variedad Compartida y las Bases Neuronales de la Intersubjetividad"): la hipótesis sostiene que existe un espacio intersubjetivo que compartimos con los demás. No somos mentes aisladas intentando descifrar a otras mentes aisladas; más bien, habitamos un espacio común de acción y emoción. Este "nosotros" (_we-centric space_) es la condición de posibilidad para la empatía. Reconocemos al otro no como un objeto, sino como otro "yo", porque cohabitamos la misma variedad corporal y neuronal.
+
+El otro es  @bengioConsciousnessPrior2019, "El _Prior_ de la Consciencia", en el que se postula que ante un espacio infinito de estímulos, la consciencia tiene una función evolutiva y computacional específica: actuar como un cuello de botella de información para facilitar el razonamiento y la generalización. La conciencia produce representación _rala_ y de baja dimensionalidad compuesta por los factores salientes de entre los estímulos recibidos y sus interconexiones - una cierta forma de variedad intrínsice de baja dimensionalidad.]. Antes de profundizar en esta línea, debemos plantearnos algunas preguntas básicas:
 
 #align(center)[
   \
