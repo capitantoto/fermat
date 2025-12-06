@@ -292,7 +292,7 @@ class Dataset:
             dims = list(range(self.p))
         data = pd.DataFrame(self.X[:, dims])
         data["y"] = self.y
-        pairplot(data=data, hue="y", **plot_kws)
+        return pairplot(data=data, hue="y", **plot_kws)
 
     def guardar(self, archivo: Path | None = None):
         with open(archivo or f"{hash(self)}.pkl", "wb") as file:
