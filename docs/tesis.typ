@@ -134,7 +134,7 @@ Para discernir cuán bien se "ajusta" un clasificador a los datos, la teoría re
 $
   hat(G) = arg min_f "EPE"(f) =arg min_f EE(L(G, f(X)))
 $
-donde la esperanza es contra la distribución conjunta $X, G)$. Por la ley de la probablidad total, podemos condicionar a X y expresar el EPE como
+donde la esperanza es contra la distribución conjunta $(X, G)$. Por la ley de la probabilidad total, podemos condicionar a X y expresar el EPE como
 
 $
   "EPE"(f) & = EE(L(G, hat(G)(X))) \
@@ -153,11 +153,11 @@ $
             & = arg max_(g in GG) Pr(g | X = x)
 $<clf-bayes>
 
-Esta razonable solución se conoce como el _clasificador de Bayes_ , y sugiere que clasifiquemos a cada observación según la clase modal condicional a su distribución conjunta $Pr(G|X)$.
+Esta razonable solución se conoce como el _clasificador de Bayes_, y sugiere que clasifiquemos a cada observación según la clase modal condicional a su distribución conjunta $Pr(G|X)$.
 Su error esperado de predicción $"EPE"$ se conoce como la _tasa de Bayes_. Un aproximador directo de este resultado es el clasificador de k vecinos más cercano #footnote[_k-nearest-neighbors classifier_]
 
 #defn("clasificador de k-vecinos-más-cercanos")[
-  Sean $x^((1)), dots, x^((k)))$ los $k$ vecinos más cercanos a $x$, y $GG^((1)), dots, GG^((k))$ sus respetivas clases. El clasificador de k-vecinos-más-cercanos le asignará a $x$ la clase más frecuente entre $GG^((1)), dots, GG^((k))$. Más formalmente:
+  Sean $x^((1)), dots, x^((k))$ los $k$ vecinos más cercanos a $x$, y $GG^((1)), dots, GG^((k))$ sus respectivas clases. El clasificador de k-vecinos-más-cercanos le asignará a $x$ la clase más frecuente entre $GG^((1)), dots, GG^((k))$. Más formalmente:
   $
     hat(G)_("kn")(x) & =GG_("kn") = arg max_(g in GG) sum_(i in [k]) ind(GG^((i)) = g) \
                      & <=> \#{i : GG^((i)) = GG_("kn"), i in [k]} = max_(g in GG) \#{i : GG^((i)) = g, i in [k]} \
@@ -179,7 +179,7 @@ $
                 & <=> Pr(GG_k|X=x) =max_(k in [K]) Pr(X=x|GG_k) times Pr(GG_k) \
 $
 
-A las probablidades "incondicionales" de clase $Pr(GG_k)$ se las suele llamar su "distribución a priori", y notarlas por $pi = (pi_1, dots, pi_K)^T$, con #box[$pi_k = Pr(GG_k) forall k in [K], quad sum pi_k = 1$]. Una aproximación razonable, si es que el conjunto de entrenamiento se obtuvo por muestreo aleatorio simple #footnote[_simple random sampling_, o s.r.s.], es tomar las proporciones muestrales
+A las probabilidades "incondicionales" de clase $Pr(GG_k)$ se las suele llamar su "distribución a priori", y notarlas por $pi = (pi_1, dots, pi_K)^T$, con #box[$pi_k = Pr(GG_k) forall k in [K], quad sum pi_k = 1$]. Una aproximación razonable, si es que el conjunto de entrenamiento se obtuvo por muestreo aleatorio simple #footnote[_simple random sampling_, o s.r.s.], es tomar las proporciones muestrales
 $
   forall k in [K], quad hat(pi)_k & = N^(-1) sum_(i in [N]) ind(g_i = GG_k) \
                                   & = \#{g_i : g_i = GG_k, i in [N]} / N
@@ -190,7 +190,7 @@ Resta hallar una aproximación $hat(Pr)(X=x|GG_k)$ a las probabilidades condicio
 
 == Estimación de densidad por núcleos
 
-De conocer las $K$ densidades $f_(X|GG_k)$, el cómputo de las mentada probabilidades es directo. Tal vez la metodología más estudiada a tales fines es la _estimación de densidad por núcleos_, comprensivamente reseñada en @hastieElementsStatisticalLearning2009[§6.6]. Al estimador resultante, sobre todo en el caso unidimensional, se lo conoce con el nombre de Parzen-Rosenblatt, por sus contribuciones fundacionales en el área @parzenEstimationProbabilityDensity1962
+De conocer las $K$ densidades $f_(X|GG_k)$, el cómputo de las mentadas probabilidades es directo. Tal vez la metodología más estudiada a tales fines es la _estimación de densidad por núcleos_, comprensivamente reseñada en @hastieElementsStatisticalLearning2009[§6.6]. Al estimador resultante, sobre todo en el caso unidimensional, se lo conoce con el nombre de Parzen-Rosenblatt, por sus contribuciones fundacionales en el área @parzenEstimationProbabilityDensity1962
 @rosenblattRemarksNonparametricEstimates1956
 .
 ==== Estimación unidimensional
@@ -209,7 +209,7 @@ Esta estimación es irregular, con saltos discretos en el numerador, por lo que 
 
 #defn([función núcleo o _kernel_])[
 
-  Se dice que $K(x) : RR-> RR$ es una _función núcleo_ si  cumple que
+  Se dice que $K(x) : RR -> RR$ es una _función núcleo_ si cumple que
 
   + toma valores reales no negativos: $K(u) >= 0$,
   + está normalizada: $integral K(u) d u = 1$,
@@ -262,7 +262,7 @@ $
 $
 
 #obs[
-  El clasificador de de @kdc-duro es en realidad la versión dura de un clasificador blando $hat(G)_"KD" (x) = hat(gamma)$, donde $ hat(gamma)_i = (hat(f)_i (x) times hat(pi)_i) / (sum_(i in [K]) hat(f)_i (x) times hat(pi)_i) $
+  El clasificador de @kdc-duro es en realidad la versión dura de un clasificador blando $hat(G)_"KD" (x) = hat(gamma)$, donde $ hat(gamma)_i = (hat(f)_i (x) times hat(pi)_i) / (sum_(i in [K]) hat(f)_i (x) times hat(pi)_i) $
 ]
 
 #obs[
@@ -274,7 +274,7 @@ $
   hat(G)_"C(onfiado)" (x_0) &: hat(Pr)(GG_i | X = x_0) = cases(1 - epsilon times (K - 1) &" si " i = 1, epsilon &" si " i != 1) \
   hat(G)_"D(udoso)" (x_0) &: hat(Pr)(GG_i | X = x_0) = cases(1/K + epsilon times (K - 1) &" si " i = 1, 1 / K - epsilon &" si " i != 1)
 $
-$hat(G)_C$ está "casi seguro" de que la clase correcta es $GG_1$, mientras que $hat(G)_D$ está prácticamente indeciso entre todas las clases. Para el entrenamiento y análisis de clasificadores blandos como el de densidad por núcleos, será relevanta encontrar funciones de pérdida que recompensen y penalicen adecuadamente esta capacidad.
+$hat(G)_C$ está "casi seguro" de que la clase correcta es $GG_1$, mientras que $hat(G)_D$ está prácticamente indeciso entre todas las clases. Para el entrenamiento y análisis de clasificadores blandos como el de densidad por núcleos, será relevante encontrar funciones de pérdida que recompensen y penalicen adecuadamente esta capacidad.
 
 == Estimación de densidad multivariada
 === Naive Bayes
@@ -288,7 +288,7 @@ A este procedimiento se lo conoce como "Naive Bayes", y a pesar de su aparente i
 === KDE multivariado
 
 #figure(caption: flex-caption(
-  "Dos círculos concéntricos y sus KDE marginales por clase: a pesar de que la frontera entre ambos grupos de puntos es muy clara, es casi imposible disinguirlas a partir de sus densidades marginales.",
+  "Dos círculos concéntricos y sus KDE marginales por clase: a pesar de que la frontera entre ambos grupos de puntos es muy clara, es casi imposible distinguirlas a partir de sus densidades marginales.",
   "Dos círculos concéntricos",
 ))[#image("img/dos-circulos-jointplot.png", width: 75%)]
 
@@ -320,7 +320,7 @@ Sean las clases de matrices $RR^(d times d)$ ...
 
 
 Aún tomando una única $HH$ para _toda_ la muestra, $HH in dots$, la elección de $HH$ en dimensión $d$ requiere definir...
-- $mat(d; 2) = (d^2 - d) slash 2$ parámetros de ventana si  $HH in cal(F)$,
+- $mat(d; 2) = (d^2 - d) slash 2$ parámetros de ventana si $HH in cal(F)$,
 - $d$ parámetros si $HH in cal(D)$ y
 - un único parámetro $h$ si $HH = h^2 bu(I)$.
 
@@ -328,13 +328,13 @@ La evaluación de la conveniencia relativa de cada parametrización se vuelve mu
 
 === La maldición de la dimensionalidad
 
-Uno estaría perdonado por suponer que el problema de estimar densidades en alta dimensión se resuelve con una buena elección de $HH$, y una muestra "lo suficientemente grande". Considérese, sin embargo, el siguiente ejercicio, adaptado de  para ilustrar ese "suficientemente grande":
+Uno estaría perdonado por suponer que el problema de estimar densidades en alta dimensión se resuelve con una buena elección de $HH$, y una muestra "lo suficientemente grande". Considérese, sin embargo, el siguiente ejercicio, adaptado para ilustrar ese "suficientemente grande":
 
 #quote(attribution: [adaptado de @wandKernelSmoothing1995[§4.9 ej 4.1]])[
-  Sean $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d), thick i in [N]$, y consideremos la estimación de la densidad en el origen, $hat(f)(bu(0))$. Suponga que el núcleo $K_(HH)$ es un "núcleo producto" basado en la distribución univariada $"Uniforme"(-1, 1)$, y $HH = h^2 bu(I)$. Derive una expresión para la proporción esperada de puntos incluidos dentro del soporte del núcleo $KH$ para $h, d$. arbitrarios.
+  Sean $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d), thick i in [N]$, y consideremos la estimación de la densidad en el origen, $hat(f)(bu(0))$. Suponga que el núcleo $K_(HH)$ es un "núcleo producto" basado en la distribución univariada $"Uniforme"(-1, 1)$, y $HH = h^2 bu(I)$. Derive una expresión para la proporción esperada de puntos incluidos dentro del soporte del núcleo $KH$ para $(h, d)$ arbitrarios.
 ]
 
-El "núcleo producto" multivariado basado en la ley $"Uniforme(-1, 1)"$ evaluado alrededor del origen es:
+El "núcleo producto" multivariado basado en la ley $"Uniforme"(-1, 1)$ evaluado alrededor del origen es:
 $
   K(x - 0)= K(x) = product_(i = 1)^d ind(-1 <= x_i <= 1) = ind(inter.big_(i=1)^d thick abs(x_i) <= 1) \
 $
@@ -354,7 +354,7 @@ $
 #let h = 0.5
 #let d = 20
 
-Para $h =#h, d=#d, thick Pr(X in [-#h,#h]^#d) = #h^(-#d) approx #calc.round(calc.pow(h, d), digits: 8)$, ¡menos de uno en un millón! En general, la caída es muy rápida, aún para valores altos de $h$. Si $X$ representa un segundo de audio respete el estandar _mínimo_ de llamadas telefónicas  #footnote[De Wikipedia: La tasa #link("https://en.wikipedia.org/wiki/Digital_Signal_0")[DS0], o _Digital Signal 0_, fue introducida para transportar una sola llamada de voz "digitizada". La típica llamada de audio se digitiza a $8 "kHz"$, o a razón de 8.000 veces por segundo. se]
+Para $h =#h, d=#d, thick Pr(X in [-#h,#h]^#d) = #h^(-#d) approx #calc.round(calc.pow(h, d), digits: 8)$, ¡menos de uno en un millón! En general, la caída es muy rápida, aún para valores altos de $h$. Si $X$ representa un segundo de audio respete el estándar _mínimo_ de llamadas telefónicas  #footnote[De Wikipedia: La tasa #link("https://en.wikipedia.org/wiki/Digital_Signal_0")[DS0], o _Digital Signal 0_, fue introducida para transportar una sola llamada de voz "digitizada". La típica llamada de audio se digitiza a $8 "kHz"$, o a razón de 8.000 veces por segundo. se]
 #image("img/curse-dim.png")tiene $d=8000$.
 En tal espacio ambiente, aún con $h=0.999$,
 $Pr(dot) approx #calc.round(calc.pow(0.999, 8000), digits: 6)$, o 1:3.000.
@@ -368,7 +368,7 @@ Pues bien, el ejemplo del segundo de audio antedicho _es_ sesgado, ya que simple
 Sin precisar detalles, podríamos postular que las realizaciones de la variable de interés $X$ (el habla), que registramos en un soporte $cal(S) subset.eq RR^d$ de alta dimensión, en realidad se concentran en cierta _variedad_ #footnote[Término que ya precisaremos. Por ahora, #MM es el _subespacio de realizaciones posibles_ de $X$] $MM subset.eq cal(S)$ potencialmente de mucha menor dimensión $dim (M) = d_MM << d$, en la que noción de distancia entre observaciones aún conserva significado. A tal postulado se lo conoce como "la hipótesis de la variedad", o _manifold hypothesis_. <hipotesis-variedad> #footnote[Para el lector curioso: @rifaiManifoldTangentClassifier2011 ofrece un desglose de la hipótesis de la variedad en tres aspectos complementarios, de los cuales el aquí presentado sería el segundo, la "hipótesis de la variedad no-supervisada. El tercero, "la hipótesis de la variedad para clasificación", dice que "puntos de distintas clases se concentrarán sobre variedades disjuntas separadas por regiones de muy baja densidad, lo asumimos implícitamente a la hora de construir un clasificador.]
 
 
-La hipótesis de la variedad no es exactamente una hipótesis contrastable en el sentido tradicion al del método científico; de hecho, ni siquiera resulta obvio que de existir, sean bien definibles las variedades en las que existen los elementos del mundo real: un dígito manuscrito, el canto de un pájaro, o una flor. Y de existir, es de esperar que sean altamente #box[no-lineales].
+La hipótesis de la variedad no es exactamente una hipótesis contrastable en el sentido tradicional del método científico; de hecho, ni siquiera resulta obvio que de existir, sean bien definibles las variedades en las que existen los elementos del mundo real: un dígito manuscrito, el canto de un pájaro, o una flor. Y de existir, es de esperar que sean altamente #box[no-lineales].
 
 #figure(caption: flex-caption(
   [Ejemplos de variedades en el mundo físico: tanto la hoja de un árbol como una bandera flameando al viento tienen dimensión intrínseca $d_MM = 2$, están embedidas en $RR^3$, y son definitivamente no-lineales.],
@@ -382,7 +382,7 @@ La hipótesis de la variedad no es exactamente una hipótesis contrastable en el
 ]
 
 
-Más bien, corresponde entenderla como un modelo mental, que nos permite aventurar ciertas líneas prácticas de trabajo en alta dimensión #footnote[TODO: @galleseRootsEmpathyShared2003 : shared manifold hypothesis y @bengioConsciousnessPrior2019]. Pero antes de profundizar en esta línea, debemos platearnos algunas preguntas básicas:
+Más bien, corresponde entenderla como un modelo mental, que nos permite aventurar ciertas líneas prácticas de trabajo en alta dimensión #footnote[TODO: @galleseRootsEmpathyShared2003 : shared manifold hypothesis y @bengioConsciousnessPrior2019]. Pero antes de profundizar en esta línea, debemos plantearnos algunas preguntas básicas:
 
 #align(center)[
   \
@@ -395,7 +395,7 @@ Más bien, corresponde entenderla como un modelo mental, que nos permite aventur
 
 Adelantando la respuesta a la segunda pregunta, resulta ser que si el soporte de $X$ es una "variedad de Riemann", bajo ciertas condiciones razonables sí es posible estimar su densidad por núcleos en la variedad @pelletierKernelDensityEstimation2005.
 
-A continuación, damos un recorrido sumario e idiosincrático por ciertos conceptos básicos de topología y variedades que consideramos necesarios para motivar la definición de variedades Riemannianas, que de paso precisarán la respuesta a la primer pregunta - ¿qué es una variedad? - en el contexto que nos interesa. A tal fin, seguimos la exposición de la monografía _Estimación no paramétrica de la densidad en variedades Riemannianas_ @munozEstimacionNoParametrica2011, que a su vez sigue, entre otros, el clásico _Introduction to Riemannian Manifolds_ @leeIntroductionRiemannianManifolds2018.
+A continuación, damos un recorrido sumario e idiosincrático por ciertos conceptos básicos de topología y variedades que consideramos necesarios para motivar la definición de variedades Riemannianas, que de paso precisarán la respuesta a la primera pregunta - ¿qué es una variedad? - en el contexto que nos interesa. A tal fin, seguimos la exposición de la monografía _Estimación no paramétrica de la densidad en variedades Riemannianas_ @munozEstimacionNoParametrica2011, que a su vez sigue, entre otros, el clásico _Introduction to Riemannian Manifolds_ @leeIntroductionRiemannianManifolds2018.
 
 === Variedades Diferenciables
 
@@ -421,12 +421,12 @@ A los conjuntos pertenecientes a la topología $T$ se les llama conjuntos abiert
 
   Se dice que un espacio topológico es un espacio de Hausdorff #footnote[o que verifica la propiedad de Hausdorff, o que es separado o que es $bu(T_2)$] si todo par de puntos distintos del espacio verifican la propiedad de Hausdorff.
 ]
-En términos coloquiales, un espacio de Hausdorff es aquél donde todos sus puntos están "bien separados".
+En términos coloquiales, un espacio de Hausdorff es aquel donde todos sus puntos están "bien separados".
 
 #defn(
   [variedad topológica @munozEstimacionNoParametrica2011[Def. 3.1.1], @leeIntroductionRiemannianManifolds2018[Apéndice A]],
 )[
-  Una variedad topológica de dimensión $d in NN$ es un espacio topológico $(MM, T)$ de Hausdorff, de base numerable, que es #strong[localmente homeomorfo a $RR^d$]. Es decir, para cada $p in MM$ existe un abierto $U in T$ y un abierto $A subset.eq RR^d$, tal que $p in U$ ($U$ es un entorno de $p$) y existe un homemorfismo $phi : U -> A$.
+  Una variedad topológica de dimensión $d in NN$ es un espacio topológico $(MM, T)$ de Hausdorff, de base numerable, que es #strong[localmente homeomorfo a $RR^d$]. Es decir, para cada $p in MM$ existe un abierto $U in T$ y un abierto $A subset.eq RR^d$, tal que $p in U$ ($U$ es un entorno de $p$) y existe un homeomorfismo $phi : U -> A$.
 ]
 
 #obs(
@@ -443,7 +443,7 @@ A un conjunto numerable de tales cartas que cubran completamente la variedad se 
 Cuando un homeomorfismo - y su inversa - es $r-$veces diferenciable, se le llama _$C^r$-difeomorfismo_, o simplemente difeomorfismo #footnote[Luego, un homeomorfismo es un $C^0-$difeomorfismo]. En particular, un $C^oo-$difeomorfismo es un difeomorfismo _suave_.
 
 #defn("")
-Sean $(MM, T)$ una variedad topolóogica de dimensión $d$ y sean $(U, phi), (V, psi)$ dos cartas. Diremos que son _suavemente compatibles_ #footnote[_smoothly compatible_ según @leeIntroductionRiemannianManifolds2018[ § "Smooth Manifolds and Smooth Maps"]. @munozEstimacionNoParametrica2011 lo denomina _compatible_ a secas.] si $U inter V = emptyset$ o bien si la función cambio de coordenadas restringida a $U inter V$ es un difeormorfismo.
+Sean $(MM, T)$ una variedad topológica de dimensión $d$ y sean $(U, phi), (V, psi)$ dos cartas. Diremos que son _suavemente compatibles_ #footnote[_smoothly compatible_ según @leeIntroductionRiemannianManifolds2018[ § "Smooth Manifolds and Smooth Maps"]. @munozEstimacionNoParametrica2011 lo denomina _compatible_ a secas.] si $U inter V = emptyset$ o bien si la función cambio de coordenadas restringida a $U inter V$ es un difeomorfismo.
 
 La compatibilidad requiere que la transición entre mapas no sea sólo continua, sino también _suave_. El motivo de esta condición es asegurar que el concepto de _suavidad_ esté bien definido en toda la variedad $MM$, independientemente de qué carta se use: si una función es diferenciable vista a través de una carta, también lo será al analizarla desde cualquier carta compatible.
 
@@ -472,7 +472,7 @@ Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métric
 #obs(
   [según TODO at do carmo Prop. 2.10],
 )[
-  *Toda variedad diferenciable admite una métrica Riemanniana*, que se peude construir componiendo las métricas Riemannianas locales a cada carta de su estructura diferenciable según la "partición de la unidad"#footnote[La definición formal de "partición de la unidad" la da - sin prueba de existencia - TODO at do carmo §0.5, p. 30. Intuitivamente, da una base funcional de #MM, en la que a cada entorno de la cobertura de #MM se le asigna una función $f_alpha$ de manera que $sum_alpha f_alpha (p) = 1 forall p in MM$. para  es una técnica que pondera con pesos que suman 1 las métricas locales a cada carta para obtener un resultado global coherente] ${bold(f)} = {f_alpha : alpha in cal(I)}$ subordinada a su cobertura.
+  *Toda variedad diferenciable admite una métrica Riemanniana*, que se puede construir componiendo las métricas Riemannianas locales a cada carta de su estructura diferenciable según la "partición de la unidad"#footnote[La definición formal de "partición de la unidad" la da - sin prueba de existencia - TODO at do carmo §0.5, p. 30. Intuitivamente, da una base funcional de #MM, en la que a cada entorno de la cobertura de #MM se le asigna una función $f_alpha$ de manera que $sum_alpha f_alpha (p) = 1 forall p in MM$. para  es una técnica que pondera con pesos que suman 1 las métricas locales a cada carta para obtener un resultado global coherente] ${bold(f)} = {f_alpha : alpha in cal(I)}$ subordinada a su cobertura.
 
   Es claro que podemos definir una métrica Riemanniana $dotp(dot, dot)^alpha$ en cada $V_alpha$: la métrica inducida por el sistema de coordenadas locales. Sea entonces el conjunto:
   $
@@ -481,7 +481,7 @@ Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métric
   es posible verificar que esta construcción define una métrica Riemanniana en todo #MM.
 ]
 
-#obs[ Cuando $MM=RR^d$, el espacio es constante e idéntico a la variedad: $forall p in RR^d, thick T_p RR^d = RR^d$. La base canónica de $T_p RR^d = RR^d$ formada por las columnas de $bu(I)_d$ es una matriz positiva definida que da lugar al pructo interno "clásico" $chevron.l u,v chevron.r = u^T bu(I)_d v = sum_(i=1)^d u_i v_i$ es una métrica Riemanniana que induce la norma euclídea $norm(v) = sqrt(v^T v)$ y la distancia $d(x, y) = norm(x-y)$.]
+#obs[ Cuando $MM=RR^d$, el espacio es constante e idéntico a la variedad: $forall p in RR^d, thick T_p RR^d = RR^d$. La base canónica de $T_p RR^d = RR^d$ formada por las columnas de $bu(I)_d$ es una matriz positiva definida que da lugar al producto interno "clásico" $chevron.l u,v chevron.r = u^T bu(I)_d v = sum_(i=1)^d u_i v_i$ es una métrica Riemanniana que induce la norma euclídea $norm(v) = sqrt(v^T v)$ y la distancia $d(x, y) = norm(x-y)$.]
 
 ==== Geodésicas y mapa exponencial
 Dado este andamiaje, podemos reconstruir algunos conceptos básicos, como longitud, distancia y geodésica.
@@ -515,7 +515,7 @@ Esta relación, entre vectores de $T_p MM$ y geodésicas de $MM$ con origen en $
   Si $exp_p$ es un difeomorfismo  en un vecindario (entorno) $V$ del origen en $T_p MM$, su imagen $U = exp_p (V)$ es un "vecindario normal" de $p$.
   Si $B_epsilon (0)$ es tal que $overline(B_epsilon (0)) subset V$, llamamos a $exp_p B_epsilon (0) = B_epsilon (p)$ la _bola normal_ – o "bola geodésica" - con centro $p$ y radio $epsilon$.
 ]
-La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geodésicas que irradian desde $p$. UUna concepción intuitiva de qué es una bola normal, es "un entorno de $p$ en el que las geodésicas que pasan por $p$ son minimizadoras de distancias". El siguiente concepto es útil para entender "cuán lejos vale" la aproximación local a un espacio euclídeo en la variedad.
+La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geodésicas que irradian desde $p$. Una concepción intuitiva de qué es una bola normal, es "un entorno de $p$ en el que las geodésicas que pasan por $p$ son minimizadoras de distancias". El siguiente concepto es útil para entender "cuán lejos vale" la aproximación local a un espacio euclídeo en la variedad.
 
 #defn(
   [radio de inyectividad #footnote[Basado en @munozEstimacionNoParametrica2011[Def. 3.3.16] Una definición a mi entender más esclarecedora se encuentra en TODO at do carmo, §13.2, _The cut locus_, que introducimos aquí informalmente. El _cut locus_ o _ligne de partage_ $C_m (p)$ - algo así como la línea de corte - de un punto $p$ es la unión de todos los puntos de corte: los puntos a lo largo de las geodésicas que irradian de $p$ donde éstas dejan de ser minizadoras de distancia. El ínfimo de la distancia entre $p$ y su línea de corte, es el radio de inyectividad de #MM en $p$, de modo podemos escribir $ "iny" MM = inf_(p in MM) d(p, C_m (p)) $
@@ -540,7 +540,7 @@ La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geod�
 ))[#image("img/mapa-exponencial-s1.svg")]
 
 
-Agregamos una última definición para restringir la clase de variedades de Riemann que nos intesará:
+Agregamos una última definición para restringir la clase de variedades de Riemann que nos interesará:
 #defn("variedad compacta")[
   Decimos que una variedad es _acotada_ cuando $sup_((p, q) in MM^2) dg(p, q) = overline(d) < oo$ - no posee elementos distanciados infinitamente entre sí. Una variedad que incluya todos sus "puntos límite" es una variedad _cerrada_. Una variedad cerrada y acotada se denomina _compacta_.
 ]
@@ -549,12 +549,12 @@ Agregamos una última definición para restringir la clase de variedades de Riem
   Un círculo en el plano, $S^1 subset RR^2 = {(x, y) : x^2 + y^2 = 1}$ es una variedad compacta: es acotada - ninguna distancia es mayor a medio gran círculo, $pi$ - y cerrada. $RR^2$ es una variedad cerrada pero no acotada. El "disco sin borde" ${(x, y) in RR^2 : x^2 + y^2 < 1}$ es acotado pero no cerrado - pues no incluye su borde $S^1$. El "cilindro infinito" ${(x, y, z) in RR^3 : x^2 + y^2 < 1}$ no es ni acotado ni compacto.
 ]
 
-Ahora sí, hemos arribado a un objeto lo suficientemente "bien portado" para soportar funciones diferenciables, una noción de distancia y todo aquello que precisamos para definir elementos aleatorios: la variedad de Riemann compacta sin frontera. Cuando hablemos de una variedad de Riemann sin calificarla, nos referiremos a ésta.
+Ahora sí, hemos arribado a un objeto lo suficientemente "bien portado" para soportar funciones diferenciables, una noción de distancia y todo aquello que precisamos para definir elementos aleatorios: la variedad de Riemann compacta sin frontera. Cuando hablemos de una variedad de Riemann sin calificarla, nos referiremos a esta.
 
 
 
 === Probabilidad en Variedades
-Hemos definido una clase clase bastante general de variedades - las variedades de Riemann - que podr´na soportar funciones de densidad y sus estimaciones @pelletierKernelDensityEstimation2005. Estos desarrollos relativamente modernos #footnote[del siglo XXI, al menos], no constituyen sin embargo el origen de la probabilidad en variedades. Mucho antes de su sistematización, ciertos casos particulares habían sido bien estudiados y allanaron el camino para el interés en variedades más generales.
+Hemos definido una clase bastante general de variedades - las variedades de Riemann - que podrían soportar funciones de densidad y sus estimaciones @pelletierKernelDensityEstimation2005. Estos desarrollos relativamente modernos #footnote[del siglo XXI, al menos], no constituyen sin embargo el origen de la probabilidad en variedades. Mucho antes de su sistematización, ciertos casos particulares habían sido bien estudiados y allanaron el camino para el interés en variedades más generales.
 Probablemente la referencia más antigua a un elemento aleatorio en una variedad distinta a $RR^d$, se deba a Richard von Mises, en _Sobre la naturaleza entera del peso atómico y cuestiones relacionadas_ @vonmisesUberGanzzahligkeitAtomgewicht1918 #footnote["Über die 'ganzzahligkeitwder' atomgewichte und verwandte fragen". en el original]. En él, von Mises se plantea la pregunta explícita de si los pesos atómicos - que empíricamente se observan siempre muy cercanos a la unidad para los elementos más livianos - son enteros con un cierto error de medición, y argumenta que para tal tratamiento, el "error gaussiano" clásico es inadecuado:
 
 #quote(attribution: [traducido de @vonmisesUberGanzzahligkeitAtomgewicht1918])[
@@ -568,7 +568,7 @@ Probablemente la referencia más antigua a un elemento aleatorio en una variedad
 Motivado también por un problema del mundo físico - las mediciones de posición en una esfera "clásica" $S^2 subset RR^3$, Ronald Fisher escribe "Dispersiones en la esfera" @fisherDispersionSphere1957, donde desarrolla una forma de teoría que parece ser apropiada para mediciones de posición en una esfera #footnote[y como era de esperar del padre del test de hipótesis, también un test de significancia análogo al t de Student.] y los ilustra utilizando mediciones de la dirección de la magnetización remanente de flujos de lava directa e inversamente magnetizados en Islandia.
 
 
-Dos décadas más tarde, los casos particulare de von Mises ($S^1$) y Fisher ($S^2$) estaban integrados en el caso más general $S^n$ en lo que se conocería como "estadística direccional" #footnote[ya que la $n-$ esfera $S^n$ de radio $1$ con centro en $0$ contiene exactamente a todos los vectores unitarios, i.e. a todas las _direcciones_ posibles de un vector en su espacio ambiente $RR^(n+1)$]. En 1975 se habla ya de _teoría de la distribución_ para la distribución von Mises - Fisher @mardiaDistributionTheoryMisesFisher1975, la "más importante en el análisis de datos direccionales"; a fines de los '90 Jupp y Mardia plantean "una visión unificada de la teoría de de la estadística direccional" @juppUnifiedViewTheory1989 , relacionándola con conceptos claves en el "caso euclídeo" como las familias exponenciales y el teorema central del límite, entre otros.
+Dos décadas más tarde, los casos particulares de von Mises ($S^1$) y Fisher ($S^2$) estaban integrados en el caso más general $S^n$ en lo que se conocería como "estadística direccional" #footnote[ya que la $n-$ esfera $S^n$ de radio $1$ con centro en $0$ contiene exactamente a todos los vectores unitarios, i.e. a todas las _direcciones_ posibles de un vector en su espacio ambiente $RR^(n+1)$]. En 1975 se habla ya de _teoría de la distribución_ para la distribución von Mises - Fisher @mardiaDistributionTheoryMisesFisher1975, la "más importante en el análisis de datos direccionales"; a fines de los '90 Jupp y Mardia plantean "una visión unificada de la teoría de de la estadística direccional" @juppUnifiedViewTheory1989 , relacionándola con conceptos claves en el "caso euclídeo" como las familias exponenciales y el teorema central del límite, entre otros.
 
 Aunque el caso particular de la $n-$esfera sí fue bien desarrollado a lo largo del siglo XX, el tratamiento más general de la estadística en variedades riemannianas conocidas pero arbitrarias aún no se hacía presente.
 
@@ -641,7 +641,7 @@ $
 
 El mapa exponencial alrededor de $p, thick exp_p : T_p MM -> MM$ es un difeomorfismo en cierta bola normal alrededor de $p$, así que admite una inversa continua y biyectiva al menos en tal bola; lo llamaremos $exp_p^(-1) : MM -> T_p MM$. Así, $exp_p^(-1) (q) in T_p MM$ es la representación de $q$ en las coordenadas localmente euclídeas del espacio tangente a $p$ (o sencillamente "locales a $p$"). De esta cantidad $x = exp_p^(-1) (q)$, queremos conocer el cociente entre dos medidas:
 - la métrica _pullback_ de $g$:  la métrica inducida en $T_p MM$ por la métrica riemanniana $g$ en #MM
-- la medida de lebesgue en la estructura euclídea de $T_p MM$.
+- la medida de Lebesgue en la estructura euclídea de $T_p MM$.
 
 En otras palabras, $theta_p (q)$ representa cuánto se infla / encoge - el espacio en la variedad #MM alrededor de $p$, relativo al volumen "natural" del espacio tangente. En general, su cómputo resulta sumamente complejo, salvo en casos particulares como las variedades "planas" o de curvatura constante. En un trabajo reciente, por ejemplo, se reseña:
 
@@ -683,7 +683,7 @@ $
   theta_p (q) = (mu_(exp_p^* g) (s)) / (mu_g_p (s)) = norm(s)/(abs(det SS^(-1/2)) norm(s) ) = abs(det SS)^(1/2)
 $
 para todo $p, q in MM$
-Recordemos de la definición de @kde-mv que el estimador de densidad por núcleos multivariado con matrix de suavización #HH es
+Recordemos de la definición de @kde-mv que el estimador de densidad por núcleos multivariado con matriz de suavización #HH es
 $ hat(f) (t; HH) & = N^(-1) sum_(i=1)^N abs(det HH)^(-1/2) K(HH^(-1/2) (t - x_i)) $
 consideremos $HH = h^2 SS, thick h in RR, SS in RR^(d times d)$:
 $
