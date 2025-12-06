@@ -403,7 +403,7 @@ A continuación, damos un recorrido sumario e idiosincrático por ciertos concep
 
 === Variedades Diferenciables
 
-#defn([espacio topológico (TODO: ARROBA CITA WIKIPEDIA)])[
+#defn([espacio topológico @wikipediaEspacioTopologico2025])[
 
   Formalmente, se llama *espacio topológico* al par ordenado $(X, T)$ formado por un conjunto $X$ y una _topología_ $T$ sobre $X$, es decir una colección de subconjuntos de $X$ que cumple las siguientes tres propiedades:
   + El conjunto vacío y $X$ están en T: $emptyset in T, X in T$
