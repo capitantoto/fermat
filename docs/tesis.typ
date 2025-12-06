@@ -66,58 +66,19 @@
 #show heading: set block(above: 1.4em, below: 1em)
 #show link: it => underline(text(it, fill: blue))
 
-// ### TOC y listados
-#outline(depth: 2)
+// #############
+// ### utils ###
+// #############
 
-= TODOs
-- [ ] Ponderar por $n^beta$
-- [ ] Evitar coma entre sujeto y predicado
-
-= Arenero
-
-```
-    config_2d = Bunch(
-        lunas=Bunch(factory=make_moons, noise_levels=Bunch(lo=0.25, hi=0.5)),
-        circulos=Bunch(factory=make_circles, noise_levels=Bunch(lo=0.08, hi=0.2)),
-        espirales=Bunch(factory=hacer_espirales, noise_levels=Bunch(lo=0.1, hi=0.2)),
-```
-== Tablas
 #let tabla_csv(path) = {
   let data = csv(path)
   let eval_scope = (fkdc: fkdc, kn: kn, fkn: fkn, kdc: kdc, lr: lr, svc: svc, lsvc: `LSVC`, gnb: gnb, base: "base")
   table(columns: data.at(0).len(), ..data.flatten().map(eval.with(mode: "markup", scope: eval_scope)))
 }
 
-#tabla_csv("data/2-blobs.csv")
-#let best(..contents) = {
-  contents.pos().map(content => table.cell(fill: rgb("#7cff9dc9"), content))
-}
 
-#let bad(..contents) = {
-  contents.pos().map(content => text(fill: black.transparentize(70%), content))
-}
-
-#show table.cell.where(y: 0): set text(weight: "bold")
-#let na = align(center)[--]
-#table(
-  columns: 3,
-  stroke: none,
-  align: (x, y) => if y == 0 { center } else { if x == 0 { right } else { top } },
-  table.header[clf][$R^2$][exac],
-  table.hline(stroke: 1pt),
-  table.vline(x: 1, start: 1, stroke: .5pt),
-  [#fkdc], [1.0], [1.0],
-  [#kdc], [1.0], [1.0],
-  [#gnb], [1.0], [1.0],
-  [#kn], [1.0], [1.0],
-  [#fkn], [1.0], [1.0],
-  [#lr], [0.99994], [1.0],
-  ..best([#slr], [0.99952], [1.0]),
-  ..bad([#gbt], [0.9995], [1.0]),
-  ..bad([#svc], [#na], [1.0]),
-)
-
-#include "mi-tabla.typ"
+// ### TOC y listados
+#outline(depth: 2)
 
 = Vocabulario y Notación
 A lo largo de esta monografía tomaremos como referencia enciclopédica al _Elements of Statistical Learning_ @hastieElementsStatisticalLearning2009, de modo que en la medida de lo posible, basaremos nuestra notación en la suya también.
@@ -1672,7 +1633,7 @@ Esta "sinergía" virtuosa, no alcanza para explicar lo que observamos al observa
 
 A primera vista, se observan unas cuantas semillas para las cuales la elección de un $alpha > 1$ resultó en una diferencia de $R^2$ bastante positiva. Pero mejor aún, en 5 de 25 semillas ($s in {7074, 7060, 8443, 1434, 1193}$), #fkn y #kn maximimizaron el objetivo con la _misma_ cantidad de vecinos, ¡y sin embargo #fkn eligió un $alpha > 1$!.
 
-== Conclusiones
+= Conclusiones
 
 A priori, nuestras tres propuestas de estimación:
 - una implementación de la propuesta de  @loubesKernelbasedClassifierRiemannian2008 para clasificación suave en variedades con @clf-bayes y @kde-variedad;
@@ -1702,7 +1663,7 @@ Con respecto a los tiempos de cómputo, no se hizo un análisis exhaustivo esenc
 - con estrategias básicas de "cacheo" #footnote[Confer el uso del decorador `joblib.Memory.cache` en `fkdc/fermat.py`], se puede computar una única vez las distancias de Fermat, y reutilizarlas en todas las evaluaciones posteriores de distancias de entrenamiento.
 
 
-=== Trabajo Futuro
+== Trabajo Futuro
 En el presente trabajo hemos desarrollado una librería y un marco teórico sumamente riguroso para intentar identificar condiciones en las cuales estimadores de densidad entrenados con distancia de Fermat muestral son estrictamente mejores que sus versiones euclídeas.
 
 Es _infinita_ la cantidad de circunstancias en las que podemos poner a prueba una técnica de clasificación, y en los experimentos ejecutados y presentados no hemos hecho más que rasgar la superficie. Así y todo, pareciera ser que en espacios ralamente sampleados o altamente curvos, donde "no quede otra" que tomar una ventana $h > "iny" MM$ para tener una densidad "viable", el uso de la distnacia de Fermat mejora, sino la exactitud de los algoritmos, sí su $R^2$ y por ende la capacidad de discernimiento "relativo" de estos estimadores.
@@ -1743,14 +1704,47 @@ Sería interesante entonces investigar si existen condiciones reales en las que 
 
 = Listados
 #outline(target: figure.where(kind: image), title: "Listado de Figuras")
-= Tablas
 #outline(target: figure.where(kind: table), title: "Listado de Tablas")
-= Código
-#outline(target: figure.where(kind: raw), title: "Listado de código")
 
 #bibliography("../bib/references.bib", style: "harvard-cite-them-right")
 
 
 
-== Apéndice A: Fichas de resultados por dataset <apendice-a>
+= Apéndice A: Fichas de resultados por dataset <apendice-a>
 
+
+= TODOs
+- [ ] Evitar coma entre sujeto y predicado
+
+== Arenero
+
+#tabla_csv("data/2-blobs.csv")
+#let best(..contents) = {
+  contents.pos().map(content => table.cell(fill: rgb("#7cff9dc9"), content))
+}
+
+#let bad(..contents) = {
+  contents.pos().map(content => text(fill: black.transparentize(70%), content))
+}
+
+#show table.cell.where(y: 0): set text(weight: "bold")
+#let na = align(center)[--]
+#table(
+  columns: 3,
+  stroke: none,
+  align: (x, y) => if y == 0 { center } else { if x == 0 { right } else { top } },
+  table.header[clf][$R^2$][exac],
+  table.hline(stroke: 1pt),
+  table.vline(x: 1, start: 1, stroke: .5pt),
+  [#fkdc], [1.0], [1.0],
+  [#kdc], [1.0], [1.0],
+  [#gnb], [1.0], [1.0],
+  [#kn], [1.0], [1.0],
+  [#fkn], [1.0], [1.0],
+  [#lr], [0.99994], [1.0],
+  ..best([#slr], [0.99952], [1.0]),
+  ..bad([#gbt], [0.9995], [1.0]),
+  ..bad([#svc], [#na], [1.0]),
+)
+
+#include "mi-tabla.typ"
