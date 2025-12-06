@@ -1,9 +1,6 @@
 **/.DS_store
-*.code-workspace
 .ipynb_checkpoints
-.vscode
-venv
-src
+.venv
 # No publicar PDFs de bibliografía
 bib/*.pdf
 bib/*.djvu
