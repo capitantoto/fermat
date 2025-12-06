@@ -1619,45 +1619,7 @@ Es de hecho este fenómeno  que se repite en muchas semillas, el que termina cor
 
 #image("img/helices_0-boxplot-r2-zoomed.svg")
 
-
-
-. En este subconjunto de las semillas en que la regla de 1SD derivó en el mínimo $alpha$, aún así #fkdc pareciera preferir ventanas muchísimo menores. La mayor diferencia 
-
-#image("img/helices_0-1182-fkdc-bandwidth-alpha-loss_contour.svg")
-El abogado del diablo diría que un $R^2$ tan alto 
-
-#image("img/helices_0-1188-fkdc-bandwidth-alpha-loss_contour.svg")
-
-
-
-#image("img/helices_0-r2-boxplot.svg")
-
-
-
-#image("img/pionono-scatter-3d.svg")
-#highlights_figure("pionono_0")
-excelente R^2 para KDC, fkdc slightly better; de nuevo casualidad?
-No! De hecho mete un par de alpha > 1 con ex
-#highlights_figure("pionono_0")
-
-A continuación, 
-
-#columns(2)[
-  #image("img/pionono-scatter-3d.svg")
-  #image("img/eslabones-scatter-3d.svg")
-  #colbreak()
-  #image("img/helices-scatter-3d.svg")
-  #image("img/hueveras-scatter-3d.svg")
-]
-
-=== Parámetros óptimos para $"(F)KDC"$ en `helices_0`
-#align(center)[#image("img/optimos-helices_0.png")]
-
-=== Superposición de parámetros: $alpha$ y $h$
-
-
-- El uso de la distancia de Fermat muestral no hiere la performance, pero las mejoras son nulas o marginales. ¿Por qué?
-
+==== Efecto de #sfd en la vecindades óptimas de #kn.
 
 Si recordamos $hat(f)_(K,N)$ según Loubes & Pelletier, al núcleo $K$ se lo evalúa sobre
 $
@@ -1666,39 +1628,88 @@ $
 
 Lo que $alpha$ afecta a $hat(f)$ vía $d$, también se puede conseguir vía $h$.
 
-Si $D_(Q_i, alpha) prop ||dot||$ (la distancia de fermat es proporcional a la euclídea), los efectos de $alpha$ y $h$ se "solapan"
+Si $D_(Q_i, alpha) prop ||dot||$ (la distancia de fermat es proporcional a la euclídea), podemos escribir
+
+$
+  D_(Q_i, alpha) (x_0, X_i)) approx (c_alpha norm(dot))/ h = norm(x_0 - X_i) / h'
+$
+con $h' = h slash c_alpha$ y efectivamente los parámetros se solapan en sus funciones. Lamentablemente, sabemos que localmente esto _es_ cierto. Por ejemplo, la serie $k_n$ que minimiza el error cuadrátrico medio cuando $n -> oo$ es $k prop n^(d/(d+4))$, que para nuestro problema resulta en $(400 * 4/5 )^(3/(3+4)) =320^(3/7) approx 12$. Pues bien, cuando miramos el mejor rendimiento en test por `n_neighbors` para #kdc y #fkdc, vemos que elegir $alpha$ le permite a #fkdc mantener una óptima performance en términos de "score" ($-cal(l)$) para _cualquier_ valor de $k$ #footnote[`n_neighbors` en la parametrización de `scikit-learn`.]
 
 
-... y sabemos que localmente, eso es cierto #emoji.face.tear
+#image("img/test-score-n_neighbors-fkn-kn.svg")
 
-- En zonas con muchas observaciones (por tener alta $f$ o alto $N$) sampleadas, la distancia de Fermat y la euclídea coinciden.
-- "Localmente", siempre van a coincidir, aunque sea en un vecindario muy pequeño.
-- Si el algoritmo de clasificación sólo depende de ese vencindario apapaasda. asd local para clasificar, no hay ganancia en la distancia de Fermat DALE BOKEH.
-- ¡Pero tampoco hay pérdida si se elige mal `n_neighbors`! #emoji.person.shrug
+Por otra dirección, llegamos a la misma conclusión que antes: si un clasificador depende de distancias extremadamente locales, salvo que la muestra esté muy escasamente sampleada, el efecto de la distancia de fermat aprendida de los datos no será muy notorio. TODO en trabajos posteirores estudiar efecto de alpha con $n$ fijo?
 
+=== Pionono
 
-=== $R^2$ por semilla para $"(F)KN"$ en `helices_0`
-#align(center)[#image("img/r2-fkn-kn-helices_0.png")]
+#image("img/pionono-scatter-3d.svg")
+#highlights_figure("pionono_0")
 
-=== $R^2$ y $alpha^star$ para $"(F)KN"$ en `helices_0`, `n_neighbors` seleccionados
-#align(center)[#image("img/r2-fkn-kn-n_neighbors-seleccionados.png")]
+Este dataset "clásico" para testear algoritmos de _clustering_ no-lineales @sapienzaWeightedGeodesicDistance2018, así que decidimos incluirlo en la serie experimental como "benchmark". El trabajo citado no hace _clasificación_ con densidad por núcleos, sino _clustering_ basado en el algoritmo $k-$medoides, pero provee una gráfico de exactitud #footnote[presuntamente fijando $k=4$ y comparando las asignaciones contra los clusters verdaderos] que compara con la obtenida por otro "primo" algorítmico ya citado, Isomap. Los autores encuentran que
+#quote[existe un amplio rango de $d$ #footnote[$alpha$ en nuestra notación] para los que la $d-$ distancia se porta significativamente mejor que Isomap. [...] para la exactitud esta región está limitada a $1.7 <= d <= 2.2$
+]
 
-=== Mejor $R^2$ para $"(F)KN"$ en `helices_0`, en función de `n_neighbors`
+Por nuestra parte, en un ambiente ligramente distinto, no encontramos diferencia significativa con la performance "cruda" de #kdc., que a su vez no se distingue de los métodos estado-del-arte en exactitud (#svc) ni $R^2$ (#gbt).
 
-#image("img/helices_0-fkn_kn-mean_test_score.png")
+=== Hueveras ($D=3, d=2, k=2$)
 
+Este dataset sumamente sintético consiste de dos clases con idénticas distribuciones pero signo opuesto en la dirección de la coordenada vertical. #footnote[Cf. `fkdc/datasets.py` para ver el detalle de las fórmulas], pero que se puede conceptualizar aproximadamente bien imaginando dos cartones de maple de huevos, uno invertido respecto al otro, intentando ocupar el mismo lugar en el espacio.
+#image("img/hueveras-scatter-3d.svg")
 
-=== $R^2$ por semilla para $"(F)KN"$ en `eslabones_0`
-#align(center)[#image("img/outputa.png")]
-
-=== $R^2$ y $alpha^star$ para $"(F)KN"$ en `eslabones_0`, `n_neighbors` seleccionados
-#align(center)[#image("img/Screenshot 2025-07-18 at 11.43.27 AM.png")]
-
-=== Mejor $R^2$ para $"(F)KN"$ en `eslabones_0`, en función de `n_neighbors`
-
-#image("img/outputb.png")
+La exactitud de la familia $cal(K)={#fkdc, #kdc, #fkn, #kn}$ es competitiva contra la de #svc, que parece ser ligera y significativamente mejor. En términos de $R^2$, la familia $cal(K)$ es la única en alcanzar valores no-nulos, y #sfd parece resultar en mejoras significativas, sobre todo para #fkn.
+#highlights_figure("hueveras_0")
 
 
+En efecto, observando los parámetros comparados de #fkdc v. #kdc, se repite que
+- la mejor hiperparametrización $(alpha_"opt", h_"opt")$ en la grilla de CV tiene $alpha > 1$,
+- hay una parametrización $(alpha_0, h_0)$ con $alpha_0 =1$ que cumple la regla de un desvío estándar,
+- con $h_0$ "significativamente distinto" a $h_"opt"$#footnote[ Por ello nos referimos a que durante el entrenamiento de #kdc existió un $h_"alt" approx h_0$, que la R1SD + #kdc _no_ eligió, y la R1SD + #fkdc sí.].
+#tabla_csv("data/hueveras_0-parametros_comparados-kdc.csv")
+
+Esta "sinergía" virtuosa, no alcanza para explicar lo que observamos al observar el efecto de la distancia de Fermat en #kn:
+
+#tabla_csv("data/hueveras_0-parametros_comparados-kn.csv")
+
+A primera vista, se observan unas cuantas semillas para las cuales la elección de un $alpha > 1$ resultó en una diferencia de $R^2$ bastante positiva. Pero mejor aún, en 5 de 25 semillas ($s in {7074, 7060, 8443, 1434, 1193}$), #fkn y #kn maximimizaron el objetivo con la _misma_ cantidad de vecinos, ¡y sin embargo #fkn eligió un $alpha > 1$!.
+
+== Conclusiones
+
+A priori, nuestras tres propuestas de estimación:
+- una implementación de la propuesta de  @loubesKernelbasedClassifierRiemannian2008 para clasificación suave en variedades con @clf-bayes y @kde-variedad;
+- el reemplazo de la distancia euclídea por distancia de Fermat muestral en algoritmos de clasificación for núcleos (#kn, #kdc) y 
+- extender la estimación de la distancia de fermat "microscópica" $cal(D)_f,beta)$ a partir de la distancia de fermat macroscópica #sfd, a puntos por fuera de la muestra
+_funcionaron_, por separado y en conjunto, a la par de métodos de primera línea, paramétricos (#svc) y no paramétricos (#gbt). Al evaluarlos por "exactitud", a pesar de estar entrenados para maximimizar la log-verosimilitud, los métodos resultaron competitivos aunque sin mejoras significativas. Al evaluarlos por $R^2$, sí se observaron excelentes rendimientos para toda la familia de métodos basados en densidad por núcleos $cal(K)$, y en ciertas ocasiones la distancia de Fermat se destaca por encima de la euclídea.
+
+Ya existía una implementación previa de la Distancia de Fermat como librería de Python [TODO citar fermat de aristas y sapienza] orientada a "clustering", tarea que tiene la particularidad de entrenar y predecir sobre los mismos datos. El problema de clasificación se evalúa, para ser justos, en observaciones que _no_ se usaron para entrenar, lo cual nos llevó a escribir una librería nueva, con menos opciones de parametrización, pero capacidad de estimación "out-of-sample" y una implementación mínimamente performante sobre métodos bien optimizados que nos permitan ejecutar una suite extensa de experimentos que pudiésemos refinar iterativamente.
+
+Poner a legos a implementar algoritmos numéricos complejos no suele terminar bien, pero milagrosamente llevamos el invento a buen puerto. También podía ser que el método tuviese una performance _decente_ pero no _competitiva_ con el estado del arte; no fue el caso.
+
+TODO el que dice que basta con aprender alpha que junta $d$ y $beta$ en uno solo tiene razón
+
+En ninguno de los datasets estudiados (casos con bajo $D in {2, 3}$) se vieron modos "catastróficos" donde la performance de $f-$[#kdc|#kn] fuese muchísimo peor que la de sus pares euclídeos. En los datasets en que se comprueba una ventaja sistemática de #fkdc (resp. #fkn) sobre #kdc (resp. #kn), se puede explicar por dos efectos:
+- En todos los casos examinados, una parte importante de la ventaja se da por una "simbiosis" positiva entre el mecanismo de selección de modelos de @r1sd, y el espacio de parámetros ampliado por la dimensión de $alpha$. Ésta resulta en parametrizaciones de #fkdc (resp. #fkn) con $alpha=1$ y ligeramente mejor $R^2$ que #kdc (resp. #kn) ignora. 
+- En ciertos casos (como #fkn en `hueveras_0`), acontece que parte de la mejora se debe a la elección de parametrizaciones de #fkn que coinciden en el $k$ elegido con #kn, pero además registran un $alpha > 1$ - i.e., una mejora _netamente gracias a_ el uso de la distancia de Fermat muestral.
+
+El "caso general", en el que #fkdc anda tan bien o mal como #kdc, observamos una relación log-lineal, $ log(h) prop alpha $ que se discierne en la _superficie de pérdida_ de entrenamiento como un "risco" de parametrizaciones equivalentes en bondad. Entendemos que esto sucede porque
+- los datasets están "bien sampleados" y
+- para todo $p in MM$ una variedad de Riemann, siempre existe un vecindario dentro del radio de inyectividad de $"iny"_p MM$ en el que $cal(D)_(f,beta) prop norm(dot)$
+En estas circunstancias existe un $h <=  "iny"_p MM$ tal que el efecto de $alpha$ "(des)inflando" la distancia euclídea puede ser sustitutuido completamente por una parametrización con distinto $h$, y no hay ventaja alguna que obtener usando distancia de fermat (#fkn o #fkdc) en lugar de euclídea.
+
+Los métodos de estimación por densidad de núcleos son "altamente locales", y por ende sólo vemos mejoras no-triviales de $R^2$ en circunstancias extraordinarias, como en los datasets de `espirales`, `helices` o `hueveras` en que aún los vecindarios locales son altamente no-euclídeos.
+
+Con respecto a los tiempos de cómputo, no se hizo un análisis exhaustivo esencialmente porque no hizo falta: corrimos 25 repeticiones de 20 datasets para 9 clasificadores en unas 12 horas en mi computadora personal #footnote[Macbook Air M1 2020, 8GB RAM, 256GB SSD] media docena de veces hasta tenerlo todo a punto, y en general ni siquiera #sfd el algoritmo más problemático. Es cierto que el cómputo de #sfd - que implica calcular geodésicas en grafos completos - puede requierer varios órdenes de magnitud mayores recursos que el de la distancia euclídea, pero
+- para datasets "moderados" (en el desarrollo se consideraron $n_k <= 1000, p <= 90$) el tiempo de cómputo de base es pequeñísimo, y aunque crezca por ´ørdenes de magnitud no afecta significativamente la experiencia del científico; además
+- con estrategias básicas de "cacheo" #footnote[Confer el uso del decorador `joblib.Memory.cache` en `fkdc/fermat.py`], se puede computar una única vez las distancias de Fermat, y reutilizarlas en todas las evaluaciones posteriores de distancias de entrenamiento.
+
+
+=== Trabajo Futuro
+En el presente trabajo hemos desarrollado una librería y un marco teórico sumamente riguroso para intentar identificar condiciones en las cuales estimadores de densidad entrenados con distancia de Fermat muestral son estrictamente mejores que sus versiones euclídeas.
+
+Es _infinita_ la cantidad de circunstancias en las que podemos poner a prueba una técnica de clasificación, y en los experimentos ejecutados y presentados no hemos hecho más que rasgar la superficie. Así y todo, pareciera ser que en espacios ralamente sampleados o altamente curvos, donde "no quede otra" que tomar una ventana $h > "iny" MM$ para tener una densidad "viable", el uso de la distnacia de Fermat mejora, sino la exactitud de los algoritmos, sí su $R^2$ y por ende la capacidad de discernimiento "relativo" de estos estimadores.
+
+Sería interesante entonces investigar si existen condiciones reales en las que sepamos "a priori" que las variedades intrínsecas son altamente no-euclídeas, y en ese contexto probar si en ciertos tamaños muestrales $n$ (y por cada clase, $n_1, dots, n_k$) pequeños relativos a la dimensión ambiente es particularmente conveniente el uso de la distancia de Fermat.
+
+== A incorporar
 === Otros datasets: 15D
 #columns(4)[
   #image("img/pionono_12-overall.png")
@@ -1728,7 +1739,6 @@ Si $D_(Q_i, alpha) prop ||dot||$ (la distancia de fermat es proporcional a la eu
 ]
 
 
-== Conclusiones
 
 
 = Listados
