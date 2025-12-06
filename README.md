@@ -51,6 +51,8 @@ Para exportar las referencias en formato compatible con Typst, se requiere la ex
 
 Descarga e instalación: https://retorque.re/zotero-better-bibtex/installation/
 
+De ser necesario, una copia de la extensión está disponible en [src/zotero-better-bibtex-6.7.240.xpi](src/zotero-better-bibtex-6.7.240.xpi).
+
 ### Exportar referencias
 
 Para generar o actualizar `bib/references.bib`:
@@ -65,7 +67,6 @@ Alternativamente, configurar una exportación automática:
 2. Marcar "Keep updated"
 3. Seleccionar la ruta `bib/references.bib`
 
-## Recursos
-- [Classification with Fermat](https://dl.dropboxusercontent.com/s/ogzs6olgberc3lx/Classification%20with%20Fermat.ipynb)
-- [Density estimation with Fermat](./Density estimation with Fermat.zip)
-- [Fermat](https://www.aristas.com.ar/fermat/fermat.html), librería en python para el cómputo de la distancia homónima
+## Uso de IA
+
+Este proyecto utiliza herramientas de IA (Claude, de Anthropic) para tareas de revisión y formato. El contenido intelectual es enteramente del autor. Ver [CLAUDE.md](CLAUDE.md) para más detalles sobre los principios y límites de este uso.
