@@ -85,9 +85,9 @@ A lo largo de esta monografía tomaremos como referencia enciclopédica al _Elem
 
 Típicamente, denotaremos a las variables independientes #footnote[También conocidas como predictoras, o _inputs_] con $X$. Si $X$ es un vector, accederemos a sus componentes con subíndices, $X_j$. En el contexto del problema de clasificación, la variable _cualitativa_ dependiente #footnote[También conocida como variable respuesta u _output_] será $G$ (de $G$rupo). Usaremos letras mayúsculas como $X, G$ para referirnos a los aspectos genéricos de una variable. Los valores _observados_ se escribirán en minúscula, de manera que el i-ésimo valor observado de $X$ será $x_i$ (de nuevo, $x_i$ puede ser un escalar o un vector).
 
-Representaremos a las matrices con letras mayúsculas en negrita, #XX; e.g.: el conjunto de de $N$ vectores $p$-dimensionales ${x_i, i in {1, dots, N}}$ será representado por la matrix #XX de dimensión $N times p$.
+Representaremos a las matrices con letras mayúsculas en negrita, #XX; e.g.: el conjunto de $N$ vectores $p$-dimensionales ${x_i, i in {1, dots, N}}$ será representado por la matriz #XX de dimensión $N times p$.
 
-En general, los vectores _no_ estarán en negrita, excepto cuando tengan $N$ componentes; esta convención distingue el $p-$vector de _inputs_ para la i-ésima observación,  $x_i$, del $N-$vector $bu(x)_j$ con todas las observaciones de la variable $X_j$. Como todos los vectore se asumen vectores columna, la i-ésima fila de #XX es $x_i^T$, la traspuesta de la i-ésima observación $x_i$.
+En general, los vectores _no_ estarán en negrita, excepto cuando tengan $N$ componentes; esta convención distingue el $p-$vector de _inputs_ para la i-ésima observación,  $x_i$, del $N-$vector $bu(x)_j$ con todas las observaciones de la variable $X_j$. Como todos los vectores se asumen vectores columna, la i-ésima fila de #XX es $x_i^T$, la traspuesta de la i-ésima observación $x_i$.
 
 A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 
@@ -96,7 +96,7 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / $RR$: los números reales; $RR_+$ denotará los reales estrictamente positivos.
 / $d_x$:
 / $RR^(d_x)$:
-/ $[k]$: el conjunto de los k números enteros, ${1, dots, k}$
+/ $[k]$: el conjunto de los $k$ números enteros, ${1, dots, k}$
 / #MM:
 / $bold(upright(H))$:
 / $norm(dot)$:
@@ -106,12 +106,12 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / $Pr(x)$: función de probabilidad,
 / $EE(x)$: esperanza,
 / $var(x)$: varianza,
-/ $iid$: independiente e idénticamente distribuido (suele aplicar a una muestra #XX
+/ $iid$: independiente e idénticamente distribuido (suele aplicar a una muestra #XX)
 / $emptyset$: el conjunto vacío
 / $overline(S)$: la _clausura_ de S; la unión de S y sus puntos límites.
 / $lambda(x)$: la medida de Lebesgue de $x$ en $RR^d$
 / $a |-> b$: la función que "toma" $a$ y "devuelve" $b$  en #link("https://en.wikipedia.org/wiki/Function_(mathematics)#Arrow_notation")[notación de flechas]
-/ $y prop x$: "y es proporcional a x", existe una constance $c : y = c times x$
+/ $y prop x$: "y es proporcional a x", existe una constante $c : y = c times x$
 / c.s.: "casi seguramente", al referirse a convergencia de v.v.a.a.
 = Preliminares
 

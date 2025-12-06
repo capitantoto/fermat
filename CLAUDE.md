@@ -57,6 +57,8 @@ El historial de commits de este repositorio permite verificar:
 - No reescribir párrafos enteros sin justificación
 - Preservar siempre la voz y estilo del autor
 - Ante dudas de contenido, preguntar en lugar de asumir
+- Editar `docs/tesis.typ` directamente sin pedir confirmación previa para cada edición
+- **SIEMPRE** pedir autorización antes de hacer un commit
 
 ## Reglas de estilo (según RAE)
 
@@ -114,10 +116,12 @@ El historial de commits de este repositorio permite verificar:
 - Todos los commits deben identificar claramente que fueron asistidos por IA
 
 ### Formato de mensajes de commit
+- Preferir mensajes cortos (≤50 caracteres) cuando sea posible
+- Solo agregar cuerpo del mensaje para la marca de IA
+- NO agregar descripciones detalladas innecesarias
+
 ```
 <tipo>: <descripción breve>
-
-[descripción detallada si es ABSOLUTAMENTE necesario]
 
 🤖 Asistido por IA (Claude)
 ```
