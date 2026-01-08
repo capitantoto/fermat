@@ -403,7 +403,7 @@ A continuación, damos un recorrido sumario e idiosincrático por ciertos concep
 
 === Variedades Diferenciables
 
-#defn([espacio topológico @wikipediaEspacioTopologico2025])[
+#defn([espacio topológico @wikipediaEntornoMatematica2025])[
 
   Formalmente, se llama *espacio topológico* al par ordenado $(X, T)$ formado por un conjunto $X$ y una _topología_ $T$ sobre $X$, es decir una colección de subconjuntos de $X$ que cumple las siguientes tres propiedades:
   + El conjunto vacío y $X$ están en T: $emptyset in T, X in T$
@@ -416,7 +416,7 @@ A continuación, damos un recorrido sumario e idiosincrático por ciertos concep
 ]
 A los conjuntos pertenecientes a la topología $T$ se les llama conjuntos abiertos o simplemente abiertos de $(X, T)$; y a sus complementos en $X$, conjuntos cerrados.
 
-#defn([entorno (TODO arroba wikipedia)])[
+#defn([entorno ])[
   Si $(X,Τ)$ es un espacio topológico y $p$ es un punto perteneciente a X, un _entorno_ #footnote[ También se los conoce como "vecindarios" - por _neighborhoods_, su nombre en inglés.] del punto $p$ es un conjunto $V$ en el que está contenido un conjunto abierto $U$ que incluye al propio $p: p in U subset.eq V$.
 ]
 #defn([espacio de Hausdorff (TODO: ARROBA CITA WIKIPEDIA)])[
@@ -460,9 +460,9 @@ La compatibilidad requiere que la transición entre mapas no sea sólo continua,
 
 Una variedad diferenciable entonces, es aquella en la que la operación de diferenciación tiene sentido no sólo punto a punto, sino globalmente. Nótese que de no poder diferenciar, tampoco podremos tomar integrales, y no sólo la _estimación_ de la densidad por núcleos sería imposible, sino que ni siquiera tendría sentido plantear una función densidad.
 
-Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métrica_. En particular, toda variedad diferenciable admite una "métrica de Riemann" (TODO arroba do carmo, Proposición 2.10).
+Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métrica_. En particular, toda variedad diferenciable admite una "métrica de Riemann" @valeroRiemannianGeometry1992[Proposición 2.10].
 
-#defn(["métrica Riemanniana TODO at Do carmo Def 2.1])[
+#defn(["métrica Riemanniana" @valeroRiemannianGeometry1992[Def. 2.1]])[
   Sea $T_p MM$ el _espacio tangente_ a un punto $p in MM$. Una métrica Riemanniana -  o estructura Riemanniana  - en una variedad diferenciable $MM$ es una correspondencia que asocia a cada punto $p in MM$ un producto interno $dotp(dot, dot)$ (i.e., una forma bilinear simétrica positiva definida) en el espacio tangente $T_p MM$ que "varía diferenciablemente" #footnote[para el lector curioso, do Carmo Def 2.1 define precisamente el sentido de esta expresión] en el entorno de $p$.
 
   A dicho producto interno se lo denomina $g_p$ e induce naturalmente una norma: $norm(v)_p= sqrt(op(g_p)(v, v)) = sqrt(dotp(v, v))$. Decimos entonces que $g_p$ es una métrica Riemanniana y el par $(MM, g)$ es una variedad de Riemann.
@@ -474,9 +474,9 @@ Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métric
 ))
 
 #obs(
-  [según TODO at do carmo Prop. 2.10],
+  [según @valeroRiemannianGeometry1992[Prop. 2.10]],
 )[
-  *Toda variedad diferenciable admite una métrica Riemanniana*, que se puede construir componiendo las métricas Riemannianas locales a cada carta de su estructura diferenciable según la "partición de la unidad"#footnote[La definición formal de "partición de la unidad" la da - sin prueba de existencia - TODO at do carmo §0.5, p. 30. Intuitivamente, da una base funcional de #MM, en la que a cada entorno de la cobertura de #MM se le asigna una función $f_alpha$ de manera que $sum_alpha f_alpha (p) = 1 forall p in MM$. para  es una técnica que pondera con pesos que suman 1 las métricas locales a cada carta para obtener un resultado global coherente] ${bold(f)} = {f_alpha : alpha in cal(I)}$ subordinada a su cobertura.
+  *Toda variedad diferenciable admite una métrica Riemanniana*, que se puede construir componiendo las métricas Riemannianas locales a cada carta de su estructura diferenciable según la "partición de la unidad"#footnote[La definición formal de "partición de la unidad" la da - sin prueba de existencia - @valeroRiemannianGeometry1992[§0.5, p. 30]. Intuitivamente, da una base funcional de #MM, en la que a cada entorno de la cobertura de #MM se le asigna una función $f_alpha$ de manera que $sum_alpha f_alpha (p) = 1 forall p in MM$. para  es una técnica que pondera con pesos que suman 1 las métricas locales a cada carta para obtener un resultado global coherente] ${bold(f)} = {f_alpha : alpha in cal(I)}$ subordinada a su cobertura.
 
   Es claro que podemos definir una métrica Riemanniana $dotp(dot, dot)^alpha$ en cada $V_alpha$: la métrica inducida por el sistema de coordenadas locales. Sea entonces el conjunto:
   $
@@ -501,7 +501,7 @@ $ <longitud-euclidea>
 ]
 A la curva $gamma$ que minimiza la distancia entre $p$ y $q$ se la denomina _geodésica_, una generalización de la "línea recta" en la geometría euclídea.
 
-En efecto, considérese la siguiente analogía: en la física clásica, un objeto que no es sujeto a ninguna fuerza (no recibe _aceleración_ alguna), estará o quieto (con velocidad nula) o en movimiento rectilíneo uniforme ("MRU"). En variedades diferenciables, la geodésicas son exactamente eso: curvas parametrizables sin aceleración ($gamma''(t) = 0 forall t$). En esta línea "intuitiva", lo que sigue es una adaptación de "El flujo geodésico" TODO at docarmo §3.2.
+En efecto, considérese la siguiente analogía: en la física clásica, un objeto que no es sujeto a ninguna fuerza (no recibe _aceleración_ alguna), estará o quieto (con velocidad nula) o en movimiento rectilíneo uniforme ("MRU"). En variedades diferenciables, la geodésicas son exactamente eso: curvas parametrizables sin aceleración ($gamma''(t) = 0 forall t$). En esta línea "intuitiva", lo que sigue es una adaptación de "El flujo geodésico" @valeroRiemannianGeometry1992[§3.2].
 
 Sea $gamma : [0, 1] -> MM, gamma(0) = p, gamma(1)=q$  una curva parametrizable. Su derivada en el origen - su _velocidad inicial_ - $gamma'(0)$ es necesariamente tangente a $gamma(0) = p in MM$, o sea que $gamma'(0) in T_p MM$: el espacio tangente $T_p MM$ contiene todas las _velocidades_ posibles desde $p$. Dada una velocidad $v in T_p MM$, podemos descomponerla en su _magnitud_ $norm(v)$ y su _dirección_ $v / norm(v)$. Como la geodésica es una curva sin aceleración, $g''(t) = 0 forall t in [0, 1]$, y luego $g'(t) = g'(0) = v in T_p MM forall t in [0, 1]$. La geodésica de $p$ a $q$ es la única curva $gamma : [0, 1] -> MM, gamma(0) = p$ con velocidad inicial $gamma'(0) = v in T_p MM$, de modo que $L(gamma) = norm(v) = dg(p, q)$ y luego de "una unidad de tiempo", $gamma(1) = q$.
 
@@ -522,7 +522,7 @@ Esta relación, entre vectores de $T_p MM$ y geodésicas de $MM$ con origen en $
 La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geodésicas que irradian desde $p$. Una concepción intuitiva de qué es una bola normal, es "un entorno de $p$ en el que las geodésicas que pasan por $p$ son minimizadoras de distancias". El siguiente concepto es útil para entender "cuán lejos vale" la aproximación local a un espacio euclídeo en la variedad.
 
 #defn(
-  [radio de inyectividad #footnote[Basado en @munozEstimacionNoParametrica2011[Def. 3.3.16] Una definición a mi entender más esclarecedora se encuentra en TODO at do carmo, §13.2, _The cut locus_, que introducimos aquí informalmente. El _cut locus_ o _ligne de partage_ $C_m (p)$ - algo así como la línea de corte - de un punto $p$ es la unión de todos los puntos de corte: los puntos a lo largo de las geodésicas que irradian de $p$ donde éstas dejan de ser minizadoras de distancia. El ínfimo de la distancia entre $p$ y su línea de corte, es el radio de inyectividad de #MM en $p$, de modo podemos escribir $ "iny" MM = inf_(p in MM) d(p, C_m (p)) $
+  [radio de inyectividad #footnote[Basado en @munozEstimacionNoParametrica2011[Def. 3.3.16] Una definición a mi entender más esclarecedora se encuentra en @valeroRiemannianGeometry1992[§13.2, _The cut locus_], que introducimos aquí informalmente. El _cut locus_ o _ligne de partage_ $C_m (p)$ - algo así como la línea de corte - de un punto $p$ es la unión de todos los puntos de corte: los puntos a lo largo de las geodésicas que irradian de $p$ donde éstas dejan de ser minizadoras de distancia. El ínfimo de la distancia entre $p$ y su línea de corte, es el radio de inyectividad de #MM en $p$, de modo podemos escribir $ "iny" MM = inf_(p in MM) d(p, C_m (p)) $
       donde la distancia de un punto a una variedad es el ínfimo de la distancia a todos los puntos de la variedad.]],
 )[
   Sea $(MM, g)$ una $d-$variedad Riemanniana. Llamamos "radio de inyectividad en $p$" a
@@ -628,7 +628,7 @@ $
 
 #obs[Todo núcleo válido en @kde-mv también es un núcleo isotrópico. A nuestros fines, continuaremos utilizando el núcleo normal.]
 #defn(
-  [función de densidad de volumen TODO at besse 78 §6.2],
+  [función de densidad de volumen @besseManifoldsAllWhose1978[§6.2]],
 )[
   Sean $p, q in MM$; le llamaremos _función de densidad de volumen_ en #MM a $theta_p (q)$ definida como
   $
@@ -639,7 +639,7 @@ $
 
 #obs[
 
-  $theta_p (q)$ está bien definida "cerca" de $p$: por ejemplo, es idénticamente igual a $1$ en el entorno $U$ localmente "plano" de $p$ donde las geodésicas $gamma subset MM$ coinciden con sus representaciones en $T_p MM$,coinciden con su representación. Ciertamente está definida para todo $q$ dentro del radio de inyectividad de $p$, $dg(p, q) < "iny"_p MM$ #footnote[ su definición global es compleja y escapa al tema de esta monografía #footnote[Besse y Pelletier consideran factible extenderla a todo #MM utilizando _campos de Jacobi_ TODO besse pelletier].]. Con $N$ "suficientemente grande", siempre podremos elegir $h_N < "iny"_p MM$  que mapee "suficientes" observaciones al soporte de K, $[0, 1]$  en las que el cálculo de $theta_p (q)$ sea factible, y las más lejanas queden por fuera, de modo que su cálculo _no sea necesario_.
+  $theta_p (q)$ está bien definida "cerca" de $p$: por ejemplo, es idénticamente igual a $1$ en el entorno $U$ localmente "plano" de $p$ donde las geodésicas $gamma subset MM$ coinciden con sus representaciones en $T_p MM$,coinciden con su representación. Ciertamente está definida para todo $q$ dentro del radio de inyectividad de $p$, $dg(p, q) < "iny"_p MM$ #footnote[ su definición global es compleja y escapa al tema de esta monografía #footnote[Besse y Pelletier consideran factible extenderla a todo #MM utilizando _campos de Jacobi_ @besseManifoldsAllWhose1978].]. Con $N$ "suficientemente grande", siempre podremos elegir $h_N < "iny"_p MM$  que mapee "suficientes" observaciones al soporte de K, $[0, 1]$  en las que el cálculo de $theta_p (q)$ sea factible, y las más lejanas queden por fuera, de modo que su cálculo _no sea necesario_.
 ]
 
 
@@ -825,7 +825,7 @@ donde $cal(K)$ es alguna medida de cercanía en el espacio ambiente (e.g. la den
 $
   hat(f) (x) = N^(-1) sum_(i=1)^N abs(det hat(SS)_i)^(-1/2) K(hat(SS)_i^(-1/2) t)
 $
-Ahora bien, computar una $hat(SS)_cal(K)_i forall i in [N]$ _y su inversa_ es sumamente costoso, por lo que los autores agregan un refinamiento: si la variedad en cuestión es $d-$dimensional, es de esperar que las direcciones principales a partir de la $d+1$-ésima sean "negligibles" #footnote[la sugerente metáfora que usan en el trabajo, es que en lugar de ubicar una "bola" de densidad alrededor de cada observación $x_i$, quieren ubicar un "panqueque" tangente a la variedad] en lugar computar las componentes principales de $hat(SS)_cal(K)_i$, simplemente fijan de antemano la dimensión $d$ esperada para la variedad, se quedan con las $d$ direcciones principales #footnote[en la práctica, las obtienen usando SVD - descomposición en valores singulares, TODO at wikipedia @hastieElementsStatisticalLearning2009[pág. 64]], "ponen en cero" el resto y "completan" la aproximación con un poco de "ruido" $sigma^2 bu(I)$. La aproximación resultante #box[$hat(SS)_i = f(hat(SS)_cal(K)_i) + sigma^2 bu(I)$] es mucho menos costosa de invertir, y tiene una interpretación geométrica bastante intuitiva en cada punto.
+Ahora bien, computar una $hat(SS)_cal(K)_i forall i in [N]$ _y su inversa_ es sumamente costoso, por lo que los autores agregan un refinamiento: si la variedad en cuestión es $d-$dimensional, es de esperar que las direcciones principales a partir de la $d+1$-ésima sean "negligibles" #footnote[la sugerente metáfora que usan en el trabajo, es que en lugar de ubicar una "bola" de densidad alrededor de cada observación $x_i$, quieren ubicar un "panqueque" tangente a la variedad] en lugar computar las componentes principales de $hat(SS)_cal(K)_i$, simplemente fijan de antemano la dimensión $d$ esperada para la variedad, se quedan con las $d$ direcciones principales #footnote[en la práctica, las obtienen usando SVD - descomposición en valores singulares @SingularValueDecomposition2025, @hastieElementsStatisticalLearning2009[pág. 64]], "ponen en cero" el resto y "completan" la aproximación con un poco de "ruido" $sigma^2 bu(I)$. La aproximación resultante #box[$hat(SS)_i = f(hat(SS)_cal(K)_i) + sigma^2 bu(I)$] es mucho menos costosa de invertir, y tiene una interpretación geométrica bastante intuitiva en cada punto.
 Usando el mismo clasificador basado en la regla de Bayes @clf-bayes que ya mencionamos, obtienen así resultados superadores a los de @kde-mv con $HH = h^2 bu(I)$. Hemos de notar, sin embargo, dos dificultades:
 - todavía no está nada claro cuál debería ser la dimensión intrínseca $d$ cuando la variedad es desconocida, y
 - no es suficiente para computar KDE en variedades según @kde-variedad, pues $hat(SS)_i$ sólo aproxima el tensor métrico en cada $x_i$, y para computar $theta_p (q)$ necesitamos conocer $g$ _en todo punto_. #footnote[El grupo de investigación de Bengio, Vincent, Rifai et ales continuó trabajando estos estimadores, con especial énfasis en la necesidad de aprender una geometría _global_ de la variedad para evitar el crecimiento exponencial de tamaño muestral que exigen los métodos locales como KDE en alta dimensión o variedades muy "rugosas", pero aquí se separan nuestros caminos. Una brevísima reseña: en @bengioNonLocalManifoldParzen2005 agregan restricciones globales a las estimaciones de los núcleos punto a punto que computan simultáneamente con redes neuronales, y en @rifaiManifoldTangentClassifier2011 aprenden explícitamente un atlas que luego usan para clasificación con TangentProp @simardTangentPropFormalism1991, una modificación del algoritmo de _backpropagation_ que se usa en redes neuronales, que busca conservar "las direcciones tangentes" a las observaciones en la representación aprendida.]
@@ -876,13 +876,13 @@ La pieza clave del algoritmo, es la estimación de la distancia geodésica en #M
 
 === Distancias basadas en densidad
 
-Algoritmos como isomap aprenden la _geometría_ de los datos, reemplazando la distancia euclídea ambiente por la distancia euclídea en el grafo $bu(N N)_k$, que con $n -> oo$ converge a la distancia $dg$ en $MM$. La distancia de Mahalanobis TODO at dist mahalonobis, por su parte, aprende la _densidad_ de los datos.
+Algoritmos como isomap aprenden la _geometría_ de los datos, reemplazando la distancia euclídea ambiente por la distancia euclídea en el grafo $bu(N N)_k$, que con $n -> oo$ converge a la distancia $dg$ en $MM$. La distancia de Mahalanobis, por su parte, aprende la _densidad_ de los datos.
 #figure(
   image("img/distancia-basada-en-densidad.svg"),
   caption: [Cuando por ejemplo $MM = (RR^2, g=bu(I)), thick X ~ cal(N)_d (a, SS)$, tenemos que $dg(a, b) = L(gamma) = r = L(zeta) = dg(a, c)$, mientras que $d_SS (a, b) < d_SS (a, c)$: la normal multivariada tiene distintas tasas de cambio en distintas direcciones, y medir distancia ignorando este hecho puede llevar a conclusiones erróneas.],
 )
 
-Combinando estas dos nociones, podemos considerar la categoría de _distancias basadas en densidad_ - DBDs -, donde curvas $gamma$ que atraviesen regiones de _baja_ densidad $f_X$ en #MM sean más "costosas" de transitar que otras de igual longitud pero por regiones de mayor densidad. Esta área del aprendizaje de distancias vio considerables avances durante el siglo XXI, a continuación del éxito empírico de Isomap, y pavimentó el camino para técnicas de reducción de dimensionalidad basales en el "aprendizaje profundo" #footnote[O "deep learning" en inglés. Llamamos genéricamente de tal modo a la plétora de arquitecturas de redes neuronales con múltiples capas que dominan hoy el procesamiento de información de alta dimensión. TODO at wikipedia] como los "autocodificadores" #footnote["autoencoders" en inglés, algoritmo que dada #XX, aprende un codificador $c(x): RR^D -> RR^d, d << D$ y un decodificador $d(-1)(x) : RR^d -> RR^D$ tal que $d(c(x)) approx x$. De hecho, uno de los "padres de la IA", Yoshua bengio, cuyo trabajo ya mencionamos en este área, menciona #link("https://www.reddit.com/r/MachineLearning/comments/mzjshl/d_who_first_advanced_the_manifold_hypothesis_to/", "en Reddit") TODO at Reddit (!) cómo su grupo de investigación en la U. de Montréal trabajando en estas ideas: aprendizaje de variedades primero, y autocodificadores posteriormente.].
+Combinando estas dos nociones, podemos considerar la categoría de _distancias basadas en densidad_ - DBDs -, donde curvas $gamma$ que atraviesen regiones de _baja_ densidad $f_X$ en #MM sean más "costosas" de transitar que otras de igual longitud pero por regiones de mayor densidad. Esta área del aprendizaje de distancias vio considerables avances durante el siglo XXI, a continuación del éxito empírico de Isomap, y pavimentó el camino para técnicas de reducción de dimensionalidad basales en el "aprendizaje profundo" #footnote[O "deep learning" en inglés. Llamamos genéricamente de tal modo a la plétora de arquitecturas de redes neuronales con múltiples capas que dominan hoy el procesamiento de información de alta dimensión @DeepLearning2025] como los "autocodificadores" #footnote["autoencoders" en inglés, algoritmo que dada #XX, aprende un codificador $c(x): RR^D -> RR^d, d << D$ y un decodificador $d(-1)(x) : RR^d -> RR^D$ tal que $d(c(x)) approx x$. De hecho, uno de los "padres de la IA", Yoshua bengio, cuyo trabajo ya mencionamos en este área, menciona #link("https://www.reddit.com/r/MachineLearning/comments/mzjshl/d_who_first_advanced_the_manifold_hypothesis_to/", "en Reddit") cómo su grupo de investigación en la U. de Montréal trabajando en estas ideas: aprendizaje de variedades primero, y autocodificadores posteriormente.].
 
 Aprender una DBD nos permite saltearnos el problema ya harto descrito de aprender la variedad desconocida #MM, e ir directamente a lo único que necesitamos extraer de la variedad para tener un algoritmo de clasificación funcional: una noción de distancia adecuada.
 
