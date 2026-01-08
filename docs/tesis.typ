@@ -355,7 +355,15 @@ $
 #let d = 20
 
 Para $h =#h, d=#d, thick Pr(X in [-#h,#h]^#d) = #h^(-#d) approx #calc.round(calc.pow(h, d), digits: 8)$, ¡menos de uno en un millón! En general, la caída es muy rápida, aún para valores altos de $h$. Si $X$ representa un segundo de audio respete el estándar _mínimo_ de llamadas telefónicas  #footnote[De Wikipedia: La tasa #link("https://en.wikipedia.org/wiki/Digital_Signal_0")[DS0], o _Digital Signal 0_, fue introducida para transportar una sola llamada de voz "digitizada". La típica llamada de audio se digitiza a $8 "kHz"$, o a razón de 8.000 veces por segundo. se]
-#image("img/curse-dim.png")tiene $d=8000$.
+#figure(
+  image("img/curse-dim.png"),
+  caption: flex-caption(
+    [Visualización de la maldición de la dimensionalidad en alta dimensión],
+    [Maldición dimensional]
+  )
+)
+
+tiene $d=8000$.
 En tal espacio ambiente, aún con $h=0.999$,
 $Pr(dot) approx #calc.round(calc.pow(0.999, 8000), digits: 6)$, o 1:3.000.
 
@@ -1354,11 +1362,17 @@ Entre #kn y #fkn casi no observamos diferencias, asunto en el que ahondaremos m�
 
 
 
-#figure(columns(2)[
-  #image("img/espirales_lo-fkdc-decision_boundary.svg")
-  #colbreak()
-  #image("img/espirales_lo-svc-decision_boundary.svg")
-])
+#figure(
+  columns(2)[
+    #image("img/espirales_lo-fkdc-decision_boundary.svg")
+    #colbreak()
+    #image("img/espirales_lo-svc-decision_boundary.svg")
+  ],
+  caption: flex-caption(
+    [Fronteras de decisión para espirales con bajo ruido: #fkdc (izq.) vs #svc (der.)],
+    [Fronteras de decisión espirales]
+  )
+)
 
 Por último, observamos las fronteras de #svc, que no tienen gradiente de color sino sólo una frontera lineal #footnote[Como aprendimos: la frontera de una variedad riemanniana de dimensión intrínseca $d$ es una variedad sin frontera de dimensión intrínseca $d-1$; la frontera de estas regiones en $R^2$ es una curva parametrizable en $RR^1$ embebida en $RR^2$]. Es sorprendente la flexibilidad del algoritmo, que consigue dibujar una única frontera sumamente no-lineal que separa los datos con altísima exactitud. La ventaja que #fkdc pareciera tener sobre #svc aquí, es que la frontera que dibuja pasa "más lejos" de las observaciones de clase, mientras que la #svc parece estar muy pegada a los brazos de la espiral, particularmente en el giro más interno.
 
@@ -1533,7 +1547,13 @@ Al ojo humano, queda claro que las fronteras y regiones de confianza que "dibuja
 Consideraremos a continuación datasets sintéticos embebidos en 3 dimensiones ($D = 3$), con variedades de dimensión intrínseca  $1$ (`eslabones, helices`) y $2$ (`pionono, hueveras`).
 
 === Eslabones
-#image("img/eslabones-scatter-3d.svg")
+#figure(
+  image("img/eslabones-scatter-3d.svg"),
+  caption: flex-caption(
+    [Visualización 3D del dataset eslabones: dos círculos entrelazados en el espacio tridimensional],
+    [Dataset eslabones 3D]
+  )
+)
 
 #highlights_figure("eslabones_0")
 
@@ -1544,7 +1564,13 @@ Un punto en contra de #fkdc aquí, es que el boxplot de $R^2$ - no así el de ex
 #tabla_csv("data/eslabones_0-params-2411.csv")
 
 ==== Hélices
-#image("img/helices-scatter-3d.svg")
+#figure(
+  image("img/helices-scatter-3d.svg"),
+  caption: flex-caption(
+    [Visualización 3D del dataset hélices: dos estructuras helicoidales entrelazadas],
+    [Dataset hélices 3D]
+  )
+)
 Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la misma dirección, una de ellas empezando a "media altura" entre dos brazos consecutivos de la otra. El dataset es particularmente desafiante para #slr, #lr, y Naive Bayes, que no logran diferenciarse en nada de un clasificador trivial que prediga siempre la misma clase.
 
 #highlights_figure("helices_0")
