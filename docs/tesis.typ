@@ -1181,8 +1181,8 @@ Consideraremos a modo de referencia los siguientes algoritmos:
 - Naive Bayes Gaussiano (#gnb),
 - Regresión Logistica (#lr) y
 - Clasificador de Soporte Vectorial (#svc)
-Esta elección no pretende ser exhaustiva, sino que responde a un "capricho informado" del investigador. #gnb es una elección natural, ya que es la simplificación que surge de asumir independencia en las dimensiones de $X$ para KDE multivariado (@kde-mv), y se puede computar para grandes conjuntos de datos en muy poco tiempo. #lr es "el" método para clasificación binaria, y su extensión a múltiples clases no es particularmente compleja: para que sea mínimamente valioso un nuevo algoritmo, necesita ser al menos tan bueno como #lr, que tiene ya más de 65 años en el campo @blissCALCULATIONDOSAGEMORTALITYCURVE1935, @coxRegressionAnalysisBinary1958. Por último, fue nuestro deseo incorporar algún método más cercano al estado del arte. A tal fin, consideramos incorporar alguna red neuronal (TODO REF), un método de _boosting_ (TODO REF) y el antedicho clasificador de soporte vectorial, #svc. Finalmente, por la sencillez de su implementación dentro del marco elegido #footnote[Utilizamos `scikit-learn` @JMLR:v12:pedregosa11a, un poderoso y extensible paquete para tareas de aprendizaje automático en Python] y por la calidad de los resultados obtenidos, decidimos dejar fuera las redes neuronales, pero introdujimos #svc, en dos variantes: con núcleos (_kernels_) lineales y RBF; y #gbt.
 
+Esta elección no pretende ser exhaustiva, sino que responde a un "capricho informado" del investigador. #gnb es una elección natural, ya que es la simplificación que surge de asumir independencia en las dimensiones de $X$ para KDE multivariado (@kde-mv), y se puede computar para grandes conjuntos de datos en muy poco tiempo. #lr es "el" método para clasificación binaria, y su extensión a múltiples clases no es particularmente compleja: para que sea mínimamente valioso un nuevo algoritmo, necesita ser al menos tan bueno como #lr, que tiene ya más de 65 años en el campo @blissCALCULATIONDOSAGEMORTALITYCURVE1935, @coxRegressionAnalysisBinary1958. Por último, fue nuestro deseo incorporar algunos métodos más cercano al estado del arte: un método de _boosting_ (@GradientBoosting2025) y el antedicho clasificador de soporte vectorial, #svc #footnote[en dos variantes: con núcleos (_kernels_) lineales y RBF - #emph[radial basis functions]]. Por conocerlo en profundidad y en virtud de su sencillez de uso, la implementación se realizó utilizando `scikit-learn` @JMLR:v12:pedregosa11a, un poderoso y extensible paquete para tareas de aprendizaje automático en Python.
 
 === Metodología
 
@@ -1645,7 +1645,7 @@ A priori, nuestras tres propuestas de estimación:
 - extender la estimación de la distancia de Fermat "microscópica" $cal(D)_f,beta)$ a partir de la distancia de Fermat macroscópica #sfd, a puntos por fuera de la muestra
 _funcionaron_, por separado y en conjunto, a la par de métodos de primera línea, paramétricos (#svc) y no paramétricos (#gbt). Al evaluarlos por "exactitud", a pesar de estar entrenados para maximizar la log-verosimilitud, los métodos resultaron competitivos aunque sin mejoras significativas. Al evaluarlos por $R^2$, sí se observaron excelentes rendimientos para toda la familia de métodos basados en densidad por núcleos $cal(K)$, y en ciertas ocasiones la distancia de Fermat se destaca por encima de la euclídea.
 
-Ya existía una implementación previa de la Distancia de Fermat como librería de Python [TODO citar fermat de aristas y sapienza] orientada a "clustering", tarea que tiene la particularidad de entrenar y predecir sobre los mismos datos. El problema de clasificación se evalúa, para ser justos, en observaciones que _no_ se usaron para entrenar, lo cual nos llevó a escribir una librería nueva, con menos opciones de parametrización, pero capacidad de estimación "out-of-sample" y una implementación mínimamente performante sobre métodos bien optimizados que nos permitan ejecutar una suite extensa de experimentos que pudiésemos refinar iterativamente.
+Ya existía una implementación previa de la Distancia de Fermat #link("https://www.aristas.com.ar/fermat/fermat.html")[como librería de Python] orientada a "clustering" @sapienzaWeightedGeodesicDistance2018, tarea que tiene la particularidad de entrenar y predecir sobre los mismos datos. El problema de clasificación se evalúa, para ser justos, en observaciones que _no_ se usaron para entrenar, lo cual nos llevó a escribir una librería nueva, con menos opciones de parametrización, pero capacidad de estimación "out-of-sample" y una implementación mínimamente performante sobre métodos bien optimizados que nos permitan ejecutar una suite extensa de experimentos que pudiésemos refinar iterativamente.
 
 Poner a legos a implementar algoritmos numéricos complejos no suele terminar bien, pero milagrosamente llevamos el invento a buen puerto. También podía ser que el método tuviese una performance _decente_ pero no _competitiva_ con el estado del arte; no fue el caso.
 
@@ -1716,9 +1716,7 @@ Sería interesante entonces investigar si existen condiciones reales en las que 
 
 = Apéndice A: Fichas de resultados por dataset <apendice-a>
 
-
-= TODOs
-- [ ] Evitar coma entre sujeto y predicado
+= Apéndice B: Código (?)
 
 == Arenero
 
