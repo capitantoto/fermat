@@ -81,9 +81,9 @@
 #outline(depth: 2)
 
 = Vocabulario y Notación
-A lo largo de esta monografía tomaremos como referencia enciclopédica al _Elements of Statistical Learning_ @hastieElementsStatisticalLearning2009, de modo que en la medida de lo posible, basaremos nuestra notación en la suya también.
+A lo largo de esta monografía tomaremos como referencia enciclopédica el excelente _Elements of Statistical Learning_ @hastieElementsStatisticalLearning2009. En la medida de lo posible, basaremos nuestra notación en la suya.
 
-Típicamente, denotaremos a las variables independientes #footnote[También conocidas como predictoras, o #emph[inputs]] con $X$. Si $X$ es un vector, accederemos a sus componentes con subíndices, $X_j$. En el contexto del problema de clasificación, la variable _cualitativa_ dependiente #footnote[También conocida como variable respuesta u #emph[output]] será $G$ (de $G$rupo). Usaremos letras mayúsculas como $X, G$ para referirnos a los aspectos genéricos de una variable. Los valores _observados_ se escribirán en minúscula, de manera que el i-ésimo valor observado de $X$ será $x_i$ (de nuevo, $x_i$ puede ser un escalar o un vector).
+Típicamente, denotaremos a las variables independientes #footnote[También conocidas como predictoras, o #emph[inputs]] con $X$. Si $X$ es un vector, accederemos a sus componentes con subíndices, $X_j$. En el contexto del problema de clasificación, la variable _cualitativa_ dependiente #footnote[También conocida como variable respuesta u #emph[output]] será $G$ (de "G"rupo). Usaremos letras mayúsculas como $X, G$ para referirnos a los aspectos genéricos de una variable. Los valores _observados_ se escribirán en minúscula, de manera que el i-ésimo valor observado de $X$ será $x_i$ (de nuevo, $x_i$ puede ser un escalar o un vector).
 
 Representaremos a las matrices con letras mayúsculas en negrita, #XX; e.g.: el conjunto de $N$ vectores $p$-dimensionales ${x_i, i in {1, dots, N}}$ será representado por la matriz #XX de dimensión $N times p$.
 
@@ -94,25 +94,26 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 #set terms(separator: h(2em, weak: true), spacing: 1em)
 
 / $RR$: los números reales; $RR_+$ denotará los reales estrictamente positivos.
-/ $d_x$:
-/ $RR^(d_x)$:
-/ $[k]$: el conjunto de los $k$ números enteros, ${1, dots, k}$
-/ #MM:
-/ $bold(upright(H))$:
-/ $norm(dot)$:
-/ ${bold(upright(X))}$:
-/ $X_(i, j)$:
+/ $RR^(p)$: el espacio euclídeo de dimensión $p$
+/ $[k]$: el conjunto de los enteros positivos del $1$ hasta $k$, ${1, 2, 3, dots, k}$
+/ #MM: una variedad arbitraria #footnote[típicamente Riemanniana, compacta y sin frontera; oportunamente definiremos estos calificativos]
+/ $d_x$: la dimensión "natural" #footnote[la dimensión de un elemento es su cantidad de componentes, la dimensión de un espacio es la dimensión de cualquiera de sus elementos] del elemento $x$ 
+/ $h$: la ventana ($h in RR$) en un estimador de densidad por núcleos en $RR$
+/ $bu(H)$: ídem $h$, para estimadores en $RR^p$ ($bu(H) in RR^(p times p)$)
+/ $norm(dot)$: norma euclídea del elemento $x$
+/ $bu(X)$: una muestra de $N$ elementos $p$-dimensionales ($XX in RR^(N times p)$)
+/ $X_(i, j)$: la j-ésima dimensión del i-ésimo elemento de #XX
 / $ind(x)$: la función indicadora, $ind(x)=cases(1 "si" x "es verdadero", 0 "si no")$
-/ $Pr(x)$: función de probabilidad,
-/ $EE(x)$: esperanza,
-/ $var(x)$: varianza,
-/ $iid$: independiente e idénticamente distribuido (suele aplicar a una muestra #XX)
+/ $Pr(dot)$: función de probabilidad #footnote[en general no hará falta definir el espacio muestral ni la $sigma-$álgebra correspondientes; de hacer falta se indicarán con subíndices] <fn-pr>
+/ $EE(dot)$: la función esperanza @fn-pr
+/ $var(dot)$: la función varianza @fn-pr
+/ $iid$: independientes e idénticamente distribuidos #footnote[típicamente los elementos aleatorios de #XX son $iid$]
 / $emptyset$: el conjunto vacío
-/ $overline(S)$: la _clausura_ de S; la unión de S y sus puntos límites.
+/ $overline(S)$: la _clausura_ de S (la unión de S y sus puntos límites)
 / $lambda(x)$: la medida de Lebesgue de $x$ en $RR^d$
 / $a |-> b$: la función que "toma" $a$ y "devuelve" $b$  en #link("https://en.wikipedia.org/wiki/Function_(mathematics)#Arrow_notation")[notación de flechas]
 / $y prop x$: "y es proporcional a x", existe una constante $c : y = c times x$
-/ c.s.: "casi seguramente", al referirse a convergencia de v.v.a.a.
+/ c.s.: "casi seguramente", re. convergencia de elementos aleatorios
 = Preliminares
 
 == El problema de clasificación
