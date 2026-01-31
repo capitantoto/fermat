@@ -41,10 +41,9 @@
     long
   }
 )
-#let defn = thmbox("definition", "Definición", inset: (x: 1.2em, top: 1em))
+#let defn = thmbox("definition", "Definición", inset: (x: 1.2em, top: 1em), base_level: 2)
 #let obs = thmplain("observation", "Observación").with(numbering: none)
-#let thm = thmbox("theorem", "Teorema", inset: (x: 1.2em, top: 1em))
-
+#let thm = thmbox("theorem", "Teorema", inset: (x: 1.2em, top: 1em), base_level: 2)
 
 // ##############
 // ### estilo ###
@@ -116,13 +115,13 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / c.s.: "casi seguramente", re. convergencia de elementos aleatorios
 = Preliminares
 
-== El problema de clasificación
+== El problema de clasificación #footnote[adaptado de @hastieElementsStatisticalLearning2009[§2.4, "Statistical Decision Theory"]]
 
 === Definición y vocabulario
-El _aprendizaje estadístico supervisado_ busca estimar (aprender) una variable _respuesta_ a partir de cierta(s) variable(s) _predictora(s)_. Cuando la _respuesta_ es una variable _cualitativa_, el problema de asignar cada observación $X$ a una clase $G in GG={GG^1, dots, GG^K}$ se denomina _de clasificación_. En general, reemplazaremos los nombres o "etiquetas" de clases $g_i$ por los enteros correspondientes, $G in [K]$. En esta definición del problema, las clases son mutuamente excluyentes y conjuntamente exhaustivas:
+El _aprendizaje estadístico supervisado_ busca estimar (aprender) una variable _respuesta_ a partir de cierta(s) variable(s) _predictora(s)_. Cuando la _respuesta_ es una variable _cualitativa_, el problema de asignar cada observación $X$ a una clase $G in GG={GG^1, dots, GG^K}$ se denomina _de clasificación_. En general, reemplazaremos los nombres o "etiquetas" de clases $g_i$ por los enteros correspondientes, $G in [K]$. En esta definición del problema, las clases son
 
-- mutuamente excluyentes: cada observación $X_i$ está asociada a lo sumo a una clase
-- conjuntamente exhaustivas: cada observación $X_i$ está asociada a alguna clase.
+- _mutuamente excluyentes_: cada observación $X_i$ está asociada a lo sumo a una clase
+- _conjuntamente exhaustivas_: cada observación $X_i$ está asociada al menos a una clase.
 
 #defn("clasificador")[
   Un _clasificador_ es una función $hat(G)(X)$ que para cada observación intenta aproximar su verdadera clase $G$ por $hat(G)$ ("ge sombrero").
@@ -130,7 +129,7 @@ El _aprendizaje estadístico supervisado_ busca estimar (aprender) una variable 
 
 Para construir $hat(G)$, contaremos con una muestra o _conjunto de entrenamiento_ $XX, bu(g)$,  de pares $(x_i, g_i), i in {1, dots, N}$ conocidos.
 
-Para discernir cuán bien se "ajusta" un clasificador a los datos, la teoría requiere de una función de _pérdida_ $L(G, hat(G)(X))$. #footnote[_loss function_ en inglés. A veces también "función de riesgo" - _risk function_.]. Será de especial interés la función de clasificación $f$ que minimiza la _esperanza de predicción errada_ $"EPE"$:
+Para discernir cuán bien se "ajusta" un clasificador a los datos, la teoría requiere de una "función de pérdida" $L(G, hat(G)(X))$ #footnote[_loss function_ en inglés. A veces también "función de riesgo" - _risk function_.]. Será de especial interés la función de clasificación $f$ que minimiza el "error de predicción esperado" $"EPE"$ #footnote[del inglés #emph[expected prediction error]]:
 
 $
   hat(G) = arg min_f "EPE"(f) =arg min_f EE(L(G, f(X)))
@@ -139,12 +138,11 @@ donde la esperanza es contra la distribución conjunta $(X, G)$. Por la ley de l
 
 $
   "EPE"(f) & = EE(L(G, hat(G)(X))) \
-           & = sum_(k in [K]) EE(L(GG_k, hat(G)(X)) Pr(GG_k | X)) EE(X) \
-           & = EE(X) sum_(k in [K]) EE(L(GG_k, g) Pr(GG_k | X)) \
+           & = EE_X sum_(k in [K]) EE(L(GG_k, hat(G)(X)) Pr(GG_k | X))  \
 $
 Y basta con minimizar punto a punto para obtener una expresión computable de $hat(G)$:
 $
-  hat(G)(x) & = arg min_(g in GG) sum_(k in [K]) L(GG_k, g) Pr(GG_k | X = x) \
+  hat(G)(x) & = arg min_f EE(L(G, f(X))) \
             & = arg min_(g in GG) sum_(k in [K]) L(GG_k, g) Pr(GG_k | X = x)
 $
 Con la _pérdida 0-1_ #footnote[que no es otra cosa que la función indicadora de un error en la predicción, $bu(01)(hat(G), G) = ind(hat(G) != G)$], la expresión se simplifica a
