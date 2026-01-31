@@ -58,7 +58,6 @@ El historial de commits de este repositorio permite verificar:
 - Preservar siempre la voz y estilo del autor
 - Ante dudas de contenido, preguntar en lugar de asumir
 - Editar `docs/tesis.typ` directamente sin pedir confirmación previa para cada edición
-- **SIEMPRE** pedir autorización antes de hacer un commit
 
 ## Reglas de estilo (según RAE)
 
