@@ -27,13 +27,19 @@
 #let slr = [$s$`-LR`]
 #let svc = `SVC`
 #let gbt = `GBT`
-// calsificador genérico
+// clasificador genérico
 #let clf = $op(hat(G))$
 #let reps = 25
 
 // Copetes flexibles para outline y texto, adaptado para 0.12 de
 // https://github.com/typst/typst/issues/1295#issuecomment-1853762154
 #let in-outline = state("in-outline", false)
+#show outline: it => {
+  in-outline.update(true)
+  it
+  in-outline.update(false)
+}
+
 #let flex-caption(long, short) = (
   context if in-outline.get() {
     short
@@ -44,6 +50,9 @@
 #let defn = thmbox("definition", "Definición", inset: (x: 1.2em, top: 1em), base_level: 2)
 #let obs = thmplain("observation", "Observación").with(numbering: none)
 #let thm = thmbox("theorem", "Teorema", inset: (x: 1.2em, top: 1em), base_level: 2)
+
+// conveniencias
+#let hfrac(num, denom) = math.frac(num, denom, style: "horizontal")
 
 // ##############
 // ### estilo ###
@@ -63,6 +72,7 @@
 #show: thmrules
 #show raw: set text(font: "New Computer Modern Mono")
 #show heading: set block(above: 1.4em, below: 1em)
+#show figure: set block(above: 1.2em, below: 1.2em)
 #show link: it => underline(text(it, fill: blue))
 
 // #############
@@ -96,7 +106,7 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / $RR^(p)$: el espacio euclídeo de dimensión $p$
 / $[k]$: el conjunto de los enteros positivos del $1$ hasta $k$, ${1, 2, 3, dots, k}$
 / #MM: una variedad arbitraria #footnote[típicamente Riemanniana, compacta y sin frontera; oportunamente definiremos estos calificativos]
-/ $d_x$: la dimensión "natural" #footnote[la dimensión de un elemento es su cantidad de componentes, la dimensión de un espacio es la dimensión de cualquiera de sus elementos] del elemento $x$ 
+/ $d_x$: la dimensión "natural" #footnote[la dimensión de un elemento es su cantidad de componentes, la dimensión de un espacio es la dimensión de cualquiera de sus elementos] del elemento $x$
 / $h$: la ventana ($h in RR$) en un estimador de densidad por núcleos en $RR$
 / $bu(H)$: ídem $h$, para estimadores en $RR^p$ ($bu(H) in RR^(p times p)$)
 / $norm(dot)$: norma euclídea del elemento $x$
@@ -118,7 +128,7 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 == El problema de clasificación #footnote[adaptado de @hastieElementsStatisticalLearning2009[§2.4, "Statistical Decision Theory"]]
 
 === Definición y vocabulario
-El _aprendizaje estadístico supervisado_ busca estimar (aprender) una variable _respuesta_ a partir de cierta(s) variable(s) _predictora(s)_. Cuando la _respuesta_ es una variable _cualitativa_, el problema de asignar cada observación $X$ a una clase $G in GG={GG^1, dots, GG^K}$ se denomina _de clasificación_. En general, reemplazaremos los nombres o "etiquetas" de clases $g_i$ por los enteros correspondientes, $G in [K]$. En esta definición del problema, las clases son
+El _aprendizaje estadístico supervisado_ busca estimar (aprender) una variable _respuesta_ a partir de cierta(s) variable(s) _predictora(s)_. Cuando la _respuesta_ es una variable _cualitativa_, el problema de asignar cada observación $X$ a una clase $G in GG={GG_1, dots, GG_K}$ se denomina _de clasificación_. En general, reemplazaremos los nombres o "etiquetas" de clases $GG_i$ por los enteros correspondientes, $G in [K]$. En esta definición del problema las clases son
 
 - _mutuamente excluyentes_: cada observación $X_i$ está asociada a lo sumo a una clase
 - _conjuntamente exhaustivas_: cada observación $X_i$ está asociada al menos a una clase.
@@ -134,11 +144,12 @@ Para discernir cuán bien se "ajusta" un clasificador a los datos, la teoría re
 $
   hat(G) = arg min_f "EPE"(f) =arg min_f EE(L(G, f(X)))
 $
-donde la esperanza es contra la distribución conjunta $(X, G)$. Por la ley de la probabilidad total, podemos condicionar a X y expresar el EPE como
+donde la esperanza es contra la distribución conjunta $(X, G)$. Por la ley de la probabilidad total, podemos condicionar a X #footnote[Aquí "condicionar" implica factorizar la densidad conjunta $Pr(X, G) = Pr(G|X) Pr(X)$ donde $Pr(G|X) = hfrac(Pr(X, G), Pr(X))$, y repartir la integral bivariada de manera acorde.] y expresar el EPE como
 
 $
-  "EPE"(f) & = EE(L(G, hat(G)(X))) \
-           & = EE_X sum_(k in [K]) EE(L(GG_k, hat(G)(X)) Pr(GG_k | X))  \
+  "EPE"(f) & = EE_(X,G)(L(G, hat(G)(X))) \
+           & = EE_X EE_(G|X)(L(G, hat(G)(X))) \
+           & = EE_X sum_(k in [K]) L(GG_k, hat(G)(X)) Pr(GG_k | X) \
 $
 Y basta con minimizar punto a punto para obtener una expresión computable de $hat(G)$:
 $
@@ -152,14 +163,13 @@ $
             & = arg max_(g in GG) Pr(g | X = x)
 $<clf-bayes>
 
-Esta razonable solución se conoce como el _clasificador de Bayes_, y sugiere que clasifiquemos a cada observación según la clase modal condicional a su distribución conjunta $Pr(G|X)$.
-Su error esperado de predicción $"EPE"$ se conoce como la _tasa de Bayes_. Un aproximador directo de este resultado es el clasificador de k vecinos más cercano #footnote[_k-nearest-neighbors classifier_]
+Esta razonable solución se conoce como el _clasificador de Bayes_, y sugiere que clasifiquemos a cada observación según la clase modal #footnote[i.e., la de mayor probabilidad] condicional a su distribución conjunta $Pr(G|X)$.
+Su error esperado de predicción $"EPE"$ se conoce como la _tasa de Bayes_. Un aproximador directo de este resultado es el clasificador de "k vecinos más cercanos" #footnote[del inglés _k-nearest-neighbors_]
 
 #defn("clasificador de k-vecinos-más-cercanos")[
-  Sean $x^((1)), dots, x^((k))$ los $k$ vecinos más cercanos a $x$, y $GG^((1)), dots, GG^((k))$ sus respectivas clases. El clasificador de k-vecinos-más-cercanos le asignará a $x$ la clase más frecuente entre $GG^((1)), dots, GG^((k))$. Más formalmente:
+  Sean $x^((1)), dots, x^((k))$ los $k$ #footnote[que no guarda relación alguna con la cantidad $K$ del problema de clasificación] vecinos más cercanos a $x$, y $g^((1)), dots, g^((k))$ sus respectivas clases. El clasificador de k-vecinos-más-cercanos - que notaremos #kn - le asignará a $x$ la clase más frecuente entre $g^((1)), dots, g^((k))$. Más formalmente:
   $
-    hat(G)_("kn")(x) & =GG_("kn") = arg max_(g in GG) sum_(i in [k]) ind(GG^((i)) = g) \
-                     & <=> \#{i : GG^((i)) = GG_("kn"), i in [k]} = max_(g in GG) \#{i : GG^((i)) = g, i in [k]} \
+    hat(G)_("kn")(x) & = g = arg max_(g in GG) sum_(i in [k]) ind(g^((i)) = g)
   $
 
 ] <kn-clf>
@@ -178,10 +188,10 @@ $
                 & <=> Pr(GG_k|X=x) =max_(k in [K]) Pr(X=x|GG_k) times Pr(GG_k) \
 $
 
-A las probabilidades "incondicionales" de clase $Pr(GG_k)$ se las suele llamar su "distribución a priori", y notarlas por $pi = (pi_1, dots, pi_K)^T$, con #box[$pi_k = Pr(GG_k) forall k in [K], quad sum pi_k = 1$]. Una aproximación razonable, si es que el conjunto de entrenamiento se obtuvo por muestreo aleatorio simple #footnote[_simple random sampling_, o s.r.s.], es tomar las proporciones muestrales
+A las probabilidades "incondicionales" de clase $Pr(GG_k)$ se las suele llamar su "distribución a priori", y notarlas por $pi = (pi_1, dots, pi_K)^T, sum pi_k = 1$. Una aproximación razonable, si es que el conjunto de entrenamiento se obtuvo por muestreo aleatorio simple, es estimarlas a partir de las proporciones muestrales: $forall k in [K]$,
 $
-  forall k in [K], quad hat(pi)_k & = N^(-1) sum_(i in [N]) ind(g_i = GG_k) \
-                                  & = \#{g_i : g_i = GG_k, i in [N]} / N
+  hat(pi)_k & = N^(-1) sum_(i in [N]) ind(g_i = GG_k) \
+            & = \#{g_i : g_i = GG_k, i in [N]} / N
 $
 
 
@@ -189,10 +199,9 @@ Resta hallar una aproximación $hat(Pr)(X=x|GG_k)$ a las probabilidades condicio
 
 == Estimación de densidad por núcleos
 
-De conocer las $K$ densidades $f_(X|GG_k)$, el cómputo de las mentadas probabilidades es directo. Tal vez la metodología más estudiada a tales fines es la _estimación de densidad por núcleos_, comprensivamente reseñada en @hastieElementsStatisticalLearning2009[§6.6]. Al estimador resultante, sobre todo en el caso unidimensional, se lo conoce con el nombre de Parzen-Rosenblatt, por sus contribuciones fundacionales en el área @parzenEstimationProbabilityDensity1962
-@rosenblattRemarksNonparametricEstimates1956
-.
-==== Estimación unidimensional
+Tal vez la metodología más estudiada a tales fines es la estimación de densidad por núcleos, reseñada en @hastieElementsStatisticalLearning2009[§6.6]. En el caso unidimensional, al estimador resultante se lo conoce por el nombre de Parzen-Rosenblatt, por sus contribuciones fundacionales en el área @parzenEstimationProbabilityDensity1962 @rosenblattRemarksNonparametricEstimates1956.
+
+=== Estimación unidimensional
 
 
 Para fijar ideas, asumamos que $X in RR$ y consideremos la estimación de densidad en una única clase para la que contamos con $N$ ejemplos ${x_1, dots, x_N}$. Una aproximación $hat(f)$ directa sería
@@ -211,42 +220,42 @@ Esta estimación es irregular, con saltos discretos en el numerador, por lo que 
   Se dice que $K(x) : RR -> RR$ es una _función núcleo_ si cumple que
 
   + toma valores reales no negativos: $K(u) >= 0$,
-  + está normalizada: $integral K(u) d u = 1$,
-  + es simétrica: $K(u) = K(-u)$ y
+  + está "normalizada": $integral K(u) d u = 1$,
+  + es simétrica en torno al cero: $K(u) = K(-u)$ y
   + alcanza su máximo en el centro: $max_u K(u) = K(0)$
 ] <kernel>
 
-#obs[Todas las funciones de densidad simétricas centradas en 0 son núcleos; en particular, la densidad "normal estándar" $phi.alt(x) = 1/sqrt(2 pi) exp(-x^2 / 2)$ lo es.]
+#obs[Todas las funciones de densidad simétricas centradas en 0 son núcleos; en particular, la densidad "normal estándar" $ phi.alt(x) = 1/sqrt(2 pi) exp(-x^2 / 2) $ lo es.]
 
 #obs[Si $K(u)$ es un núcleo, entonces $K_h (u) = 1/h op(K)(u / h)$ también lo es.]
 
-Ahora sí estamos en condiciones de enunciar el
 #defn("estimador de densidad por núcleos")[
 
 
-  Sea $bu(x) = (x_1, dots, x_N)^T$ una muestra #iid de cierta variable aleatoria escalar $X in RR$ con función de densidad $f$. Su estimador de densidad por núcleos, o estimador de Parzen-Rosenblatt es
+  Sea $bu(x) = (x_1, dots, x_N)^T$ una muestra #iid de cierta variable aleatoria escalar $X in RR$ con función de densidad $f$. Su estimador de densidad por núcleos, KDE #footnote[de _Kernel Density Estimator_, por sus siglas en inglés] o estimador de Parzen-Rosenblatt es
   $
-    hat(f)(x_0) = 1/N sum_(i=1)^N K (x_0, x_i)
+    hat(f)(x_0) = 1/N sum_(i=1)^N 1/ h K ((x_0 - x_i)/h) = 1/N sum_(i=1)^N K_h (x_0 - x_i)
   $
 
-  donde $K$ es una @kernel
+  donde $K_h$ es un núcleo según @kernel. Al parámetro $h$ se lo conoce como "ventana" de suavizado o _smoothing_.
 ] <parzen>
 
 #obs[
-  La densidad de la distribución uniforme centrada en 0 de diámetro 1, $U(x) = ind(1/2 < x <= 1/2)$ es un núcleo.  Luego, $ U_h (x) = 1/h ind(-h/2 < x < h/2) $ también es un núcleo válido, y por ende el estimador de @eps-nn es un caso particular del estimador de @parzen:
+  La densidad de la distribución uniforme centrada en 0 de diámetro 1, $U(x) = ind(1/2 < x <= 1/2)$ es un núcleo.  Luego, $ U_h (x) = 1/h ind(-h/2 < x < h/2) $ también es un núcleo válido, y por ende el estimador de @eps-nn resulta estrechamente emparentado al estimador de @parzen:
   $
     hat(f)(x_0) & = \#{x_i in cal(N)(x_0)} / (N times h) \
-                & = 1 / N sum_(i in [N]) 1/ h thick U((x_i - x_0) / h) \
-                & = 1 / N sum_(i = 1)^N U_h (x_i - x_0)
+                & = 1 / N sum_(i in [N]) 1/h ind(-h/2 < x_i - x_0 < h/2) \
+                & = 1 / N sum_(i in [N]) U_h (x_i - x_0)
   $
+  con la diferencia de que el estimador de @eps-nn fija el _diámetro_ del vecindario a considerar, y el de @parzen fija la _cantidad_ de vecinos a tener en cuenta #footnote[Al primero se lo conoce como $epsilon$- nearest neighbors ($epsilon$-NN) con $epsilon$ denotando el _radio_ del vecindario; el segundo es el ya descrito $k$-NN.].
 ]
 === Clasificador de densidad por núcleos
 
-Si $hat(f)_k, k in [K]$ son estimadores de densidad por núcleos #footnote[KDEs ó _Kernel Density Estimators_, por sus siglas en inglés] de cada una de las $K$ densidades condicionales $X|GG_k$ según @parzen, podemos construir el siguiente clasificador
+Si $hat(f)_k, k in [K]$ son estimadores de densidad por núcleos de cada una de las $K$ densidades condicionales $X|GG_k$ según @parzen, podemos construir el siguiente clasificador
 
 #defn(
   "clasificador de densidad por núcleos",
-)[ Sean $hat(f)_1, dots, hat(f)_K$ estimadores de densidad por núcleos según @parzen. Sean además $hat(pi)_1, dots, hat(pi)_K$ las estimaciones de la probabilidad incondicional de pertenecer a cada grupo $GG_1, dots, GG_k$. Luego, la siguiente regla constituye un clasificador de densidad por núcleos:
+)[ Sean $hat(f)_1, dots, hat(f)_K$ estimadores de densidad por núcleos según @parzen. Sean además $hat(pi)_1, dots, hat(pi)_K$ las estimaciones de la probabilidad incondicional de pertenecer a cada grupo $GG_1, dots, GG_k$. Luego, la siguiente regla constituye un clasificador de densidad por núcleos - lo notaremos #kdc :
   $
     hat(G)_"KD" (x) = g & = arg max_(i in [K]) hat(Pr)(GG_i | X = x) \
                         & = arg max_(i in [K]) hat(Pr)(X=x|GG_i) times hat(Pr)(GG_i) \
@@ -255,43 +264,47 @@ Si $hat(f)_k, k in [K]$ son estimadores de densidad por núcleos #footnote[KDEs 
 
 === Clasificadores duros y suaves
 
-Un clasificador que asigna a cada observación _una clase_ - la más probable, se suele llamar _clasificador duro_. Un clasificador que asigna a cada observación _una distribución de probabilidades de clase_ $hat(gamma)$ #footnote[ Todas las restricciones habituales aplican: dado $hat(gamma) = (hat(gamma)_1, dots, hat(gamma)_K)^T$, todas sus componentes deben pertenecer al intervalo $[0, 1]$ y su suma ser exactamente $1$.] se suele llamar _clasificador blando_. Dado un clasificador _blando_ $hat(G)_"Blando"$, es trivial construir el clasificador duro asociado $hat(G)_"Duro"$:
+Un clasificador que asigna a cada observación _una clase_ - la más probable, se suele llamar _clasificador duro_. Un clasificador que asigna a cada observación _una distribución de probabilidades de clase_ $hat(gamma)$ #footnote[$hat(gamma)$ aproximará $gamma = (gamma_1, dots, gamma_K)^T$ con $gamma_i = Pr(G = GG_i), quad sum_(i in [K]) gamma_i = 1$.] se suele llamar _clasificador blando_. Dado un clasificador _blando_ $hat(G)_"Blando"$, es trivial construir el clasificador duro asociado $hat(G)_"Duro"$:
 $
   hat(G)_"Duro" (x_0) = arg max_i hat(G)_"Blando" (x_0) = arg max_i hat(gamma)_i
 $
 
 #obs[
-  El clasificador de @kdc-duro es en realidad la versión dura de un clasificador blando $hat(G)_"KD" (x) = hat(gamma)$, donde $ hat(gamma)_i = (hat(f)_i (x) times hat(pi)_i) / (sum_(i in [K]) hat(f)_i (x) times hat(pi)_i) $
+  El clasificador de @kdc-duro es la versión dura de un clasificador blando $hat(G)_"KD" (x) = hat(gamma)$, donde $ hat(gamma)_i = (hat(f)_i (x) times hat(pi)_i) / (sum_(i in [K]) hat(f)_i (x) times hat(pi)_i) $
 ]
 
 #obs[
-  Algunos clasificadores sólo pueden ser duros, como $hat(G)_"1-NN"$, el clasificador de @kn-clf con $k=1$.
+  Ciertos clasificadores sólo pueden ser duros, como $hat(G)_"1-NN"$ (el clasificador de @kn-clf con $k=1$), o aquellos derivados de algoritmos clasifican sin estimar probabilidades condicionales, como los basados en SVMs #footnote["#link("https://es.wikipedia.org/wiki/M%C3%A1quina_de_vectores_de_soporte")[máquinas de vectores de soporte]", del inglés _support vector machines_].
 ]
 
-Dos clasificadores _blandos_ pueden tener la misma pérdida $0-1$, pero "pintar" dos panoramas muy distintos respecto a cuán "seguros" están de cierta clasificación. Por caso,
+Dos clasificadores _blandos_ pueden tener la misma pérdida $0-1$, pero "pintar" dos panoramas muy distintos respecto a cuán "seguros" están de cierta clasificación. Por caso, sea $epsilon > 0$ y arbitrariamente pequeño:
 $
-  hat(G)_"C(onfiado)" (x_0) &: hat(Pr)(GG_i | X = x_0) = cases(1 - epsilon times (K - 1) &" si " i = 1, epsilon &" si " i != 1) \
-  hat(G)_"D(udoso)" (x_0) &: hat(Pr)(GG_i | X = x_0) = cases(1/K + epsilon times (K - 1) &" si " i = 1, 1 / K - epsilon &" si " i != 1)
+  hat(G)_"C(onfiado)" (x_0) &: hat(Pr)(GG_i | X = x_0) = cases(1 - epsilon &" si " i = 1, hfrac(epsilon, (K - 1)) &" si " i != 1) \
+  hat(G)_"D(udoso)" (x_0) &: hat(Pr)(GG_i | X = x_0) = cases(1/K + epsilon &" si " i = 1, 1 / K - hfrac(epsilon, (K - 1)) &" si " i != 1)
 $
-$hat(G)_C$ está "casi seguro" de que la clase correcta es $GG_1$, mientras que $hat(G)_D$ está prácticamente indeciso entre todas las clases. Para el entrenamiento y análisis de clasificadores blandos como el de densidad por núcleos, será relevante encontrar funciones de pérdida que recompensen y penalicen adecuadamente esta capacidad.
+$hat(G)_C$ está "casi seguro" de que la clase correcta es $GG_1$, mientras que $hat(G)_D$ está otorga casi la misma probabilidades a todas las clases. Para el entrenamiento y análisis de clasificadores blandos como el de densidad por núcleos, será relevante encontrar funciones de pérdida que recompensen la confianza de un clasificador _cuando ésta esté justificada_ #footnote[y lo penalicen cuando no - es decir, cuando la confianza está puesta en la clase errada. Más al respecto, más adelante.].
 
 == Estimación de densidad multivariada
 === Naive Bayes
-Una manera "ingenua" de adaptar el procedimiento de estimación de densidad ya mencionado a $X$ multivariadas, consiste en sostener el desde-luego-falso-pero-útil supuesto de que sus componentes $X_1, dots, X_p$ son independientes entre sí. De este modo, la estimación de densidad conjunta se reduce a la estimación de $p$ densidades marginales univariadas. Dada cierta clase $j$, podemos escribir la densidad condicional $X|j$ como
+Una manera "ingenua" de adaptar el procedimiento de estimación de densidad ya mencionado a $X$ multivariadas, consiste en sostener el falso-pero-útil supuesto de que sus componentes $X_1, dots, X_p$ son independientes entre sí. De este modo, la estimación de densidad conjunta se reduce a la estimación de $p$ densidades marginales univariadas. Dada cierta clase $j$ #footnote[donde el entero $j in [K]$ es la etiqueta de la clase $GG_j$], podemos escribir la densidad condicional $X|j$ como
 $
   f_j (X) = product_(k = 1)^p f_(j k) (X_k)
 $ <naive-bayes>
 
-A este procedimiento se lo conoce como "Naive Bayes", y a pesar de su aparente ingenuidad es competitivo contra algoritmos mucho más sofisticados en un amplio rango de tareas. En términos de cómputo, permite resolver la estimación con $K times p$ KDE univariados. Además, permite que en $X$ se combinen variables cuantitativas y cualitativas: basta con reemplazar la estimación de densidad para los $X_k$ cualitativos por su correspondiente histograma.
+A este procedimiento se lo conoce como "Naive Bayes" @hastieElementsStatisticalLearning2009[§6.6.3], y a pesar de su aparente ingenuidad es competitivo contra algoritmos mucho más sofisticados en un amplio rango de tareas. En términos de cómputo, permite resolver la estimación con $K times p$ KDE univariados. Además, permite que en $X$ se combinen variables cuantitativas y cualitativas: basta con reemplazar la estimación de densidad para las componenets $X_k$ cualitativos por su correspondiente histograma.
 
 === KDE multivariado
+Consideremos un _dataset_ compuesto por observaciones muestradas de dos círculos concéntricos con algo de ruido:
+#figure(
+  caption: flex-caption(
+    "Dos círculos concéntricos y sus KDE marginales por clase: a pesar de que la frontera entre ambos grupos de puntos es muy clara, es casi imposible distinguirlas a partir de sus densidades marginales.",
+    "Dos círculos concéntricos",
+  ),
+  image("img/dos-circulos-jointplot.png", width: 75%),
+)
 
-#figure(caption: flex-caption(
-  "Dos círculos concéntricos y sus KDE marginales por clase: a pesar de que la frontera entre ambos grupos de puntos es muy clara, es casi imposible distinguirlas a partir de sus densidades marginales.",
-  "Dos círculos concéntricos",
-))[#image("img/dos-circulos-jointplot.png", width: 75%)]
 
-En casos como este, el procedimiento de Naive Bayes falla miserablemente, y será necesario adaptar el procedimiento de KDE unidimensional a $d >= 2$ sin basarnos en el supuesto de independencia de las $X_1, dots, X_k$. A lo largo de las cuatro décadas posteriores a las publicaciones de Parzen y Rosenblatt, el estudio de los estimadores de densidad por núcleos avanzó considerablemente, de manera que ya para mediados de los '90 existen minuciosos libros de referencia como "Kernel Smoothing" @wandKernelSmoothing1995, que seguiremos en la presente sección
+En casos así, el procedimiento de Naive Bayes falla por completo, y será necesario adaptar el procedimiento de KDE unidimensional a $d >= 2$ sin basarnos en el supuesto de independencia de las $X_1, dots, X_k$. A lo largo de las cuatro décadas posteriores a las publicaciones de Parzen y Rosenblatt, el estudio de los estimadores de densidad por núcleos avanzó considerablemente, de manera que ya para mediados de los \'90 existían minuciosos libros de referencia como "Kernel Smoothing" @wandKernelSmoothing1995, que seguiremos en la presente sección.
 
 #defn([KDE multivariada, @wandKernelSmoothing1995[§4]])[
   En su forma más general, estimador de densidad por núcleos #box[$d-$ variado] es
@@ -301,7 +314,7 @@ En casos como este, el procedimiento de Naive Bayes falla miserablemente, y ser�
   $
 
   donde
-  - $HH in RR^(d times d)$ es una matriz simétrica def. pos. análoga a la ventana $h in RR$ para $d=1$,
+  - $HH in RR^(d times d)$ es una matriz simétrica definida positiva análoga a la ventana $h in RR$ para $d=1$,
   - $KH(t) = abs(det HH)^(-1/2) K(HH^(-1/2) t)$
   - $K$ es una función núcleo $d$-variada tal que $integral K(bu(x)) d bu(x) = 1$
 ] <kde-mv>
@@ -312,22 +325,21 @@ $
 $
 
 === La elección de $HH$
-Sean las clases de matrices $RR^(d times d)$ ...
+Sean las clases de matrices $RR^(d times d)$
 - $cal(F)$, de matrices simétricas definidas positivas,
 - $cal(D)$, de matrices diagonales definidas positivas ($cal(D) subset.eq cal(F)$) y
 - $cal(S)$, de múltiplos escalares de la identidad: $cal(S) = {h^2 bu(I):h >0} subset.eq cal(D)$
 
-
-Aún tomando una única $HH$ para _toda_ la muestra, $HH in dots$, la elección de $HH$ en dimensión $d$ requiere definir...
-- $mat(d; 2) = (d^2 - d) slash 2$ parámetros de ventana si $HH in cal(F)$,
+Aún tomando una única $HH$ para _toda_ la muestra, la elección de $HH$ en $d$ dimensiones requiere ajustar
+- $mat(d; 2) = (d^2 - d) slash 2$ parámetros si $HH in cal(F)$,
 - $d$ parámetros si $HH in cal(D)$ y
 - un único parámetro $h$ si $HH = h^2 bu(I)$.
 
-La evaluación de la conveniencia relativa de cada parametrización se vuelve muy compleja, muy rápido. @wandComparisonSmoothingParameterizations1993 proveen un análisis detallado para el caso $d = 2$, y concluyen que aunque cada caso amerita su propio estudio, $HH in cal(D)$ suele ser "adecuado". Sin embargo, este no es un gran consuelo para valores de $d$ verdaderamente altos, en cuyo caso existe aún un problema más fundamental.
+La evaluación de la conveniencia relativa de cada parametrización se vuelve muy compleja, muy rápido. @wandComparisonSmoothingParameterizations1993 proveen un análisis detallado para el caso $d = 2$, y concluyen que aunque cada caso amerita su propio estudio, $HH in cal(D)$ suele un compromiso "adecuado" entre la complejidad de tomar $HH in cal(F)$ y la rigidez de $HH in cal(S)$. Sin embargo, este no es un gran consuelo para valores de $d$ verdaderamente altos, en cuyo caso existe aún un problema más fundamental.
 
 === La maldición de la dimensionalidad
 
-Uno estaría perdonado por suponer que el problema de estimar densidades en alta dimensión se resuelve con una buena elección de $HH$, y una muestra "lo suficientemente grande". Considérese, sin embargo, el siguiente ejercicio, adaptado para ilustrar ese "suficientemente grande":
+Uno estaría perdonado por suponer que el problema de estimar densidades en alta dimensión se resuelve con una buena elección de $HH$, y una muestra "lo suficientemente grande". Considérese, sin embargo, el siguiente ejercicio ilustrativo de cuánto es "suficientemente grande":
 
 #quote(attribution: [adaptado de @wandKernelSmoothing1995[§4.9 ej 4.1]])[
   Sean $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d), thick i in [N]$, y consideremos la estimación de la densidad en el origen, $hat(f)(bu(0))$. Suponga que el núcleo $K_(HH)$ es un "núcleo producto" basado en la distribución univariada $"Uniforme"(-1, 1)$, y $HH = h^2 bu(I)$. Derive una expresión para la proporción esperada de puntos incluidos dentro del soporte del núcleo $KH$ para $(h, d)$ arbitrarios.
@@ -353,42 +365,43 @@ $
 #let h = 0.5
 #let d = 20
 
-Para $h =#h, d=#d, thick Pr(X in [-#h,#h]^#d) = #h^(-#d) approx #calc.round(calc.pow(h, d), digits: 8)$, ¡menos de uno en un millón! En general, la caída es muy rápida, aún para valores altos de $h$. Si $X$ representa un segundo de audio respete el estándar _mínimo_ de llamadas telefónicas  #footnote[De Wikipedia: La tasa #link("https://en.wikipedia.org/wiki/Digital_Signal_0")[DS0], o _Digital Signal 0_, fue introducida para transportar una sola llamada de voz "digitizada". La típica llamada de audio se digitiza a $8 "kHz"$, o a razón de 8.000 veces por segundo. se]
-#image("img/curse-dim.png")tiene $d=8000$.
-En tal espacio ambiente, aún con $h=0.999$,
-$Pr(dot) approx #calc.round(calc.pow(0.999, 8000), digits: 6)$, o 1:3.000.
+Para $h =#h, d=#d, thick Pr(X in [-#h,#h]^#d) = #h^(-#d) approx #calc.round(calc.pow(h, d), digits: 8)$, ¡menos de uno en un millón! En general, la caída es muy rápida, aún para valores altos de $h$. Si $X$ representa un segundo de audio muestreado respetando el estándar _mínimo_ para llamadas telefónicas  #footnote[De Wikipedia: La tasa #link("https://en.wikipedia.org/wiki/Digital_Signal_0")[DS0], o _Digital Signal 0_, fue introducida para transportar una sola llamada de voz "digitizada". La típica llamada de audio se digitiza a $8 "kHz"$, o a razón de 8.000 veces por segundo.], tiene $d=8000$. En tal espacio ambiente, aún con $h=0.999$, $Pr(dot) approx #calc.round(calc.pow(0.999, 8000), digits: 6)$, o 1:3.000.
 
+#figure(
+  caption: flex-caption([Proporción de $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d)$ dentro de un $d$-cubo de lado $h$ para valore seleccionados de $h$.], [Proporción de $X$ dentro de un $d$-cubo de lado $h$]),
+  image("img/curse-dim.png"),
+)
 === La hipótesis de la variedad ("manifold hypothesis")
 
-Ahora, si el espacio está _tan_, pero _tan_ vacío en alta dimensión, ¿cómo es que el aprendizaje supervisado _sirve de algo_? La reciente explosión en capacidades y herramientas de procesamiento (¡y generación!) de formatos de altísima dimensión #footnote[audio, video, texto y data genómica por citar sólo algunos] pareciera ser prueba fehaciente de que la tan mentada _maldición de la dimensionalidad_ no es más que un cuento de viejas.
+Ahora, si el espacio está _tan_, pero _tan_ vacío en alta dimensión, ¿cómo es que el aprendizaje supervisado _sirve de algo_? La reciente explosión en capacidades y herramientas de procesamiento (¡y generación!) de formatos de altísima dimensión #footnote[audio, video, texto y data genómica, por citar sólo algunos] pareciera ser prueba fehaciente de que la tan mentada _maldición de la dimensionalidad_ no es más que una fábula para asustar estudiantes de estadística.
 
-Pues bien, el ejemplo del segundo de audio antedicho _es_ sesgado, ya que simplemente no es cierto que si $X$ representa $1s$ de voz humana , su ley sea uniforme 8000 dimensiones #footnote[El audio se digitiza usando 8 bits para cada muestra, así que más precisamente, $sop X = [2^8]^8000$ o $64 "kbps"$, kilobits-por-segundo.]: si uno muestreara un segundo de audio siguiendo cualquier distribución en la que muestras consecutivas no tengan ninguna correlación, obtiene #link("https://es.wikipedia.org/wiki/Ruido_blanco")[_ruido blanco_]. La voz humana, por su parte, tiene _estructura_, y por ende correlación instante-a-instante. Cada voz tiene un _timbre_ característico, y las palabras enuncidas posibles están ceñidas por la _estructura fonológica_ de la lengua locutada.
+Pues bien, el ejemplo de un segundo segundo de audio antedicho _es_ sesgado: no es cierto que si $X$ representa un segundo de voz humana digitizada, su ley sea uniforme en 8000 dimensiones #footnote[El audio se digitiza usando 8 bits para cada muestra, así que más precisamente, si $B = [2^8] = {1, dots, 256}, sop X = B^8000$ o $64 "kbps"$, kilobits-por-segundo.]. Un segundo de audio generado siguiendo cualquier distribución en la que muestras consecutivas no tengan ninguna correlación, obtiene #link("https://es.wikipedia.org/wiki/Ruido_blanco")[_ruido blanco_]. La voz humana, por su parte, tiene _estructura_, y por ende correlación instante a instante. Cada voz tiene un _timbre_ característico, y las palabras enuncidas posibles están ceñidas por la _estructura fonológica_ de la lengua locutada.
 
-Sin precisar detalles, podríamos postular que las realizaciones de la variable de interés $X$ (el habla), que registramos en un soporte $cal(S) subset.eq RR^d$ de alta dimensión, en realidad se concentran en cierta _variedad_ #footnote[Término que ya precisaremos. Por ahora, #MM es el _subespacio de realizaciones posibles_ de $X$] $MM subset.eq cal(S)$ potencialmente de mucha menor dimensión $dim (M) = d_MM << d$, en la que noción de distancia entre observaciones aún conserva significado. A tal postulado se lo conoce como "la hipótesis de la variedad", o _manifold hypothesis_. <hipotesis-variedad> #footnote[Para el lector curioso: @rifaiManifoldTangentClassifier2011 ofrece un desglose de la hipótesis de la variedad en tres aspectos complementarios, de los cuales el aquí presentado sería el segundo, la "hipótesis de la variedad no-supervisada. El tercero, "la hipótesis de la variedad para clasificación", dice que "puntos de distintas clases se concentrarán sobre variedades disjuntas separadas por regiones de muy baja densidad, lo asumimos implícitamente a la hora de construir un clasificador.]
+Sin precisar detalles, podríamos postular que las realizaciones de la variable de interés $X$ (el habla), que registramos en un soporte $cal(S) subset.eq RR^d$ de alta dimensión, en realidad se concentran en cierta _variedad_ #footnote[Término que ya precisaremos. Por ahora, #MM es el _subespacio de realizaciones posibles_ de $X$] $MM subset.eq cal(S)$ potencialmente de mucha menor dimensión $dim MM = d_MM << d = dim cal(S)$, en la que noción de distancia entre observaciones aún conserva significado. A tal postulado se lo conoce como "la hipótesis de la variedad", o _manifold hypothesis_. <hipotesis-variedad> #footnote[Para el lector curioso: @rifaiManifoldTangentClassifier2011 ofrece un desglose de la hipótesis de la variedad en tres aspectos complementarios, de los cuales el aquí presentado sería el segundo, la "hipótesis de la variedad no-supervisada". El tercero, "la hipótesis de la variedad para clasificación", dice que "puntos de distintas clases se concentrarán sobre variedades disjuntas separadas por regiones de muy baja densidad", y lo asumimos implícitamente a la hora de construir un clasificador.]
 
 
-La hipótesis de la variedad no es exactamente una hipótesis contrastable en el sentido tradicional del método científico; de hecho, ni siquiera resulta obvio que de existir, sean bien definibles las variedades en las que existen los elementos del mundo real: un dígito manuscrito, el canto de un pájaro, o una flor. Y de existir, es de esperar que sean altamente #box[no-lineales].
+La hipótesis de la variedad no es exactamente una hipótesis contrastable en el sentido tradicional del método científico; de hecho, ni siquiera resulta obvio que de existir, sean bien definibles las variedades en las que existen los elementos del mundo real: un dígito manuscrito, el canto de un pájaro, o una flor. Y de existir, es de esperar que sean altamente #box[no-lineales]. Más bien, corresponde entenderla como un modelo mental, que nos permite aventurar ciertas líneas prácticas de trabajo en alta dimensión #footnote[El concepto de "variedad" para denotar un espacio no-euclídeo con ciertas características intuitivas está bastante extendido en literatura no estrictamente matemática. Para el lector ávido, mencionamos dos _papers_ interesantes al de respecto de potenciales modelos "varietales" de fenómenos como la empatía y la conciencia.
+
+
+
+
+  Uno es @galleseRootsEmpathyShared2003 ("Las Raíces de la Empatía: La Hipótesis de la Variedad Compartida y las Bases Neuronales de la Intersubjetividad"): la hipótesis sostiene que existe un espacio intersubjetivo que compartimos con los demás. No somos mentes aisladas intentando descifrar a otras mentes aisladas; más bien, habitamos un espacio común de acción y emoción. Este "nosotros" (_we-centric space_) es la condición de posibilidad para la empatía. Reconocemos al otro no como un objeto, sino como otro "yo", porque cohabitamos la misma variedad corporal y neuronal.
+
+  El otro es  @bengioConsciousnessPrior2019, "El _Prior_ de la Consciencia", en el que se postula que ante un espacio infinito de estímulos, la consciencia tiene una función evolutiva y computacional específica: actuar como un cuello de botella de información para facilitar el razonamiento y la generalización. La conciencia produce representación _rala_ y de baja dimensionalidad compuesta por los factores salientes de entre los estímulos recibidos y sus interconexiones - una cierta forma de variedad intrínsice de baja dimensionalidad.].
 
 #figure(caption: flex-caption(
-  [Ejemplos de variedades en el mundo físico: tanto la hoja de un árbol como una bandera flameando al viento tienen dimensión intrínseca $d_MM = 2$, están embedidas en $RR^3$, y son definitivamente no-lineales.],
+  [Ejemplos de variedades en el mundo físico: una bandera flameando al viento, el pétalo de una flor. Ambas tienen dimensión $d_MM = 2$, están embedidas en $RR^3$, y no son lineales.],
   "Ejemplos de variedades en el mundo físico",
 ))[
-  #columns(2, [
-    #image("img/hormiga-petalo.jpg")
-    #colbreak()
-    #image("img/bandera-argentina.png")
-  ])
+  #grid(
+  columns: (1fr, 1fr),
+  column-gutter: 1em,
+  image("img/hormiga-petalo.jpg", height: 14em),
+  image("img/bandera-argentina.png", height: 14em),
+)
 ]
-
-
-Más bien, corresponde entenderla como un modelo mental, que nos permite aventurar ciertas líneas prácticas de trabajo en alta dimensión #footnote[El concepto de "variedad" para denotar un espacio no-euclídeo con ciertas características intuitivas está bastante extendido en literatura no estrictamente matemática. Para el lector ávido, mencionamos dos _papers_ interesantes al de respecto de potenciales modelos "varietales" de fenómenos como la empatía y la conciencia.
-
- Uno es @galleseRootsEmpathyShared2003 ("Las Raíces de la Empatía: La Hipótesis de la Variedad Compartida y las Bases Neuronales de la Intersubjetividad"): la hipótesis sostiene que existe un espacio intersubjetivo que compartimos con los demás. No somos mentes aisladas intentando descifrar a otras mentes aisladas; más bien, habitamos un espacio común de acción y emoción. Este "nosotros" (_we-centric space_) es la condición de posibilidad para la empatía. Reconocemos al otro no como un objeto, sino como otro "yo", porque cohabitamos la misma variedad corporal y neuronal.
-
-El otro es  @bengioConsciousnessPrior2019, "El _Prior_ de la Consciencia", en el que se postula que ante un espacio infinito de estímulos, la consciencia tiene una función evolutiva y computacional específica: actuar como un cuello de botella de información para facilitar el razonamiento y la generalización. La conciencia produce representación _rala_ y de baja dimensionalidad compuesta por los factores salientes de entre los estímulos recibidos y sus interconexiones - una cierta forma de variedad intrínsice de baja dimensionalidad.]. Antes de profundizar en esta línea, debemos plantearnos algunas preguntas básicas:
-
+ Antes de profundizar en esta línea, debemos plantearnos algunas preguntas básicas:
 #align(center)[
-  \
   ¿Qué es, exactamente, una variedad? \ \
   ¿Es posible construir un KDE con soporte en cierta variedad _conocida_? \ \
   ¿Sirve de algo todo esto si _no conocemos_ la variedad en cuestión?
@@ -1651,13 +1664,13 @@ Poner a legos a implementar algoritmos numéricos complejos no suele terminar bi
 TODO el que dice que basta con aprender alpha que junta $d$ y $beta$ en uno solo tiene razón
 
 En ninguno de los datasets estudiados (casos con bajo $D in {2, 3}$) se vieron modos "catastróficos" donde la performance de $f-$[#kdc|#kn] fuese muchísimo peor que la de sus pares euclídeos. En los datasets en que se comprueba una ventaja sistemática de #fkdc (resp. #fkn) sobre #kdc (resp. #kn), se puede explicar por dos efectos:
-- En todos los casos examinados, una parte importante de la ventaja se da por una "simbiosis" positiva entre el mecanismo de selección de modelos de @r1sd, y el espacio de parámetros ampliado por la dimensión de $alpha$. Ésta resulta en parametrizaciones de #fkdc (resp. #fkn) con $alpha=1$ y ligeramente mejor $R^2$ que #kdc (resp. #kn) ignora. 
+- En todos los casos examinados, una parte importante de la ventaja se da por una "simbiosis" positiva entre el mecanismo de selección de modelos de @r1sd, y el espacio de parámetros ampliado por la dimensión de $alpha$. Ésta resulta en parametrizaciones de #fkdc (resp. #fkn) con $alpha=1$ y ligeramente mejor $R^2$ que #kdc (resp. #kn) ignora.
 - En ciertos casos (como #fkn en `hueveras_0`), acontece que parte de la mejora se debe a la elección de parametrizaciones de #fkn que coinciden en el $k$ elegido con #kn, pero además registran un $alpha > 1$ - i.e., una mejora _netamente gracias a_ el uso de la distancia de Fermat muestral.
 
 El "caso general", en el que #fkdc anda tan bien o mal como #kdc, observamos una relación log-lineal, $ log(h) prop alpha $ que se discierne en la _superficie de pérdida_ de entrenamiento como un "risco" de parametrizaciones equivalentes en bondad. Entendemos que esto sucede porque
 - los datasets están "bien sampleados" y
 - para todo $p in MM$ una variedad de Riemann, siempre existe un vecindario dentro del radio de inyectividad de $"iny"_p MM$ en el que $cal(D)_(f,beta) prop norm(dot)$
-En estas circunstancias existe un $h <=  "iny"_p MM$ tal que el efecto de $alpha$ "(des)inflando" la distancia euclídea puede ser sustituido completamente por una parametrización con distinto $h$, y no hay ventaja alguna que obtener usando distancia de Fermat (#fkn o #fkdc) en lugar de euclídea.
+En estas circunstancias existe un $h <= "iny"_p MM$ tal que el efecto de $alpha$ "(des)inflando" la distancia euclídea puede ser sustituido completamente por una parametrización con distinto $h$, y no hay ventaja alguna que obtener usando distancia de Fermat (#fkn o #fkdc) en lugar de euclídea.
 
 Los métodos de estimación por densidad de núcleos son "altamente locales", y por ende sólo vemos mejoras no-triviales de $R^2$ en circunstancias extraordinarias, como en los datasets de `espirales`, `helices` o `hueveras` en que aún los vecindarios locales son altamente no-euclídeos.
 
@@ -1710,7 +1723,6 @@ Sería interesante entonces investigar si existen condiciones reales en las que 
 #outline(target: figure.where(kind: table), title: "Listado de Tablas")
 
 #bibliography("../bib/references.bib", style: "harvard-cite-them-right")
-
 
 
 = Apéndice A: Fichas de resultados por dataset <apendice-a>
