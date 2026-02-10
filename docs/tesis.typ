@@ -513,7 +513,8 @@ Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métric
 #obs[ Cuando $MM=RR^d$, el espacio es constante e idéntico a la variedad: $forall p in RR^d, thick T_p RR^d = RR^d$. La base canónica de $T_p RR^d = RR^d$ formada por las columnas de $bu(I)_d$ es una matriz positiva definida que da lugar al producto interno "clásico" $dotp(u, v) = u^T bu(I)_d v = sum_(i=1)^d u_i v_i$. $dotp(u, v)$ es una métrica Riemanniana que induce la norma euclídea $norm(v) = sqrt(v^T v)$ y la distancia $d(x, y) = norm(x-y)$.]
 
 === Geodésicas y mapa exponencial
-Dado este andamiaje, podemos reconstruir algunos conceptos básicos, como longitud, distancia y geodésica.
+Con las definiciones previas podemos definir algunos conceptos fundamentales como longitud, distancia y geodésica en variedades de Riemann.
+
 Sea $gamma : [a, b] -> MM$ una _curva diferenciable_ en #MM, y $gamma'$ su derivada. La _longitud_ de $gamma$ está dada por
 $
   L(gamma) = integral_a^b norm(gamma'(t)) dif t = integral_a^b sqrt(op(g_(gamma(t)))(gamma'(t), gamma'(t))) dif t
@@ -524,11 +525,9 @@ $ <longitud-euclidea>
     dg(p, q) = inf_(gamma) thick {L(gamma) : thick thick gamma: [0, 1] -> MM, thick gamma(0)=p,thick gamma(1)=q}
   $
 ]
-A la curva $gamma$ que minimiza la distancia entre $p$ y $q$ se la denomina _geodésica_, una generalización de la "línea recta" en la geometría euclídea.
+Una _geodésica_ es una generalización de la "línea recta" en la geometría euclídea. Considérese la siguiente analogía #footnote[Este párrafo y el que sigue están adaptados de "El Flujo Geodésico" @docarmoRiemannianGeometry1992[§3.2]]: en la física clásica, un objeto que no es sujeto a ninguna fuerza (no recibe _aceleración_ alguna) estará o quieto (con velocidad nula) o en movimiento _rectilíneo_ uniforme ("MRU"). En variedades diferenciables, las geodésicas son exactamente eso: curvas sin aceleración, $gamma''(t) = 0 forall t$. En particular, una geodésica es localmente minimizante de longitud: la curva $gamma$ que realiza la distancia $dg(p, q)$ es necesariamente una geodésica.
 
-En efecto, considérese la siguiente analogía: en la física clásica, un objeto que no es sujeto a ninguna fuerza (no recibe _aceleración_ alguna), estará o quieto (con velocidad nula) o en movimiento rectilíneo uniforme ("MRU"). En variedades diferenciables, la geodésicas son exactamente eso: curvas parametrizables sin aceleración ($gamma''(t) = 0 forall t$). En esta línea "intuitiva", lo que sigue es una adaptación de "El flujo geodésico" @docarmoRiemannianGeometry1992[§3.2].
-
-Sea $gamma : [0, 1] -> MM, gamma(0) = p, gamma(1)=q$  una curva parametrizable. Su derivada en el origen - su _velocidad inicial_ - $gamma'(0)$ es necesariamente tangente a $gamma(0) = p in MM$, o sea que $gamma'(0) in T_p MM$: el espacio tangente $T_p MM$ contiene todas las _velocidades_ posibles desde $p$. Dada una velocidad $v in T_p MM$, podemos descomponerla en su _magnitud_ $norm(v)$ y su _dirección_ $v / norm(v)$. Como la geodésica es una curva sin aceleración, $g''(t) = 0 forall t in [0, 1]$, y luego $g'(t) = g'(0) = v in T_p MM forall t in [0, 1]$. La geodésica de $p$ a $q$ es la única curva $gamma : [0, 1] -> MM, gamma(0) = p$ con velocidad inicial $gamma'(0) = v in T_p MM$, de modo que $L(gamma) = norm(v) = dg(p, q)$ y luego de "una unidad de tiempo", $gamma(1) = q$.
+Sea $p in MM$ y $v in T_p MM$ un vector tangente en $p$, que interpretamos como una _velocidad inicial_: su dirección $v slash norm(v)$ indica hacia dónde partir y su magnitud $norm(v)$ indica cuán rápido. Por existencia y unicidad de soluciones de ecuaciones diferenciales, existe una única geodésica $gamma$ con $gamma(0) = p$ y $gamma'(0) = v$. Como $gamma''(t) = 0 forall t$, la rapidez a lo largo de $gamma$ es constante: $norm(gamma'(t)) = norm(v) forall t$, de modo que $L(gamma) = integral_0^1 norm(gamma'(t)) dif t = norm(v)$. Tras una unidad de tiempo, la geodésica alcanza el punto $gamma(1) in MM$, habiendo recorrido una longitud $norm(v)$.
 
 Esta relación, entre vectores de $T_p MM$ y geodésicas de $MM$ con origen en $p$, nos permite relacionar una "bola" en $T_p MM$ con su análogo en $MM$.
 
@@ -560,8 +559,7 @@ La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geod�
   $
 ]
 
-#obs[Si $MM = RR^d$ con la métrica canónica entonces$"iny" MM = oo$. Si $MM = RR^d - {p}$, con la métrica usual, entonces existe un punto arbitrariamente cerca de $p$ en el que la geodésica que irradia en dirección a $p$ se corta inmediatamente: entonces el radio de inyectividad es cero. Si $MM = S^1$ con radio unitario y la métrica inducida de $RR^2$, el radio de inyectividad es $pi$, puesto que si tomamos "el polo norte" $p_N$ como origen de un espacio tangente $T_p_N S^1$, todas (las dos) geodésicas que salen de él llegan al polo sur $p_S$ "al mismo tiempo" $pi$, y perdemos la inyectividad.
-]
+#obs[Si $MM = RR^d$ con la métrica canónica entonces $"iny" MM = oo$. Si $MM = RR^d - {p}$, con la métrica usual, entonces existe un punto arbitrariamente cerca de $p$ en el que la geodésica que irradia en dirección a $p$ se corta inmediatamente: entonces el radio de inyectividad es cero. Si $MM = S^1$ con radio unitario y la métrica inducida de $RR^2$, el radio de inyectividad es $pi$, puesto que si tomamos "el polo norte" $p_N$ como origen de un espacio tangente $T_p_N S^1$, todas las geodésicas que salen de él llegan al polo sur $p_S$ "al mismo tiempo" $pi$, y perdemos la inyectividad.]
 
 #figure(caption: flex-caption(
   [Espacio tangente y mapa exponencial para $p_N in S^1$. Nótese que $"iny" S^1 = pi$. Prolongando una geodésica  $gamma(t)$ más allá de $t = pi$, ya no se obtiene un camino mínimo, pues hubiese sido más corto llegar por $-gamma(s), thick s = t mod pi$.],
@@ -570,16 +568,21 @@ La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geod�
 
 
 Agregamos una última definición para restringir la clase de variedades de Riemann que nos interesará:
+
+#defn("punto límite")[Un punto $x$ es límite del conjunto $S$ si toda vecindad abierta de $x$ contiene puntos de $S$ distintos de $x$.]
+
+#v(-1em)
+
 #defn("variedad compacta")[
-  Decimos que una variedad es _acotada_ cuando $sup_((p, q) in MM^2) dg(p, q) = overline(d) < oo$ - no posee elementos distanciados infinitamente entre sí. Una variedad que incluya todos sus "puntos límite" es una variedad _cerrada_. Una variedad cerrada y acotada se denomina _compacta_.
+  Decimos que una variedad es _acotada_ cuando $sup_((p, q) in MM^2) dg(p, q) = overline(d) < oo$ -- i.e., no posee elementos distanciados infinitamente entre sí. 
+  Una variedad que incluya todos sus "puntos límite" es una variedad _cerrada_. Una variedad cerrada y acotada se denomina _compacta_.
 ]
 
 #obs[
-  Un círculo en el plano, $S^1 subset RR^2 = {(x, y) : x^2 + y^2 = 1}$ es una variedad compacta: es acotada - ninguna distancia es mayor a medio gran círculo, $pi$ - y cerrada. $RR^2$ es una variedad cerrada pero no acotada. El "disco sin borde" ${(x, y) in RR^2 : x^2 + y^2 < 1}$ es acotado pero no cerrado - pues no incluye su borde $S^1$. El "cilindro infinito" ${(x, y, z) in RR^3 : x^2 + y^2 < 1}$ no es ni acotado ni compacto.
+  Un círculo en el plano, $S^1 subset RR^2 = {(x, y) : x^2 + y^2 = 1}$ es una variedad compacta: es acotada -- ninguna distancia es mayor a medio gran círculo, $pi$ -- y cerrada. $RR^2$ es una variedad cerrada pero no acotada. El "disco sin borde" ${(x, y) in RR^2 : x^2 + y^2 < 1}$ es acotado pero no cerrado - pues no incluye su frontera $S^1$. El "cilindro infinito" ${(x, y, z) in RR^3 : x^2 + y^2 < 1}$ no es ni acotado ni cerrado.
 ]
 
-Ahora sí, hemos arribado a un objeto lo suficientemente "bien portado" para soportar funciones diferenciables, una noción de distancia y todo aquello que precisamos para definir elementos aleatorios: la variedad de Riemann compacta sin frontera. Cuando hablemos de una variedad de Riemann sin calificarla, nos referiremos a esta.
-
+Ahora sí, hemos arribado a un objeto lo suficientemente "bien portado" para soportar funciones diferenciables, una noción de distancia y todo aquello que precisamos para definir elementos aleatorios: la _variedad de Riemann compacta sin frontera_. Cuando hablemos de una variedad de Riemann sin calificarla, nos referiremos a esta.
 
 
 === Probabilidad en Variedades
@@ -587,11 +590,11 @@ Hemos definido una clase bastante general de variedades - las variedades de Riem
 Probablemente la referencia más antigua a un elemento aleatorio en una variedad distinta a $RR^d$, se deba a Richard von Mises, en _Sobre la naturaleza entera del peso atómico y cuestiones relacionadas_ @vonmisesUberGanzzahligkeitAtomgewicht1918 #footnote["Über die 'ganzzahligkeitwder' atomgewichte und verwandte fragen". en el original]. En él, von Mises se plantea la pregunta explícita de si los pesos atómicos - que empíricamente se observan siempre muy cercanos a la unidad para los elementos más livianos - son enteros con un cierto error de medición, y argumenta que para tal tratamiento, el "error gaussiano" clásico es inadecuado:
 
 #quote(attribution: [traducido de @vonmisesUberGanzzahligkeitAtomgewicht1918])[
-  (dots) Pues no es evidente desde el principio que, por ejemplo, para un peso atómico de $35,46$ (Cl), el error sea de $+0,46$ y no de $-0,54$: es muy posible que se logre una mejor concordancia con ciertos supuestos con la segunda determinación. A continuación, se desarrollan los elementos — esencialmente muy simples — de una "teoría del error cíclico", que se complementa con la teoría gaussiana o "lineal" y permite un tratamiento completamente inequívoco del problema de la "enteridad" y cuestiones similares.
+  ($dots$) Pues no es evidente desde el principio que, por ejemplo, para un peso atómico de $35,46$ (Cl), el error sea de $+0,46$ y no de $-0,54$: es muy posible que se logre una mejor concordancia con ciertos supuestos con la segunda determinación. A continuación, se desarrollan los elementos — esencialmente muy simples — de una "teoría del error cíclico", que se complementa con la teoría gaussiana o "lineal" y permite un tratamiento completamente inequívoco del problema de la "enteridad" y cuestiones similares.
 ]
 
 #figure(
-  image("img/von-mises-s1.png"),
+  image("img/von-mises-s1.png", height: 16em),
   caption: [Pretendido "error" - diferencia módulo 1 - de los pesos atómicos medidos para ciertos elementos, sobre $S^1$. Nótese como la mayoría de las mediciones se agrupan en torno al $0.0$.],
 )
 Motivado también por un problema del mundo físico - las mediciones de posición en una esfera "clásica" $S^2 subset RR^3$, Ronald Fisher escribe "Dispersiones en la esfera" @fisherDispersionSphere1957, donde desarrolla una forma de teoría que parece ser apropiada para mediciones de posición en una esfera #footnote[y como era de esperar del padre del test de hipótesis, también un test de significancia análogo al t de Student.] y los ilustra utilizando mediciones de la dirección de la magnetización remanente de flujos de lava directa e inversamente magnetizados en Islandia.
