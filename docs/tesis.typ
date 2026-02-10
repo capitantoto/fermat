@@ -188,10 +188,10 @@ $
                 & <=> Pr(GG_k|X=x) =max_(k in [K]) Pr(X=x|GG_k) times Pr(GG_k) \
 $
 
-A las probabilidades "incondicionales" de clase $Pr(GG_k)$ se las suele llamar su "distribución a priori", y notarlas por $pi = (pi_1, dots, pi_K)^T, sum pi_k = 1$. Una aproximación razonable, si es que el conjunto de entrenamiento se obtuvo por muestreo aleatorio simple, es estimarlas a partir de las proporciones muestrales: $forall k in [K]$,
+A las probabilidades "incondicionales" de clase $Pr(GG_k)$ se las suele llamar su "distribución a priori", y notarlas por $pi = (pi_1, dots, pi_K)^T, sum pi_k = 1$. Una aproximación razonable, si es que el conjunto de entrenamiento se obtuvo por muestreo aleatorio simple, es estimarlas a partir de las proporciones muestrales:
 $
-  hat(pi)_k & = N^(-1) sum_(i in [N]) ind(g_i = GG_k) \
-            & = \#{g_i : g_i = GG_k, i in [N]} / N
+  forall k in [K], quad hat(pi)_k & = N^(-1) sum_(i in [N]) ind(g_i = GG_k) \
+                                  & = \#{g_i : g_i = GG_k, i in [N]} / N
 $
 
 
@@ -368,44 +368,50 @@ $
 Para $h =#h, d=#d, thick Pr(X in [-#h,#h]^#d) = #h^(-#d) approx #calc.round(calc.pow(h, d), digits: 8)$, ¡menos de uno en un millón! En general, la caída es muy rápida, aún para valores altos de $h$. Si $X$ representa un segundo de audio muestreado respetando el estándar _mínimo_ para llamadas telefónicas  #footnote[De Wikipedia: La tasa #link("https://en.wikipedia.org/wiki/Digital_Signal_0")[DS0], o _Digital Signal 0_, fue introducida para transportar una sola llamada de voz "digitizada". La típica llamada de audio se digitiza a $8 "kHz"$, o a razón de 8.000 veces por segundo.], tiene $d=8000$. En tal espacio ambiente, aún con $h=0.999$, $Pr(dot) approx #calc.round(calc.pow(0.999, 8000), digits: 6)$, o 1:3.000.
 
 #figure(
-  caption: flex-caption([Proporción de $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d)$ dentro de un $d$-cubo de lado $h$ para valore seleccionados de $h$.], [Proporción de $X$ dentro de un $d$-cubo de lado $h$]),
+  caption: flex-caption(
+    [Proporción de $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d)$ dentro de un $d$-cubo de lado $h$ para valore seleccionados de $h$.],
+    [Proporción de $X$ dentro de un $d$-cubo de lado $h$],
+  ),
   image("img/curse-dim.png"),
 )
-=== La hipótesis de la variedad ("manifold hypothesis")
+=== La hipótesis de la variedad (_manifold hypothesis_)
 
 Ahora, si el espacio está _tan_, pero _tan_ vacío en alta dimensión, ¿cómo es que el aprendizaje supervisado _sirve de algo_? La reciente explosión en capacidades y herramientas de procesamiento (¡y generación!) de formatos de altísima dimensión #footnote[audio, video, texto y data genómica, por citar sólo algunos] pareciera ser prueba fehaciente de que la tan mentada _maldición de la dimensionalidad_ no es más que una fábula para asustar estudiantes de estadística.
 
 Pues bien, el ejemplo de un segundo segundo de audio antedicho _es_ sesgado: no es cierto que si $X$ representa un segundo de voz humana digitizada, su ley sea uniforme en 8000 dimensiones #footnote[El audio se digitiza usando 8 bits para cada muestra, así que más precisamente, si $B = [2^8] = {1, dots, 256}, sop X = B^8000$ o $64 "kbps"$, kilobits-por-segundo.]. Un segundo de audio generado siguiendo cualquier distribución en la que muestras consecutivas no tengan ninguna correlación, obtiene #link("https://es.wikipedia.org/wiki/Ruido_blanco")[_ruido blanco_]. La voz humana, por su parte, tiene _estructura_, y por ende correlación instante a instante. Cada voz tiene un _timbre_ característico, y las palabras enuncidas posibles están ceñidas por la _estructura fonológica_ de la lengua locutada.
 
-Sin precisar detalles, podríamos postular que las realizaciones de la variable de interés $X$ (el habla), que registramos en un soporte $cal(S) subset.eq RR^d$ de alta dimensión, en realidad se concentran en cierta _variedad_ #footnote[Término que ya precisaremos. Por ahora, #MM es el _subespacio de realizaciones posibles_ de $X$] $MM subset.eq cal(S)$ potencialmente de mucha menor dimensión $dim MM = d_MM << d = dim cal(S)$, en la que noción de distancia entre observaciones aún conserva significado. A tal postulado se lo conoce como "la hipótesis de la variedad", o _manifold hypothesis_. <hipotesis-variedad> #footnote[Para el lector curioso: @rifaiManifoldTangentClassifier2011 ofrece un desglose de la hipótesis de la variedad en tres aspectos complementarios, de los cuales el aquí presentado sería el segundo, la "hipótesis de la variedad no-supervisada". El tercero, "la hipótesis de la variedad para clasificación", dice que "puntos de distintas clases se concentrarán sobre variedades disjuntas separadas por regiones de muy baja densidad", y lo asumimos implícitamente a la hora de construir un clasificador.]
+Sin precisar detalles, podríamos postular que las realizaciones de la variable de interés $X$ (el habla), que registramos en un soporte $cal(S) subset.eq RR^d$ de alta dimensión, en realidad se concentran en cierta _variedad_ #footnote[Término que ya precisaremos. Por ahora, #MM es el _subespacio de realizaciones posibles_ de $X$] $MM subset.eq cal(S)$ potencialmente de mucha menor dimensión $dim MM = d_MM << d = dim cal(S)$, en la que noción de distancia entre observaciones aún conserva significado. A tal postulado se lo conoce como "la hipótesis de la variedad", o _manifold hypothesis_. <hipotesis-variedad>
+#footnote[
+  Para el lector curioso: @rifaiManifoldTangentClassifier2011 ofrece un desglose de la hipótesis de la variedad en tres aspectos complementarios, de los cuales el aquí presentado sería el segundo, la "hipótesis de la variedad no-supervisada". El tercero, "la hipótesis de la variedad para clasificación", dice que "puntos de distintas clases se concentrarán sobre variedades disjuntas separadas por regiones de muy baja densidad", y lo asumimos implícitamente a la hora de construir un clasificador.
+]
 
 
-La hipótesis de la variedad no es exactamente una hipótesis contrastable en el sentido tradicional del método científico; de hecho, ni siquiera resulta obvio que de existir, sean bien definibles las variedades en las que existen los elementos del mundo real: un dígito manuscrito, el canto de un pájaro, o una flor. Y de existir, es de esperar que sean altamente #box[no-lineales]. Más bien, corresponde entenderla como un modelo mental, que nos permite aventurar ciertas líneas prácticas de trabajo en alta dimensión #footnote[El concepto de "variedad" para denotar un espacio no-euclídeo con ciertas características intuitivas está bastante extendido en literatura no estrictamente matemática. Para el lector ávido, mencionamos dos _papers_ interesantes al de respecto de potenciales modelos "varietales" de fenómenos como la empatía y la conciencia.
+La hipótesis de la variedad no es exactamente una hipótesis contrastable en el sentido tradicional del método científico; de hecho, ni siquiera resulta obvio que de existir, sean bien definibles las variedades en las que existen los elementos del mundo real: un dígito manuscrito, el canto de un pájaro, o una flor. Y de existir, es de esperar que sean altamente #box[no-lineales]. Más bien, corresponde entenderla como un modelo mental, que nos permite aventurar ciertas líneas prácticas de trabajo en alta dimensión.
+#footnote[
+  El concepto de "variedad" para denotar más o menos formalmente un espacio no-euclídeo con ciertas características intuitivas está extendido en literatura no estrictamente matemática. Para el lector ávido, mencionamos dos _papers_ interesantes al respecto de potenciales modelos "varietales" de fenómenos como la empatía y la conciencia.
 
+  Uno es @galleseRootsEmpathyShared2003, _Las Raíces de la Empatía: La Hipótesis de la Variedad Compartida y las Bases Neuronales de la Intersubjetividad_: la hipótesis sostiene que existe un espacio intersubjetivo que compartimos con los demás. No somos mentes aisladas intentando descifrar a otras mentes aisladas; más bien, habitamos un espacio común de acción y emoción. Este "nosotros" (_we-centric space_) es la condición de posibilidad para la empatía. Reconocemos al otro no como un objeto, sino como otro "yo", porque cohabitamos la misma variedad corporal y neuronal.
 
-
-
-  Uno es @galleseRootsEmpathyShared2003 ("Las Raíces de la Empatía: La Hipótesis de la Variedad Compartida y las Bases Neuronales de la Intersubjetividad"): la hipótesis sostiene que existe un espacio intersubjetivo que compartimos con los demás. No somos mentes aisladas intentando descifrar a otras mentes aisladas; más bien, habitamos un espacio común de acción y emoción. Este "nosotros" (_we-centric space_) es la condición de posibilidad para la empatía. Reconocemos al otro no como un objeto, sino como otro "yo", porque cohabitamos la misma variedad corporal y neuronal.
-
-  El otro es  @bengioConsciousnessPrior2019, "El _Prior_ de la Consciencia", en el que se postula que ante un espacio infinito de estímulos, la consciencia tiene una función evolutiva y computacional específica: actuar como un cuello de botella de información para facilitar el razonamiento y la generalización. La conciencia produce representación _rala_ y de baja dimensionalidad compuesta por los factores salientes de entre los estímulos recibidos y sus interconexiones - una cierta forma de variedad intrínsice de baja dimensionalidad.].
+  El otro es  @bengioConsciousnessPrior2019, _El Prior de la Conciencia_, en el que se postula que ante un espacio infinito de estímulos, la conciencia tiene una función evolutiva y computacional específica: actuar como un cuello de botella de información para facilitar el razonamiento y la generalización. La conciencia produce una representación rala y de baja dimensionalidad compuesta por los factores salientes de entre los estímulos recibidos y sus interconexiones - es decir, una cierta variedad de baja dimensión intrínsica.
+]
 
 #figure(caption: flex-caption(
   [Ejemplos de variedades en el mundo físico: una bandera flameando al viento, el pétalo de una flor. Ambas tienen dimensión $d_MM = 2$, están embedidas en $RR^3$, y no son lineales.],
   "Ejemplos de variedades en el mundo físico",
 ))[
   #grid(
-  columns: (1fr, 1fr),
-  column-gutter: 1em,
-  image("img/hormiga-petalo.jpg", height: 14em),
-  image("img/bandera-argentina.png", height: 14em),
-)
+    columns: (1fr, 1fr),
+    column-gutter: 1em,
+    image("img/hormiga-petalo.jpg", height: 14em), image("img/bandera-argentina.png", height: 14em),
+  )
 ]
- Antes de profundizar en esta línea, debemos plantearnos algunas preguntas básicas:
+
+Antes de poder profundizar en esta línea, debemos plantearnos algunas preguntas básicas:
 #align(center)[
   ¿Qué es, exactamente, una variedad? \ \
   ¿Es posible construir un KDE con soporte en cierta variedad _conocida_? \ \
   ¿Sirve de algo todo esto si _no conocemos_ la variedad en cuestión?
-] <preguntas>
+]
 
 == Variedades de Riemann
 
@@ -414,6 +420,8 @@ Adelantando la respuesta a la segunda pregunta, resulta ser que si el soporte de
 A continuación, damos un recorrido sumario e idiosincrático por ciertos conceptos básicos de topología y variedades que consideramos necesarios para motivar la definición de variedades Riemannianas, que de paso precisarán la respuesta a la primera pregunta - ¿qué es una variedad? - en el contexto que nos interesa. A tal fin, seguimos la exposición de la monografía _Estimación no paramétrica de la densidad en variedades Riemannianas_ @munozEstimacionNoParametrica2011, que a su vez sigue, entre otros, el clásico _Introduction to Riemannian Manifolds_ @leeIntroductionRiemannianManifolds2018.
 
 === Variedades Diferenciables
+
+#v(-1em)
 
 #defn([espacio topológico @wikipediaEspacioTopologico2025])[
 
@@ -431,37 +439,38 @@ A los conjuntos pertenecientes a la topología $T$ se les llama conjuntos abiert
 #defn([entorno @wikipediaEntornoMatematica2025])[
   Si $(X,Τ)$ es un espacio topológico y $p$ es un punto perteneciente a X, un _entorno_ #footnote[ También se los conoce como "vecindarios" - por _neighborhoods_, su nombre en inglés.] del punto $p$ es un conjunto $V$ en el que está contenido un conjunto abierto $U$ que incluye al propio $p: p in U subset.eq V$.
 ]
-#defn([espacio de Hausdorff (TODO: ARROBA CITA WIKIPEDIA)])[
+
+#defn([espacio de Hausdorff @wikipediaEspacioHausdorff2024])[
 
   Sea $(X, T)$ un espacio topológico. Se dice que dos puntos $p, q in X$ cumplen la propiedad de Hausdorff si existen dos entornos $U_p$ de $p$ y $U_q$ de $q$ tales que $U_p inter U_q = emptyset$ (i.e., son disjuntos).
 
-  Se dice que un espacio topológico es un espacio de Hausdorff #footnote[o que verifica la propiedad de Hausdorff, o que es separado o que es $bu(T_2)$] si todo par de puntos distintos del espacio verifican la propiedad de Hausdorff.
+  Se dice que un espacio topológico es un espacio de Hausdorff #footnote[o que "verifica la propiedad de Hausdorff", o que "es separado o que es $bu(T_2)$"] si todo par de puntos distintos del espacio verifican la propiedad de Hausdorff.
 ]
 En términos coloquiales, un espacio de Hausdorff es aquel donde todos sus puntos están "bien separados".
 
 #defn(
   [variedad topológica @munozEstimacionNoParametrica2011[Def. 3.1.1], @leeIntroductionRiemannianManifolds2018[Apéndice A]],
 )[
-  Una variedad topológica de dimensión $d in NN$ es un espacio topológico $(MM, T)$ de Hausdorff, de base numerable, que es #strong[localmente homeomorfo a $RR^d$]. Es decir, para cada $p in MM$ existe un abierto $U in T$ y un abierto $A subset.eq RR^d$, tal que $p in U$ ($U$ es un entorno de $p$) y existe un homeomorfismo $phi : U -> A$.
+  Una variedad topológica de dimensión $d in NN$ es un espacio topológico $(MM, T)$ de Hausdorff, de base numerable, que es #strong[localmente homeomorfo a $RR^d$]. Es decir, para cada $p in MM$ existe un abierto $U in T$ y un abierto $A subset.eq RR^d$, tal que $p in U$ #footnote[de modo que $U$ es un entorno de $p$] y existe un homeomorfismo $phi : U -> A$.
 ]
 
 #obs(
   "Sobre variedades con y sin frontera",
-)[ Toda $n-$variedad #footnote[i.e. variedad de dimensión $n$] tiene puntos interiores, pero algunas además tienen una _frontera_; esta frontera es a su vez una variedad _sin_ frontera de dimensión $n - 1$. Por caso: un disco en el plano euclídeo $RR^2$ es una $2-$variedad _con_ frontera, cuya frontera es una variedad de dimensión $2 - 1 = 1$ sin frontera: el círculo $S^1$; una pelota de tenis es una $3-$variedad con frontera dada por su superficie, la variedad sin frontera $S^2$. De aquí en más, cuando hablemos de variedades topológicas, nos referiremos a variedades _sin_ frontera.]
+)[ Toda $n-$variedad #footnote[i.e. variedad de dimensión $n$] tiene puntos interiores, pero algunas además tienen una _frontera_; esta frontera es a su vez una variedad _sin_ frontera de dimensión $n - 1$. Por caso: un disco en el plano euclídeo $RR^2$ es una $2-$variedad _con_ frontera, cuya frontera es una variedad de dimensión $2 - 1 = 1$ sin frontera: el círculo $S^1$ #footnote[$S^n$ denota la $n-$esfera: la variedad de los puntos en $RR^(n+1)$ a distancia unitaria del origen. Así, $S^1$ es el círculo y $S^2$ es la superficie esférica.]; una pelota de tenis es una $3-$variedad con frontera dada por su superficie, que es (aproximadamente) la variedad sin frontera $S^2$. De aquí en más, cuando hablemos de variedades topológicas, nos referiremos a variedades _sin_ frontera.]
 
 
-En una variedad topológica, cobra sentido cierto concepto de cercanía - pero no necesariamente de _distancia_, y es posible definir funciones continuas y límites.
+En una variedad topológica, cobra sentido cierto concepto de cercanía pero no necesariamente de _distancia_, y es posible definir funciones continuas y límites.
 
-Un _homeomorfismo_ #footnote[del griego _homo-_: igual, _-morfo_: forma; de igual forma] es una función phi entre dos espacios topológicos si es biyectiva y tanto ella como su inversa son continuas. El par ordenado $(U, phi)$ es una _carta #footnote[_chart_ en inglés] alrededor de $p$_.
+Un _homeomorfismo_ #footnote[del griego _homo-_: igual, _-morfo_: forma; de igual forma] es una función $phi$ entre dos espacios topológicos si es biyectiva y tanto ella como su inversa son continuas. El par ordenado $(U, phi)$ es una _carta #footnote[_chart_ en inglés] alrededor de $p$_.
 
-A un conjunto numerable de tales cartas que cubran completamente la variedad se lo denomina "atlas". Simbólicamente, #box[$cal(A) = {(U_alpha, phi_alpha) : alpha in cal(I)}$] es un atlas sí y sólo si $MM = union_alpha U_alpha$. Al conjunto de entornos ${bu(U)_alpha} = {U_alpha : (U_alpha, phi_alpha) in cal(A)}$ que componen un atlas se lo denomina "cobertura" de #MM.
+A un conjunto numerable de tales cartas que cubran completamente la variedad se lo denomina "atlas". Simbólicamente, #box[$cal(A) = {(U_alpha, phi_alpha) : alpha in cal(I)}$] es un atlas sí y sólo si $MM = union_alpha U_alpha$. Al conjunto de entornos ${U_alpha : (U_alpha, phi_alpha) in cal(A)}$ que componen un atlas se lo denomina "cobertura" de #MM.
 
 Cuando un homeomorfismo - y su inversa - es $r-$veces diferenciable, se le llama _$C^r$-difeomorfismo_, o simplemente difeomorfismo #footnote[Luego, un homeomorfismo es un $C^0-$difeomorfismo]. En particular, un $C^oo-$difeomorfismo es un difeomorfismo _suave_.
 
-#defn("")
-Sean $(MM, T)$ una variedad topológica de dimensión $d$ y sean $(U, phi), (V, psi)$ dos cartas. Diremos que son _suavemente compatibles_ #footnote[_smoothly compatible_ según @leeIntroductionRiemannianManifolds2018[ § "Smooth Manifolds and Smooth Maps"]. @munozEstimacionNoParametrica2011 lo denomina _compatible_ a secas.] si $U inter V = emptyset$ o bien si la función cambio de coordenadas restringida a $U inter V$ es un difeomorfismo.
+#defn([cartas suavemente compatibles])[
+  Sean $(MM, T)$ una variedad topológica de dimensión $d$ y sean $(U, phi), (V, psi)$ dos cartas. Diremos que son _suavemente compatibles_ #footnote[_smoothly compatible_ según @leeIntroductionRiemannianManifolds2018[ § "Smooth Manifolds and Smooth Maps"]. @munozEstimacionNoParametrica2011 lo denomina _compatible_ a secas.] si $U inter V = emptyset$ o bien si la función cambio de coordenadas restringida a $U inter V$ es un difeomorfismo.]
 
-La compatibilidad requiere que la transición entre mapas no sea sólo continua, sino también _suave_. El motivo de esta condición es asegurar que el concepto de _suavidad_ esté bien definido en toda la variedad $MM$, independientemente de qué carta se use: si una función es diferenciable vista a través de una carta, también lo será al analizarla desde cualquier carta compatible.
+La compatibilidad requiere que la transición entre cartas no sea sólo continua, sino también _suave_. El motivo de esta condición es asegurar que el concepto de _suavidad_ esté bien definido en toda la variedad $MM$, independientemente de qué carta se use: si una función es diferenciable vista a través de una carta, también lo será al analizarla desde cualquier carta compatible.
 
 #defn([estructura diferenciable @munozEstimacionNoParametrica2011[Def. 3.1.3]])[
   Un atlas $cal(A) = {(U_alpha, phi_alpha) : alpha in cal(I)}$ es diferenciable si sus cartas son compatibles entre sí. Si un atlas diferenciable $cal(D)$ es _maximal_ lo llamaremos una _estructura diferenciable de la variedad $MM$ _. Con maximal queremos decir lo siguiente: Si $(U, phi)$ es una carta de $MM$ que es compatible con todas las cartas de $cal(D)$, entonces $(U, phi) in cal(D)$ #footnote[i.e., no existe otro atlas diferenciable que contenga propiamente a $cal(D)$, lo cual desambigua la referencia.]
@@ -470,36 +479,40 @@ La compatibilidad requiere que la transición entre mapas no sea sólo continua,
   Una variedad diferenciable de dimensión $d$ es una terna $(MM, tau, cal(D))$ donde $(MM, tau)$ es una variedad topológica de dimensión $d$ y $cal(D)$ una estructura diferenciable.
 ]
 
-Una variedad diferenciable entonces, es aquella en la que la operación de diferenciación tiene sentido no sólo punto a punto, sino globalmente. Nótese que de no poder diferenciar, tampoco podremos tomar integrales, y no sólo la _estimación_ de la densidad por núcleos sería imposible, sino que ni siquiera tendría sentido plantear una función densidad.
+Una variedad diferenciable entonces, es aquella en la que la operación de diferenciación tiene sentido no sólo punto a punto, sino globalmente. De no poder diferenciar, tampoco podremos tomar integrales, y definir funciones de densidad - ni hablar de estimarlas - resulta imposible.
 
-Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métrica_. En particular, toda variedad diferenciable admite una "métrica de Riemann" @carmoRiemannianGeometry1992[§1, Proposición 2.10].
+Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métrica_. En particular, toda variedad diferenciable admite una "métrica de Riemann" @docarmoRiemannianGeometry1992[§1, Proposición 2.10].
 
-#defn(["métrica Riemanniana" @carmoRiemannianGeometry1992[§1, Def. 2.1]])[
-  Sea $T_p MM$ el _espacio tangente_ a un punto $p in MM$. Una métrica Riemanniana -  o estructura Riemanniana  - en una variedad diferenciable $MM$ es una correspondencia que asocia a cada punto $p in MM$ un producto interno $dotp(dot, dot)$ (i.e., una forma bilinear simétrica positiva definida) en el espacio tangente $T_p MM$ que "varía diferenciablemente" #footnote[para el lector curioso, el texto original define precisamente el sentido de esta expresión] en el entorno de $p$.
+#defn(["métrica Riemanniana" @docarmoRiemannianGeometry1992[§1, Def. 2.1]])[
+  Sea $T_p MM$ el _espacio tangente_ a un punto $p in MM$. Una métrica Riemanniana -  o estructura Riemanniana  - en una variedad diferenciable $MM$ es una correspondencia que asocia a cada punto $p in MM$ un producto interno $dotp(dot, dot)$ (i.e., una forma bilinear simétrica definida positiva) en el espacio tangente $T_p MM$ que "varía diferenciablemente" #footnote[para el lector riguroso, el texto original define precisamente el sentido de esta expresión] en el entorno de $p$.
 
   A dicho producto interno se lo denomina $g_p$ e induce naturalmente una norma: $norm(v)_p= sqrt(op(g_p)(v, v)) = sqrt(dotp(v, v))$. Decimos entonces que $g_p$ es una métrica Riemanniana y el par $(MM, g)$ es una variedad de Riemann.
 ] <metrica-riemanniana>
 
-#figure(image("img/Tangent_plane_to_sphere_with_vectors.svg"), caption: flex-caption(
+#figure(image("img/Tangent_plane_to_sphere_with_vectors.svg", height: 12em), caption: flex-caption(
   [Espacio tangente  $T_p MM$ a una esfera $MM = S^2$ por $p$. Nótese que el espacio tangente varía con $p$, pero siempre mantiene la misma dimensión ($d=2$) que $MM$],
   [Espacio tangente en $S^2$],
 ))
 
 #obs(
-  [según @carmoRiemannianGeometry1992[Prop. 2.10]],
+  [según @docarmoRiemannianGeometry1992[Prop. 2.10]],
 )[
-  *Toda variedad diferenciable admite una métrica Riemanniana*, que se puede construir componiendo las métricas Riemannianas locales a cada carta de su estructura diferenciable según la "partición de la unidad"#footnote[La definición formal de "partición de la unidad" la da - sin prueba de existencia - @carmoRiemannianGeometry1992[§0.5, p. 30]. Intuitivamente, da una base funcional de #MM, en la que a cada entorno de la cobertura de #MM se le asigna una función $f_alpha$ de manera que $sum_alpha f_alpha (p) = 1 forall p in MM$. para  es una técnica que pondera con pesos que suman 1 las métricas locales a cada carta para obtener un resultado global coherente] ${bold(f)} = {f_alpha : alpha in cal(I)}$ subordinada a su cobertura.
+  *Toda variedad diferenciable admite una métrica Riemanniana*, que se puede construir componiendo las métricas Riemannianas locales a cada carta de su estructura diferenciable según la "partición de la unidad"
+  #footnote[
+    La definición formal de "partición de la unidad" se da sin prueba de existencia en @docarmoRiemannianGeometry1992[§0.5, p. 30]. A cada entorno $U_alpha$ de la cobertura de #MM se le asigna una función $f_alpha$ de manera que $sum_alpha f_alpha (p) = 1 forall p in MM$. Intuitivamente, da una base funcional de #MM, que al ser evaluadas en cualquier punto ponderan con pesos que suman 1 las métricas locales a cada carta para obtener un resultado global coherente.
+  ]
+  ${f_alpha : alpha in cal(I)}$ subordinada a su cobertura.
 
-  Es claro que podemos definir una métrica Riemanniana $dotp(dot, dot)^alpha$ en cada $V_alpha$: la métrica inducida por el sistema de coordenadas locales. Sea entonces el conjunto:
+  Es claro que podemos definir una métrica Riemanniana $dotp(dot, dot)^alpha$ en cada entorno $U_alpha$ de la cobertura: la métrica inducida por el sistema de coordenadas locales. Sea entonces:
   $
     dotp(u, v)_p = sum_alpha f_alpha (p) dotp(u, v)_p^alpha quad forall p in MM, thick u,v in T_p MM
   $
   es posible verificar que esta construcción define una métrica Riemanniana en todo #MM.
 ]
 
-#obs[ Cuando $MM=RR^d$, el espacio es constante e idéntico a la variedad: $forall p in RR^d, thick T_p RR^d = RR^d$. La base canónica de $T_p RR^d = RR^d$ formada por las columnas de $bu(I)_d$ es una matriz positiva definida que da lugar al producto interno "clásico" $chevron.l u,v chevron.r = u^T bu(I)_d v = sum_(i=1)^d u_i v_i$ es una métrica Riemanniana que induce la norma euclídea $norm(v) = sqrt(v^T v)$ y la distancia $d(x, y) = norm(x-y)$.]
+#obs[ Cuando $MM=RR^d$, el espacio es constante e idéntico a la variedad: $forall p in RR^d, thick T_p RR^d = RR^d$. La base canónica de $T_p RR^d = RR^d$ formada por las columnas de $bu(I)_d$ es una matriz positiva definida que da lugar al producto interno "clásico" $dotp(u, v) = u^T bu(I)_d v = sum_(i=1)^d u_i v_i$. $dotp(u, v)$ es una métrica Riemanniana que induce la norma euclídea $norm(v) = sqrt(v^T v)$ y la distancia $d(x, y) = norm(x-y)$.]
 
-==== Geodésicas y mapa exponencial
+=== Geodésicas y mapa exponencial
 Dado este andamiaje, podemos reconstruir algunos conceptos básicos, como longitud, distancia y geodésica.
 Sea $gamma : [a, b] -> MM$ una _curva diferenciable_ en #MM, y $gamma'$ su derivada. La _longitud_ de $gamma$ está dada por
 $
@@ -513,7 +526,7 @@ $ <longitud-euclidea>
 ]
 A la curva $gamma$ que minimiza la distancia entre $p$ y $q$ se la denomina _geodésica_, una generalización de la "línea recta" en la geometría euclídea.
 
-En efecto, considérese la siguiente analogía: en la física clásica, un objeto que no es sujeto a ninguna fuerza (no recibe _aceleración_ alguna), estará o quieto (con velocidad nula) o en movimiento rectilíneo uniforme ("MRU"). En variedades diferenciables, la geodésicas son exactamente eso: curvas parametrizables sin aceleración ($gamma''(t) = 0 forall t$). En esta línea "intuitiva", lo que sigue es una adaptación de "El flujo geodésico" @carmoRiemannianGeometry1992[§3.2].
+En efecto, considérese la siguiente analogía: en la física clásica, un objeto que no es sujeto a ninguna fuerza (no recibe _aceleración_ alguna), estará o quieto (con velocidad nula) o en movimiento rectilíneo uniforme ("MRU"). En variedades diferenciables, la geodésicas son exactamente eso: curvas parametrizables sin aceleración ($gamma''(t) = 0 forall t$). En esta línea "intuitiva", lo que sigue es una adaptación de "El flujo geodésico" @docarmoRiemannianGeometry1992[§3.2].
 
 Sea $gamma : [0, 1] -> MM, gamma(0) = p, gamma(1)=q$  una curva parametrizable. Su derivada en el origen - su _velocidad inicial_ - $gamma'(0)$ es necesariamente tangente a $gamma(0) = p in MM$, o sea que $gamma'(0) in T_p MM$: el espacio tangente $T_p MM$ contiene todas las _velocidades_ posibles desde $p$. Dada una velocidad $v in T_p MM$, podemos descomponerla en su _magnitud_ $norm(v)$ y su _dirección_ $v / norm(v)$. Como la geodésica es una curva sin aceleración, $g''(t) = 0 forall t in [0, 1]$, y luego $g'(t) = g'(0) = v in T_p MM forall t in [0, 1]$. La geodésica de $p$ a $q$ es la única curva $gamma : [0, 1] -> MM, gamma(0) = p$ con velocidad inicial $gamma'(0) = v in T_p MM$, de modo que $L(gamma) = norm(v) = dg(p, q)$ y luego de "una unidad de tiempo", $gamma(1) = q$.
 
@@ -534,7 +547,7 @@ Esta relación, entre vectores de $T_p MM$ y geodésicas de $MM$ con origen en $
 La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geodésicas que irradian desde $p$. Una concepción intuitiva de qué es una bola normal, es "un entorno de $p$ en el que las geodésicas que pasan por $p$ son minimizadoras de distancias". El siguiente concepto es útil para entender "cuán lejos vale" la aproximación local a un espacio euclídeo en la variedad.
 
 #defn(
-  [radio de inyectividad #footnote[Basado en @munozEstimacionNoParametrica2011[Def. 3.3.16] Una definición a mi entender más esclarecedora se encuentra en @carmoRiemannianGeometry1992[§13.2, _The cut locus_], que introducimos aquí informalmente. El _cut locus_ o _ligne de partage_ $C_m (p)$ - algo así como la línea de corte - de un punto $p$ es la unión de todos los puntos de corte: los puntos a lo largo de las geodésicas que irradian de $p$ donde éstas dejan de ser minizadoras de distancia. El ínfimo de la distancia entre $p$ y su línea de corte, es el radio de inyectividad de #MM en $p$, de modo podemos escribir $ "iny" MM = inf_(p in MM) d(p, C_m (p)) $
+  [radio de inyectividad #footnote[Basado en @munozEstimacionNoParametrica2011[Def. 3.3.16] Una definición a mi entender más esclarecedora se encuentra en @docarmoRiemannianGeometry1992[§13.2, _The cut locus_], que introducimos aquí informalmente. El _cut locus_ o _ligne de partage_ $C_m (p)$ - algo así como la línea de corte - de un punto $p$ es la unión de todos los puntos de corte: los puntos a lo largo de las geodésicas que irradian de $p$ donde éstas dejan de ser minizadoras de distancia. El ínfimo de la distancia entre $p$ y su línea de corte, es el radio de inyectividad de #MM en $p$, de modo podemos escribir $ "iny" MM = inf_(p in MM) d(p, C_m (p)) $
       donde la distancia de un punto a una variedad es el ínfimo de la distancia a todos los puntos de la variedad.]],
 )[
   Sea $(MM, g)$ una $d-$variedad Riemanniana. Llamamos "radio de inyectividad en $p$" a
@@ -1731,6 +1744,7 @@ Sería interesante entonces investigar si existen condiciones reales en las que 
 
 == Arenero
 
+TODO: revisar forma de citar bibliografía, corregir autores y formato en textos enciclopédicos y otros
 #tabla_csv("data/2-blobs.csv")
 #let best(..contents) = {
   contents.pos().map(content => table.cell(fill: rgb("#7cff9dc9"), content))
