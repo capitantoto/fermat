@@ -65,7 +65,6 @@
 #set text(font: "New Computer Modern", lang: "es")
 #set heading(numbering: "1.1")
 #set strong(delta: 100)
-#set par(justify: true)
 #set math.equation(numbering: "(1)")
 #set quote(block: true)
 
@@ -90,6 +89,7 @@
 #outline(depth: 2)
 
 = Vocabulario y Notación
+
 A lo largo de esta monografía tomaremos como referencia enciclopédica el excelente _Elements of Statistical Learning_ @hastieElementsStatisticalLearning2009. En la medida de lo posible, basaremos nuestra notación en la suya.
 
 Típicamente, denotaremos a las variables independientes #footnote[También conocidas como predictoras, o #emph[inputs]] con $X$. Si $X$ es un vector, accederemos a sus componentes con subíndices, $X_j$. En el contexto del problema de clasificación, la variable _cualitativa_ dependiente #footnote[También conocida como variable respuesta u #emph[output]] será $G$ (de "G"rupo). Usaremos letras mayúsculas como $X, G$ para referirnos a los aspectos genéricos de una variable. Los valores _observados_ se escribirán en minúscula, de manera que el i-ésimo valor observado de $X$ será $x_i$ (de nuevo, $x_i$ puede ser un escalar o un vector).
@@ -103,7 +103,7 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 #set terms(separator: h(2em, weak: true), spacing: 1em)
 
 / $RR$: los números reales; $RR_+$ denotará los reales estrictamente positivos.
-/ $RR^(p)$: el espacio euclídeo de dimensión $p$
+/ $RR^p$: el espacio euclídeo de dimensión $p$
 / $[k]$: el conjunto de los enteros positivos del $1$ hasta $k$, ${1, 2, 3, dots, k}$
 / #MM: una variedad arbitraria #footnote[típicamente Riemanniana, compacta y sin frontera; oportunamente definiremos estos calificativos]
 / $d_x$: la dimensión "natural" #footnote[la dimensión de un elemento es su cantidad de componentes, la dimensión de un espacio es la dimensión de cualquiera de sus elementos] del elemento $x$
@@ -120,9 +120,9 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / $emptyset$: el conjunto vacío
 / $overline(S)$: la _clausura_ de S (la unión de S y sus puntos límites)
 / $lambda(x)$: la medida de Lebesgue de $x$ en $RR^d$
-/ $a |-> b$: la función que "toma" $a$ y "devuelve" $b$  en #link("https://en.wikipedia.org/wiki/Function_(mathematics)#Arrow_notation")[notación de flechas]
+/ $a |-> b$: la función que "toma" $a$ y "devuelve" $b$  en notación de flechas
 / $y prop x$: "y es proporcional a x", existe una constante $c : y = c times x$
-/ c.s.: "casi seguramente", re. convergencia de elementos aleatorios
+/ "c.s.": "casi seguramente", re. convergencia de elementos aleatorios
 = Preliminares
 
 == El problema de clasificación #footnote[adaptado de @hastieElementsStatisticalLearning2009[§2.4, "Statistical Decision Theory"]]
@@ -134,7 +134,7 @@ El _aprendizaje estadístico supervisado_ busca estimar (aprender) una variable 
 - _conjuntamente exhaustivas_: cada observación $X_i$ está asociada al menos a una clase.
 
 #defn("clasificador")[
-  Un _clasificador_ es una función $hat(G)(X)$ que para cada observación intenta aproximar su verdadera clase $G$ por $hat(G)$ ("ge sombrero").
+  Un _clasificador_ es una función $hat(G)(X)$ que para cada observación intenta aproximar su verdadera clase $G$ por $hat(G)$ #footnote[pronunciado "ge sombrero"].
 ] <clasificador>
 
 Para construir $hat(G)$, contaremos con una muestra o _conjunto de entrenamiento_ $XX, bu(g)$,  de pares $(x_i, g_i), i in {1, dots, N}$ conocidos.
@@ -185,8 +185,10 @@ $
   hat(G)(x) = g & = arg max_(g in GG) Pr(g | X = x) \
                 & <=> Pr(g|X=x) = max_(g in GG) Pr(g|X=x) \
                 & <=> Pr(g|X=x) =max_(g in GG) Pr(X=x|g) times Pr(g) \
-                & <=> Pr(GG_k|X=x) =max_(k in [K]) Pr(X=x|GG_k) times Pr(GG_k) \
+                & <=> Pr(GG_k|X=x) =max_(k in [K]) Pr(X=x|GG_k) times Pr(GG_k), \
 $
+
+donde el segundo $<=>$ vale siempre que $Pr(X = x) > 0$ -- y dado que _observamos_ $X=x$, el supuesto es razonable.
 
 A las probabilidades "incondicionales" de clase $Pr(GG_k)$ se las suele llamar su "distribución a priori", y notarlas por $pi = (pi_1, dots, pi_K)^T, sum pi_k = 1$. Una aproximación razonable, si es que el conjunto de entrenamiento se obtuvo por muestreo aleatorio simple, es estimarlas a partir de las proporciones muestrales:
 $
@@ -358,7 +360,7 @@ $
 De modo que $sop KH = [-h, h]^d$, y ahora nos resta encontrar la esperanza. Como las componentes de una ley uniforme multivariada son independientes entre sí,
 $
   Pr(X in [-h, h]^d) & = product_(i=1)^d Pr(X_i in [-h, h]) \
-                     & = Pr(-h <= X_1 <= h])^d \
+                     & = Pr(-h <= X_1 <= h)^d \
                      & = [(h - (-h))/(1-(-1))]^d = h^d quad square.stroked
 $
 
@@ -586,8 +588,9 @@ Ahora sí, hemos arribado a un objeto lo suficientemente "bien portado" para sop
 
 
 === Probabilidad en Variedades
-Hemos definido una clase bastante general de variedades - las variedades de Riemann - que podrían soportar funciones de densidad y sus estimaciones @pelletierKernelDensityEstimation2005. Estos desarrollos relativamente modernos #footnote[del siglo XXI, al menos], no constituyen sin embargo el origen de la probabilidad en variedades. Mucho antes de su sistematización, ciertos casos particulares habían sido bien estudiados y allanaron el camino para el interés en variedades más generales.
-Probablemente la referencia más antigua a un elemento aleatorio en una variedad distinta a $RR^d$, se deba a Richard von Mises, en _Sobre la naturaleza entera del peso atómico y cuestiones relacionadas_ @vonmisesUberGanzzahligkeitAtomgewicht1918 #footnote["Über die 'ganzzahligkeitwder' atomgewichte und verwandte fragen". en el original]. En él, von Mises se plantea la pregunta explícita de si los pesos atómicos - que empíricamente se observan siempre muy cercanos a la unidad para los elementos más livianos - son enteros con un cierto error de medición, y argumenta que para tal tratamiento, el "error gaussiano" clásico es inadecuado:
+Hemos definido una clase bastante general de variedades - las variedades de Riemann - capaces de soportar funciones de densidad y sus estimaciones @pelletierKernelDensityEstimation2005. Estos desarrollos relativamente modernos no constituyen el origen de la probabilidad en variedades. Mucho antes de su sistematización, ciertos casos particulares fueron ya bien estudiados y allanaron el camino para el interés en variedades más generales.
+
+Probablemente la referencia más antigua a un elemento aleatorio en una variedad distinta a $RR^d$, se deba a Richard von Mises, en _Sobre la naturaleza entera del peso atómico y cuestiones relacionadas_ @vonmisesUberGanzzahligkeitAtomgewicht1918 #footnote["Über die 'ganzzahligkeit der' atomgewichte und verwandte fragen", en el alemán original]. En él, von Mises se plantea si los pesos atómicos - que empíricamente se observan siempre muy cercanos a la unidad para los elementos más livianos - son enteros con un cierto error de medición, y argumenta que para tal tratamiento, el "error gaussiano" clásico es inadecuado:
 
 #quote(attribution: [traducido de @vonmisesUberGanzzahligkeitAtomgewicht1918])[
   ($dots$) Pues no es evidente desde el principio que, por ejemplo, para un peso atómico de $35,46$ (Cl), el error sea de $+0,46$ y no de $-0,54$: es muy posible que se logre una mejor concordancia con ciertos supuestos con la segunda determinación. A continuación, se desarrollan los elementos — esencialmente muy simples — de una "teoría del error cíclico", que se complementa con la teoría gaussiana o "lineal" y permite un tratamiento completamente inequívoco del problema de la "enteridad" y cuestiones similares.
@@ -595,14 +598,17 @@ Probablemente la referencia más antigua a un elemento aleatorio en una variedad
 
 #figure(
   image("img/von-mises-s1.png", height: 16em),
-  caption: [Pretendido "error" - diferencia módulo 1 - de los pesos atómicos medidos para ciertos elementos, sobre $S^1$. Nótese como la mayoría de las mediciones se agrupan en torno al $0.0$.],
+  caption: flex-caption([Pretendido "error" - diferencia módulo 1 - de los pesos atómicos medidos para ciertos elementos sobre $S^1$. Nótese como la mayoría de las mediciones se agrupan en torno al $0.0$. Fuente: @vonmisesUberGanzzahligkeitAtomgewicht1918],[Pesos atómicos "módulo 1" sobre $S^1$]) 
 )
-Motivado también por un problema del mundo físico - las mediciones de posición en una esfera "clásica" $S^2 subset RR^3$, Ronald Fisher escribe "Dispersiones en la esfera" @fisherDispersionSphere1957, donde desarrolla una forma de teoría que parece ser apropiada para mediciones de posición en una esfera #footnote[y como era de esperar del padre del test de hipótesis, también un test de significancia análogo al t de Student.] y los ilustra utilizando mediciones de la dirección de la magnetización remanente de flujos de lava directa e inversamente magnetizados en Islandia.
+Motivado también por un problema del mundo físico, Ronald Fisher escribe "Dispersiones en la esfera" @fisherDispersionSphere1957, donde desarrolla una teoría apropiada para mediciones de posición en una esfera #footnote[y como era de esperar del padre del test de hipótesis, también su correspondiente test de significancia, análogo al "t de Student".] y la ilustra a partir de mediciones de la dirección de la "magnetización termorremanenteremanente" de flujos de lava  en Islandia.
+#footnote[
+  Los datos que Fisher usa en la Sección 4 son mediciones de magnetismo remanenteen muestras de roca de flujos de lava islandeses, recolectadas por J. Hospers en Pembroke College, Cambridge. Cuando la lava se enfría y solidifica, los minerales ferromagnéticos (como la magnetita) se alinean con el campo magnético terrestre del momento y quedan "congelados" en esa orientación. Esto se llama magnetización termorremanente. Siglos o milenios después, se puede tomar una muestra de esa roca y medir en qué dirección apunta su magnetización residual, hecho que Fisher utiliza para "testear" si entre "su presente" y el período Cuaternario el campo magnético terrestre se invirtió -- cosa que efectivamente sucedió.
+]
 
 
-Dos décadas más tarde, los casos particulares de von Mises ($S^1$) y Fisher ($S^2$) estaban integrados en el caso más general $S^n$ en lo que se conocería como "estadística direccional" #footnote[ya que la $n-$ esfera $S^n$ de radio $1$ con centro en $0$ contiene exactamente a todos los vectores unitarios, i.e. a todas las _direcciones_ posibles de un vector en su espacio ambiente $RR^(n+1)$]. En 1975 se habla ya de _teoría de la distribución_ para la distribución von Mises - Fisher @mardiaDistributionTheoryMisesFisher1975, la "más importante en el análisis de datos direccionales"; a fines de los '90 Jupp y Mardia plantean "una visión unificada de la teoría de de la estadística direccional" @juppUnifiedViewTheory1989 , relacionándola con conceptos claves en el "caso euclídeo" como las familias exponenciales y el teorema central del límite, entre otros.
+Dos décadas más tarde, los casos particulares de von Mises ($S^1$) y Fisher ($S^2$) fueron integrados al caso más general $S^n$ en lo que se conocería como "estadística direccional" #footnote[la $n-$ esfera $S^n$ de radio $1$ con centro en $0$ contiene exactamente a todos los vectores unitarios -- i.e., todas las _direcciones_ posibles de un vector -- en su espacio ambiente $RR^(n+1)$]. En 1975 se habla ya de _teoría de la distribución_ para la distribución von Mises - Fisher @mardiaDistributionTheoryMisesFisher1975, la "más importante en el análisis de datos direccionales". A fines de los '80 Jupp y Mardia plantean "una visión unificada de la teoría de de la estadística direccional" @juppUnifiedViewTheory1989, adaptando conceptos claves del "caso euclídeo" como las familias exponenciales y el teorema central del límite, entre otros.
 
-Aunque el caso particular de la $n-$esfera sí fue bien desarrollado a lo largo del siglo XX, el tratamiento más general de la estadística en variedades riemannianas conocidas pero arbitrarias aún no se hacía presente.
+Aunque el caso particular de la $n-$esfera sí fue bien desarrollado a lo largo del siglo XX, no se alcanzó un tratamiento más general de la estadística en variedades riemannianas conocidas pero arbitrarias.
 
 === KDE en variedades de Riemann
 
@@ -611,17 +617,17 @@ Un trabajo sumamente interesante a principios del siglo XXI es el de Bruno Pelle
 
 #defn([KDE en variedades de Riemann @pelletierKernelDensityEstimation2005[Ecuación 1]])[
   Sean
-  - $(MM, g)$ una variedad de Riemann compacta y sin frontera de dimensión $d$, y $dg$ la distancia de Riemann,
+  - $(MM, g)$ una variedad de Riemann compacta y sin frontera de dimensión intrínseca $d$, y $dg$ la distancia de Riemann, #footnote[mantenemos la notación del original; $d$ es un entero y #dg un operador, lo que debería evitar la confusión]
   - $K$ un _núcleo isotrópico_ en #MM soportado en la bola unitaria en $RR^d$
   - dados $p, q in MM$, $theta_p (q)$ la _función de densidad de volumen en_ #MM
-  - Sea #XX una muestra de $N$ observaciones de una variable aleatoria $X$ con densidad $f$ soportada en #MM
+  Sea #XX una muestra de $N$ observaciones de una variable aleatoria $X$ con densidad $f$ soportada en #MM
   Luego, el estimador de densidad por núcleos para $X$ es la #box[$hat(f) :MM ->RR$] que a cada $p in MM$ le asocia el valor
   $
     hat(f) (p) & = N^(-1) sum_(i=1)^N K_h (p,X_i) \
                & = N^(-1) sum_(i=1)^N 1/h^d 1/(theta_X_i (p))K((dg(p, X_i))/h)
   $
 ] <kde-variedad>
-con la restricción de que la ventana $h <= h_0 <= "iny" MM$, el _radio de inyectividad_ de #MM. #footnote[
+con la restricción de que la ventana $h <= h_0 <= "iny" MM$, el radio de inyectividad de #MM. #footnote[
   Esta restricción no es catastrófica. Para toda variedad compacta, el radio de inyectividad será estrictamente positivo @munozEstimacionNoParametrica2011[Prop. 3.3.18]. Como además $h$ es en realidad una sucesión ${h_n}_(n=1)^N$ decreciente como función del tamaño muestral, siempre existirá un cierto tamaño muestral a partir del cual $h_n < "iny" MM$.
 ].
 El autor prueba la convergencia en $L^2(MM)$:
@@ -633,8 +639,7 @@ El autor prueba la convergencia en $L^2(MM)$:
   $
   En consecuencia, para $h tilde n^(-1/(d+4))$, tenemos $ EE norm(hat(f)_n - f)_(L^2(MM))^2 = O(n^(-4/(d+4))) $
 ]
-Nótese que esta formulación revela una buena sugerencia de en qué orden comenzar la búsqueda de $h$.
-@henryKernelDensityEstimation2009[Teorema 3.2] prueba la consistencia fuerte de $hat(f)$: bajo los mismos  @pelletierKernelDensityEstimation2005, obtienen que
+Nótese que esta formulación sugiere en qué orden comenzar la búsqueda de un $h$ "óptimo". Guillermo Henry y Daniela Rodríguez prueban la consistencia fuerte de $hat(f)$ @henryKernelDensityEstimation2009[Teorema 3.2]: bajo los mismos supuestos de @pelletierKernelDensityEstimation2005, obtienen que
 $
   sup_(p in MM) abs(hat(f)_n(p) - f(p)) attach(->, t: "c.s.") 0
 $
@@ -646,12 +651,12 @@ $
     columns: 2,
     $integral_(RR^d) K(norm(x)) dif lambda(x) = 1$, [$K$ es función de densidad en $RR^d$],
     $integral_(RR^d) x K(norm(x)) dif lambda(x) = 0$, [Si $Y~K, thick EE Y = 0$],
-    $integral_(RR^d) norm(x)^2 K(norm(x)) dif lambda(x) < oo$, [Si $Y~K, thick var Y = 0$],
+    $integral_(RR^d) norm(x)^2 K(norm(x)) dif lambda(x) < oo$, [Si $Y~K, thick var Y < oo$],
     $sop K = [0, 1]$, "",
     $sup_x K(x) = K(0)$, [$K$ se maximiza en el origen],
   )
 
-  Decimos entonces que el mapa $RR^d in.rev x -> K(norm(x)) in RR$ es un "núcleo isotrópico" en $RR^d$ soportado en la bola unitaria.
+  Decimos entonces que el mapa $RR^d in.rev x |-> K(norm(x)) in RR$ es un _núcleo isotrópico_ en $RR^d$ soportado en la bola unitaria.
 ]
 
 #obs[Todo núcleo válido en @kde-mv también es un núcleo isotrópico. A nuestros fines, continuaremos utilizando el núcleo normal.]
@@ -667,7 +672,7 @@ $
 
 #obs[
 
-  $theta_p (q)$ está bien definida "cerca" de $p$: por ejemplo, es idénticamente igual a $1$ en el entorno $U$ localmente "plano" de $p$ donde las geodésicas $gamma subset MM$ coinciden con sus representaciones en $T_p MM$,coinciden con su representación. Ciertamente está definida para todo $q$ dentro del radio de inyectividad de $p$, $dg(p, q) < "iny"_p MM$ #footnote[ su definición global es compleja y escapa al tema de esta monografía #footnote[Besse y Pelletier consideran factible extenderla a todo #MM utilizando _campos de Jacobi_ @besseManifoldsAllWhose1978[§6.3] @pelletierKernelDensityEstimation2005[§2]].]. Con $N$ "suficientemente grande", siempre podremos elegir $h_N < "iny"_p MM$  que mapee "suficientes" observaciones al soporte de K, $[0, 1]$  en las que el cálculo de $theta_p (q)$ sea factible, y las más lejanas queden por fuera, de modo que su cálculo _no sea necesario_.
+  $theta_p (q)$ está bien definida "cerca" de $p$: por ejemplo, es idénticamente igual a $1$ en el entorno $U$ localmente "plano" de $p$ donde las geodésicas $gamma subset MM$ coinciden con sus representaciones en $T_p MM$. Ciertamente está definida para todo $q$ dentro del radio de inyectividad de $p$, $dg(p, q) < "iny"_p MM$ #footnote[ su definición global es compleja y escapa al tema de esta monografía #footnote[Besse y Pelletier consideran factible extenderla a todo #MM utilizando _campos de Jacobi_ @besseManifoldsAllWhose1978[§6.3] @pelletierKernelDensityEstimation2005[§2]].]. Con $N$ "suficientemente grande", siempre podremos elegir $h_N < "iny"_p MM$  que mapee "suficientes" observaciones al soporte de K, $[0, 1]$  en las que el cálculo de $theta_p (q)$ sea factible, y las más lejanas queden por fuera, de modo que su cálculo _no sea necesario_.
 ]
 
 
@@ -675,32 +680,32 @@ El mapa exponencial alrededor de $p, thick exp_p : T_p MM -> MM$ es un difeomorf
 - la métrica _pullback_ de $g$:  la métrica inducida en $T_p MM$ por la métrica riemanniana $g$ en #MM
 - la medida de Lebesgue en la estructura euclídea de $T_p MM$.
 
-En otras palabras, $theta_p (q)$ representa cuánto se infla / encoge - el espacio en la variedad #MM alrededor de $p$, relativo al volumen "natural" del espacio tangente. En general, su cómputo resulta sumamente complejo, salvo en casos particulares como las variedades "planas" o de curvatura constante. En un trabajo reciente, por ejemplo, se reseña:
+En otras palabras, $theta_p (q)$ representa cuánto se infla/encoge el espacio en la variedad #MM alrededor de $p$, relativo al volumen "natural" del espacio tangente. En general, su cómputo resulta sumamente complejo, salvo en casos particulares como las variedades "planas" o de curvatura constante. En un trabajo reciente, por ejemplo, se reseña:
 
 #quote(
   attribution: [@berenfeldDensityEstimationUnknown2021[§1.2, "Resultados Principales"]],
 )[
-  Un problema restante a esta altura es el de entender cómo la _regularidad_ #footnote[En este contexto, se entiende que una variedad es más regular mientras menos varíe su densidad de volumen punto a punto] de #MM afecta las tasas de convergencia de funciones suaves (...).
+  Un problema restante a esta altura es el de entender cómo la _regularidad_ #footnote[En este contexto, se entiende que una variedad es más regular mientras menos varíe su densidad de volumen punto a punto.] de #MM afecta las tasas de convergencia de funciones suaves (...).
   Luego, en el caso especial en que la dimensión de #MM es conocida e igual a $1$, podemos construir un estimador que alcanza la tasa [propuesta anteriormente]. Así, se establece que en dimensión $1$ al menos, la regularidad de la variedad #MM no afecta la tasa para estimar $f$ aún cuando #MM es desconocida. Sin embargo, la función de densidad de volumen $theta_p (q)$ _no_ es constante tan pronto como $d >= 2$ y obtener un panorama global en mayores dimensiones es todavía un problema abierto y presumiblemente muy desafiante.
 ]
 
 Para ganar en intuición, consideraremos $theta_p (q)$ para algunas variedades profusamente estudiadas.
 
-=== La densidad de volumen $theta_p (p)$ en variedades "planas"
+=== La densidad de volumen $theta_p (q)$ en variedades "planas"
 
 #obs[En el entorno de $p$ en que el espacio es localmente análogo a $RR^d$, $theta_p (q) = 1$.]
-En los espacios "planos" la métrica $g$ es constante a través de toda la variedad $g_p$. El espacio euclídeo $RR^d$ acompañado de la métrica habitual dotado de la métrica habitual tiene por distancia $d_I (x, y) = sqrt(norm(x-y)) = sqrt((x-y)^T bu(I)_d (x-y))$. El espacio euclídeo con distancia $d_SS$ de Mahalanobis @DistanciaMahalanobis2024 también es plano, sólo que con distancia $op(d_SS)(x, y) = sqrt((x -y)^T SS^(-1) (x-y)) = sqrt(norm(SS^(-1/2)(x-y)))$. $d_SS$ no es "isotrópica": en algunas direcciones cambia más rápido: tiene mayor _velocidad_.
+En los espacios "planos" la métrica $g$ es constante a través de toda la variedad $g_p$. El espacio euclídeo $RR^d$ dotado de la métrica habitual tiene por distancia $d_I (x, y) = norm(x-y) = sqrt((x-y)^T bu(I)_d (x-y))$. El espacio euclídeo con distancia $d_SS$ de Mahalanobis @DistanciaMahalanobis2024 también es plano, sólo que con distancia $op(d_SS)(x, y) = sqrt((x -y)^T SS^(-1) (x-y)) = norm(SS^(-1/2)(x-y))$. $d_SS$ no es "isotrópica": varía a distintas velocidades en distintas direcciones.
 
-El _tensor métrico_ $g$ es constante y de dimensión finita en ambos casos, así que esta "forma bilinear simétrica positiva definida" se puede representar con única matriz definida positiva $g=g_(i j), g in RR^(d times d)$ que se conoce como _tensor métrico_. A la distancia "habitual" en $RR^d$ le corresponde $g=bu(I)_d$, a la distancia de mahalanobis $g=SS$.
+El _tensor métrico_ $g$ es constante y de dimensión finita en ambos casos, así que esta "forma bilinear simétrica positiva definida" se puede representar con única matriz definida positiva $g=g_(i j), g in RR^(d times d)$ que se conoce como _tensor métrico_. A la distancia "habitual" en $RR^d$ le corresponde $g=bu(I)_d^(-1)=bu(I)_d$, a la distancia de mahalanobis $g=SS^(-1)$.
 
-Al tener radio de inyectividad infinito, basta con una única carta para cubrir el espacio euclídeo, de manera que su atlas maximal será de la forma $A = {(RR^d, phi)$. De todos los homeomorfismos $phi$ posibles, resulta tal vez el más "conveniente" $exp_p^(-1) : MM -> T_p MM$ el difeomorfismo inverso al mapa exponencial.
+Al tener radio de inyectividad infinito, basta con una única carta para cubrir el espacio euclídeo, de manera que su atlas maximal será de la forma $A = {(RR^d, phi)}$. De todos los homeomorfismos $phi$ posibles, el más "conveniente" es $exp_p^(-1) : MM -> T_p MM$ -- el difeomorfismo inverso al mapa exponencial.
 
-Nótese que la distancia cuadrada $op(d_SS)^2(p, q) = norm(SS^(-1/2)(q - p))$ no es más que la norma de $q - p$ luego de una transformación lineal $SS^(-1/2)$, que "manda" los puntos $ MM in.rev (p, q) |-> (x, y) = exp_p (p, q) = (0, exp q) in T_p MM $ de la variedad $MM = RR^d$ a los puntos $(0, exp_x y)$ del espacio tangente a #MM en $p, thick T_p MM = RR^d$. Usamos $(p, q)$ para referirnos a los puntos en #MM y $(x, y)$ para $T_p MM$.
+Nótese que la distancia cuadrada $op(d_SS)^2(p, q) = norm(SS^(-1/2)(q - p))$ no es más que la norma de $q - p$ luego de una transformación lineal $SS^(-1/2)$, que "manda" los puntos $ MM in.rev (p, q) |-> (x, y) = exp_p^(-1)(p, q) = (0, exp_p^(-1) q) in T_p MM $ de la variedad $MM = RR^d$ a los puntos $(0, exp_x y)$ del espacio tangente a #MM en $p, thick T_p MM = RR^d$. Usamos $(p, q)$ para referirnos a los puntos en #MM y $(x, y)$ para $T_p MM$.
 
 $SS^(-1/2)$ no es otra cosa más que el mapa exponencial inverso, $forall p in MM, thick exp_p^(-1) q = SS^(-1/2) (q - p)$ y su "directo" es, entonces:
 $ exp_x y : T_p MM -> MM = SS^(1/2) (y - x) $
 
-Habiendo obtenido $SS^(1/2) (q - p) = exp_p^(-1) (q)$, reemplazamos en la definición de densidad de volumen y obtenemos
+Habiendo obtenido $SS^(-1/2) (q - p) = exp_p^(-1) (q)$, reemplazamos en la definición de densidad de volumen y obtenemos
 $
   theta_p (q) = mu_(exp_p^*g) / mu_g_p (SS^(-1/2)(q - p))
 $
@@ -747,7 +752,7 @@ $
 #figure(caption: flex-caption(
   [KDE en $S^2$ para $X =$ sth sth los flujos de lava de Fisher TODO mejorar imagen],
   "asdf",
-))[#image("img/henry-rodriguez-bolas.png", width: 85%)]
+))[#image("img/henry-rodriguez-bolas.png", height: 22em)]
 
 == Clasificación en variedades
 
