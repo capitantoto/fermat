@@ -23,7 +23,7 @@
 #let fkn = [$f$`-KN`]
 #let kn = `KN`
 #let gnb = `GNB` // $("GNB")$
-#let lr = `LR`
+#let logr = `LR`
 #let slr = [$s$`-LR`]
 #let svc = `SVC`
 #let gbt = `GBT`
@@ -80,7 +80,7 @@
 
 #let tabla_csv(path) = {
   let data = csv(path)
-  let eval_scope = (fkdc: fkdc, kn: kn, fkn: fkn, kdc: kdc, lr: lr, svc: svc, lsvc: `LSVC`, gnb: gnb, base: "base")
+  let eval_scope = (fkdc: fkdc, kn: kn, fkn: fkn, kdc: kdc, lr: logr, svc: svc, lsvc: `LSVC`, gnb: gnb, base: "base")
   table(columns: data.at(0).len(), ..data.flatten().map(eval.with(mode: "markup", scope: eval_scope)))
 }
 
@@ -366,7 +366,7 @@ De modo que $sop KH = [-h, h]^d$, y ahora nos resta encontrar la esperanza. Como
 $
   Pr(X in [-h, h]^d) & = product_(i=1)^d Pr(X_i in [-h, h]) \
                      & = Pr(-h <= X_1 <= h)^d \
-                     & = [(h - (-h))/(1-(-1))]^d = h^d quad square.stroked
+                     & = [(h - (-h))/(1-(-1))]^d = h^d quad square
 $
 
 #let h = 0.5
@@ -522,10 +522,11 @@ Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métric
 === Geodésicas y mapa exponencial
 Con las definiciones previas podemos definir algunos conceptos fundamentales como longitud, distancia y geodésica en variedades de Riemann.
 
-Sea $gamma : [a, b] -> MM$ una _curva diferenciable_ en #MM, y $gamma'$ su derivada. La _longitud_ de $gamma$ está dada por
-$
-  L(gamma) = integral_a^b norm(gamma'(t)) dif t = integral_a^b sqrt(op(g_(gamma(t)))(gamma'(t), gamma'(t))) dif t
-$ <longitud-euclidea>
+#defn("longitud de una curva")[
+  Sea $gamma : [a, b] -> MM$ una _curva diferenciable_ en #MM, y $gamma'$ su derivada. La _longitud_ de $gamma$ está dada por
+  $
+    L(gamma) = integral_a^b norm(gamma'(t)) dif t = integral_a^b sqrt(op(g_(gamma(t)))(gamma'(t), gamma'(t))) dif t
+  $] <longitud>
 #defn("distancia en variedades de Riemann")[
   Sea $(MM, g)$ una variedad de Riemann, y $p, q in MM$ dos puntos. Definimos la distancia entre ellos inducida por la métrica $g$ como
   $
@@ -895,7 +896,7 @@ Recordemos que toda esta aventura comenzó cuando identificamos que
 #v(1em)
 
 En rigor, no es necesario conocer #MM para estimar densidades en ella; bastaría con conocer una aproximación a la distancia geodésica en #MM que sirva de sustituto a la distancia euclídea en el espacio ambiente. Probablemente el algoritmo más conocido a tal fin, sea Isomap - por "mapeo isométrico de _features_".
- 
+
 Desarrollado a fines del siglo XX por Joshua Tenenbaum et al.  @tenenbaumMappingManifoldPerceptual1997 @tenenbaumGlobalGeometricFramework2000, el algoritmo consta de tres pasos:
 
 #defn("algoritmo Isomap")[
@@ -909,7 +910,10 @@ Desarrollado a fines del siglo XX por Joshua Tenenbaum et al.  @tenenbaumMapping
 ]
 #figure(
   image("img/isomap-2.png", height: 16em),
-  caption: flex-caption([Isomap aplicado a 1.000 dígitos "2" manuscritos del dataset _MNIST_ con $d=2$ Nótese que las dos direcciones se corresponden fuertemente con características de los dígitos: el rulo inferior en el eje $X$, y el arco superior en el eje $Y$. Fuente: @tenenbaumGlobalGeometricFramework2000.], [Isomap ($d=2$) aplicado 1.000 dígitos "2" manuscritos]),
+  caption: flex-caption(
+    [Isomap aplicado a 1.000 dígitos "2" manuscritos del dataset _MNIST_ con $d=2$ Nótese que las dos direcciones se corresponden fuertemente con características de los dígitos: el rulo inferior en el eje $X$, y el arco superior en el eje $Y$. Fuente: @tenenbaumGlobalGeometricFramework2000.],
+    [Isomap ($d=2$) aplicado 1.000 dígitos "2" manuscritos],
+  ),
 )
 
 La pieza clave del algoritmo, es la estimación de la distancia geodésica en #MM a través de la distancia en el grafo de vecinos más cercanos. Si la muestra disponible es "suficientemente grande", es razonable esperar que en el entorno de una observación $x_0$ las distancias euclídeas aproximen bien las distancias geodésicas, y por ende un "paseo" por el grafo $bu(N N)$ debería describir una curva prácticamente contenida en #MM. Isomap resultó ser un algoritmo sumamente efectivo que avivó el interés por el aprendizaje de distancias, pero todavía cuenta con un talón de Aquiles: la elección del parámetro de cercanía, $epsilon$ ó $k$:
@@ -918,33 +922,43 @@ La pieza clave del algoritmo, es la estimación de la distancia geodésica en #M
 
 === Distancias basadas en densidad
 
-Algoritmos como Isomap aprenden la _geometría_ de los datos, reemplazando la distancia euclídea ambiente por la distancia euclídea en el grafo $bu(N N)_k$ #footnote[donde el subíndice representa la cantidad de vecinos considerados - o el diámetro $epsilon$ de la vecindad, de corresponder.], que con $n -> oo$ converge a la distancia $dg$ en $MM$. La distancia de Mahalanobis, por su parte, aprende la _densidad_ de los datos.
-#figure(
-  image("img/distancia-basada-en-densidad.svg"),
-  caption: [Cuando por ejemplo $(MM, g) = (RR^2, bu(I))$ y $thick X ~ cal(N)_2 (a, SS)$ #footnote[la densidad normal bivariada centrada en $a$ con matriz de covarianza $SS$.], tenemos que $d_bu(I) (a, b) = norm(a - b) = L(gamma) = r = L(zeta) = norm(a - c)$, mientras que si consideramos las mismas $X$ definidas en $(MM', g') = (RR^2, SS) $, -- el mismo espacio ambiente con distancia de Mahalanobis -- $d_SS (a, b) < d_SS (a, c)$: la normal multivariada tiene distintas tasas de cambio en distintas direcciones, y medir distancia ignorando este hecho puede llevar a conclusiones erróneas.],
-)
-// TODO: Ver que la fuente de excalidraw se renderee en el PDF final
+Algoritmos como Isomap aprenden la _geometría_ de los datos, reemplazando la distancia euclídea ambiente por la distancia geodésica en el grafo pesado $bu(N N)_k$ #footnote[donde el subíndice representa la cantidad de vecinos considerados - o el diámetro $epsilon$ de la vecindad, de corresponder.], que con $n -> oo$ converge a la distancia $dg$ en $MM$. En estadística, conocer la geometría del soporte no es suficiente para tener un panorama completo. Por caso: sean $X'$ y $X^*$ dos distribuciones aleatorias soportadas en la esfera $S^2$:
+- $X'$ surgida de _samplear_ uniformemente "coordenadas polares" en el rectángulo $[0, pi] times [0, 2 pi]$, y
+- $X^*$ surgida de samplear uniformemente directamente en $S^2$.
+Ambas distribuciones tienen la misma geometría, pero distintas densidades: $X'$ se concentra en los polos y es mínimamente densa en el ecuador; $X^*$ es efectivamente igual de densa en todo $S^2$.
 
-Combinando estas dos nociones, podemos considerar la categoría de _distancias basadas en densidad_ - DBDs -, donde curvas $gamma$ que atraviesen regiones de _baja_ densidad $f_X$ en #MM sean más "costosas" de transitar que otras de igual longitud pero por regiones de mayor densidad. Esta área del aprendizaje de distancias vio considerables avances durante el siglo XXI, a continuación del éxito empírico de Isomap, y pavimentó el camino para técnicas de reducción de dimensionalidad basales en el "aprendizaje profundo" #footnote[O "deep learning" en inglés. Llamamos genéricamente de tal modo a la plétora de arquitecturas de redes neuronales con múltiples capas que dominan hoy el procesamiento de información de alta dimensión @AprendizajeProfundo2025] como los "autocodificadores" #footnote[#emph[autoencoders] en inglés, algoritmo que dada #XX, aprende un codificador $c(x): RR^D -> RR^d, d << D$ y un decodificador $d(-1)(x) : RR^d -> RR^D$ tal que $d(c(x)) approx x$. De hecho, uno de los "padres de la IA", Yoshua bengio, cuyo trabajo ya mencionamos en este área, menciona #link("https://www.reddit.com/r/MachineLearning/comments/mzjshl/d_who_first_advanced_the_manifold_hypothesis_to/", "en Reddit") cómo su grupo de investigación en la U. de Montréal trabajando en estas ideas: aprendizaje de variedades primero, y autocodificadores posteriormente.].
+Un ejemplo aún más concreto: sea $Omega$ la población de alumnos de nuestra facultad, y tomemos $X(Omega) = (X_1, X_2)$ con
+$
+  X_1(omega) & = "edad de " omega \
+  X_2(omega) & = "cantidad de cabellos de " omega \
+$
+Es cierto que $sop(X) = RR^2$, pero resulta patente que la tasa de variación en ambas dimensiones _no es_ la misma: una decena de años es una diferencia de edad significativa, mientras que una decena de cabellos faltantes es invisible a cualquiera #footnote[salvo, seguramente, a quien los haya perdido].
 
-Aprender una DBD nos permite saltearnos el problema ya harto descrito de aprender la variedad desconocida #MM, e ir directamente a lo único que necesitamos extraer de la variedad para tener un algoritmo de clasificación funcional: una noción de distancia adecuada.
+Conocer la _densidad_ de los datos en la geometría es crucial para obtener una noción de distancia verdaderamente útil: de esta necesidad surge el estudio de las _distancias basadas en densidad_ #footnote[o "DBD", por sus siglas en inglés: _density-based distance (metric)_]: su premisa básica es computar la longitud de una curva $gamma$ integrando una función de costo inversamente proporcional a la densidad $f_X$ en #MM -- más "costosa" en regiones menos densas. Esta área del aprendizaje de distancias vio considerables avances durante el siglo XXI -- luego del éxito empírico de Isomap --, y pavimentó el camino para técnicas de reducción de dimensionalidad basales en el "aprendizaje profundo" #footnote[  O "deep learning" en inglés. Llamamos genéricamente de tal modo a la plétora de arquitecturas de redes neuronales con múltiples capas que dominan hoy el procesamiento de información de alta dimensión @AprendizajeProfundo2025] como los "autocodificadores" #footnote[#emph[autoencoders] en inglés, algoritmo que dada #XX, aprende un codificador $c(x): RR^D -> RR^d, d << D$ y un decodificador $d(x) : RR^d -> RR^D$ tal que $d(c(x)) approx x$.
+]. Yoshua Bengio -- uno de los "padres de la IA" cuyo trabajo ya mencionamos en esta monografía --, menciona #link("https://www.reddit.com/r/MachineLearning/comments/mzjshl/d_who_first_advanced_the_manifold_hypothesis_to/", "en Reddit") cómo su grupo de investigación en la Universidad de Montréal trabajando en estas ideas: aprendizaje de variedades primero, y autocodificadores posteriormente.
+
+#quote(attribution: "Y. Bengio")[
+  El término hipótesis de la variedad es en efecto más antiguo que la revolución del aprendizaje profundo, aunque el concepto ya estaba presente en los primeros días de los autoencoders en los primeros años de los 90 (no bajo ese nombre, pero la misma idea) y los mapas autoorganizados en los 80, por no mencionar PCA aún antes (aunque eso estaba limitado a variedades lineales). Y el grupo a mi alrededor en la U. de Montreal en la década del 2000 y principios de la del 2010 trabajó bastante sobre el concepto, en el contexto de modelar distribuciones que se concentran cerca de un conjunto de menor dimensión (es decir, una variedad), por ejemplo, con denoising auto-encoders (trabajo liderado por Pascal Vincent) y contractive auto-encoders (liderado por Salah Rifai). También trabajamos en cómo la hipótesis de la variedad impactaba los modelos generativos y la dificultad de muestrear (y cómo muestrear) cuando hay múltiples variedades alejadas entre sí (el problema de mezcla en MCMC).
+]
+Aprender una DBD nos permite saltearnos el problema ya harto descrito de aprender la variedad desconocida #MM, e ir directamente a lo único estrictamente necesario para tener un algoritmo de clasificación funcional: una noción de distancia adecuada.
 
 @vincentDensitySensitiveMetrics2003 proveen una de las primeras heurísticas para una DBD: al igual que Isomap, toma las distancias de caminos mínimos pesados en un grafo con vértices #XX, pero
 - considera el grafo completo $bu(C)$ en lugar del de $k-$vecinos $bu(N N)_k$ y
 - pesa las aristas del grafo por la distancia euclídea en el espacio ambiente entre sus extremos _al cuadrado_.
 
-Esta noción de distancia "arista-cuadrada" #footnote["edge-squared distance" en inglés] tiene el efecto de "desalentar grandes saltos" entre observaciones lejanas, que es otra manera de decir "asignar un costo alto a trayectos por regiones de baja densidad", por lo cual ya califica - tal vez rudimentariamente - como una DBD.
+Esta noción de "distancia de arista-al-cuadrado" #footnote["edge-squared distance" en inglés] tiene el efecto de desalentar grandes saltos entre observaciones lejanas, que es una manera  de "asignar un costo alto a trayectos por regiones de baja densidad", por lo cual ya califica como una DBD  rudimentaria.
 
-#figure(image("img/distancia-cuadrada.svg"), caption: [En el grafo completo de 3 vértices, hay sólo dos caminos entre $a$ y $c$: $zeta = a -> b -> c$, y $gamma = a -> c$]). Bajo la norma euclídea, $L(gamma) = 3 < 4 = 2+2 = L(zeta)$ de modo que $d(a, c) = 3$ con geodésica $gamma$. Con la distancia de arista cuadrada, $L(zeta) = 2^2 + 2^2 = 8 < 3^2 = L(gamma)$, y por lo tanto $d(a, c) = 8$ con geodésica $zeta$. La distancia de arista cuadrada cambia las geodésicas, y también cambia la escala en que se miden las distancias.
+#figure(image("img/distancia-cuadrada.svg", height: 16em), caption: flex-caption(
+  [En este grafo completo de 3 vértices "isósceles", hay sólo dos caminos entre $a$ y $c$: $zeta = a -> b -> c$, y $gamma = a -> c$],
+  [Grafo completo de 3 vértices en disposición "isósceles"],
+)) <grafo-completo-3-vertices>
+
+Consideremos el grafo _planar_ de @grafo-completo-3-vertices. Bajo la con la norma euclídea, $L(gamma) = 3 < 4 = 2 + 2 = L(zeta)$ de modo que $d(a, c) = 3$ con geodésica $gamma$. Con la distancia de arista-al-cuadrado, $L(zeta) = 2^2 + 2^2 = 8 < 3^2 = L(gamma)$, y por lo tanto $d(a, c) = 8$ con geodésica $zeta$. La distancia de arista-al-cuadrado cambia las geodésicas, y también cambia la escala en que se miden las distancias.
 
 
-Hay numerosos algoritmos y estudios comparativos de los mismos en esta era, así que sólo nos detendremos arbitrariamente en algunos. @caytonAlgorithmsManifoldLearning2005 provee un resumen temprano de algunos de los algoritmos de aprendizaje de variedades más relevantes hasta entonces, y comenta además sobre el torrente aparentemente inacabable de algoritmos sugeridos: es tan amplio el espectro de variedades subyacentes y de representaciones "útiles" que se pueden concebir, que (a) en el plano teórico resulta muy difícil de obtener garantías "amplias" de eficiencia y performance, y (b) en el plano experimental, quedamos reducidos a "elegir un conjunto representativo de variedades" y observar si los resultados obtenidos son  "intuitivamente agradables". Veinte años más tarde, esto mismo seguiremos haciendo en una sección posterior.
+En las dos últimas décadas han surgido numersos algoritmos para calcular DBDs y hasta algunos _surveys_ comparando las bondades relativas de cada una, nos detendremos arbitrariamente en algunos. En @caytonAlgorithmsManifoldLearning2005 el autor provee un resumen de los algoritmos de aprendizaje de variedades más relevantes (hasta entonces). En sus reflexiones finales #footnote[cf. @caytonAlgorithmsManifoldLearning2005[§5, "¿Qué queda por hacer?"], la lectura de cuyas conclusiones al menos -- si no el trabajo entero -- recomiendo. ], el autor considera que es tan amplio el espectro de variedades subyacentes y de representaciones "útiles" que se pueden concebir, que (a) en el plano teórico resulta muy difícil de obtener garantías de eficiencia y performance, y (b) en el plano experimental, quedamos reducidos a elegir un conjunto representativo de variedades y observar si los resultados obtenidos son "intuitivamente agradables". Más aún, las evaluaciones experimentales requieren _conocer_ la variedad subyacente para luego evaluar si el algoritmo de aprendizaje preserva información útil. Determinar si un dataset del mundo real efectivamente yace sobre cierta variedad es tan difícil como aprender la variedad; usar datos artificiales puede no rendir resultados realistas. Veintiún años más tarde, en esta monografía nos topamos con las mismas dificultades de antaño.
 
-@bijralSemisupervisedLearningDensity2012 ofrece - a nuestro entender - una de las primera formalizaciones "amplias" de qué constituye una DBD. Para abordarla, revisaremos una definición previa. En @longitud-euclidea mencionamos sin precisiones que dada una variedad de Riemann compacta y sin frontera $(MM, g)$, la longitud de una _curva rectificable_ $gamma subset MM$ parametrizada en $[0, 1]$ es
-$
-  L(gamma) = integral_0^1 norm(gamma'(t)) dif t = integral_0^1 sqrt(op(g_(gamma(t))) (gamma'(t), gamma'(t))) dif t
-$
-
+A nuestro entender, @bijralSemisupervisedLearningDensity2012 ofrece una de las primeras formalizaciones de qué constituye una DBD. Para abordarla, revisaremos una definición previa. En @longitud definimos la longitud de una curva $gamma$ parametrizada y diferenciable sobre una variedad de Riemann compacta y sin frontera $(MM, g)$.
 
 #defn(
   "curva rectificable",
@@ -954,12 +968,12 @@ $
 
   donde el supremo se toma sobre todas las particiones posibles $a = t_0 < t_1 < ... < t_n = b$ del intervalo $[a,b]$.
 
-  Equivalentemente, si $gamma$ es diferenciable por tramos, entonces es rectificable si y solo si:
+  Equivalentemente, si $gamma$ es diferenciable por tramos, entonces es rectificable si y sólo si:
 
   $ L(gamma) = integral_a^b |gamma'(t)| dif t < infinity $
 ]
 
-Las curvas rectificables son importantes porque permiten definir conceptos como la longitud de arco y la parametrización por longitud de arco, que son fundamentales en geometría diferencial y análisis. En particular, sea $gamma: [a,b] -> RR^n$ una curva rectificable parametrizada y diferenciable por tramos y $f: RR^n -> RR$ una función diferenciable. La integral de línea de $f$ sobre $gamma$ se define como:
+Las curvas rectificables son importantes porque permiten definir conceptos como la longitud de arco y la parametrización por longitud de arco, que son fundamentales en geometría diferencial y análisis. En particular, sea $gamma: [a,b] -> RR^n$ una curva rectificable parametrizada y diferenciable por tramos y $f: RR^n -> RR$ una función diferenciable. La "integral de línea" #footnote[_line integral_ en inglés] de $f$ sobre $gamma$ se define como:
 
 $ integral_gamma f dif s = integral_a^b f(gamma(t)) |gamma'(t)| dif t $
 
@@ -970,14 +984,16 @@ Si $gamma$ tiene longitud finita y $f$ es continua -- como en nuestro caso de us
 Sea entonces $X ~ f, thick f : MM -> RR_+$ un elemento aleatorio distribuido según $f$ sobre una variedad de Riemann compacta y sin frontera -- potencialmente desconocida --  #MM. Sea además $g(t) : RR_+ -> RR$ una función _monótonicamente decreciente_ en su parámetro. Consideraremos el _costo_$J_f$  de un camino $gamma : [0, 1] -> MM, gamma(0)=p, gamma(1)=q$ entre $p, q$ como la integral de $g compose f$ a lo largo de $gamma$:
 
 $
-  op(J_(g compose f))(gamma) = integral_0^1 op(g)lr((f(gamma(t)))) norm(gamma'(t))_p dif t
+  op(J_(g compose f))(gamma) = integral_0^1 op(g) lr(( f(gamma(t)) ), size: #140%) norm(gamma'(t))_p dif t
 $
 
 Y la distancia basada en la densidad $f$ pesada por $g$ entre dos puntos cualesquiera $p, q in MM$ como
-$ D_(g compose f) (p, q) = inf_gamma op(J_(g compose f))(gamma) $,
+
+$
+  D_(g compose f) (p, q) = inf_gamma op(J_(g compose f))(gamma),
+$
 donde la minimización es con respecto a todos los senderos rectificables con extremos en $p, q$, y $norm(dot)_p$ es la $p-$norma o distancia de Minkowski con parámetro $p$.
 
-#obs[La longitud de @longitud-euclidea es equivalente a tomar una función constante $g(t) = 1$ y $p=2$]
 
 #defn([norma $p$])[
   Sea $p >= 1$. Para $x, y in RR^d$, la norma $ell_p$ #footnote[También conocida como "$p-$norma" o "distancia de Minkowski"] se define como:
@@ -986,71 +1002,92 @@ donde la minimización es con respecto a todos los senderos rectificables con ex
     norm(x)_p = (sum_(i=1)^d abs(x_i)^p)^(1/p)
   $
 ]
+#obs[La longitud de @longitud es equivalente a tomar $g(t) = 1$ y $p=2$, salvo que $g(t) = 1$ no es monontónicamente decreciente, y por ende la definición previa es insensible a la densidad.]
 #obs[Cada $p-$norma induce su propia distancia $d_p$. Algunas son muy conocidas:
-  - $p=1$ da la distancia "taxi" o "de Manhattan" #footnote[Llamada así porque representa la distancia que recorrería un taxi en una grilla urbana. Una traducción razonable sería _distancia de San Telmo_]:
-  $ d_1(x, y) = norm(x - y)_1 = sum_(i=1)^d abs(x_i - y_i) $,
+  - $p=1$ da la distancia "taxi" o "de Manhattan" #footnote[Llamada así porque representa la distancia que recorrería un taxi en una grilla urbana. Una traducción localizada razonable sería "distancia de San Telmo"]:
+  $ d_1(x, y) = norm(x - y)_1 = sum_(i=1)^d abs(x_i - y_i) thin , $
   - $p=2$ da la distancia euclídea que ya hemos usado, omitiendo el subíndice $2$:
-  $ d_2(x, y) = norm(x - y) = sqrt(sum_(i=1)^d (x_i-y_i)^2) $,
-  - $p -> oo$ da la distancia de Chebyshev,
+  $ d_2(x, y) = norm(x - y) = sqrt(sum_(i=1)^d (x_i-y_i)^2) thin , $
+  - $p -> oo$ da la distancia de Chebyshev:
   $ norm(x)_(p->oo) = max_(1 <= i <= d) |x_i - y_i| $
 ] <lp-metric>
 
-¿Es posible estimar $D_(g compose f)$ de manera consistente? Intuitivamente, consideremos dos puntos $a, b in U subset MM, thick dim MM = d$ en un vecindario $U$ de $a$ lo "suficientemente pequeño" como para que $f$ sea esencialmente uniforme en él, y en particular en el segmento $gamma_(a b) = overline(a b)$ y tomemos $g = 1 slash f^r$:
+¿Es posible estimar $D_(g compose f)$ de manera consistente? Intuitivamente, consideremos dos puntos $a, b in U subset MM, thick dim MM = d$ #footnote[reemplazamos la notación habitual de $p, q in MM$ por $a, b in MM$ y $d_MM$ por $d$ como en @bijralSemisupervisedLearningDensity2012[§3], y así evitar confusiones con la $p-$norma.] en un vecindario $U$ de $a$ lo "suficientemente pequeño" como para que $f$ sea esencialmente uniforme en él, y en particular en el segmento $gamma_(a b) = overline(a b)$ y tomemos $g = 1 slash f^r$:
 
-$ J_(r)(gamma_(a b)) = D_r (a, b) & approx g("alrededor de " a " y " b) norm(b - a)_p \
-                                & prop g(norm(b -a)_p^(-d)) norm(b-a)_p \
-                                & = norm(b -a)_p^(r d + 1) = norm(b-a)_p^q $,
+$J_(r)(gamma_(a b)) = D_r (a, b) & approx g lr((f("alrededor de " a " y " b)), size: #140%) norm(b - a)_p \
+& prop g(norm(b -a)_p^(-d)) norm(b-a)_p \
+& = norm(b -a)_p^(r d + 1) = norm(b-a)_p^q thin,$
 
-donde $q = r times d+1$. Nótese que como ya mencionamos, tomar $q=1$ (o $r = 0$) devuelve la distancia de Minkowski.
+donde $q = r times d+1$.
 
-Luego, el costo de un paseo de $k$ pasos por el grafo completo de #XX, $gamma = (pi_0, pi_1, dots, pi_(i_k)), thick pi_(j)^T in XX forall j in [k]$ por el grafo completo de #XX se puede computar con una simple suma:
-$ J_r (gamma) = sum_(j=1)^k D_r (pi_(j-1), pi_(j)) approx prop sum_(j=1)^k norm(pi_(j) - pi_(j-1))_p^q $ se puede computar similarmente,
+Nótese que como ya mencionamos, tomar $q=1$ (o $r = 0$) devuelve la distancia de Minkowski.
 
-que a su vez nos permite estimar las distancias geodésicas $D_r$ como los "caminos mínimos" en el grafo completo de $XX$ con aristas pesadas por $norm(b - a)_p^q), thick a^T, b^T in XX$.
+Sea $Pi = (pi_0, pi_1, dots, pi_k)$ una serie de índices identificando $k + 1$ observaciones de $XX$. Luego, el costo de un paseo de $k$ pasos por el grafo completo de #XX, $x_(pi_0)-> x_(pi_1) -> dots -> x_(pi_k)$ se puede computar con una simple suma:
+$
+  J_r (x_(pi_0)-> dots -> x_(pi_k)) & = sum_(j=1)^k D_r (x_(pi_(j-1)), x_(pi_(j))) \
+                                    & approx prop sum_(j=1)^k norm(x_(pi_(j)) - x_(pi_(j-1)))_p^q
+$
 
-Esta estimación es particularmente atractiva, en tanto no depende para nada de la dimensión ambiente $D$, y sólo depende de la dimensión intrínseca $d$ de #MM a través de $q=r d+1$. De hecho, los autores mencionan que "casi cualquier par de valores $(p, q)$ funciona", y en particular encuentran que en sus experimento, $p=2, q=8$ "anda bien en general" @bijralSemisupervisedLearningDensity2012[5.1] #footnote[tendremos más para decir al respecto en la sección de Experimentos TODO link experimentos].
+Finalmente, si #XX es una muestra "duficientemente densa", podemos estimar las distancias geodésicas $D_r$ como los "caminos mínimos" en el grafo completo de $XX$ con aristas pesadas por $norm(b - a)_p^q), thick a, b^T in XX$.
 
-Queda de manifiesto que hay una estrecha relación entre las distancias de caminos mínimos con aristas pesadas por una potencia $q= r d +1$ - que sólo está definida entre observaciones de #XX, con la distancia $D_r = inf_gamma (integral_gamma 1/f^r dif s)$, que a priori está definida globalmente en #MM.
+Esta estimación es particularmente atractiva, en tanto no depende para nada de la dimensión ambiente $D$, y sólo depende de la dimensión intrínseca $d$ de #MM a través de $q=r d+1$. De hecho, los autores mencionan que "casi cualquier par de valores $(p, q)$ funciona", y en particular encuentran que en sus experimento, $p=2, q=8$ "anda bien en general" @bijralSemisupervisedLearningDensity2012[5.1] #footnote[tendremos más para decir al respecto en la @resultados, "Resultados"].
+
+#v(1em)
+#align(center)[$quad * quad * quad *$]
+#v(1em)
 
 Un resultado interesante por lo exacto, aparece en @chuExactComputationManifold2019. Dado un conjunto de puntos $P = {p_1, dots, p_N}, p_i in MM forall i in [N]$, Considérese la "métrica de vecino más cercano"
-$ r_P(q) = 4 min_(p in P) norm(q - p) $,
 
-que da lugar a la función de costo
-$ J_(r_P) (gamma) = integral_0^1 r_P (gamma(t)) norm(gamma'(t)) dif t $,
+$ r_P(q) = 4 min_(p in P) norm(q - p) thin , $
+
+donde $P subset MM$ es un _subconjunto_ de la variedad #footnote[a nuestros fines, $P = XX$, pero no tiene por qué serlo: el argumento de Chu et al admite cualquier conjunto _finito_ $P$, cuyos elementos pueden ser regiones enteras de $MM$, y ni siquiera deben ser convexas] que da lugar a la función de costo
+
+$ J_(r_P) (gamma) = integral_0^1 r_P (gamma(t)) norm(gamma'(t)) dif t thin , $
+
 que a su vez define la distancia
 
 $
-  D_(r_P) = inf_gamma J_(r_P) (gamma)
+  D_(r_P) = inf_gamma J_(r_P) (gamma) thin ,
 $
-que llaman distancia de vecino más cercano, $d_bu(N) = D_(r_P)$.
+que los autores llaman "distancia de vecino más cercano", $d_bu(N) = D_(r_P)$.
 
-Considérese además la distancia de arista-cuadrada:
+Considérese además la distancia de arista-al-cuadrado #footnote[cuando $P = XX$, ésta es la misma que @vincentDensitySensitiveMetrics2003 propusieran dieciséis años antes]:
 $
   d_bu(2)(a, b) = inf_((p_0, dots, p_k)) sum_(i=1)^k norm(p_i - p_(i-1))^2
 $
 donde el ínfimo se toma sobre toda posible secuencia de puntos $p_0, dots, p_k in P, p_0 = a, p_k = b$. Resulta entonces que la distancia de vecino más cercano $d_bu(N)$ y la métrica de arista cuadrada $d_bu(2)$ son equivalentes para todo conjunto de puntos $P$ en dimensión arbitraria. @chuExactComputationManifold2019[Teorema 1.1] #footnote[De hecho, la prueba que ofrecen es un poco más general: los elementos de $P$ no tienen por qué ser puntos en #MM, sino que pueden ser conjuntos compactos, con costo cero al atravesarlos, cf. @chuExactComputationManifold2019[Figura 2]].
 
-Probar la equivalencia para el caso trivial con $P = {a, b} subset RR^D$ se convierte en un ejercicio de análisis muy sencillo, que cementa la intuición y explica el factor de $4$ original:
+Probar la equivalencia para el caso trivial con $P = {a, b} subset RR^D$ se convierte en un ejercicio de análisis muy sencillo, que cementa la intuición y explica el factor de $4$ en $r_P$:
+
+#v(-3em)
 #figure(
   image("img/equivalencia-d2-dN.svg"),
-  caption: [Ejemplo trivial de la equivalencia $d_bu(N) equiv d_bu(2)$ para $P = {a, b}$],
+  caption: flex-caption(
+    [Ejemplo trivial de la equivalencia $d_bu(N) equiv d_bu(2)$ para $P = {a, b}$],
+    [Ejemplo de la equivalencia $d_bu(N) equiv d_bu(2)$],
+  ),
 ) <equiv-d2-dn>
 
-En la mitad del segmento $overline(a b)$ más cercana a $a$ (región azul), $d_bu(N)$ es $norm(z - a)^2$; análogamente, en la región naranja $d_bu(N) = norm(z - b)^2$.
+Por la desigualdad triangular, cualquier camino entre $a$ y $b$ ha de ser al menos tan largo como $overline(a b)$. En la mitad del segmento $overline(a b)$ más cercana a $a$ (región azul), $d_bu(N)$ es $norm(z - a)^2$; análogamente, en la región naranja $d_bu(N) = norm(z - b)^2$. Parametricemos $overline(a b):$
 $
-  gamma(t) : [0, 1] -> RR^D, thick gamma(t) = (1 - t) a + t b, thick gamma'(t) = b - a \ \
+  gamma(t) &: [0, 1] -> RR^D, quad
+  gamma(t) &= a + (b - a) t, quad
+  gamma'(t) &= b - a
 $
 $
-  d_bu(N)(a, b) & = J_(r_P) (gamma) = integral_0^1 r_{a, b} (gamma(t)) times norm(gamma'(t)) dif t \
+  d_bu(N)(a, b) & =  D_(r_P) = inf_gamma J_(r_P) (gamma) = J_(r_P) (overline(a b)) \= integral_0^1 r_{a, b} (gamma(t)) times norm(gamma'(t)) dif t \
   & = integral_0^1 4 min_(p in {a, b}) norm((a + (b -a)t) - p) norm(b-a) dif t \
   & = 4 norm(b-a) (integral_0^(1/2) norm(a + (b -a)t - a) dif t + integral_(1/2)^1 norm(a + (b -a)t - b) dif t )\
   & = 4 norm(b-a) (integral_0^(1/2) norm((b -a)t) dif t + integral_(1/2)^1 norm((a-b)(1-t)) dif t )\
-  & = 4 norm(b-a)^2 (integral_0^(1/2) t dif t + integral_(1/2)^1 (1-t) dif t ) = 4 norm(b-a) (1/8 + 1/8) \
-  & = norm(b-a)^2
-  = d_bu(2)(a, b)
+  & = 4 norm(b-a)^2 (integral_0^(1/2) t dif t + integral_(1/2)^1 (1-t) dif t ) \
+  &= 4 norm(b-a)^2 [( t^2 |^(1 slash 2)_0) + (t - t^2 |^1_(1 slash 2))] \
+  &= 4 norm(b-a)^2 (1/2 - 1/4) \
+  & = norm(b-a)^2 \
+  & = d_bu(2)(a, b) quad square
 $
+#v(1em)
 
-El grueso del trabajo de Chu et al consiste en una prueba más general de esta igualdad, que se desarrolla en tres partes:
+El grueso del trabajo de Chu et al consiste en una prueba general de esta igualdad, que se desarrolla en tres partes:
 1. Para toda colección finita de puntos $P = {p_i : p_i in RR^D}$,
 
   1.a. $d_bu(N) <= d_bu(2)$
@@ -1058,25 +1095,20 @@ El grueso del trabajo de Chu et al consiste en una prueba más general de esta i
   1.b. $d_bu(N) >= d_bu(2)$
 2. (1) también es válido para toda colección de compactos $P$ de $RR^D$.
 
-Una utilidad de este resultado, es que permite calcular con precisión para qué valores de $k$, estimar $d_bu(N)$ sobre el grafo pesado por aristas cuadradas $bu(N N)_k (XX)$  es "suficientemente buen sustituto" por el más costoso $bu(C)(XX)$. En @chuExactComputationManifold2019[Theorema 1.3], observan que basta $k = O(2^d ln n)$
+Una utilidad de este resultado, es que permite calcular con precisión qué valores de $k$ estimar $d_bu(N)$ sobre el grafo pesado por aristas cuadradas $bu(N N)_k (XX)$  es un "suficientemente buen reemplazo" del cálculo equivalente -- pero mucho más costoso -- sobre $bu(C)(XX)$. En @chuExactComputationManifold2019[Theorema 1.3], observan que con tomar $k = O(2^d ln n)$ basta.
 
-Lo que Chu et al llaman $d_bu(2)$ y figura en @chuExactComputationManifold2019 @vincentDensitySensitiveMetrics2003 como "distancia de arista-cuadrada", es la misma distancia $D_r$ que @bijralSemisupervisedLearningDensity2012 considera, con $p = 2$ (norma euclídea) y $r = 1/d$ (de modo que $q=r d+1=2$).
-A nuestro entender, no hay pruebas de tal equivalencia para valores arbitrarios de $p, q$, pero sí existen resultados asintóticos para casos más generales.
+Lo que Chu et al llaman $d_bu(2)$ y figura en @chuExactComputationManifold2019 @vincentDensitySensitiveMetrics2003 como "distancia de arista-cuadrada", es la misma distancia $D_r$ que @bijralSemisupervisedLearningDensity2012 consideran con $p = 2$ (norma euclídea) y $r = 1/d$ -- de modo que $q=r d+1=2$. 
 
 === Distancia de Fermat
 
+No conocemos pruebas de equivalencia para valores arbitrarios de $p, q$, ni se deriva de la prueba mencionada que deban de existir. Sin embargo, sí existe en la literatura una familia de DBDs  para la cual se conocen tasas de convergencia asintótica de la aproximación muestral en el grafo completo a la distancia propiamente dicha, sobre una variedad Riemanniana compacta sin frontera -- la familia de _Distancia(s) de Fermat_.
 
-#quote(attribution: "P. Groisman et al (2019)")[
-  #set text(size: 12pt)
-  _We tackle the problem of learning a distance between points, able to capture both the geometry of the manifold and the underlying density. We define such a sample distance and prove the convergence, as the sample size goes to infinity, to a macroscopic one that we call Fermat distance as it minimizes a path functional, resembling Fermat principle in optics._]
-
-
-El trabajo de @groismanNonhomogeneousEuclideanFirstpassage2019 considera la misma familia de distancias basadas en funciones monótonamente decrecientes de la densidad que @bijralSemisupervisedLearningDensity2012, $g = 1 / f^r$, salvo que en @groismanNonhomogeneousEuclideanFirstpassage2019,
+El trabajo de @groismanNonhomogeneousEuclideanFirstpassage2019 considera la misma familia de distancias basadas en funciones monótonamente decrecientes de la densidad que @bijralSemisupervisedLearningDensity2012, $g = 1 / f^r$, salvo que en Groisman et al,
 $
   p = 2; quad q = alpha; quad r = beta = (alpha - 1) / d
 $
 
-y no se limita a sugerir que la distancia en el espacio ambiente, $D_r = D_(g compose f)$ se puede aproximar a través de la distancia basada en el grafo completo de #XX con aristas pesadas por $norm(dot)_2^alpha$, sino que precisan en qué sentido la una converge a la otra, y a qué tasa.#footnote[Con respecto a fijar $p=2$, en la "Observación 2.6" los autores mencionan que es posible y hasta sería interesante reemplazar la norma euclídea -- $2-$norma -- por otra distancia -- otra $p-$norma, por ejemplo --, reemplazando las integrales con respecto a la longitud de arco, por integrales con respecto a la distancia involucrada. Entendemos de ello que no es una condición _necesaria_ para el desarrolo del trabajo, sino sólo _conveniente_.]
+y no se limitan a sugerir que la distancia en el espacio ambiente se puede aproximar a través de la distancia basada en el grafo completo con aristas pesadas como en Bijral et al , sino que precisan en qué sentido la una converge a la otra, y a qué tasa.#footnote[Con respecto a fijar $p=2$, en la "Observación 2.6" los autores mencionan que es posible y hasta sería interesante reemplazar la norma euclídea -- $2-$norma -- por otra distancia -- otra $p-$norma, por ejemplo --, reemplazando las integrales con respecto a la longitud de arco, por integrales con respecto a la distancia involucrada. Entendemos de ello que no es una condición _necesaria_ para el desarrolo del trabajo, sino sólo _conveniente_. Omitiremos el subíndice en la $2-$norma de aquí en más.]
 
 #defn([Distancia "macroscrópica" de Fermat @groismanNonhomogeneousEuclideanFirstpassage2019[Definición 2.2]])[
 
@@ -1084,55 +1116,55 @@ y no se limita a sugerir que la distancia en el espacio ambiente, $D_r = D_(g co
   y $x, y in S subset.eq RR^D$. Definimos la _Distancia de Fermat_ $cal(D)_(f, beta)(x, y)$ como:
 
   $
-    cal(T)_(f, beta)(gamma) = integral_gamma f^(-beta) dif s, quad cal(D)_(f, beta)(x, y) = inf_gamma cal(T)_(f, beta)(gamma)
+    cal(T)_(f, beta)(gamma) = integral_gamma f^(-beta) dif s, quad cal(D)_(f, beta)(x, y) = inf_gamma cal(T)_(f, beta)(gamma) thin ,
   $
 
-  ... donde el ínfimo se toma sobre el conjunto de todos los "senderos" o curvas rectificables entre $x$ e $y$ contenidos en $overline(S)$, la clausura de $S$, y la integral es entendida con respecto a la longitud de arco $dif s$ dada por la distancia euclídea como siempre.
+donde el ínfimo se toma sobre el conjunto de todos los "senderos" o curvas rectificables entre $x$ e $y$ contenidos en $overline(S)$ -- la clausura de $S$ --, y la integral se entiende con respecto a la longitud de arco $dif s$ dada por la distancia euclídea. Omitiremos la dependencia en $beta$ y $f$ cuando no sea estrictamente necesaria. #footnote[
+  En palabras de los autores, el nombre deriva de que "esta definición coincide con el Principio de Fermat en óptica para determinar el sendero recorrido por un haz de luz en un medio no homogéneo cuando el índice de refracción está dado por $f^(-beta)$"
+]
 ]
 
 Este objeto "macroscópico" se puede aproximar a partir de una versión "microscópica" del mismo, que en límite converge a $cal(D)_(f, beta)$:
 
-#defn("Distancia muestral de Fermat")[
+#let sfd = $D_(Q, alpha)$
+
+#defn([Distancia muestral o "microscópica" de Fermat])[
 
   Sea $Q$ un conjunto no-vacío, _localmente finito_ #footnote[Es decir, que para todo compacto $U subset RR^D$, la cardinalidad de $Q inter U$ es finita, $abs(Q inter U) < oo$.] de $RR^D$. Para $alpha >=1$ y $x, y in RR^d$, la _Distancia Muestral de Fermat_ se define como
 
+
   $
-    D_(Q, alpha) = inf { & sum_(j=1)^(K-1) ||q_(j+1) - q_j||^alpha : (q_1, dots, q_K) \
+    sfd = inf { & sum_(j=1)^(K-1) ||q_(j+1) - q_j||^alpha : (q_1, dots, q_K) \
                          & "es un camino de x a y", K>=1}
   $
 
-  donde los $q_j$ son elementos $Q$. Nótese que $D_(Q, alpha)$ satisface la desigualdad triangular, define una métrica sobre $Q$ y una pseudo-métrica #footnote[una métrica tal que la distancia puede ser nula entre puntos no-idénticos $exists a != b : d(a, b) = 0$] sobre $RR^d$.
+  donde los $q_j in Q thin forall j in [K]$. Nótese que #sfd satisface la desigualdad triangular, define una métrica sobre $Q$ y una pseudo-métrica #footnote[una métrica tal que la distancia puede ser nula entre puntos no-idénticos:  $ exists a != b : d(a, b) = 0 $] sobre $RR^d$.
 ] <sample-fermat-distance>
 
+Antes de presentar en qué sentido  #sfd converge a $cal(D)_(f, beta)$, una definición más:
 #defn([variedad isométrica])[
   Diremos que #MM es una variedad $d-$dimensional $C^1$ _isométrica_ embebida en $RR^D$ si existe un conjunto abierto y conexo $S subset RR^D$ y $phi : S -> RR^D$ una transformación isométrica #footnote[Que preserva las métricas o distancias; del griego "isos" (igual) y "metron" (medida)] tal que $phi(overline(S)) = MM$. Como se mencionó con anterioridad, se espera que $d << D$, pero no es necesario.
 ]
 
 #defn([Convergencia de $D_(Q, alpha)$, @groismanNonhomogeneousEuclideanFirstpassage2019[Teorema 2.7]])[
 
-  Asuma que #MM es una variedad $C^1$ $d$-dimensional isométrica embebida en $RR^D$ y $f: M -> R_+$ es una función de densidad de probabilidad continua. Sea $Q_n = {q_1, ..., q_n}$ un conjunto de elementos aleatorios independientes con densidad común $f$. Entonces, para $alpha > 1$ y $x,y in M$ tenemos:
+  Asuma que #MM es una variedad $C^1$ $d$-dimensional isométrica embebida en $RR^D$ y $f: MM -> R_+$ es una función de densidad de probabilidad continua. Sea $Q_n = {q_1, ..., q_n}$ un conjunto de elementos aleatorios independientes con densidad común $f$. Entonces, para $alpha > 1$ y $x,y in M$ tenemos:
 
   $ lim_(n->oo) n^beta D_(Q_n,alpha)(x,y) = mu D_(f,beta)(x,y) " casi seguramente." $
 
   Aquí,
   - $beta = (alpha-1) slash d$,
   - $mu$ es una constante que depende únicamente de $alpha$ y $d$ y
-  - la minimización se realiza sobre todas las curvas rectificables $gamma subset M$ que comienzan en $x$ y terminan en $y$.
+  - la minimización se realiza sobre todas las curvas rectificables $gamma subset MM$ que comienzan en $x$ y terminan en $y$.
 ]
 
 #obs[
   El factor de escala $beta = (alpha-1)/d$ depende de la dimensión intrínseca $d$ de la variedad, y no de la dimensión $D$ del espacio ambiente.
 ]
 
-La distancia muestral de Fermat $D_(Q, alpha)$:
-- se puede aproximar a partir de una muestra "lo suficientemente grande"
-- sin conocer ni la variedad #MM ni su dimensión intrínseca; además
-- tiene garantías de convergencia a una distancia basada en densidad (DBD) "macroscópica" (la distancia de Fermat "a secas" $cal(D),(f, beta)$) y
-- por definición, aprende "a la vez" la geometría del dominio y la densidad de la variable aleatoria objetivo sobre éste.
+La distancia muestral de Fermat $D_(Q, alpha)$ se puede aproximar a partir de una muestra "lo suficientemente grande _sin conocer ni la variedad #MM ni su dimensión intrínseca_. Además, tiene garantías de convergencia a una distancia basada en densidad (DBD) -- la distancia de Fermat "macroscópica" $cal(D)_(f, beta)$ -- para todo $beta,$. ¡Hemos encontrado la pieza faltante para nuestro clasificador en variedades _desconocidas_! Estamos finalmente en condiciones de proponer un algoritmo de clasificación que reúna todos los cabos del tejido teórico hasta aquí desplegado.
 
-Es decir, que pareciéramos haber conseguido la pieza faltante para nuestro clasificador en variedades _desconocidas_ y estaríamos en condiciones de proponer un algoritmo de clasificación que reúna todos los cabos del tejido teórico hasta aquí desplegado.
-
-Nobleza obliga, hemos de mencionar que los trabajos de @littleBalancingGeometryDensity2021 @mckenziePowerWeightedShortest2019 , contemporáneos a Groisman et al, también consideran lo que ellos llaman "distancias de caminos mínimos pesadas por potencias" #footnote["power-weighted shortest-path distances" o PWSPDs por sus siglas en inglés], y las aplican no a problemas de clasificación, sino de _clustering_ #footnote[de identificación de grupos en datos no etiquetados]. Hay algunas diferencias en la minucia del tratamiento #footnote[En particular, la distancias microscópica que plantean Little et al no es la suma de las aristas pesadas por $q=alpha$ como hacen Bijral et al y Groisman et al, sino la raíz $alpha$-ésima de tal suma, en una especia de reversión de la distancia de Minkowski. Además, el contexto de _clustering_ los lleva a considerar una muestra compuesta de elementos provenientes de variedad disjuntas, una representando a cada _cluster_.], pero no así en la sustancia, por lo cual pasaremos directamente a la próxima sección.
+Los trabajos de @littleBalancingGeometryDensity2021 @mckenziePowerWeightedShortest2019 -- contemporáneos a Groisman et al -- consideran lo que ellos llaman "distancias de caminos mínimos pesadas por potencias" #footnote["power-weighted shortest-path distances" o PWSPDs por sus siglas en inglés], aplicándoles no a problemas de clasificación, sino de _clustering_ #footnote[i.e., de identificación de grupos en datos no etiquetados]. Las definiciones de ambos grupos son muy similares en espíritu, con una diferencia menor: la distancia microscópica que plantean Little et al no es la suma de las aristas pesadas por $q=alpha$ como en Bijral et al y Groisman et al, sino la raíz $alpha$-ésima de tal suma, en una especia de reversión de la distancia de Minkowski. Siendo la sustancia de ambos trabajos en esencia la misma, pasaremos directamente a la próxima sección -- nuestra propuesta original.
 = Propuesta Original
 
 Al comienzo de este sendero teórico nos preguntamos: ¿es posible mejorar un algoritmo de clasificación reemplazando la distancia euclídea por una aprendida de los datos? Habiendo explorado el área en profundidad, entendemos que sí pareciera ser posible, y en particular la distancia muestral de Fermat es un buen candidato de reemplazo.
@@ -1222,10 +1254,10 @@ Además de medir qué (des)ventajas otorga el uso de una distancia aprendida de 
 
 Consideraremos a modo de referencia los siguientes algoritmos:
 - Naive Bayes Gaussiano (#gnb),
-- Regresión Logistica (#lr) y
+- Regresión Logistica (#logr) y
 - Clasificador de Soporte Vectorial (#svc)
 
-Esta elección no pretende ser exhaustiva, sino que responde a un "capricho informado" del investigador. #gnb es una elección natural, ya que es la simplificación que surge de asumir independencia en las dimensiones de $X$ para KDE multivariado (@kde-mv), y se puede computar para grandes conjuntos de datos en muy poco tiempo. #lr es "el" método para clasificación binaria, y su extensión a múltiples clases no es particularmente compleja: para que sea mínimamente valioso un nuevo algoritmo, necesita ser al menos tan bueno como #lr, que tiene ya más de 65 años en el campo @blissCALCULATIONDOSAGEMORTALITYCURVE1935, @coxRegressionAnalysisBinary1958. Por último, fue nuestro deseo incorporar algunos métodos más cercano al estado del arte: un método de _boosting_ (@GradientBoosting2025) y el antedicho clasificador de soporte vectorial, #svc #footnote[en dos variantes: con núcleos (_kernels_) lineales y RBF - #emph[radial basis functions]]. Por conocerlo en profundidad y en virtud de su sencillez de uso, la implementación se realizó utilizando `scikit-learn` @JMLR:v12:pedregosa11a, un poderoso y extensible paquete para tareas de aprendizaje automático en Python.
+Esta elección no pretende ser exhaustiva, sino que responde a un "capricho informado" del investigador. #gnb es una elección natural, ya que es la simplificación que surge de asumir independencia en las dimensiones de $X$ para KDE multivariado (@kde-mv), y se puede computar para grandes conjuntos de datos en muy poco tiempo. #logr es "el" método para clasificación binaria, y su extensión a múltiples clases no es particularmente compleja: para que sea mínimamente valioso un nuevo algoritmo, necesita ser al menos tan bueno como #logr, que tiene ya más de 65 años en el campo @blissCALCULATIONDOSAGEMORTALITYCURVE1935, @coxRegressionAnalysisBinary1958. Por último, fue nuestro deseo incorporar algunos métodos más cercano al estado del arte: un método de _boosting_ (@GradientBoosting2025) y el antedicho clasificador de soporte vectorial, #svc #footnote[en dos variantes: con núcleos (_kernels_) lineales y RBF - #emph[radial basis functions]]. Por conocerlo en profundidad y en virtud de su sencillez de uso, la implementación se realizó utilizando `scikit-learn` @JMLR:v12:pedregosa11a, un poderoso y extensible paquete para tareas de aprendizaje automático en Python.
 
 === Metodología
 
@@ -1270,13 +1302,13 @@ Para definir una $C$ factible en modelos con dim(h) > 1, definimos el orden de c
 
 === Medidas de locación y dispersión no-paramétricas:
 Siendo el "setting" (DBD en variedad de Riemann desconocida) tan poco ortodoxo, parece razonable comparar performance con medidas de locación robustas. Por eso comparamos la performance _mediana_ (y no media) por semilla de c/ clasificador, y las visualizamos con un _boxplot_, y no un IC $mu plus.minus n times sigma$.
-= Resultados
+= Resultados <resultados>
 
 == In Totis
 
 En total, ejecutamos unas 4,500 tareas, producto de #reps repeticiones por dataset y clasificador, sobre un total de 20 datasets y 9 clasificadores diferentes. Recordemos que todos los estimadores se entrenaron con _score_ `neg_log_loss` (para optimizar por $R^2$), salvo #svc que al ser un clasificador duro, se entrenó con `accuracy`. Así, entre los clasificadores blandos la distancia de Fermat rindió frutos, con el máximo $R^2$ mediano en 10 de los 20 experimentos: 7 preseas fueron para #fkdc y 3 para #fkn.
 
-#gbt "ganó" en 5 datasets, entre ellos en varios con mucho ruido (`_hi`, y `_12`. #kdc resultó óptimo en 2 datasets, cementando la técnica del @kde-variedad como competitiva de por sí. Por último, tanto #kn como #lr (en su versión escalada, #slr) resultaron medianamente mejores que todos los demás en ciertos dataset, y sólo #gnb no consiguió ningún podio - aunque resultó competitivo en casi todo el tablero.
+#gbt "ganó" en 5 datasets, entre ellos en varios con mucho ruido (`_hi`, y `_12`. #kdc resultó óptimo en 2 datasets, cementando la técnica del @kde-variedad como competitiva de por sí. Por último, tanto #kn como #logr (en su versión escalada, #slr) resultaron medianamente mejores que todos los demás en ciertos dataset, y sólo #gnb no consiguió ningún podio - aunque resultó competitivo en casi todo el tablero.
 La amplia distribución de algoritmos óptimos según las condiciones del dataset, remarcan la existencia de ventajas relativas en todos ellos.
 
 #let data = csv("data/mejor-clf-por-dataset-segun-r2-mediano.csv")
@@ -1318,7 +1350,7 @@ $ sigma_"lunas" = 0.25 quad sigma_"circulos" = 0.08 quad sigma_"espirales" = 0.1
 
 En los tres datasets, el resultado es muy similar: #fkdc es el estimador que mejor $R^2$ reporta, y en todos tiene una exactitud comparable a la del mejor para el dataset. En ninguno de los tres datasets #fkdc tiene una exactitud muy distinta a la de #kdc, pero saca ventaja en $R^2$ para `lunas_lo` y `espirales_lo`.
 
-Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #fkn y #gbt, mientras que #gnb, #slr, #lr rinden mal pues las _fronteras de decisión_ que pueden representar no cortan bien a los datos.
+Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #fkn y #gbt, mientras que #gnb, #slr, #logr rinden mal pues las _fronteras de decisión_ que pueden representar no cortan bien a los datos.
 
 
 #let highlights_figure(dataset) = {
@@ -1358,8 +1390,8 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 #highlights_figure("espirales_lo")
 #pagebreak()
 
-#let sfd = $D_(Q, alpha)$
 #let euc = $norm(thin dot thin)_2$
+#let sfd = $D_(Q, alpha)$
 
 #obs("riesgos computacionales")[
   Una dificultad de entrenar un clasificador _original_, es que hay que definir las rutinas numéricas "a mano" #footnote[Usando librerías estándares como `numpy` y `scipy`, sí, pero nada más.], y _debugear_ errores en rutinas numéricas es particularmente difícil, porque las operaciones casi siempre retornan, salvo que retornan valores irrisorios #footnote[Hubo montones de estos, cuya resolución progresiva dio lugar a la pequeña librería que acompaña esta tesis. Todo error de cálculo que pueda persistir en el producto final depende exclusivamente de mí, pero tan mal no parecen haber dado los experimentos.].
@@ -1375,20 +1407,20 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 ==== Fronteras de decisión
 Una inspección ocular a las fronteras de decisión revela las limitaciones de distintos algoritmos.
 
-#lr, #slr sólo pueden dibujar fronteras "lineales", y como ninguna frontera lineal que corte la muestra logra dividirla en dos regiones con densidades de clase realmente diferentes, el algoritmo falla. #gnb falla de manera análoga, aunque su problema es otro - no lidia bien con distribuciones con densidades marginales muy similares.
+#logr, #slr sólo pueden dibujar fronteras "lineales", y como ninguna frontera lineal que corte la muestra logra dividirla en dos regiones con densidades de clase realmente diferentes, el algoritmo falla. #gnb falla de manera análoga, aunque su problema es otro - no lidia bien con distribuciones con densidades marginales muy similares.
 
 #let clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb")
 #align(center)[#box(width: 160%, figure(table(columns: 3, stroke: 0pt, ..clfs.map(clf => image(
     "img/espirales_lo-" + clf + "-decision_boundary.svg",
   )))))]
 
-Aún con esas limitaciones, #lr tiene un rendimiento decente en `lunas_lo`:
+Aún con esas limitaciones, #logr tiene un rendimiento decente en `lunas_lo`:
 
 #figure(
   image("img/lunas_lo-lr-decision_boundary.svg"),
   caption: [Frontera de decisión para #slr en `lunas_lo`, semilla #plotting_seed],
 )
-Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) aprendida por #lr separa _bastante_ bien la muestra: pasa por el punto del segmento que une los "focos" de cada luna, y de todas las direcciones con origen allí, es la que mejor separa las clases. _A grosso modo_, en el tercio de la muestra más cercano a la frontera, alcanza una exactitud de $~50%$, pero en los tercios al interior de cada región, esta virtualmente en 100%, que da un promedio global de $1/3 50% + 2/3 100% = 86.7%$, casi exactamente la exactitud observada.
+Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) aprendida por #logr separa _bastante_ bien la muestra: pasa por el punto del segmento que une los "focos" de cada luna, y de todas las direcciones con origen allí, es la que mejor separa las clases. _A grosso modo_, en el tercio de la muestra más cercano a la frontera, alcanza una exactitud de $~50%$, pero en los tercios al interior de cada región, esta virtualmente en 100%, que da un promedio global de $1/3 50% + 2/3 100% = 86.7%$, casi exactamente la exactitud observada.
 
 También resulta llamativa la "creatividad" de #gbt para aproximar unas fronteras naturalmente curvas como una serie de preguntas binarias, que sólo permiten dibujar regiones rectangulares #footnote[Quien haya pasado alguna clase no particularmente emocionante pintando espirales en hoja cuadriculada reconocerá este patrón rápidamente.].
 
@@ -1592,7 +1624,7 @@ Un punto en contra de #fkdc aquí, es que el boxplot de $R^2$ - no así el de ex
 
 ==== Hélices
 #image("img/helices-scatter-3d.svg")
-Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la misma dirección, una de ellas empezando a "media altura" entre dos brazos consecutivos de la otra. El dataset es particularmente desafiante para #slr, #lr, y Naive Bayes, que no logran diferenciarse en nada de un clasificador trivial que prediga siempre la misma clase.
+Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la misma dirección, una de ellas empezando a "media altura" entre dos brazos consecutivos de la otra. El dataset es particularmente desafiante para #slr, #logr, y Naive Bayes, que no logran diferenciarse en nada de un clasificador trivial que prediga siempre la misma clase.
 
 #highlights_figure("helices_0")
 Que a #gnb le resulte complejo no es sorprendente, ya que las distribuciones marginales son prácticamente idénticas:
@@ -1785,7 +1817,7 @@ TODO: revisar forma de citar bibliografía, corregir autores y formato en textos
   [#gnb], [1.0], [1.0],
   [#kn], [1.0], [1.0],
   [#fkn], [1.0], [1.0],
-  [#lr], [0.99994], [1.0],
+  [#logr], [0.99994], [1.0],
   ..best([#slr], [0.99952], [1.0]),
   ..bad([#gbt], [0.9995], [1.0]),
   ..bad([#svc], [#na], [1.0]),
