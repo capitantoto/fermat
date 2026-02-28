@@ -906,7 +906,7 @@ Desarrollado a fines del siglo XX por Joshua Tenenbaum et al.  @tenenbaumMapping
     - ($epsilon-$Isomap): la distancia euclídea entre $a, b$ en el espacio ambiente es menor o igual a épsilon, $norm(a - b) <= epsilon$.
     - ($k-$Isomap): $b$ es uno de los $k$ vecinos más cercanos de $a$ #footnote[o viceversa, pues en un grafo no-dirigido la relación de vecinos más cercanos es mutua]
   + Computar la distancia geodésica en el grafo $bu(N N)$ -- el "costo" de los caminos mínimos -- entre todo par de observaciones, $d_bu(N N)(a, b) forall a, b in XX$ #footnote[A tal fin, se puede utilizar segón convenga el algoritmo de #link("https://es.wikipedia.org/wiki/Algoritmo_de_Floyd-Warshall")[Floyd-Warshall] o #link("https://es.wikipedia.org/wiki/Algoritmo_de_Dijkstra")[Dijkstra]].
-  + Construir la representación - $d-$dimensional utilizando MDS #footnote["Multi Dimensional Scaling", o #link("https://es.wikipedia.org/wiki/Escalamiento_multidimensional")[_escalamiento multidimensional_], un algoritmo de reducción de dimensionalidad] en el espacio euclídeo $RR^d$ que minimice una métrica de discrepancia denominada «estrés», entre las distancias $d_bu(N N)$ de (2) y la norma euclídea en la representación. Para elegir el valor óptimo de $d$ #footnote[que debería coincidir con la dimensión intrínseca de los datos], búsquese el "codo" en el gráfico de estrés en función de la dimensión de MDS.
+  + Construir la representación - $d-$dimensional utilizando MDS #footnote["Multi Dimensional Scaling", o #link("https://es.wikipedia.org/wiki/Escalamiento_multidimensional")[_escalamiento multidimensional_], un algoritmo de reducción de dimensionalidad] en el espacio euclídeo $RR^d$ que minimice una métrica de discrepancia denominada "estrés", entre las distancias $d_bu(N N)$ de (2) y la norma euclídea en la representación. Para elegir el valor óptimo de $d$ #footnote[que debería coincidir con la dimensión intrínseca de los datos], búsquese el "codo" en el gráfico de estrés en función de la dimensión de MDS.
 ]
 #figure(
   image("img/isomap-2.png", height: 16em),
@@ -1231,7 +1231,7 @@ Una métrica natural para evaluar una regla de clasificación suave es la _veros
   $ op(cal(l))(clf) = n^(-1) log(op("L")(clf)) = n^(-1)sum_(i=1)^n log(hat(bu(Y))_((i, y_i))) $
 ] <vero>
 
-La verosimilitud de una muestra varía en $[0, 1]$ y su log-verosimilitud, en $(-oo, 0]$, pero, como métrica, esta solo se vuelve comprensible _relativa a otros clasificadores_. Una forma de «normalizar» la log-verosimilitud se debe a @mcfaddenConditionalLogitAnalysis1974.
+La verosimilitud de una muestra varía en $[0, 1]$ y su log-verosimilitud, en $(-oo, 0]$, pero, como métrica, esta solo se vuelve comprensible _relativa a otros clasificadores_. Una forma de "normalizar" la log-verosimilitud se debe a @mcfaddenConditionalLogitAnalysis1974.
 
 #defn(
   [$R^2$ de McFadden],
@@ -1269,7 +1269,7 @@ La unidad de evaluación de los algoritmos a considerar es una `Tarea`, que se c
 La especificación completa de un clasificador requiere, además de la elección del algoritmo, la especificación de sus _hiperparámetros_, de manera tal de optimizar su rendimiento bajo ciertas condiciones de evaluación. Para ello, se definió de antemano para cada clasificador una _grilla_ de hiperparámetros: durante el proceso de entrenamiento, la elección de los "mejores" hiperparámetros se efectuó maximizando la log-verosimilitud @vero para los clasificadores suaves, y la exactitud @exactitud para los duros #footnote[Entre los mencionados, el único clasificador duro es #svc. Técnicamente es posible entrenar un clasificador suave a partir de uno duro con un _segundo_ estimador que toma como _input_ el resultado "crudo" del clasificador duro y da como _output_ una probabilidad calibrada (cf. #link("https://scikit-learn.org/stable/modules/calibration.html")[Calibración] en la documentación de `scikit-learn`  @buitinckAPIDesignMachine2013), pero es un proceso computacionalmente costoso.] con una búsqueda exhaustiva por validación cruzada de 5 pliegos #footnote[Conocida en inglés como #emph[Grid Search 5-fold Cross-Validation]] sobre la grilla entera.
 
 === Estimación de la variabilidad en la _performance_ reportada
-En última instancia, cualquier métrica evaluada no es otra cosa que un _estadístico_ que representa la «calidad» del clasificador en la tarea a mano. A fines de conocer no solo su estimación puntual sino también darnos una idea de la variabilidad de su _performance_, para cada dataset y colección de algoritmos, se entrenaron y evaluaron #reps tareas idénticas salvo por la semilla $s$, que luego se usaron para estimar la varianza y el desvío estándar en la exactitud (@exactitud) y el pseudo-$R^2$ (@R2-mcf).
+En última instancia, cualquier métrica evaluada no es otra cosa que un _estadístico_ que representa la "calidad" del clasificador en la tarea a mano. A fines de conocer no solo su estimación puntual sino también darnos una idea de la variabilidad de su _performance_, para cada dataset y colección de algoritmos, se entrenaron y evaluaron #reps tareas idénticas salvo por la semilla $s$, que luego se usaron para estimar la varianza y el desvío estándar en la exactitud (@exactitud) y el pseudo-$R^2$ (@R2-mcf).
 
 Cuando el conjunto de datos proviene del mundo real y por lo tanto _preexiste a nuestro trabajo_, las #reps semillas $s_1, dots, s_#reps$ fueron utilizadas para definir el split de entrenamiento/evaluación. Por el contrario, cuando el conjunto de datos fue generado sintéticamente, las semillas se utilizaron para generar #reps versiones distintas pero perfectamente replicables del dataset, y en todas se utilizó una misma semilla maestra $s^star$ para definir el split de evaluación.
 
@@ -1289,7 +1289,7 @@ La validación cruzada de $k$ pliegos nos provee naturalmente de $k$ realizacion
   Sea $hat(s^2)(L(h))$ una estimación razonable de la varianza de la pérdida $L(h)$ del modelo parametrizado en $h$, y $h^"opt"$ la que alcanza la mínima pérdida. De entre todas las hiperparametrizaciones, elíjase _la más sencilla_: $h^star = arg min_(h in cal(H)) C(h), \ cal(H) = {h : L(h) <= L(h^"opt") + sqrt(hat(s^2)(L(h^"opt"))) }$.
 ] <r1sd>
 
-Para definir $C$ en modelos con $dim(h) > 1$, definimos el orden de complejidad creciente _para cada clasificador_ como una lista ordenada de 2-tuplas con el nombre de cada hiperparámetro y una dirección de crecimiento. Para #fkdc, por ejemplo, $C(h) = [(alpha, "ascendente"), (h, "descendente")]$. La decisión de ordenar así los parámetros, con $alpha$ primero y $C$ ascendente en $alpha$, hace que la evaluación «prefiera» naturalmente a #kdc por sobre #fkdc#footnote[$#kdc = op(#fkdc)(alpha = 1)$], ya que el mínimo $alpha = 1$ estudiado resulta siempre preferido. En consecuencia, cuando veamos que #fkdc elige un $alpha != 1$, sabremos que no es por pura casualidad.
+Para definir $C$ en modelos con $dim(h) > 1$, definimos el orden de complejidad creciente _para cada clasificador_ como una lista ordenada de 2-tuplas con el nombre de cada hiperparámetro y una dirección de crecimiento. Para #fkdc, por ejemplo, $C(h) = [(alpha, "ascendente"), (h, "descendente")]$. La decisión de ordenar así los parámetros, con $alpha$ primero y $C$ ascendente en $alpha$, hace que la evaluación "prefiera" naturalmente a #kdc por sobre #fkdc#footnote[$#kdc = op(#fkdc)(alpha = 1)$], ya que el mínimo $alpha = 1$ estudiado resulta siempre preferido. En consecuencia, cuando veamos que #fkdc elige un $alpha != 1$, sabremos que no es por pura casualidad.
 
 // TODO: considerar renombrar hiperparametrización para evitar confusión con la ventana $h$.
 #obs([complejidad en $h$])[
@@ -1324,7 +1324,7 @@ El mismo análisis con métrica de exactitud es, desde luego, menos favorable a 
 Solo considerar la _performance_ de #fkdc y #fkn en los 20 datasets daría unas 40 unidades de análisis, y en el espíritu de indagación curiosa que guía esta tesis, existen aún más tendencias y patrones interesantes en los 4,500 experimentos realizados. No es nuestra intención matar de aburrimiento al lector, con lo cual a continuación haremos un paneo arbitrario por algunos de los resultados que (a) nos resultaron más llamativos o (b) se acercan lo suficiente a alguno de la literatura previa como para merecer un comentario aparte. Quien desee corroborar que no hice un uso injustificado de la discrecionalidad para elegir resultados, puede referirse al @apendice-a[Apéndice A2 - Hojas de resultados por experimento] y darse una panzada de tablas y gráficos.
 == Lunas, círculos y espirales ($D=2, d=1, k=2$)
 
-Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=1, k=2$, y exploramos tres curvas sampleadas con un poco de «ruido blanco»/* TODO: citar paper sobre sampleo en el tubo de radio $r$ alrededor de la variedad #MM. */:
+Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=1, k=2$, y exploramos tres curvas sampleadas con un poco de "ruido blanco"/* TODO: citar paper sobre sampleo en el tubo de radio $r$ alrededor de la variedad #MM. */:
 #let plotting_seed = 1075
 #figure(
   columns(3)[
@@ -1392,7 +1392,7 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 #obs("riesgos computacionales")[
   Una dificultad de entrenar un clasificador _original_ es que hay que definir las rutinas numéricas "a mano" #footnote[Usando librerías estándares como `numpy` y `scipy`, sí, pero nada más.], y _debugear_ errores en rutinas numéricas es particularmente difícil, porque las operaciones casi siempre retornan, salvo que retornan valores irrisorios #footnote[Hubo montones de estos, cuya resolución progresiva dio lugar a la pequeña librería que acompaña esta tesis. Todo error de cálculo que pueda persistir en el producto final depende exclusivamente de mí, pero tan mal no parecen haber dado los experimentos.].
 
-  A ello se le suma que el cómputo de #sfd es realmente caro. /* TODO: precisar orden $O$. */ Aun siguiendo «buenas prácticas computacionales» #footnote[Como sumar logaritmos en lugar de multiplicar valores "crudos" siempre que sea posible], implementaciones ingenuas pueden resultar impracticables hasta en datasets de pequeño $n$.
+  A ello se le suma que el cómputo de #sfd es realmente caro. /* TODO: precisar orden $O$. */ Aun siguiendo "buenas prácticas computacionales" #footnote[Como sumar logaritmos en lugar de multiplicar valores "crudos" siempre que sea posible], implementaciones ingenuas pueden resultar impracticables hasta en datasets de pequeño $n$.
 
   Por otra parte, es cierto que cuando $alpha = 1$ y $n->oo, quad sfd -> cal(D)_(f, beta) = euc$, pero esa es una afirmación asintótica y aquí estamos tomando $k=5$ pliegos de entre $n = 800$ observaciones, con $n_"train" = n_"eval" = n slash 2$ observaciones para un tamaño muestral efectivo de $(k-1)/k n/2 = 360$. ¿Es 360 un tamaño muestral "lo suficientemente grande" para que sea válida?
 
@@ -1403,7 +1403,7 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 ==== Fronteras de decisión
 Una inspección ocular a las fronteras de decisión revela las limitaciones de distintos algoritmos.
 
-#logr y #slr solo pueden dibujar fronteras «lineales», y como ninguna frontera lineal que corte la muestra logra dividirla en dos regiones con densidades de clase realmente diferentes, el algoritmo falla. #gnb falla de manera análoga, aunque su problema es otro - no lidia bien con distribuciones con densidades marginales muy similares.
+#logr y #slr solo pueden dibujar fronteras "lineales", y como ninguna frontera lineal que corte la muestra logra dividirla en dos regiones con densidades de clase realmente diferentes, el algoritmo falla. #gnb falla de manera análoga, aunque su problema es otro - no lidia bien con distribuciones con densidades marginales muy similares.
 
 #let clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb")
 #align(center)[#box(width: 160%, figure(table(columns: 3, stroke: 0pt, ..clfs.map(clf => image(
@@ -1565,7 +1565,7 @@ En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" 
 
 
 
-El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los estimadores, pero los métodos basados en densidad por núcleos parecen sufrirlo particularmente, aunque solo sea porque «caen desde más alto», a un nivel de _performance_ similar al de otros métodos.
+El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los estimadores, pero los métodos basados en densidad por núcleos parecen sufrirlo particularmente, aunque solo sea porque "caen desde más alto", a un nivel de _performance_ similar al de otros métodos.
 
 #figure(
   columns(3)[
@@ -1635,7 +1635,7 @@ En prácticamente todas las semillas el $R^2$ de #fkdc es estrictamente mejor al
 
 #tabla_csv("data/helices_0-parametros_comparados-kdc.csv")
 
-Ordenados por $Delta_(R^2) = R^2_#fkdc - R^2_#kdc$, la semilla con mayor diferencia a favor del resultado con distancia de Fermat corresponde a un no-trivial $(alpha = 1.25, h = 0.006)$ que resulta en un $Delta_(R^2) = 0.237 (= 0.953 - 0.716)$ puntos _en términos absolutos_#footnote[I.e., «un montón».] por encima de #kdc con $h = 0.208$, usando una ventana unas 35 veces más ancha.
+Ordenados por $Delta_(R^2) = R^2_#fkdc - R^2_#kdc$, la semilla con mayor diferencia a favor del resultado con distancia de Fermat corresponde a un no-trivial $(alpha = 1.25, h = 0.006)$ que resulta en un $Delta_(R^2) = 0.237 (= 0.953 - 0.716)$ puntos _en términos absolutos_#footnote[I.e., "un montón".] por encima de #kdc con $h = 0.208$, usando una ventana unas 35 veces más ancha.
 Salta a la vista también que tales parametrizaciones tienen muy variada _performance_ _out-of-sample_, pues para $s = 8096$ _también_ se eligió $(alpha = 1.25, h = 0.006)$ contra $h_#kdc = 0.143 approx 25 h_#fkdc$ y se dio la segunda diferencia _negativa_ más amplia en contra de #fkdc ($Delta_(R^2) = -0.098$).
 
 Gracias a la regla de parsimonia sabemos, por ejemplo, que para $s = 1188$ ---con el segundo mayor $Delta_(R^2) = 0.227$--- no hay parametrizaciones con $alpha < 2.5$ a menos de 1SD de la mejor parametrización en _test_, cuyo $alpha = 3$.
@@ -1651,7 +1651,7 @@ Lo tercero, es que en unos cuantos casos en que $alpha_#fkdc = alpha_#kdc = 1$, 
 Nuestro control, #kdc encuentra durante su entrenamiento y posterior testeo con R1SD la solución $h=0.143$ (cf. posición $(1)$ del diagrama). Presumiblemente, la varianza de la performance en testeo para dicha solución fue tal que ningún punto en el entorno de $h=0.01$ (cf. $(3)$) estaba a menos de 1SD de $(1)$. Cuando entrenamos #fkdc y ampliamos el dominio de la parametrización a $RR^2$ con $(h, alpha)$, la validación cruzada alcanza un máximo en $alpha=3; h = 0,000562$ (cf. $(2)$). Esta nueva solución, potencialmente "sobreparametrizada" con un $R^2_"train" = ; R^2_"test" = 0.988$, también tiene más varianza en sus resultados a través de cada pliego de CV, por lo que de repente ahora la cota inferior para ser considerada dentro de $cal(h)$ de @r1sd se vuelve más permisiva, en tanto se contrae menos por el aumento en el $R^2$ óptimo que lo que se relaja por el incremento en su varianza.
 En ese rango ampliado de parametrizaciones "suficientemente buenas", ahora sí se encuentra $alpha=1; h=0.01$, y la CV "se mueve" de $(2) " a " (3)$, encontrando un óptimo en el espacio reducido de #kdc que este no llegó a considerar.
 
-De hecho, es este fenómeno ---que se repite con las semillas `4286, 1182, 6610, 2411, 8527, 7060, 8591`, todas con $alpha <= 1.25$--- el que termina desplazando la mediana de $R^2$ hasta $0.97$, por fuera de la «caja»#footnote[El rango intercuartil en el _boxplot_.] de $R^2_#kdc$.
+De hecho, es este fenómeno ---que se repite con las semillas `4286, 1182, 6610, 2411, 8527, 7060, 8591`, todas con $alpha <= 1.25$--- el que termina desplazando la mediana de $R^2$ hasta $0.97$, por fuera de la "caja"#footnote[El rango intercuartil en el _boxplot_.] de $R^2_#kdc$.
 
 #image("img/helices_0-boxplot-r2-zoomed.svg")
 
@@ -1681,11 +1681,11 @@ Por otra dirección, llegamos a la misma conclusión que antes: si un clasificad
 #image("img/pionono-scatter-3d.svg")
 #highlights_figure("pionono_0")
 
-Este dataset es «clásico» para testear algoritmos de _clustering_ no-lineales @sapienzaWeightedGeodesicDistance2018, así que decidimos incluirlo en la serie experimental como _benchmark_. El trabajo citado no hace _clasificación_ con densidad por núcleos, sino _clustering_ basado en el algoritmo $k-$medoides, pero provee un gráfico de exactitud #footnote[presuntamente fijando $k=4$ y comparando las asignaciones contra los clusters verdaderos] que compara con la obtenida por otro "primo" algorítmico ya citado, Isomap. Los autores encuentran que
+Este dataset es "clásico" para testear algoritmos de _clustering_ no-lineales @sapienzaWeightedGeodesicDistance2018, así que decidimos incluirlo en la serie experimental como _benchmark_. El trabajo citado no hace _clasificación_ con densidad por núcleos, sino _clustering_ basado en el algoritmo $k-$medoides, pero provee un gráfico de exactitud #footnote[presuntamente fijando $k=4$ y comparando las asignaciones contra los clusters verdaderos] que compara con la obtenida por otro "primo" algorítmico ya citado, Isomap. Los autores encuentran que
 #quote[existe un amplio rango de $d$ #footnote[$alpha$ en nuestra notación] para los que la $d-$ distancia se porta significativamente mejor que Isomap. [...] para la exactitud esta región está limitada a $1.7 <= d <= 2.2$
 ]
 
-Por nuestra parte, en un ambiente ligeramente distinto, no encontramos diferencia significativa con la _performance_ «cruda» de #kdc, que a su vez no se distingue de los métodos estado-del-arte en exactitud (#svc) ni $R^2$ (#gbt).
+Por nuestra parte, en un ambiente ligeramente distinto, no encontramos diferencia significativa con la _performance_ "cruda" de #kdc, que a su vez no se distingue de los métodos estado-del-arte en exactitud (#svc) ni $R^2$ (#gbt).
 
 === Hueveras ($D=3, d=2, k=2$)
 
@@ -1702,7 +1702,7 @@ En efecto, observando los parámetros comparados de #fkdc v. #kdc, se repite que
 - con $h_0$ "significativamente distinto" a $h_"opt"$#footnote[ Por ello nos referimos a que durante el entrenamiento de #kdc existió un $h_"alt" approx h_0$, que la R1SD + #kdc _no_ eligió, y la R1SD + #fkdc sí.].
 #tabla_csv("data/hueveras_0-parametros_comparados-kdc.csv")
 
-Esta «sinergia» virtuosa no alcanza para explicar lo que observamos del efecto de la distancia de Fermat en #kn:
+Esta "sinergia" virtuosa no alcanza para explicar lo que observamos del efecto de la distancia de Fermat en #kn:
 
 #tabla_csv("data/hueveras_0-parametros_comparados-kn.csv")
 
@@ -1726,7 +1726,7 @@ En ninguno de los datasets estudiados (casos con bajo $D in {2, 3}$) se vieron m
 - En todos los casos examinados, una parte importante de la ventaja se da por una "simbiosis" positiva entre el mecanismo de selección de modelos de @r1sd, y el espacio de parámetros ampliado por la dimensión de $alpha$. Esta resulta en parametrizaciones de #fkdc (resp. #fkn) con $alpha=1$ y ligeramente mejor $R^2$ que #kdc (resp. #kn) ignora.
 - En ciertos casos (como #fkn en `hueveras_0`), acontece que parte de la mejora se debe a la elección de parametrizaciones de #fkn que coinciden en el $k$ elegido con #kn, pero además registran un $alpha > 1$ - i.e., una mejora _netamente gracias al_ uso de la distancia de Fermat muestral.
 
-En el «caso general», en el que #fkdc anda tan bien o mal como #kdc, observamos una relación log-lineal, $ log(h) prop alpha $ que se discierne en la _superficie de pérdida_ de entrenamiento como un "risco" de parametrizaciones equivalentes en bondad. Entendemos que esto sucede porque
+En el "caso general", en el que #fkdc anda tan bien o mal como #kdc, observamos una relación log-lineal, $ log(h) prop alpha $ que se discierne en la _superficie de pérdida_ de entrenamiento como un "risco" de parametrizaciones equivalentes en bondad. Entendemos que esto sucede porque
 - los datasets están "bien sampleados" y
 - para todo $p in MM$ una variedad de Riemann, siempre existe un vecindario dentro del radio de inyectividad de $"iny"_p MM$ en el que $cal(D)_(f,beta) prop norm(dot)$
 En estas circunstancias existe un $h <= "iny"_p MM$ tal que el efecto de $alpha$ "(des)inflando" la distancia euclídea puede ser sustituido completamente por una parametrización con distinto $h$, y no hay ventaja alguna que obtener usando distancia de Fermat (#fkn o #fkdc) en lugar de euclídea.
