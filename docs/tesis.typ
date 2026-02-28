@@ -1168,29 +1168,28 @@ Los trabajos de @littleBalancingGeometryDensity2021 @mckenziePowerWeightedShorte
 
 = Propuesta Original
 
-Al comienzo de este sendero teórico nos preguntamos: ¿es posible mejorar un algoritmo de clasificación reemplazando la distancia euclídea por una aprendida de los datos? Habiendo explorado el área en profundidad, entendemos que sí pareciera ser posible, y en particular la distancia muestral de Fermat es un buen candidato de reemplazo.
+Al comienzo de este sendero teórico nos preguntamos: ¿es posible mejorar un algoritmo de clasificación reemplazando la distancia euclídea por una aprendida de los datos? Habiendo explorado el área en profundidad, entendemos que sí pareciera ser posible, y en particular la distancia muestral de Fermat #sfd es un buen candidato de reemplazo. Deseamos también comprender si el efecto de la #sfd aprendida es independiente del algoritmo de clasificación que la incorpora. Para saldar ambas cuestiones, nos propusimos:
 
-Para saldar la cuestión, nos propusimos:
-1. Implementar un clasificador basado en estimación de densidad por núcleos como el de @kde-variedad @loubesKernelbasedClassifierRiemannian2008, al que llamaremos "KDC".
-2. Implementar un estimador de densidad por núcleos basado en la distancia de Fermat, a fines de comparar la _performance_ de KDC con distancia euclídea y con distancia de Fermat.
+1. Implementar un clasificador basado en estimación de densidad por núcleos según @kde-variedad @loubesKernelbasedClassifierRiemannian2008, al que llamaremos "KDC" #footnote[_Kernel Density Classifier_, por sus siglas en inglés].
+2. Implementar un estimador de densidad por núcleos basado en la distancia de Ferma, "F-KDC", a fines de comparar la _performance_ de KDC con distancia euclídea y con distancia de Fermat.
+3. Implementar un clasificador de $k$ vecinos más cercanos según @kn-clf, pero con distancia muestral de Fermat en lugar de euclídea.
+4. Comparar sistemáticamente la capacidad de clasificación de cada algoritmo propuesto --- y algunos más de referencia --- en datasets de diversas características.
+5. Analizar los resultados e identificar en qué condiciones es que la distancia de Fermat aporta mejoras significativas sobre la tradicional distancia euclídea.
 
-Nótese que el clasificador de $k-$vecinos más cercanos de @kn-clf (k-NN, @eps-nn), tiene un pariente cercano, $epsilon-upright("NN")$
-#defn([clasificador de $epsilon-$vecinos-más-cercanos])[
-  Sean $B_epsilon(x)$ una bola normal de radio $epsilon$ centrada en $x$, y $cal(N)_epsilon (x) = XX inter B_epsilon(x)$ el $epsilon-$vecindario de $x$. El clasificador de $epsilon-$vecinos-más-cercanos $epsilon-N N$ le asignará a $x$ la clase más frecuente entre la de sus vecinos $y in cal(N)_epsilon (x)$
-] <epsnn-clf>
+El método de aprendizaje de la distancia muestral de Fermat y los tres algoritmos novedosos #footnote[En los tres ser requirieron desarrollos nuevos al menos parcialmente. KDC en variedades según @clf-kde-variedad está definido en @loubesKernelbasedClassifierRiemannian2008 pero no implementado; la estimación de densidad por núcleos  multivariada  de @kde-mv cuenta con múltiples implementaciones en código pero no conocemos algorimos de clasificación "llave en mano" que se basen en ella; $k-$NN como en @kn-clf es un algoritmo de clasificación harto común que soporta distancias no-euclídeas, pero no la distancia de Fermat específicamente.] componen un repositorio de código abierto que acompaña esta tesis y está a disposición de cualquier investigador que desee corroborar los resultados en Github #footnote[https://github.com/capitantoto/fermat].
 
-@eps-nn es esencialmente equivalente a KDC con un núcleo "rectangular", $k(t) = ind(d(x, t) < epsilon) / epsilon$, pero su implementación es considerablemente más sencilla. Para comprender más cabalmente el efecto de la distancia de Fermat en _la tarea de clasificación_, y no solamente en _cierto_ algoritmo de clasificación, nos propusimos también
+A continuación, mencionamos algunos aspectos salientes sobre los desarrollos de código necesarios así como la metodología de evaluación diseñada, antes de pasar a los resultados.
 
-3. Implementar un clasificador cual @kn-clf, pero con distancia muestral de Fermat en lugar de euclídea.
+== Estimación de distancia de Fermat _out-of-sample_
 
-=== Estimación de distancia _out-of-sample_
+Un proyecto de código pre-existente a esta monografía ya implementa el cálculo de la distancia de Fermat microscópica o muestral para un conjunto de observaciones dado: #link("https://pypi.org/project/fermat/")[fermat], de Facundo Sapienza. Este paquete fue desarrollado para soportar los experimentos de @sapienzaWeightedGeodesicDistance2018 que exploran los efectos de esta noción de distancia en tareas de _clustering_. Al ser una tarea no-supervisada #footnote[Una tarea supervisada de aprendizaje es aquella en que se entrena el algoritmo con un conjunto de observaciones para el que _ya se sabe_ el valor correcto de resuesta. Una tarea "no supervisada" no cuenta con una "respuesta correcta" de antemano. _Clustering_ --- identificar grupos en la muestra --- es una tarea no supervisada; _clasificación_ --- asignar elementos a clases conocidas de antemano --- es una tarea supervisada.], se utilizan todas las observaciones disponibles y solo se requiere calcular la distancia entre dos elementos cualesquiera de la muestra #XX, pero nunca contra otros $p : p in MM, p in.not XX$.
 
-Entrenar el clasificador por validación cruzada no presenta inconvenientes: como $XX_"train" subset.eq XX$ y $XX_"test" subset.eq XX$, se sigue que $forall (a, b) in {XX_"train" times XX_"test"} subset.eq {XX times XX}$, y $D_(XX, alpha) (a, b)$ está bien definida. Ahora bien, ¿cómo calculamos la distancia _muestral_ de una _nueva_ observación $x_0$ a los elementos de cada clase?
+Entrenar un algoritmo _supervisado_ de clasificación requiere apartar una fracción de las observaciones disponibles #footnote[De no hacerlo y evaluar al clasificador sobre los mismos datos de entrenamiento, se corre el riesgo de sobreajustar el clasificador a los datos. De entrenar $k-$NN con tal criterio $k = 1$ acertará la clase correcta _siempre_, ya que cada observación es su propia vecina con distancia cero.] para evaluar la pérdida objetivo $L$. ¿Cómo calculamos entonces la distancia _muestral_ de una _nueva_ observación $x_0$ a los elementos de cada grupo $GG_i, i in [K]$?
 
-Para cada una de las $g_i in GG$ clases, definimos el conjunto $ Q_i= {x_0} union {x_j : x_j in XX, g_j = g_i, j in {1, dots, N}} $
-y calculamos $D_(Q_i, alpha) (x_0, dot)$.
+Para cada una de las $GG_i in GG$ clases, definimos el conjunto $ Q_i= {x_0} union {x_j : x_j in XX, GG_j = GG_i} $
+y calculamos $D_(Q_i, alpha)$. No es difícil en principio este cómputo, pero resultaría absurdamente costoso computacionalmente recomputar $D_(Q_i, alpha)$ para cada una de las $K$ clases por cada nueva observación. En su lugar, implementamos un sencillo algoritmo "incremental", que permite recomputar únicamente las geodésicas que cambian al agregar la nueva observación $x_0$ al grafo completo de la clase en cuestión.
 
-=== Adaptación a variedades disjuntas, elección de $h$ por clase
+== Adaptación a variedades disjuntas, elección de $h$ por clase
 
 El clasificador de Loubes & Pelletier asume que todas las clases están soportadas en la misma variedad #MM. ¿Quién dice que ello vale para las diferentes clases? ¡Nadie! Sin embargo:
 1. No hace falta dicho supuesto: en el peor de los casos, podemos asumir que la unión de las clases está soportada en _cierta_ variedad de Riemann que resulta de (¿la clausura de?) la unión de sus soportes individuales.
