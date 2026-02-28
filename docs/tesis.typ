@@ -1713,27 +1713,27 @@ A primera vista, se observan unas cuantas semillas para las cuales la elección 
 A priori, nuestras tres propuestas de estimación:
 - una implementación de la propuesta de  @loubesKernelbasedClassifierRiemannian2008 para clasificación suave en variedades con @clf-bayes y @kde-variedad;
 - el reemplazo de la distancia euclídea por distancia de Fermat muestral en algoritmos de clasificación por núcleos (#kn, #kdc) y
-- extender la estimación de la distancia de Fermat "microscópica" $cal(D)_f,beta)$ a partir de la distancia de Fermat macroscópica #sfd, a puntos por fuera de la muestra
+- extender la estimación de la distancia de Fermat "microscópica" $cal(D)_(f,beta)$ a partir de la distancia de Fermat macroscópica #sfd, a puntos por fuera de la muestra
 _funcionaron_, por separado y en conjunto, a la par de métodos de primera línea, paramétricos (#svc) y no paramétricos (#gbt). Al evaluarlos por "exactitud", a pesar de estar entrenados para maximizar la log-verosimilitud, los métodos resultaron competitivos aunque sin mejoras significativas. Al evaluarlos por $R^2$, sí se observaron excelentes rendimientos para toda la familia de métodos basados en densidad por núcleos $cal(K)$, y en ciertas ocasiones la distancia de Fermat se destaca por encima de la euclídea.
 
 Ya existía una implementación previa de la Distancia de Fermat #link("https://www.aristas.com.ar/fermat/fermat.html")[como librería de Python] orientada a "clustering" @sapienzaWeightedGeodesicDistance2018, tarea que tiene la particularidad de entrenar y predecir sobre los mismos datos. El problema de clasificación se evalúa, para ser justos, en observaciones que _no_ se usaron para entrenar, lo cual nos llevó a escribir una librería nueva, con menos opciones de parametrización, pero capacidad de estimación "out-of-sample" y una implementación mínimamente performante sobre métodos bien optimizados que nos permitan ejecutar una suite extensa de experimentos que pudiésemos refinar iterativamente.
 
 Poner a legos a implementar algoritmos numéricos complejos no suele terminar bien, pero milagrosamente llevamos el invento a buen puerto. También podía ser que el método tuviese una performance _decente_ pero no _competitiva_ con el estado del arte; no fue el caso.
 
-TODO el que dice que basta con aprender alpha que junta $d$ y $beta$ en uno solo tiene razón
+// TODO: integrar referencia al paper que argumenta que basta con aprender alpha, que junta $d$ y $beta$ en uno solo.
 
-En ninguno de los datasets estudiados (casos con bajo $D in {2, 3}$) se vieron modos "catastróficos" donde la performance de $f-$[#kdc|#kn] fuese muchísimo peor que la de sus pares euclídeos. En los datasets en que se comprueba una ventaja sistemática de #fkdc (resp. #fkn) sobre #kdc (resp. #kn), se puede explicar por dos efectos:
-- En todos los casos examinados, una parte importante de la ventaja se da por una "simbiosis" positiva entre el mecanismo de selección de modelos de @r1sd, y el espacio de parámetros ampliado por la dimensión de $alpha$. Ésta resulta en parametrizaciones de #fkdc (resp. #fkn) con $alpha=1$ y ligeramente mejor $R^2$ que #kdc (resp. #kn) ignora.
-- En ciertos casos (como #fkn en `hueveras_0`), acontece que parte de la mejora se debe a la elección de parametrizaciones de #fkn que coinciden en el $k$ elegido con #kn, pero además registran un $alpha > 1$ - i.e., una mejora _netamente gracias a_ el uso de la distancia de Fermat muestral.
+En ninguno de los datasets estudiados (casos con bajo $D in {2, 3}$) se vieron modos "catastróficos" donde la _performance_ de #fkdc/#fkn fuese muchísimo peor que la de sus pares euclídeos. En los datasets en que se comprueba una ventaja sistemática de #fkdc (resp. #fkn) sobre #kdc (resp. #kn), se puede explicar por dos efectos:
+- En todos los casos examinados, una parte importante de la ventaja se da por una "simbiosis" positiva entre el mecanismo de selección de modelos de @r1sd, y el espacio de parámetros ampliado por la dimensión de $alpha$. Esta resulta en parametrizaciones de #fkdc (resp. #fkn) con $alpha=1$ y ligeramente mejor $R^2$ que #kdc (resp. #kn) ignora.
+- En ciertos casos (como #fkn en `hueveras_0`), acontece que parte de la mejora se debe a la elección de parametrizaciones de #fkn que coinciden en el $k$ elegido con #kn, pero además registran un $alpha > 1$ - i.e., una mejora _netamente gracias al_ uso de la distancia de Fermat muestral.
 
-El "caso general", en el que #fkdc anda tan bien o mal como #kdc, observamos una relación log-lineal, $ log(h) prop alpha $ que se discierne en la _superficie de pérdida_ de entrenamiento como un "risco" de parametrizaciones equivalentes en bondad. Entendemos que esto sucede porque
+En el «caso general», en el que #fkdc anda tan bien o mal como #kdc, observamos una relación log-lineal, $ log(h) prop alpha $ que se discierne en la _superficie de pérdida_ de entrenamiento como un "risco" de parametrizaciones equivalentes en bondad. Entendemos que esto sucede porque
 - los datasets están "bien sampleados" y
 - para todo $p in MM$ una variedad de Riemann, siempre existe un vecindario dentro del radio de inyectividad de $"iny"_p MM$ en el que $cal(D)_(f,beta) prop norm(dot)$
 En estas circunstancias existe un $h <= "iny"_p MM$ tal que el efecto de $alpha$ "(des)inflando" la distancia euclídea puede ser sustituido completamente por una parametrización con distinto $h$, y no hay ventaja alguna que obtener usando distancia de Fermat (#fkn o #fkdc) en lugar de euclídea.
 
-Los métodos de estimación por densidad de núcleos son "altamente locales", y por ende sólo vemos mejoras no-triviales de $R^2$ en circunstancias extraordinarias, como en los datasets de `espirales`, `helices` o `hueveras` en que aún los vecindarios locales son altamente no-euclídeos.
+Los métodos de estimación por densidad de núcleos son "altamente locales", y por ende solo vemos mejoras no-triviales de $R^2$ en circunstancias extraordinarias, como en los datasets de `espirales`, `helices` o `hueveras` en que aun los vecindarios locales son altamente no-euclídeos.
 
-Con respecto a los tiempos de cómputo, no se hizo un análisis exhaustivo esencialmente porque no hizo falta: corrimos 25 repeticiones de 20 datasets para 9 clasificadores en unas 12 horas en mi computadora personal #footnote[Macbook Air M1 2020, 8GB RAM, 256GB SSD] media docena de veces hasta tenerlo todo a punto, y en general ni siquiera #sfd el algoritmo más problemático. Es cierto que el cómputo de #sfd - que implica calcular geodésicas en grafos completos - puede requerir varios órdenes de magnitud mayores recursos que el de la distancia euclídea, pero
+Con respecto a los tiempos de cómputo, no se hizo un análisis exhaustivo esencialmente porque no hizo falta: corrimos 25 repeticiones de 20 datasets para 9 clasificadores en unas 12 horas en mi computadora personal #footnote[Macbook Air M1 2020, 8GB RAM, 256GB SSD] media docena de veces hasta tenerlo todo a punto, y en general ni siquiera fue #sfd el algoritmo más problemático. Es cierto que el cómputo de #sfd - que implica calcular geodésicas en grafos completos - puede requerir varios órdenes de magnitud mayores recursos que el de la distancia euclídea, pero
 - para datasets "moderados" (en el desarrollo se consideraron $n_k <= 1000, p <= 90$) el tiempo de cómputo de base es pequeñísimo, y aunque crezca por órdenes de magnitud no afecta significativamente la experiencia del científico; además
 - con estrategias básicas de "cacheo" #footnote[Confer el uso del decorador `joblib.Memory.cache` en `fkdc/fermat.py`], se puede computar una única vez las distancias de Fermat, y reutilizarlas en todas las evaluaciones posteriores de distancias de entrenamiento.
 
@@ -1741,7 +1741,7 @@ Con respecto a los tiempos de cómputo, no se hizo un análisis exhaustivo esenc
 == Trabajo Futuro
 En el presente trabajo hemos desarrollado una librería y un marco teórico sumamente riguroso para intentar identificar condiciones en las cuales estimadores de densidad entrenados con distancia de Fermat muestral son estrictamente mejores que sus versiones euclídeas.
 
-Es _infinita_ la cantidad de circunstancias en las que podemos poner a prueba una técnica de clasificación, y en los experimentos ejecutados y presentados no hemos hecho más que rasgar la superficie. Así y todo, pareciera ser que en espacios ralamente sampleados o altamente curvos, donde "no quede otra" que tomar una ventana $h > "iny" MM$ para tener una densidad "viable", el uso de la distancia de Fermat mejora, sino la exactitud de los algoritmos, sí su $R^2$ y por ende la capacidad de discernimiento "relativo" de estos estimadores.
+Es _infinita_ la cantidad de circunstancias en las que podemos poner a prueba una técnica de clasificación, y en los experimentos ejecutados y presentados no hemos hecho más que rascar la superficie. Así y todo, pareciera ser que en espacios ralamente sampleados o altamente curvos, donde "no quede otra" que tomar una ventana $h > "iny" MM$ para tener una densidad "viable", el uso de la distancia de Fermat mejora, si no la exactitud de los algoritmos, sí su $R^2$ y por ende la capacidad de discernimiento "relativo" de estos estimadores.
 
 Sería interesante entonces investigar si existen condiciones reales en las que sepamos "a priori" que las variedades intrínsecas son altamente no-euclídeas, y en ese contexto probar si en ciertos tamaños muestrales $n$ (y por cada clase, $n_1, dots, n_k$) pequeños relativos a la dimensión ambiente es particularmente conveniente el uso de la distancia de Fermat.
 
@@ -1789,7 +1789,7 @@ Sería interesante entonces investigar si existen condiciones reales en las que 
 
 == Arenero
 
-TODO: revisar forma de citar bibliografía, corregir autores y formato en textos enciclopédicos y otros
+// TODO: revisar forma de citar bibliografía, corregir autores y formato en textos enciclopédicos y otros
 #tabla_csv("data/2-blobs.csv")
 #let best(..contents) = {
   contents.pos().map(content => table.cell(fill: rgb("#7cff9dc9"), content))
