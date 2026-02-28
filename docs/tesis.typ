@@ -1324,7 +1324,7 @@ El mismo análisis con métrica de exactitud es, desde luego, menos favorable a 
 Solo considerar la _performance_ de #fkdc y #fkn en los 20 datasets daría unas 40 unidades de análisis, y en el espíritu de indagación curiosa que guía esta tesis, existen aún más tendencias y patrones interesantes en los 4,500 experimentos realizados. No es nuestra intención matar de aburrimiento al lector, con lo cual a continuación haremos un paneo arbitrario por algunos de los resultados que (a) nos resultaron más llamativos o (b) se acercan lo suficiente a alguno de la literatura previa como para merecer un comentario aparte. Quien desee corroborar que no hice un uso injustificado de la discrecionalidad para elegir resultados, puede referirse al @apendice-a[Apéndice A2 - Hojas de resultados por experimento] y darse una panzada de tablas y gráficos.
 == Lunas, círculos y espirales ($D=2, d=1, k=2$)
 
-Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=1, k=2$, y exploramos tres curvas sampleadas en con un poco de "ruido blanco" #footnote[TODO: paper que habla de "sampleo en el tubo de radio $r$ alredededor de la variedad #MM".]:
+Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=1, k=2$, y exploramos tres curvas sampleadas con un poco de «ruido blanco»/* TODO: citar paper sobre sampleo en el tubo de radio $r$ alrededor de la variedad #MM. */:
 #let plotting_seed = 1075
 #figure(
   columns(3)[
@@ -1341,7 +1341,7 @@ Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=
 
 
 
-En una primera variación con "bajo ruido" (y sufijada "`_lo`") #footnote[en inglés, _low_ y _high_ - baja y alta - son casi homófonos de _lo_ y _hi_], las observaciones #XX sobre la variedad #MM #footnote[TODO: Cómo se generaron los datasets en variedades? R: Sampleo (uniforme) en espacio euclideo homeomorfo y proyecto con la carta exponencial + ruido "blanco" $epsilon$. Más detalles en el Apéndice "Datasets"], se les añadió ruido blanco una normal estándar bivariada escalada por un parámetro de ruido $sigma$, $epsilon ~ cal(N)_2(0, sigma^2 bu(I))$ ajustado a cada dataset para resultar "poco" relativo a la escala de los datos.
+En una primera variación con "bajo ruido" (y sufijada "`_lo`") #footnote[en inglés, _low_ y _high_ - baja y alta - son casi homófonos de _lo_ y _hi_], a las observaciones #XX sobre la variedad #MM/* TODO: agregar nota al pie sobre cómo se generaron los datasets (sampleo uniforme en espacio euclídeo homeomorfo, carta exponencial + ruido blanco). Cf. Apéndice Datasets. */ se les añadió ruido blanco de una normal estándar bivariada escalada por un parámetro de ruido $sigma$, $epsilon ~ cal(N)_2(0, sigma^2 bu(I))$ ajustado a cada dataset para resultar "poco" relativo a la escala de los datos.
 $ sigma_"lunas" = 0.25 quad sigma_"circulos" = 0.08 quad sigma_"espirales" = 0.1 $.
 
 En los tres datasets, el resultado es muy similar: #fkdc es el estimador que mejor $R^2$ reporta, y en todos tiene una exactitud comparable a la del mejor para el dataset. En ninguno de los tres datasets #fkdc tiene una exactitud muy distinta a la de #kdc, pero saca ventaja en $R^2$ para `lunas_lo` y `espirales_lo`.
@@ -1390,9 +1390,9 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 #let sfd = $D_(Q, alpha)$
 
 #obs("riesgos computacionales")[
-  Una dificultad de entrenar un clasificador _original_, es que hay que definir las rutinas numéricas "a mano" #footnote[Usando librerías estándares como `numpy` y `scipy`, sí, pero nada más.], y _debugear_ errores en rutinas numéricas es particularmente difícil, porque las operaciones casi siempre retornan, salvo que retornan valores irrisorios #footnote[Hubo montones de estos, cuya resolución progresiva dio lugar a la pequeña librería que acompaña esta tesis. Todo error de cálculo que pueda persistir en el producto final depende exclusivamente de mí, pero tan mal no parecen haber dado los experimentos.].
+  Una dificultad de entrenar un clasificador _original_ es que hay que definir las rutinas numéricas "a mano" #footnote[Usando librerías estándares como `numpy` y `scipy`, sí, pero nada más.], y _debugear_ errores en rutinas numéricas es particularmente difícil, porque las operaciones casi siempre retornan, salvo que retornan valores irrisorios #footnote[Hubo montones de estos, cuya resolución progresiva dio lugar a la pequeña librería que acompaña esta tesis. Todo error de cálculo que pueda persistir en el producto final depende exclusivamente de mí, pero tan mal no parecen haber dado los experimentos.].
 
-  A ello se le suma que el cómputo de #sfd es realmente caro. TODO: precisar orden $O$. Aún siguiendo "buenas prácticas computacionales" #footnote[Como sumar logaritmos de en lugar de multiplicar valores "crudos" siempre que sea posible], implementaciones ingenuas pueden resultar impracticables hasta en datasets de pequeño $n$.
+  A ello se le suma que el cómputo de #sfd es realmente caro. /* TODO: precisar orden $O$. */ Aun siguiendo «buenas prácticas computacionales» #footnote[Como sumar logaritmos en lugar de multiplicar valores "crudos" siempre que sea posible], implementaciones ingenuas pueden resultar impracticables hasta en datasets de pequeño $n$.
 
   Por otra parte, es cierto que cuando $alpha = 1$ y $n->oo, quad sfd -> cal(D)_(f, beta) = euc$, pero esa es una afirmación asintótica y aquí estamos tomando $k=5$ pliegos de entre $n = 800$ observaciones, con $n_"train" = n_"eval" = n slash 2$ observaciones para un tamaño muestral efectivo de $(k-1)/k n/2 = 360$. ¿Es 360 un tamaño muestral "lo suficientemente grande" para que sea válida?
 
@@ -1403,26 +1403,26 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 ==== Fronteras de decisión
 Una inspección ocular a las fronteras de decisión revela las limitaciones de distintos algoritmos.
 
-#logr, #slr sólo pueden dibujar fronteras "lineales", y como ninguna frontera lineal que corte la muestra logra dividirla en dos regiones con densidades de clase realmente diferentes, el algoritmo falla. #gnb falla de manera análoga, aunque su problema es otro - no lidia bien con distribuciones con densidades marginales muy similares.
+#logr y #slr solo pueden dibujar fronteras «lineales», y como ninguna frontera lineal que corte la muestra logra dividirla en dos regiones con densidades de clase realmente diferentes, el algoritmo falla. #gnb falla de manera análoga, aunque su problema es otro - no lidia bien con distribuciones con densidades marginales muy similares.
 
 #let clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb")
 #align(center)[#box(width: 160%, figure(table(columns: 3, stroke: 0pt, ..clfs.map(clf => image(
     "img/espirales_lo-" + clf + "-decision_boundary.svg",
   )))))]
 
-Aún con esas limitaciones, #logr tiene un rendimiento decente en `lunas_lo`:
+Aun con esas limitaciones, #logr tiene un rendimiento decente en `lunas_lo`:
 
 #figure(
   image("img/lunas_lo-lr-decision_boundary.svg"),
   caption: [Frontera de decisión para #slr en `lunas_lo`, semilla #plotting_seed],
 )
-Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) aprendida por #logr separa _bastante_ bien la muestra: pasa por el punto del segmento que une los "focos" de cada luna, y de todas las direcciones con origen allí, es la que mejor separa las clases. _A grosso modo_, en el tercio de la muestra más cercano a la frontera, alcanza una exactitud de $~50%$, pero en los tercios al interior de cada región, esta virtualmente en 100%, que da un promedio global de $1/3 50% + 2/3 100% = 86.7%$, casi exactamente la exactitud observada.
+Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) aprendida por #logr separa _bastante_ bien la muestra: pasa por el punto del segmento que une los "focos" de cada luna, y de todas las direcciones con origen allí, es la que mejor separa las clases. _Grosso modo_, en el tercio de la muestra más cercano a la frontera, alcanza una exactitud de $~50%$, pero en los tercios al interior de cada región está virtualmente en 100%, que da un promedio global de $1/3 50% + 2/3 100% = 86.7%$, casi exactamente la exactitud observada.
 
-También resulta llamativa la "creatividad" de #gbt para aproximar unas fronteras naturalmente curvas como una serie de preguntas binarias, que sólo permiten dibujar regiones rectangulares #footnote[Quien haya pasado alguna clase no particularmente emocionante pintando espirales en hoja cuadriculada reconocerá este patrón rápidamente.].
+También resulta llamativa la "creatividad" de #gbt para aproximar unas fronteras naturalmente curvas como una serie de preguntas binarias, que solo permiten dibujar regiones rectangulares #footnote[Quien haya pasado alguna clase no particularmente emocionante pintando espirales en hoja cuadriculada reconocerá este patrón rápidamente.].
 
 Entre #kn y #fkn casi no observamos diferencias, asunto en el que ahondaremos más adelante. Por lo pronto, sí se nota que se adaptan bastante bien a los datos, con algunas regiones "claras" de incertidumbre que resultan onerosas en términos de $R^2$: a primera vista los mapas de decisión recién expuestos se ven muy similares, pero las pequeñas diferencias de probabilidades resultaron en una diferencia de $0.19$ en $R^2$ _en contra_ del modelo más complejo para esta semilla.
 
-#kdc ofrece una frontera aún más regular que #kn, sin perder en $R^2$ y hasta mejorando la exactitud. Y por encima de esta ya destacable _performance_, el uso de la distancia de Fermat _incrementa_ la confianza en estas regiones -nótese como se afinan las áreas grises y aumenta la superficie de rojo/azul sólido, mejorando otro poco el $R^2$.
+#kdc ofrece una frontera aún más regular que #kn, sin perder en $R^2$ y hasta mejorando la exactitud. Y por encima de esta ya destacable _performance_, el uso de la distancia de Fermat _incrementa_ la confianza en estas regiones -nótese cómo se afinan las áreas grises y aumenta la superficie de rojo/azul sólido, mejorando otro poco el $R^2$.
 
 
 
@@ -1432,7 +1432,7 @@ Entre #kn y #fkn casi no observamos diferencias, asunto en el que ahondaremos m�
   #image("img/espirales_lo-svc-decision_boundary.svg")
 ])
 
-Por último, observamos las fronteras de #svc, que no tienen gradiente de color sino sólo una frontera lineal #footnote[Como aprendimos: la frontera de una variedad riemanniana de dimensión intrínseca $d$ es una variedad sin frontera de dimensión intrínseca $d-1$; la frontera de estas regiones en $R^2$ es una curva parametrizable en $RR^1$ embebida en $RR^2$]. Es sorprendente la flexibilidad del algoritmo, que consigue dibujar una única frontera sumamente no-lineal que separa los datos con altísima exactitud. La ventaja que #fkdc pareciera tener sobre #svc aquí, es que la frontera que dibuja pasa "más lejos" de las observaciones de clase, mientras que la #svc parece estar muy pegada a los brazos de la espiral, particularmente en el giro más interno.
+Por último, observamos las fronteras de #svc, que no tienen gradiente de color sino solo una frontera lineal #footnote[Como aprendimos: la frontera de una variedad riemanniana de dimensión intrínseca $d$ es una variedad sin frontera de dimensión intrínseca $d-1$; la frontera de estas regiones en $R^2$ es una curva parametrizable en $RR^1$ embebida en $RR^2$]. Es sorprendente la flexibilidad del algoritmo, que consigue dibujar una única frontera sumamente no-lineal que separa los datos con altísima exactitud. La ventaja que #fkdc pareciera tener sobre #svc aquí, es que la frontera que dibuja pasa "más lejos" de las observaciones de clase, mientras que la #svc parece estar muy pegada a los brazos de la espiral, particularmente en el giro más interno.
 
 === Estudio de ablación #footnote[Según la #link("https://dle.rae.es/ablaci%C3%B3n")[RAE], "Del lat. tardío ablatio, -ōnis 'acción de quitar'."; ¿qué se pierde en términos de $R^2$ al _no_ usar #sfd en estos algoritmos?]: $R^2$ para #kdc/ #kn con y sin distancia de Fermat.
 
@@ -1460,7 +1460,7 @@ Veamos primero qué sucede durante el entrenamiento para `circulos_lo`: ¿es que
 
 #obs(
   "unidades de la pérdida",
-)[ Si bien nosotros estamos considerando como _score_ (a más, mejor) $R^2$, durante el entrenamiento se entrenó con `neg_log_loss`, que aunque tiene la misma monotonicidad que $R^2$, está en otras unidades, entre $-oo, 0$]
+)[Si bien consideramos como _score_ (a más, mejor) $R^2$, el entrenamiento se realizó con `neg_log_loss`, que aunque tiene la misma monotonicidad que $R^2$, está en otras unidades: entre $(-oo, 0]$.]
 
 #figure(
   image("img/circulos_lo-8527-fkdc-bandwidth-alpha-loss_contour.svg"),
@@ -1471,7 +1471,7 @@ Nótese que la región amarilla, que representa los máximos puntajes durante el
 // TODO: agregar referencia al paper que dice que "todo alfa da OK", que tomaba p=2 q=8 (bijral?)
 // TODO: aplicar q=8 a ver qué resulta
 
-Ahora bien, esto es sólo en _un_ dataset, con _una_ semilla específica. ¿Se replicará el fenómeno en los otros datasets?
+Ahora bien, esto es solo en _un_ dataset, con _una_ semilla específica. ¿Se replicará el fenómeno en los otros datasets?
 
 // #let mejores_semillas = (7837, 5640, 4286)
 // #let peores_semillas = (1075, 1434, 9975)
@@ -1488,7 +1488,7 @@ Ahora bien, esto es sólo en _un_ dataset, con _una_ semilla específica. ¿Se r
   #box(width: 150%)[
     #figure(
       grid(columns: semillas.len(), stroke: 0pt, ..imgs),
-      caption: [Superficies de pérdida para tres semillas y cada uno de los tres dataset. El patrón log-lineal previamente observado se replica casi perfectamente en todos los casos.],
+      caption: [Superficies de pérdida para tres semillas y cada uno de los tres datasets. El patrón log-lineal previamente observado se replica casi perfectamente en todos los casos.],
     ) <fig-19>
   ]
 ]
@@ -1505,7 +1505,7 @@ Hacemos entonces una comprobación fundamental: ¿qué parametrizaciones están 
 
 #obs(
   "mejores corridas de _test_",
-)[ TODO: aclarar que en test a veces el mejor puntaje lo obtienen _otros_ $alpha$, pero la diferencia no es lo suficientemente grande para descartar alguna opción con $alpha = 1$ .
+)[En _test_, a veces el mejor puntaje lo obtienen _otros_ $alpha$, pero la diferencia no es lo suficientemente grande para descartar alguna opción con $alpha = 1$.
   #tabla_csv("data/lunas_lo-best_test_params.csv")
 ]
 Resulta ser que
@@ -1524,7 +1524,7 @@ Veamos cómo se comparan los valores de $R^2$ que alcanza cada algoritmo en cada
 )
 En el panel izquierdo se observa una clara tendencia a mejorar ligeramente el $R^2$ a medida que disminuye el ancho de la ventana $h$ (en el rango en cuestión). En el panel derecho, para confirmar que la tendencia sucede _en cada repetición del experimento_, comparamos no los valores absolutos sino las diferencias _relativas_ en $R^2, h$ para #fkdc, #kdc, y vemos que a mayor diferencia en $h$, peor es la caída en $R^2$.
 
-Cabe aquí una crítica al diseño experimental: si #fkdc está tomando siempre $alpha =1$, por qué #kdc no puede elegir el mismo $h$ que #fkdc y así "empatar" su performance? ¿Se exploró una grilla de hiperparámetros a propósito desfavorable para #kdc? Pues no, todo lo contario #footnote[La definición exacta está en `fkdc/config.py`, y es `np.logspace(-5, 6, 45)` para #fkdc y `np.logspace(-5, 6, 136)` para #kdc]: las grillas de $h$ para #kdc y #fkdc
+Cabe aquí una crítica al diseño experimental: si #fkdc está tomando siempre $alpha =1$, por qué #kdc no puede elegir el mismo $h$ que #fkdc y así "empatar" su performance? ¿Se exploró una grilla de hiperparámetros a propósito desfavorable para #kdc? Pues no, todo lo contrario #footnote[La definición exacta está en `fkdc/config.py`, y es `np.logspace(-5, 6, 45)` para #fkdc y `np.logspace(-5, 6, 136)` para #kdc]: las grillas de $h$ para #kdc y #fkdc
 - cubren de manera "logarítmicamente equidistante" el mismo rango de $h: [10^(-5), 10^6]$ y
 - la grilla de #kdc cuenta con $approx$ el triple de puntos de #fkdc ($136 "vs." 45$).
 
@@ -1533,7 +1533,7 @@ $
   #fkdc: & [0.1, 0.178, 0.316, 0.562] \
    #kdc: & [0.119, 0.143, 0.173, 0.208, 0.251, 0.303, 0.366, 0.441, 0.532] \
 $
-con lo cual #kdc _podría_ haber encontrado el ligeramente más conveniente $h^star approx 0.17$, pero la convalidación cruzada se inclinó por valores concentrados en el rango $[0.25, 0.3]$. De repetir el experimento toando una grilla más fina en este rango crucial, es posible que $Delta_h^star approx 0$ y por ende $Delta_(R^2)$ también, aunque por el mismo argumento de tomar una grilla más fina para $alpha approx 1$ terminaríamos tal vez encontrando un $alpha^star > 1$ para #fkdc #footnote[Hete aquí la dificultad de enunciar propiedades generales a partir de experimentos particulares: siempre hay _un experimento más_ para hacer, pero lamentablemente, en algún momento había que culminar la etapa experimental.]. En cualquier caso, hemos de aceptar que la ventaja de #fkdc en `lunas_lo` (y también en `espirales_lo`, aunque de menor magnitud) sobre #kdc _no_ se debe a la inclusión del hiperparámetro $alpha$, sino a una convalidación cruzada aleatoriamente favorable.
+con lo cual #kdc _podría_ haber encontrado el ligeramente más conveniente $h^star approx 0.17$, pero la convalidación cruzada se inclinó por valores concentrados en el rango $[0.25, 0.3]$. De repetir el experimento tomando una grilla más fina en este rango crucial, es posible que $Delta_h^star approx 0$ y por ende $Delta_(R^2)$ también, aunque por el mismo argumento de tomar una grilla más fina para $alpha approx 1$ terminaríamos tal vez encontrando un $alpha^star > 1$ para #fkdc #footnote[Hete aquí la dificultad de enunciar propiedades generales a partir de experimentos particulares: siempre hay _un experimento más_ para hacer, pero lamentablemente, en algún momento había que culminar la etapa experimental.]. En cualquier caso, hemos de aceptar que la ventaja de #fkdc en `lunas_lo` (y también en `espirales_lo`, aunque de menor magnitud) sobre #kdc _no_ se debe a la inclusión del hiperparámetro $alpha$, sino a una validación cruzada aleatoriamente favorable.
 
 === Efectos de aumentar el ruido
 
@@ -1565,7 +1565,7 @@ En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" 
 
 
 
-El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los estimadores, pero los métodos basados en densidad por núcleos parecen sufrirlo particularmente, aunque sólo sean porque "caen desde más alto", a un nivel de performance similar al de otros métodos.
+El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los estimadores, pero los métodos basados en densidad por núcleos parecen sufrirlo particularmente, aunque solo sea porque «caen desde más alto», a un nivel de _performance_ similar al de otros métodos.
 
 #figure(
   columns(3)[
