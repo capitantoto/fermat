@@ -1189,14 +1189,11 @@ Entrenar un algoritmo _supervisado_ de clasificación requiere apartar una fracc
 Para cada una de las $GG_i in GG$ clases, definimos el conjunto $ Q_i= {x_0} union {x_j : x_j in XX, GG_j = GG_i} $
 y calculamos $D_(Q_i, alpha)$. No es difícil en principio este cómputo, pero resultaría absurdamente costoso computacionalmente recomputar $D_(Q_i, alpha)$ para cada una de las $K$ clases por cada nueva observación. En su lugar, implementamos un sencillo algoritmo "incremental", que permite recomputar únicamente las geodésicas que cambian al agregar la nueva observación $x_0$ al grafo completo de la clase en cuestión.
 
-== Adaptación a variedades disjuntas, elección de $h$ por clase
+=== Elección del ancho de banda para clasificación
 
-El clasificador de Loubes & Pelletier asume que todas las clases están soportadas en la misma variedad #MM. ¿Quién dice que ello vale para las diferentes clases? ¡Nadie! Sin embargo:
-1. No hace falta dicho supuesto: en el peor de los casos, podemos asumir que la unión de las clases está soportada en _cierta_ variedad de Riemann que resulta de (¿la clausura de?) la unión de sus soportes individuales.
-2. Si las variedades (y las densidades que soportan) difieren, tanto el $alpha_i^*$ como el $h_i^*$ óptimos para los estimadores de densidad individuales no tienen por qué coincidir.
-3. Aunque las densidades individuales $f_i$ estén bien estimadas, el clasificador resultante puede ser malo si no diferencia bien en las fronteras. Por simplicidad, decidimos parametrizar el clasificador con dos únicos hiperparámetros globales: $alpha, h$.
+Al estimar densidades con distancia de Fermat en una variedad, la elección del ancho de banda se simplifica considerablemente: en lugar de una matriz completa $HH$ como en el KDE multivariado euclídeo, basta con un escalar $h$ por clase --- y el $alpha$ correspondiente. Idealmente, convendría elegir un $h_i^*$ (y $alpha_i^*$) óptimo para cada clase $GG_i$, ya que las densidades individuales pueden diferir sustancialmente.
 
-// TODO: integrar referencia @hallBandwidthChoiceNonparametric2005 sobre h óptimo para clasificación con KDEs
+Sin embargo, @hallBandwidthChoiceNonparametric2005 muestran que el $h$ óptimo para la estimación de densidad no es necesariamente el óptimo para la _clasificación_: la tarea de clasificar no requiere estimar bien la densidad en todo el soporte, sino distinguir bien _en las fronteras_ entre clases. Teniendo esto en cuenta y para simplificar la configuración, parametrizamos #fkdc con un único $h$ y $alpha$ globales. Aun así, la búsqueda del óptimo por validación cruzada considera cientos de hiperparametrizaciones, lo cual no admite configuraciones mucho más complejas que dos parámetros.
 == Evaluación
 
 Nos interesa conocer en qué circunstancias, si es que hay alguna, la distancia muestral de Fermat provee ventajas a la hora de clasificar por sobre la distancia euclídea. Además, en caso de existir, quisiéramos en la medida de lo posible comprender por qué (o por qué no) es que tal ventaja existe.
