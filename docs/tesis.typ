@@ -98,7 +98,7 @@ Típicamente, denotaremos a las variables independientes #footnote[También cono
 
 Representaremos a las matrices con letras mayúsculas en negrita, #XX; e.g.: el conjunto de $N$ vectores $p$-dimensionales ${x_i, i in {1, dots, N}}$ será representado por la matriz #XX de dimensión $N times p$.
 
-En general, los vectores _no_ estarán en negrita, excepto cuando tengan $N$ componentes; esta convención distingue el $p-$vector de #emph[inputs] para la i-ésima observación,  $x_i$, del $N-$vector $bu(x)_j$ con todas las observaciones de la variable $X_j$. Como todos los vectores se asumen vectores columna, la i-ésima fila de #XX es $x_i^T$, la traspuesta de la i-ésima observación $x_i$.
+En general, los vectores _no_ estarán en negrita, excepto cuando tengan $N$ componentes; esta convención distingue el $p-$vector de #emph[inputs] para la i-ésima observación,  $x_i$, del $N-$vector $bu(x)_j$ con todas las observaciones de la variable $X_j$. Como todos los vectores se asumen vectores columna, la i-ésima fila de #XX es $x_i^T$, la traspuesta de la i-ésima observación $x_i$. El elemento de la $i$-ésima fila y $j$-ésima columna de la matrix #XX se notará $XX_(i,j)$.
 
 #pagebreak()
 
@@ -1070,12 +1070,12 @@ Probar la equivalencia para el caso trivial con $P = {a, b} subset RR^D$ se conv
 
 Por la desigualdad triangular, cualquier camino entre $a$ y $b$ ha de ser al menos tan largo como $overline(a b)$. En la mitad del segmento $overline(a b)$ más cercana a $a$ (región azul), $d_bu(N)$ es $norm(z - a)^2$; análogamente, en la región naranja $d_bu(N) = norm(z - b)^2$. Parametricemos $overline(a b):$
 $
-  gamma(t) &: [0, 1] -> RR^D, quad
-  gamma(t) &= a + (b - a) t, quad
-  gamma'(t) &= b - a
+  gamma(t) & : [0, 1] -> RR^D, quad
+             gamma(t) & = a + (b - a) t, quad
+                        gamma'(t) & = b - a
 $
 $
-  d_bu(N)(a, b) & =  D_(r_P) = inf_gamma J_(r_P) (gamma) = J_(r_P) (overline(a b)) \= integral_0^1 r_{a, b} (gamma(t)) times norm(gamma'(t)) dif t \
+  d_bu(N)(a, b) & = D_(r_P) = inf_gamma J_(r_P) (gamma) = J_(r_P) (overline(a b)) \= integral_0^1 r_{a, b} (gamma(t)) times norm(gamma'(t)) dif t \
   & = integral_0^1 4 min_(p in {a, b}) norm((a + (b -a)t) - p) norm(b-a) dif t \
   & = 4 norm(b-a) (integral_0^(1/2) norm(a + (b -a)t - a) dif t + integral_(1/2)^1 norm(a + (b -a)t - b) dif t )\
   & = 4 norm(b-a) (integral_0^(1/2) norm((b -a)t) dif t + integral_(1/2)^1 norm((a-b)(1-t)) dif t )\
@@ -1097,7 +1097,7 @@ El grueso del trabajo de Chu et al consiste en una prueba general de esta iguald
 
 Una utilidad de este resultado, es que permite calcular con precisión qué valores de $k$ estimar $d_bu(N)$ sobre el grafo pesado por aristas cuadradas $bu(N N)_k (XX)$  es un "suficientemente buen reemplazo" del cálculo equivalente --- pero mucho más costoso --- sobre $bu(C)(XX)$. En @chuExactComputationManifold2019[Theorema 1.3], observan que con tomar $k = O(2^d ln n)$ basta.
 
-Lo que Chu et al llaman $d_bu(2)$ y figura en @chuExactComputationManifold2019 @vincentDensitySensitiveMetrics2003 como "distancia de arista-cuadrada", es la misma distancia $D_r$ que @bijralSemisupervisedLearningDensity2012 consideran con $p = 2$ (norma euclídea) y $r = 1/d$ --- de modo que $q=r d+1=2$. 
+Lo que Chu et al llaman $d_bu(2)$ y figura en @chuExactComputationManifold2019 @vincentDensitySensitiveMetrics2003 como "distancia de arista-cuadrada", es la misma distancia $D_r$ que @bijralSemisupervisedLearningDensity2012 consideran con $p = 2$ (norma euclídea) y $r = 1/d$ --- de modo que $q=r d+1=2$.
 
 === Distancia de Fermat
 
@@ -1119,9 +1119,9 @@ y no se limitan a sugerir que la distancia en el espacio ambiente se puede aprox
     cal(T)_(f, beta)(gamma) = integral_gamma f^(-beta) dif s, quad cal(D)_(f, beta)(x, y) = inf_gamma cal(T)_(f, beta)(gamma) thin ,
   $
 
-donde el ínfimo se toma sobre el conjunto de todos los "senderos" o curvas rectificables entre $x$ e $y$ contenidos en $overline(S)$ --- la clausura de $S$ --, y la integral se entiende con respecto a la longitud de arco $dif s$ dada por la distancia euclídea. Omitiremos la dependencia en $beta$ y $f$ cuando no sea estrictamente necesaria. #footnote[
-  En palabras de los autores, el nombre deriva de que "esta definición coincide con el Principio de Fermat en óptica para determinar el sendero recorrido por un haz de luz en un medio no homogéneo cuando el índice de refracción está dado por $f^(-beta)$"
-]
+  donde el ínfimo se toma sobre el conjunto de todos los "senderos" o curvas rectificables entre $x$ e $y$ contenidos en $overline(S)$ --- la clausura de $S$ --, y la integral se entiende con respecto a la longitud de arco $dif s$ dada por la distancia euclídea. Omitiremos la dependencia en $beta$ y $f$ cuando no sea estrictamente necesaria. #footnote[
+    En palabras de los autores, el nombre deriva de que "esta definición coincide con el Principio de Fermat en óptica para determinar el sendero recorrido por un haz de luz en un medio no homogéneo cuando el índice de refracción está dado por $f^(-beta)$"
+  ]
 ]
 
 Este objeto "macroscópico" se puede aproximar a partir de una versión "microscópica" del mismo, que en límite converge a $cal(D)_(f, beta)$:
@@ -1135,7 +1135,7 @@ Este objeto "macroscópico" se puede aproximar a partir de una versión "microsc
 
   $
     sfd = inf { & sum_(j=1)^(K-1) ||q_(j+1) - q_j||^alpha : (q_1, dots, q_K) \
-                         & "es un camino de x a y", K>=1}
+                & "es un camino de x a y", K>=1}
   $
 
   donde los $q_j in Q thin forall j in [K]$. Nótese que #sfd satisface la desigualdad triangular, define una métrica sobre $Q$ y una pseudo-métrica #footnote[una métrica tal que la distancia puede ser nula entre puntos no-idénticos:  $ exists a != b : d(a, b) = 0 $] sobre $RR^d$.
@@ -1189,45 +1189,45 @@ Entrenar un algoritmo _supervisado_ de clasificación requiere apartar una fracc
 Para cada una de las $GG_i in GG$ clases, definimos el conjunto $ Q_i= {x_0} union {x_j : x_j in XX, GG_j = GG_i} $
 y calculamos $D_(Q_i, alpha)$. No es difícil en principio este cómputo, pero resultaría absurdamente costoso computacionalmente recomputar $D_(Q_i, alpha)$ para cada una de las $K$ clases por cada nueva observación. En su lugar, implementamos un sencillo algoritmo "incremental", que permite recomputar únicamente las geodésicas que cambian al agregar la nueva observación $x_0$ al grafo completo de la clase en cuestión.
 
-=== Elección del ancho de banda para clasificación
+== Elección del ancho de banda para clasificación
 
-Al estimar densidades con distancia de Fermat en una variedad, la elección del ancho de banda se simplifica considerablemente: en lugar de una matriz completa $HH$ como en el KDE multivariado euclídeo, basta con un escalar $h$ por clase --- y el $alpha$ correspondiente. Idealmente, convendría elegir un $h_i^*$ (y $alpha_i^*$) óptimo para cada clase $GG_i$, ya que las densidades individuales pueden diferir sustancialmente.
+Al estimar densidades con distancia de Fermat en una variedad, la elección del ancho de banda se simplifica considerablemente: en lugar de una matriz completa $HH$ como en el KDE multivariado euclídeo, basta con dos escalares --- $h$ y $alpha$. Idealmente, convendría elegir un par $(h_i^*, alpha_i^*)$ óptimo para cada clase $GG_i$, ya que las densidades individuales pueden diferir sustancialmente.
 
-Sin embargo, @hallBandwidthChoiceNonparametric2005 muestran que el $h$ óptimo para la estimación de densidad no es necesariamente el óptimo para la _clasificación_: la tarea de clasificar no requiere estimar bien la densidad en todo el soporte, sino distinguir bien _en las fronteras_ entre clases. Teniendo esto en cuenta y para simplificar la configuración, parametrizamos #fkdc con un único $h$ y $alpha$ globales. Aun así, la búsqueda del óptimo por validación cruzada considera cientos de hiperparametrizaciones, lo cual no admite configuraciones mucho más complejas que dos parámetros.
-== Evaluación
+Sin embargo, @hallBandwidthChoiceNonparametric2005 muestran que el $h$ óptimo para la estimación de densidad no es necesariamente el óptimo para la _clasificación_: la tarea de clasificar no requiere estimar bien la densidad en todo el soporte, sino distinguir bien _en las fronteras_ entre clases. Teniendo esto en cuenta y para simplificar la configuración, parametrizamos #fkdc con un único $h$ y $alpha$ globales #footnote[y #kdc con un único $h$, elegido sobre una grilla mucho más fina que la de #fkdc]. La búsqueda de simplicidad en la configuración no es un deseo, es una necesidad: la elección de hiperparámetros óptimos por validación cruzada en una grilla requiere entrenar el mismo clasificador en una cantidad de configuraciones que crece exponencialmente con la cantidad de hiperparámetros, lo cual prohíbe configuraciones mucho más complejas que unos pocos parámetros.
 
-Nos interesa conocer en qué circunstancias, si es que hay alguna, la distancia muestral de Fermat provee ventajas a la hora de clasificar por sobre la distancia euclídea. Además, en caso de existir, quisiéramos en la medida de lo posible comprender por qué (o por qué no) es que tal ventaja existe.
-A nuestro entender resulta imposible hacer declaraciones demasiado generales al respecto de la capacidad del clasificador: la cantidad de _datasets_ posibles, junto con sus _configuraciones de evaluación_, es tan densamente infinita como lo permita la imaginación del evaluador. Con un ánimo exploratorio, nos proponemos evaluar la _performance_ de nuestros clasificadores basados en distancia muestral de Fermat en algunas _tareas_ puntuales.
+== Metodología
 
-=== Métricas de _performance_
+La unidad de evaluación de los algoritmos a considerar es una `Tarea` #footnote[cf. el archivo `fkdc/tarea.py` en el repositorio adjunto para más detalles.], que se compone de:
+- un _dataset_ con el conjunto de $N$ observaciones en $D$ dimensiones repartidas en $K$ clases, $(XX, bu(g))$,
+- un _split de evaluación_ $r in (0, 1)$, que determina las proporción de los datos a incluir en la muestra de entrenamiento $XX_"train"$ ($1 - r$) y la de evaluación $XX_"test"$ ($r$),
+- una _semilla_ $s in [2^32]$ que alimenta el generador de números aleatorios y define determinísticamente cómo realizar la división antedicha y
+- una _métrica de evaluación_ #footnote[en muchos casos ésta coincidirá con la función de pérdida $L$ a minimizar durante el entrenamiento, pero no necesariamente] que resume la "bondad" de las predicciones sobre $XX_"test"$ del clasficador entrenado en $XX_"train"$. 
+
+=== Métricas de evaluación
 
 En tareas de clasificación, la métrica más habitual es la _exactitud_ #footnote([Más conocida por su nombre en inglés, _accuracy_.])
 
-
 #defn(
   "exactitud",
-)[Sean $(XX, bu(g)) in RR^(n times p) times RR^n$ una matriz de $n$ observaciones de $p$ atributos y sus clases asociadas. Sea además $hat(bu(g)) = hat(G)(XX)$ las predicciones de clase resultado de una regla de clasificación $hat(G)$. La _exactitud_ ($"exac"$) de $hat(G)$ en #XX se define como la proporción de coincidencias con las clases verdaderas $bu(g)$:
+)[Sean $(XX, bu(g)) in RR^(N times p) times RR^N$ una matriz de $N$ observaciones de $p$ atributos y sus clases asociadas. Sea además $hat(bu(g)) = hat(G)(XX)$ las predicciones de clase resultado de una regla de clasificación $hat(G)$. La _exactitud_ ($"exac"$) de $hat(G)$ en #XX se define como la proporción de coincidencias con las clases verdaderas $bu(g)$:
   $ op("exac")(hat(G) | XX) = n^(-1) sum_(i=1)^n ind(hat(g)_i = g_i) $
 ] <exactitud>
 
-La exactitud está bien definida para cualquier clasificador que provea una regla _dura_ de clasificación. Ahora bien, cuando un clasificador provee una regla suave, la exactitud como métrica "pierde información": dos clasificadores binarios que asignen respectivamente 0.51 y 1.0 de probabilidad de pertenecer a la clase correcta a todas las observaciones tendrán la misma exactitud, $100%$, aunque el segundo es a las claras mejor. A la inversa, cuando un clasificador erra al asignar la clase: ¿lo hace con absoluta confianza, asignando una alta probabilidad a la clase equivocada, o con cierta incertidumbre, repartiendo la masa de probabilidad entre varias clases que considera factibles?
-
-Una métrica natural para evaluar una regla de clasificación suave es la _verosimilitud_ (y su logaritmo) de las predicciones.
+La exactitud está bien definida para cualquier clasificador que provea una regla _dura_ de clasificación. Ahora bien, cuando un clasificador provee una regla suave, la exactitud como métrica pierde información: dos clasificadores binarios que asignen respectivamente 0.51 y 1.0 de probabilidad de pertenecer a la clase correcta a todas las observaciones tendrán la misma exactitud, $100%$, aunque el segundo es a las claras mejor. A la inversa, cuando un clasificador erra al asignar la clase: ¿lo hace con absoluta confianza, asignando una alta probabilidad a la clase equivocada, o con cierta incertidumbre, repartiendo la masa de probabilidad entre varias clases que considera factibles? Una métrica natural para evaluar una regla de clasificación suave es la _verosimilitud_ de las predicciones.
 
 #defn(
   "verosimilitud",
-)[Sean $bu(("X, y")) in RR^(n times p) times RR^n$ una matriz de $n$ observaciones de $p$ atributos y sus clases asociadas. Sea además $hat(bu(Y)) = clf(XX) in RR^(n times k)$ la matriz de probabilidades de clase resultado de una regla suave de clasificación #clf. La _verosimilitud_ ($"vero"$) de #clf en #bu("X") se define como la probabilidad conjunta que asigna #clf a las clases verdaderas #bu("y"):
+)[Sean $XX, bu(g)$ como en @exactitud . Sea además $hat(bu(Y)) = clf(XX) in RR^(n times k)$ la matriz de probabilidades de clase resultado de una regla suave de clasificación #clf. La _verosimilitud_ ($"vero"$) de #clf en #bu("X") se define como la probabilidad conjunta que asigna #clf a las clases verdaderas #bu("y"):
   $
-    op(L)(clf) = op("vero")(
-      clf | XX
-    ) = Pr(hat(bu(y)) = bu(y)) = product_(i=1)^n Pr(hat(y)_i =y_i) = product_(i=1)^n hat(bu(Y))_((i, y_i))
+    op("vero")( clf | XX ) &= Pr(hat(bu(y)) = bu(y)) = product_(i=1)^n Pr(hat(y)_i =y_i) \
+    op("vero")( clf | XX ) &= product_(i=1)^n hat(bu(Y))_(i, y_i)
   $
 
   Por conveniencia, se suele considerar la _log-verosimilitud promedio_,
   $ op(cal(l))(clf) = n^(-1) log(op("L")(clf)) = n^(-1)sum_(i=1)^n log(hat(bu(Y))_((i, y_i))) $
 ] <vero>
 
-La verosimilitud de una muestra varía en $[0, 1]$ y su log-verosimilitud, en $(-oo, 0]$, pero, como métrica, esta solo se vuelve comprensible _relativa a otros clasificadores_. Una forma de "normalizar" la log-verosimilitud se debe a @mcfaddenConditionalLogitAnalysis1974.
+La verosimilitud de una muestra varía en el rango $[0, 1]$ y su log-verosimilitud, en $(-oo, 0]$. Como métrica, esta se vuelve comprensible al expresarla _relativa a otros clasificadores_, por ejemplo, como propone @mcfaddenConditionalLogitAnalysis1974.
 
 #defn(
   [$R^2$ de McFadden],
@@ -1235,50 +1235,55 @@ La verosimilitud de una muestra varía en $[0, 1]$ y su log-verosimilitud, en $(
   $ op(R^2)(clf | XX) = 1 - (op(cal(l))(clf)) / (op(cal(l))(clf_0)) $
 ] <R2-mcf>
 
-#obs[ $op(R^2)(clf_0) = 0$. A su vez, para un clasificador perfecto $clf^star$ que otorgue toda la masa de probabilidad a la clase correcta, tendrá $op(L)(clf^star) = 1$ y log-verosimilitud igual a 0, de manera que $op(R^2)(clf^star) = 1 - 0 = 1$.
-
-  Sin embargo, un clasificador _peor_ que $clf_0$ en tanto asigne bajas probabilidades a las clases correctas, puede tener un $R^2$ infinitamente negativo.
+#obs[ $op(R^2)(clf_0) = 0$. Un clasificador perfecto --- un "oráculo" --- $clf^star$ que otorgue toda la masa de probabilidad a la clase correcta, tendrá $op(L)(clf^star) = 1$ y log-verosimilitud igual a 0, de manera que $op(R^2)(clf^star) = 1 - 0 = 1$. Un clasificador _peor_ que $clf_0$ en tanto asigne bajas probabilidades a las clases correctas, puede tener un $R^2$ infinitamente negativo.
 ]
 
-Visto y considerando que tanto #fkdc como #fkn son clasificadores suaves, evaluaremos su comportamiento en comparación con ambas métricas, la exactitud y el $R^2$ de McFadden #footnote[de aquí en más, $R^2$ para abreviar].
+Tanto #kdc, #fkdc y #fkn son clasificadores suaves, por lo que los evaluaremos principalmente según el $R^2$ de @R2-mcf. Sin embargo, mantendremos un ojo en la exactitud de @exactitud, para asegurarnos de que su _performance_ en esta métrica tan tradicional no sea significativamente peor que la de los algoritmos de referencia.
 
 === Algoritmos de referencia
 
-Además de medir qué (des)ventajas otorga el uso de una distancia aprendida de los datos en la tarea de clasificación, quisiéramos entender (a) por qué sucede, y (b) si tal (des)ventaja es significativa en el amplio abanico de algoritmos disponibles. Pírrica victoria sería mejorar con la distancia de Fermat la _performance_ de cierto algoritmo, para encontrar que aún con la mejora, el algoritmo no es competitivo en la tarea de referencia.
-
-Consideraremos a modo de referencia los siguientes algoritmos:
+Pírrica victoria sería mejorar con la distancia de Fermat la _performance_ de #kdc o #kn para encontrar que aún así, el algoritmo no es competitivo contra el estado del arte en la misma tarea. A modo de referencia consideramos también los siguientes algoritmos:
 - Naive Bayes Gaussiano (#gnb),
-- Regresión Logistica (#logr) y
+- Regresión Logistica (#logr),
+- _Gradient Boosting Trees_ (#gbt) #footnote[Una traducción literal sería "árboles (de decisión) por potenciación del gradiente", pero este término casi nunca se traduce en la práctica.] y 
 - Clasificador de Soporte Vectorial (#svc)
 
-Esta elección no pretende ser exhaustiva, sino que responde a un "capricho informado" del investigador. #gnb es una elección natural, ya que es la simplificación que surge de asumir independencia en las dimensiones de $X$ para KDE multivariado (@kde-mv), y se puede computar para grandes conjuntos de datos en muy poco tiempo. #logr es "el" método para clasificación binaria, y su extensión a múltiples clases no es particularmente compleja: para que sea mínimamente valioso un nuevo algoritmo, necesita ser al menos tan bueno como #logr, que tiene ya más de 65 años en el campo @blissCALCULATIONDOSAGEMORTALITYCURVE1935, @coxRegressionAnalysisBinary1958. Por último, fue nuestro deseo incorporar algunos métodos más cercanos al estado del arte: un método de _boosting_ (@GradientBoosting2025) y el antedicho clasificador de soporte vectorial, #svc #footnote[en dos variantes: con núcleos (_kernels_) lineales y RBF - #emph[radial basis functions]]. Por conocerlo en profundidad y en virtud de su sencillez de uso, la implementación se realizó utilizando `scikit-learn` @JMLR:v12:pedregosa11a, un poderoso y extensible paquete para tareas de aprendizaje automático en Python.
+#v(1em)
 
-=== Metodología
+Esta elección no pretende ser exhaustiva, sino que responde a un "capricho informado" del investigador. Naive Bayes (@naive-bayes) una elección natural, ya que es la simplificación que surge de asumir independencia en las dimensiones de $X$ para KDE multivariado (@kde-mv), y se puede computar para grandes conjuntos de datos en muy poco tiempo.
 
-La unidad de evaluación de los algoritmos a considerar es una `Tarea`, que se compone de:
-- un _diccionario de algoritmos_ a evaluar en condiciones idénticas, definidas por
-- un _dataset_ con el conjunto de $N$ observaciones en $D$ dimensiones repartidas en $K$ clases, $(XX, bu(g))$,
-- un _split de evaluación_ $r in (0, 1)$, que determina las proporciones de los datos a usar durante el entrenamiento ($1 - r$) y la evaluación ($r$), junto con
-- una _semilla_ $s in [2^32]$ que alimenta el generador de números aleatorios y define determinísticamente cómo realizar la división antedicha.
+La regresión logística es "el" método para clasificación binaria, y su extensión a múltiples clases no es particularmente compleja. Para resultar mínimamente valioso, un nuevo algoritmo necesita ser al menos tan bueno como #logr y sus ya más de 80 años en el campo #footnote[la referencia más temprana a la regresión logística data de @berksonApplicationLogisticFunction1944; la referencia clásica al marco formal moderno está en @coxRegressionAnalysisBinary1958. Un trabajo aún anterior sobre estimación de probabilidades pero usando la función _probit_ --- la distribución acumulada de la normal estándar --- en lugar de la función _logit_ o sigmoidea, es @blissCALCULATIONDOSAGEMORTALITYCURVE1935].
+ 
+Por último, fue nuestro deseo incorporar algunos métodos más cercanos al estado del arte. A tal fin incorporamos un método de _boosting_ #footnote[ El _gradient boosting_ fue introducido por @friedmanGreedyFunctionApproximation2001, y desde entonces ha dado lugar a implementaciones altamente eficientes como XGBoost @chenXGBoostScalableTree2016 y LightGBM @keLightGBMHighlyEfficient2017.] y el antedicho clasificador de soporte vectorial. El clasificador de soporte vectorial @cortesSupportvectorNetworks1995, #svc, se evaluó en dos variantes: con núcleos (_kernels_) lineales y RBF #footnote[del inglés _radial basis functions_, "funciones de base radial"].
+
+
+Por conocerlo en profundidad y en virtud de su sencillez de uso, la implementación se realizó utilizando `scikit-learn` @JMLR:v12:pedregosa11a, un poderoso y extensible paquete para tareas de aprendizaje automático en Python.
+
+
+=== Pre-tratamiento de los datos
+
+Mantuvimos al mínimo el pre-tratamiento de los datos de entrada. Esta decisión fue deliberada: nos interesaba evaluar si la distancia de Fermat era capaz de capturar la estructura de la variedad subyacente sin asistencia adicional en la preparación de los datos, si bien reconocemos que este supuesto no es del todo razonable en aplicaciones del mundo real, donde el pre-procesamiento suele ser una etapa fundamental.
+
+La excepción fue la regresión logística, de la cual es bien sabido que su _performance_ se degrada considerablemente cuando las variables predictoras se encuentran en escalas muy distintas. Por este motivo incluimos tanto #logr --- regresión logística sobre los datos originales --- como #slr, una variante en la que los datos fueron previamente estandarizados.
 
 === Entrenamiento de los algoritmos
-La especificación completa de un clasificador requiere, además de la elección del algoritmo, la especificación de sus _hiperparámetros_, de manera tal de optimizar su rendimiento bajo ciertas condiciones de evaluación. Para ello, se definió de antemano para cada clasificador una _grilla_ de hiperparámetros: durante el proceso de entrenamiento, la elección de los "mejores" hiperparámetros se efectuó maximizando la log-verosimilitud @vero para los clasificadores suaves, y la exactitud @exactitud para los duros #footnote[Entre los mencionados, el único clasificador duro es #svc. Técnicamente es posible entrenar un clasificador suave a partir de uno duro con un _segundo_ estimador que toma como _input_ el resultado "crudo" del clasificador duro y da como _output_ una probabilidad calibrada (cf. #link("https://scikit-learn.org/stable/modules/calibration.html")[Calibración] en la documentación de `scikit-learn`  @buitinckAPIDesignMachine2013), pero es un proceso computacionalmente costoso.] con una búsqueda exhaustiva por validación cruzada de 5 pliegos #footnote[Conocida en inglés como #emph[Grid Search 5-fold Cross-Validation]] sobre la grilla entera.
+La especificación completa de un clasificador requiere no solo elegir un algoritmo sino también especificar de sus _hiperparámetros_, a fin de optimizar su rendimiento bajo ciertas condiciones de evaluación. Para ello, se definió de antemano para cada clasificador una _grilla_ de hiperparámetros: durante el proceso de entrenamiento, la elección de los "mejores" hiperparámetros se efectuó maximizando la log-verosimilitud @vero para los clasificadores suaves, y la exactitud @exactitud para los duros #footnote[Entre los mencionados, el único clasificador duro es #svc. Técnicamente es posible entrenar un clasificador suave a partir de uno duro con un _segundo_ estimador que toma como _input_ el resultado "crudo" del clasificador duro y da como _output_ una probabilidad calibrada (cf. #link("https://scikit-learn.org/stable/modules/calibration.html")[Calibración] en la documentación de `scikit-learn`  @buitinckAPIDesignMachine2013), pero es un proceso computacionalmente costoso.] con una búsqueda exhaustiva por validación cruzada de 5 pliegos #footnote[Conocida en inglés como #emph[Grid Search 5-fold Cross-Validation]] sobre la grilla entera.
 
 === Estimación de la variabilidad en la _performance_ reportada
-En última instancia, cualquier métrica evaluada no es otra cosa que un _estadístico_ que representa la "calidad" del clasificador en la tarea a mano. A fines de conocer no solo su estimación puntual sino también darnos una idea de la variabilidad de su _performance_, para cada dataset y colección de algoritmos, se entrenaron y evaluaron #reps tareas idénticas salvo por la semilla $s$, que luego se usaron para estimar la varianza y el desvío estándar en la exactitud (@exactitud) y el pseudo-$R^2$ (@R2-mcf).
+En última instancia, cualquier métrica evaluada no es otra cosa que un _estadístico_ que representa la "calidad" del clasificador en la tarea a mano. A fines de conocer no solo su estimación puntual sino también darnos una idea de la variabilidad de su _performance_, para cada dataset y colección de algoritmos, se entrenaron y evaluaron #reps tareas idénticas salvo por la semilla $s$, que luego se usaron para estimar estadísticos de locación (media, mediana, rango intercuartil) y dispersión (varianza y desvío estándar) en la exactitud (@exactitud) y el pseudo-$R^2$ (@R2-mcf).
 
-Cuando el conjunto de datos proviene del mundo real y por lo tanto _preexiste a nuestro trabajo_, las #reps semillas $s_1, dots, s_#reps$ fueron utilizadas para definir el split de entrenamiento/evaluación. Por el contrario, cuando el conjunto de datos fue generado sintéticamente, las semillas se utilizaron para generar #reps versiones distintas pero perfectamente replicables del dataset, y en todas se utilizó una misma semilla maestra $s^star$ para definir el split de evaluación.
+Cuando el conjunto de datos proviene del mundo real y por lo tanto _preexiste a nuestro trabajo_, las #reps semillas $s_1, dots, s_#reps$ fueron utilizadas para definir diferentes partticiones de entrenamiento/evaluación. Por el contrario, cuando el conjunto de datos fue generado sintéticamente, las semillas se utilizaron para generar #reps versiones distintas pero perfectamente replicables del dataset, y en todas se utilizó una misma semilla maestra $s^star$ para definir el _split_ de evaluación.
 
 
 === Regla de Parsimonia
 
 La estrategia de validación cruzada intenta evitar que los algoritmos sobreajusten durante el entrenamiento, evaluando su comportamiento en $XX_"test"$, disjunto de $XX_"train"$.
-No todas las parametrizaciones son equivalentes: en general, para cada hiperparámetro se puede establecer una dirección en la que el modelo se complejiza, en tanto se ajusta más y más a los datos de entrenamiento: un estimador #kn entrenado con _menos vecinos_  cambia sus predicciones más seguido que uno con _más vecinos_ - considere $50-"NN"$ y $1-"NN"$.
+No todas las parametrizaciones son equivalentes: en general, para cada hiperparámetro se puede establecer una dirección en la que el modelo se complejiza, en tanto se ajusta más y más a los datos de entrenamiento #footnote[Por ejemplo, #kn se complejiza a medida que  _disminuye_ $k$, la cantidad de vecinos: las predicciones de $1-$NN sobre la variedad cambian más seguido que las de $100$-NN].
 
 #obs(link("https://es.wikipedia.org/wiki/Navaja_de_Ockham")[Navaja de Occam])[
   "cuando dos teorías en igualdad de condiciones tienen las mismas consecuencias, la teoría más simple tiene más probabilidades de ser correcta que la compleja"
 ]
-Reformulando, diremos que sujeto a la implementación de _cierto_ algoritmo, cuando dos hiperparametrizaciones $h_0, h_1$ tienen _casi_ las mismas consecuencias --- alcanzan $R^2$ tales que $abs(R^2(h_0) - R^2(h_1)) <= epsilon$ --- preferiremos la más sencilla: la de menor _complejidad_ $C(h)$, para cierta función $C$ a definir.
+Reformulando, diremos que sujeto a la implementación de _cierto_ algoritmo, cuando dos hiperparametrizaciones $nu, mu$ tienen _casi_ las mismas consecuencias --- alcanzan $R^2$ tales que $abs(R^2(nu) - R^2(mu)) < c$ con $c$ "suficientemente pequeño" --- preferiremos la más sencilla: la de menor _complejidad_ $C(h)$, para cierta función $C$ a definir.
 
 La validación cruzada de $k$ pliegos nos provee naturalmente de $k$ realizaciones de la métrica a optimizar para cada hiperparametrización. Sea $h^"opt"$ la que minimiza la pérdida de evaluación y $hat(s^2)(L(h^"opt"))$ la varianza estimada de dicha pérdida. Sobre esta base, implementamos la siguiente regla:
 #defn([regla de $1 sigma$])[
