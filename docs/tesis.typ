@@ -1201,7 +1201,7 @@ La unidad de evaluación de los algoritmos a considerar es una `Tarea` #footnote
 - un _dataset_ con el conjunto de $N$ observaciones en $D$ dimensiones repartidas en $K$ clases, $(XX, bu(g))$,
 - un _split de evaluación_ $r in (0, 1)$, que determina las proporción de los datos a incluir en la muestra de entrenamiento $XX_"train"$ ($1 - r$) y la de evaluación $XX_"test"$ ($r$),
 - una _semilla_ $s in [2^32]$ que alimenta el generador de números aleatorios y define determinísticamente cómo realizar la división antedicha y
-- una _métrica de evaluación_ #footnote[en muchos casos ésta coincidirá con la función de pérdida $L$ a minimizar durante el entrenamiento, pero no necesariamente] que resume la "bondad" de las predicciones sobre $XX_"test"$ del clasficador entrenado en $XX_"train"$. 
+- una _métrica de evaluación_ #footnote[en muchos casos ésta coincidirá con la función de pérdida $L$ a minimizar durante el entrenamiento, pero no necesariamente] que resume la "bondad" de las predicciones sobre $XX_"test"$ del clasficador entrenado en $XX_"train"$.
 
 === Métricas de evaluación
 
@@ -1219,8 +1219,8 @@ La exactitud está bien definida para cualquier clasificador que provea una regl
   "verosimilitud",
 )[Sean $XX, bu(g)$ como en @exactitud . Sea además $hat(bu(Y)) = clf(XX) in RR^(n times k)$ la matriz de probabilidades de clase resultado de una regla suave de clasificación #clf. La _verosimilitud_ ($"vero"$) de #clf en #bu("X") se define como la probabilidad conjunta que asigna #clf a las clases verdaderas #bu("y"):
   $
-    op("vero")( clf | XX ) &= Pr(hat(bu(y)) = bu(y)) = product_(i=1)^n Pr(hat(y)_i =y_i) \
-    op("vero")( clf | XX ) &= product_(i=1)^n hat(bu(Y))_(i, y_i)
+    op("vero")( clf | XX ) & = Pr(hat(bu(y)) = bu(y)) = product_(i=1)^n Pr(hat(y)_i =y_i) \
+    op("vero")( clf | XX ) & = product_(i=1)^n hat(bu(Y))_(i, y_i)
   $
 
   Por conveniencia, se suele considerar la _log-verosimilitud promedio_,
@@ -1245,7 +1245,7 @@ Tanto #kdc, #fkdc y #fkn son clasificadores suaves, por lo que los evaluaremos p
 Pírrica victoria sería mejorar con la distancia de Fermat la _performance_ de #kdc o #kn para encontrar que aún así, el algoritmo no es competitivo contra el estado del arte en la misma tarea. A modo de referencia consideramos también los siguientes algoritmos:
 - Naive Bayes Gaussiano (#gnb),
 - Regresión Logistica (#logr),
-- _Gradient Boosting Trees_ (#gbt) #footnote[Una traducción literal sería "árboles (de decisión) por potenciación del gradiente", pero este término casi nunca se traduce en la práctica.] y 
+- _Gradient Boosting Trees_ (#gbt) #footnote[Una traducción literal sería "árboles (de decisión) por potenciación del gradiente", pero este término casi nunca se traduce en la práctica.] y
 - Clasificador de Soporte Vectorial (#svc)
 
 #v(1em)
@@ -1253,7 +1253,7 @@ Pírrica victoria sería mejorar con la distancia de Fermat la _performance_ de 
 Esta elección no pretende ser exhaustiva, sino que responde a un "capricho informado" del investigador. Naive Bayes (@naive-bayes) una elección natural, ya que es la simplificación que surge de asumir independencia en las dimensiones de $X$ para KDE multivariado (@kde-mv), y se puede computar para grandes conjuntos de datos en muy poco tiempo.
 
 La regresión logística es "el" método para clasificación binaria, y su extensión a múltiples clases no es particularmente compleja. Para resultar mínimamente valioso, un nuevo algoritmo necesita ser al menos tan bueno como #logr y sus ya más de 80 años en el campo #footnote[la referencia más temprana a la regresión logística data de @berksonApplicationLogisticFunction1944; la referencia clásica al marco formal moderno está en @coxRegressionAnalysisBinary1958. Un trabajo aún anterior sobre estimación de probabilidades pero usando la función _probit_ --- la distribución acumulada de la normal estándar --- en lugar de la función _logit_ o sigmoidea, es @blissCALCULATIONDOSAGEMORTALITYCURVE1935].
- 
+
 Por último, fue nuestro deseo incorporar algunos métodos más cercanos al estado del arte. A tal fin incorporamos un método de _boosting_ #footnote[ El _gradient boosting_ fue introducido por @friedmanGreedyFunctionApproximation2001, y desde entonces ha dado lugar a implementaciones altamente eficientes como XGBoost @chenXGBoostScalableTree2016 y LightGBM @keLightGBMHighlyEfficient2017.] y el antedicho clasificador de soporte vectorial. El clasificador de soporte vectorial @cortesSupportvectorNetworks1995, #svc, se evaluó en dos variantes: con núcleos (_kernels_) lineales y RBF #footnote[del inglés _radial basis functions_, "funciones de base radial"].
 
 
@@ -1278,27 +1278,31 @@ Cuando el conjunto de datos proviene del mundo real y por lo tanto _preexiste a 
 === Regla de Parsimonia
 
 La estrategia de validación cruzada intenta evitar que los algoritmos sobreajusten durante el entrenamiento, evaluando su comportamiento en $XX_"test"$, disjunto de $XX_"train"$.
-No todas las parametrizaciones son equivalentes: en general, para cada hiperparámetro se puede establecer una dirección en la que el modelo se complejiza, en tanto se ajusta más y más a los datos de entrenamiento #footnote[Por ejemplo, #kn se complejiza a medida que  _disminuye_ $k$, la cantidad de vecinos: las predicciones de $1-$NN sobre la variedad cambian más seguido que las de $100$-NN].
+No todas las parametrizaciones son equivalentes: en general, para cada hiperparámetro se puede establecer una dirección en la que el modelo se complejiza, en tanto se ajusta más y más a los datos de entrenamiento #footnote[Por ejemplo, #kn se complejiza a medida que  _disminuye_ $k$, la cantidad de vecinos: las predicciones de $1-$NN sobre la variedad cambian más seguido que las de $100$-NN]. Esto nos recuerda un principio filosófico clásico:
 
 #obs(link("https://es.wikipedia.org/wiki/Navaja_de_Ockham")[Navaja de Occam])[
-  "cuando dos teorías en igualdad de condiciones tienen las mismas consecuencias, la teoría más simple tiene más probabilidades de ser correcta que la compleja"
+  Atribuida a William de Ockham (c. 1287--1347), también se conoce como "Principio de Parsimonia", y se suele citar --- en palabras que su autor nunca pronunció exactamente --- como _Entia non sunt multiplicanda praerter necessitatem_, "No se deben multiplicar las entidades sin necesidad". Popularmente, se suele parafrasear como "de entre dos teorías en disputa, es preferible la explicación más simple de un fenómeno".
 ]
-Reformulando, diremos que sujeto a la implementación de _cierto_ algoritmo, cuando dos hiperparametrizaciones $nu, mu$ tienen _casi_ las mismas consecuencias --- alcanzan $R^2$ tales que $abs(R^2(nu) - R^2(mu)) < c$ con $c$ "suficientemente pequeño" --- preferiremos la más sencilla: la de menor _complejidad_ $C(h)$, para cierta función $C$ a definir.
+Reformulando, diremos que sujeto a la implementación de _cierto_ algoritmo, cuando dos hiperparametrizaciones $nu, mu$ tienen _casi_ las mismas consecuencias --- alcanzan pérdidas tales que $abs(L(nu) - L(mu)) < c$ con $c$ "suficientemente pequeño" --- preferiremos la más sencilla: la de menor _complejidad_ $C$, para cierta función $C$ a definir.
 
-La validación cruzada de $k$ pliegos nos provee naturalmente de $k$ realizaciones de la métrica a optimizar para cada hiperparametrización. Sea $h^"opt"$ la que minimiza la pérdida de evaluación y $hat(s^2)(L(h^"opt"))$ la varianza estimada de dicha pérdida. Sobre esta base, implementamos la siguiente regla:
-#defn([regla de $1 sigma$])[
-  Sea $hat(s^2)(L(h))$ una estimación razonable de la varianza de la pérdida $L(h)$ del modelo parametrizado en $h$, y $h^"opt"$ la que alcanza la mínima pérdida. De entre todas las hiperparametrizaciones, elíjase _la más sencilla_: $h^star = arg min_(h in cal(H)) C(h), \ cal(H) = {h : L(h) <= L(h^"opt") + sqrt(hat(s^2)(L(h^"opt"))) }$.
+La validación cruzada de $k$ pliegos nos provee naturalmente de $k$ realizaciones de la métrica a optimizar para cada hiperparametrización, que podemos utilizar para estimar el desvío estándar de la misa. Sobre esta base, implementamos la siguiente regla:
+#defn([regla de un desvío estándar o "R1SD"])[
+  Sea $mu^star$ la hiperparametrización que minimiza la pérdida de entrenamiento y $hat(s)(L(mu^star))$ el desvío estimado de dicha pérdida. De entre todas las hiperparametrizaciones casi tan satisfactorias como $mu^star$, elíjase _la más sencilla_:
+  $         & mu^(1 sigma) = arg min_(mu in Mu) C(mu) \
+  "donde" & Mu = {mu : L(mu) <= L(mu^star) + hat(s)(L(mu^star))) } $.
 ] <r1sd>
 
-Para definir $C$ en modelos con $dim(h) > 1$, definimos el orden de complejidad creciente _para cada clasificador_ como una lista ordenada de 2-tuplas con el nombre de cada hiperparámetro y una dirección de crecimiento. Para #fkdc, por ejemplo, $C(h) = [(alpha, "ascendente"), (h, "descendente")]$. La decisión de ordenar así los parámetros, con $alpha$ primero y $C$ ascendente en $alpha$, hace que la evaluación "prefiera" naturalmente a #kdc por sobre #fkdc#footnote[$#kdc = op(#fkdc)(alpha = 1)$], ya que el mínimo $alpha = 1$ estudiado resulta siempre preferido. En consecuencia, cuando veamos que #fkdc elige un $alpha != 1$, sabremos que no es por pura casualidad.
+Para definir $C$ en modelos con $dim(h) > 1$, definimos el orden de complejidad creciente _para cada clasificador_ jerárquicamente como una lista de pares ordenados de hiperparámetros y la dirección de complejidad creciente. Para #fkdc, por ejemplo,
+$ C_#fkdc (mu) = [(alpha, "ascendente"), (h, "descendente")]. $
+La decisión de ordenar así los parámetros, con $alpha$ primero y $C$ ascendente en $alpha$, hace que la evaluación "prefiera" naturalmente a #kdc por sobre #fkdc#footnote[$#kdc = op(#fkdc)(alpha = 1)$], ya que el mínimo $alpha = 1$ estudiado resulta siempre preferido. En consecuencia, sólo se elegirá un $alpha^star > 1$ cuando la _performance_ de #fkdc sea siginifcativamente mejor que la de KDC --- con $alpha equiv 1$.
 
-// TODO: considerar renombrar hiperparametrización para evitar confusión con la ventana $h$.
 #obs([complejidad en $h$])[
-  La complejidad es _descendente_ en el tamaño de la ventana $h$: a mayor $h$, tanto más grande se vuelve el vecindario donde $K_h (d(x, x_i)) >> 0$ y por ende pesa en la asignación. Análogamente, $k-"NN"$ y su primo $epsilon- "NN"$ tienen complejidad descendente en $k, epsilon$.
+  La complejidad es _descendente_ en el tamaño de la ventana $h$: a mayor $h$, tanto más grande se vuelve el vecindario donde $K_h (d(x, x_i)) >> 0$ y por ende pesa en la asignación. Análogamente, $k-"NN"$ y su primo $epsilon- "NN"$ tienen complejidad _descendente_ en $k, epsilon$.
 ]
 
 === Medidas de locación y dispersión no-paramétricas
-Siendo el _setting_ --- estimación de densidad basada en distancias en una variedad de Riemann desconocida --- tan poco ortodoxo, parece razonable comparar la _performance_ con medidas de locación robustas. Por eso comparamos la _performance_ mediana (y no media) por semilla de cada clasificador, y la visualizamos con un _boxplot_ en lugar de un intervalo de confianza $mu plus.minus n times sigma$.
+Nos dedicaremos a la  estimación de densidad basada en distancia de Fermat en una variedad de Riemann desconocida. Resulta imposible conocer _a priori_ la teoría de la distribución para estos estimadores, por lo que nos resulta razonable comparar la _performance_ con medidas de locación robustas. Por ello compararemos la _performance_ mediana (y no media) entre las #reps repeticiones con distintas semillas de cada clasificador, y las visualizaremos con un _boxplot_ en lugar de un intervalo de confianza.
+
 = Resultados <resultados>
 
 == In Totis
