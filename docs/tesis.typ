@@ -1329,11 +1329,13 @@ El mismo análisis con métrica de exactitud es, desde luego, menos favorable a 
 Solo considerar la _performance_ de #fkdc y #fkn en los 20 datasets daría unas 40 unidades de análisis, y en el espíritu de indagación curiosa que guía esta tesis, existen aún más tendencias y patrones interesantes en los 4,500 experimentos realizados. No es nuestra intención matar de aburrimiento al lector, con lo cual a continuación haremos un paneo arbitrario por algunos de los resultados que (a) nos resultaron más llamativos o (b) se acercan lo suficiente a alguno de la literatura previa como para merecer un comentario aparte. Quien desee corroborar que no hice un uso injustificado de la discrecionalidad para elegir resultados, puede referirse al @apendice-a[Apéndice A2 - Hojas de resultados por experimento] y darse una panzada de tablas y gráficos.
 == Lunas, círculos y espirales ($D=2, d=1, k=2$)
 
-Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=1, k=2$, y exploramos tres curvas sampleadas con un poco de "ruido blanco": dos "lunas" --- semicírculos no superpuestos con sus centros en un extremo del semicírculo opuesto ---, dos círculos concéntricos y dos espirales con el mismo origen y rotación en sentidos opuestos #footnote[No entraremos en demasiado detalle sobre cómo se generó o de dónde se tomó cada _dataset_ para mantener el foco en los resultados de la experimentación. En el paquete adjunto, las rutinas completas para generar cada conjunto de datos se puede leer en `fkdc/datasets.py`].
+Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=1, k=2$, y exploramos tres curvas sampleadas con un poco de "ruido blanco" añadido: dos "lunas" --- semicírculos no superpuestos con sus centros en un extremo del semicírculo opuesto ---, dos círculos concéntricos y dos espirales con el mismo origen y rotación en sentidos opuestos #footnote[No entraremos en demasiado detalle sobre cómo se generó o de dónde se tomó cada _dataset_ para mantener el foco en los resultados de la experimentación. En el paquete adjunto, las rutinas completas para generar cada conjunto de datos se puede leer en `fkdc/datasets.py`].
 
 #v(-1em)
 
-#defn("ruido blanco")[Sea $X = (X_1, dots, X_d) in RR^d$ una variable aleatoria tal que $"E"(X_i)=0, "Var"(X_i)=SS thick forall i in [d]$. Llamaremos "ruido blanco con escala $SS$" a toda realización de $X$.] <ruido-blanco>
+#defn(
+  "ruido blanco",
+)[Sea $W = (W_1, dots, W_d) in RR^d$ una variable aleatoria tal que $"E"(W_i)=0, "Var"(W_i)=SS thick forall i in [d]$. Llamaremos "ruido blanco con escala $SS$" a $N$ realizaciones #iid de $W, thin bu(W) in RR^(N times d)$.] <ruido-blanco>
 
 #obs[Dado que la dimensión de la variedad subyacente ($d=1$) es menor que la del espacio ambiente ($D=2$), sin ruido las observaciones caerían exactamente sobre la curva y la tarea de clasificación resultaría casi trivialmente sencilla. Para acercarnos a un escenario más realista que simule la incertidumbre inherente en cualquier toma de muestras, las observaciones se generan dentro de un _tubo_ de radio $tau$ alrededor de #MM, es decir, en el conjunto $B(MM, tau) = {x in RR^D : min_(y in MM) norm(x - y)_2 <= tau}$, tal como @mckenziePowerWeightedShortest2019 mencionan como posible extensión a su trabajo.]
 
@@ -1388,15 +1390,6 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 }
 
 
-#highlights_figure("lunas_lo")
-#pagebreak()
-
-#highlights_figure("circulos_lo")
-#pagebreak()
-
-#highlights_figure("espirales_lo")
-#pagebreak()
-
 #let euc = $norm(thin dot thin)_2$
 #let sfd = $D_(Q, alpha)$
 
@@ -1410,22 +1403,11 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
   Por todo ello, que la bondad de los clasificadores _no empeore_ con el uso de #sfd en lugar de #euc es de por sí un hito importante.
 ]
 
-=== Fronteras de decisión
-Una inspección ocular a las fronteras de decisión revela las limitaciones de distintos algoritmos, siendo el caso de las espirales el más vistoso y pedagógico. 
-#logr y #slr solo pueden dibujar fronteras "lineales", y como ninguna frontera lineal que corte la muestra logra dividirla en dos regiones con densidades de clase realmente diferentes, el algoritmo falla. #gnb falla de manera análoga, aunque su problema es otro - no lidia bien con distribuciones con densidades marginales muy similares.
+=== `lunas_lo`
 
-#let clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb")
-#figure(
-  align(center)[#box(width: 160%, table(columns: 3, stroke: 0pt, ..clfs.map(clf => image(
-    "img/espirales_lo-" + clf + "-decision_boundary.svg",
-  ))))],
-  caption: flex-caption(
-    [Fronteras de decisión de los nueve algoritmos evaluados sobre `espirales_lo` con semilla $s=#plotting_seed$. Nótese la incapacidad de #logr, #slr y #gnb para separar las clases, la aproximación rectangular de #gbt, y la nitidez de las fronteras de #fkdc y #svc.],
-    [Fronteras de decisión en `espirales_lo`],
-  ),
-) <fig-fronteras-espirales>
+#highlights_figure("lunas_lo")
 
-Aun con esas limitaciones, #logr tiene un rendimiento decente en uno de los datasets, `lunas_lo`:
+#logr tiene un rendimiento decente en `lunas_lo`:
 
 #figure(
   image("img/lunas_lo-lr-decision_boundary.svg", height: 20em),
@@ -1433,9 +1415,27 @@ Aun con esas limitaciones, #logr tiene un rendimiento decente en uno de los data
 )
 Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) aprendida por #logr separa _bastante_ bien la muestra: pasa por el punto del segmento que une el "centro" de cada luna, y de todas las direcciones con tal origen, elige la que mejor separa las clases. _Grosso modo_, en el tercio de la muestra más cercano a la frontera, alcanza una exactitud de $~50%$, pero en los tercios al interior de cada región está virtualmente en 100%, que da un promedio global de $1/3 50% + 2/3 100% = 86.7%$, casi exactamente la exactitud observada.
 
-También resulta llamativa la "creatividad" de #gbt para aproximar unas fronteras naturalmente curvas como una serie de preguntas binarias, que solo permiten dibujar regiones rectangulares.
+=== `circulos_lo` y `espirales_lo`
 
-Entre #kn y #fkn casi no observamos diferencias, asunto en el que ahondaremos más adelante. Por lo pronto, sí se nota que se adaptan bastante bien a los datos, con algunas regiones "claras" de incertidumbre que resultan onerosas en términos de $R^2$: a primera vista los mapas de decisión recién expuestos se ven muy similares, pero las pequeñas diferencias de probabilidades resultaron en una diferencia de $0.19$ en $R^2$ _en contra_ del modelo más complejo para esta semilla.
+#highlights_figure("circulos_lo")
+
+
+#highlights_figure("espirales_lo")
+
+Una inspección ocular a las fronteras de decisión revela las limitaciones de distintos algoritmos, siendo el caso de las espirales el más vistoso y pedagógico. #logr y #slr solo pueden dibujar fronteras "lineales", y como ninguna frontera lineal que corte la muestra logra dividirla en dos regiones con densidades de clase realmente diferentes, el algoritmo falla. #gnb falla de manera análoga, aunque su problema es otro - no lidia bien con distribuciones con densidades marginales muy similares.
+
+#let clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb")
+#figure(
+  align(center)[#box(width: 160%, table(columns: 3, stroke: 0pt, ..clfs.map(clf => image(
+      "img/espirales_lo-" + clf + "-decision_boundary.svg",
+    ))))],
+  caption: flex-caption(
+    [Fronteras de decisión de los nueve algoritmos evaluados sobre `espirales_lo` con semilla $s=#plotting_seed$. Nótese la incapacidad de #logr, #slr y #gnb para separar las clases, la aproximación rectangular de #gbt, y la nitidez de las fronteras de #fkdc y #svc.],
+    [Fronteras de decisión en `espirales_lo`],
+  ),
+) <fig-fronteras-espirales>
+
+Entre #kn y #fkn casi no observamos diferencias, asunto en el que ahondaremos más adelante. Por lo pronto, sí se nota que se adaptan bastante bien a los datos, con algunas regiones "claras" de incertidumbre que resultan onerosas en términos de $R^2$: a primera vista los mapas de decisión recién expuestos se ven muy similares, pero las pequeñas diferencias de probabilidades resultaron en una diferencia de $0.19$ en $R^2$ _en contra_ del modelo más complejo para esta semilla #footnote[La diferencia en la _mediana_ de $R^2$ para ambos es mucho menor, $approx 0.03$, lo cual resalta la sensibilidad de los resultados a la semilla aleatorizante y la importance de realizar muchas repeticiones de cada experimento para evitar resultados espurios]. También resulta llamativa la "creatividad" de #gbt para aproximar las verdaderas fronteras --- espirales curvas --- con una serie de preguntas binarias, que le permiten dibujar una especie "espirales rectabgulares".
 
 #kdc ofrece una frontera aún más regular que #kn, sin perder en $R^2$ y hasta mejorando la exactitud. Y por encima de esta ya destacable _performance_, el uso de la distancia de Fermat _incrementa_ la confianza en estas regiones --- nótese cómo se afinan las áreas grises y aumenta la superficie de rojo/azul sólido, mejorando otro poco el $R^2$.
 
@@ -1445,9 +1445,9 @@ Entre #kn y #fkn casi no observamos diferencias, asunto en el que ahondaremos m�
   #image("img/espirales_lo-svc-decision_boundary.svg")
 ])
 
-Por último, observamos las fronteras de #svc, que no tienen gradiente de color sino solo una frontera lineal #footnote[Como aprendimos: la frontera de una variedad riemanniana de dimensión intrínseca $d$ es una variedad sin frontera de dimensión intrínseca $d-1$; la frontera de estas regiones en es una curva parametrizable en $RR^1$ embebida en $RR^2$]. Es sorprendente la flexibilidad del algoritmo, que consigue dibujar una única frontera sumamente no-lineal que separa los datos con altísima exactitud. La ventaja que #fkdc pareciera tener sobre #svc aquí, es que la frontera que dibuja pasa "más lejos" de las observaciones de clase, mientras que la #svc parece estar muy pegada a los brazos de la espiral, particularmente en el giro más interno.
+Por último, observamos las fronteras de #svc, que no tienen gradiente de color sino solo una frontera lineal #footnote[Como aprendimos: la frontera de una variedad riemanniana de dimensión intrínseca $d$ es una variedad sin frontera de dimensión intrínseca $d-1$; la frontera de estas regiones en es una curva parametrizable en $RR^1$ embebida en $RR^2$] puesto que al ser un clasificador duro determina una frontera abrupta donde cambia la clase predicha. Es sorprendente la flexibilidad del algoritmo, que consigue dibujar una única frontera sumamente no-lineal que separa los datos con altísima exactitud. La ventaja que #fkdc pareciera tener sobre #svc, es que la frontera que dibuja pasa "más lejos" de las observaciones de clase, mientras que la #svc parece estar muy pegada a los brazos de la espiral, particularmente en el giro más interno.
 
-=== Estudio de ablación #footnote: $R^2$ para #kdc/ #kn con y sin distancia de Fermat.
+=== Estudio de ablación: $R^2$ para #kdc/ #kn con y sin distancia de Fermat.
 
 Según la #link("https://dle.rae.es/ablaci%C3%B3n")[RAE], "Del lat. tardío ablatio, -ōnis 'acción de quitar'." --- ¿qué se pierde en términos de $R^2$ al _no_ usar #sfd en estos algoritmos?. Sirvan para concentrar la atención en esta diferencia, los gráficos de dispersión del $R^2$ alcanzado en $XX_"test"$ para #kn y #kdc con y sin distancia de Fermat, en las #reps repeticiones de cada Tarea.
 
@@ -1465,32 +1465,26 @@ Según la #link("https://dle.rae.es/ablaci%C3%B3n")[RAE], "Del lat. tardío abla
   caption: [Gráficos de dispersión (_scatterplots_) de $R^2$ para #kdc (izq.) y #kn (der.) con (eje $y$) y sin (eje $x$) distancia de Fermat.],
 ) <fig-17>
 
-Para #kn y #fkn, los resultados son casi exactamente iguales para todas las semillas; con ciertas semillas saca ventaja #fkn en `espirales_lo`, pero también tiene dos muy malos resultados con $R^2 approx 0$ que #kn evita.
+Para #kn y #fkn, los resultados son casi exactamente iguales para todas las semillas en `lunas_lo` y `circulos_lo`; con ciertas semillas #fkn saca ventaja en `espirales_lo`, pero también tiene dos muy malos resultados con $R^2 approx 0$ que #kn evita.
 
-Para #fkdc, pareciera evidenciarse alguna ventaja para varias semillas en `lunas_lo, espirales_lo`, menos así para `circulos_lo`.
+Para #fkdc, pareciera evidenciarse alguna ventaja para varias semillas en `lunas_lo` y `espirales_lo`, menos así para `circulos_lo`.
 
 Veamos primero qué sucede durante el entrenamiento para `circulos_lo`: ¿es que no hay ninguna ventaja en usar #sfd? Consideremos la _superficie de pérdida_ que resulta de graficar en 2D la pérdida $L$ usada _durante el entrenamiento_ para cada hiperparametrización considerada:
 
 #obs(
   "unidades de la pérdida",
-)[Si bien consideramos como _score_ (a más, mejor) $R^2$, el entrenamiento se realizó con `neg_log_loss`, que aunque tiene la misma monotonicidad que $R^2$, está en otras unidades: entre $(-oo, 0]$.]
+)[Si bien consideramos como _score_ (a más, mejor) $R^2$, el entrenamiento se realizó con `neg_log_loss` #footnote[Durante la edición de esta monografía, descubrimos que entre las numerosas funciones de puntaje --- _score_ --- que tolera `scikit-learn`, se incluye #link("https://scikit-learn.org/stable/modules/model_evaluation.html#d2-score-classification")[`d2_log_loss_score`], que es esencialmente el $R^2$ de McFadden que proponemos como métrica de evaluación. Sería ideal recomputar los experimentos entrenándolos con dicha función objetivo, pero no haby razones de peso apra suponer que el resultado sería demasiado distinto: al fin y al cabo, tanto la log-verosimilitud como el $R^2$ se maximizan en el mismo punto que la verosimilitud.], que aunque tiene la misma monotonicidad que $R^2$, está en otras unidades: entre $(-oo, 0]$.]
 
 #figure(
   image("img/circulos_lo-8527-fkdc-bandwidth-alpha-loss_contour.svg"),
   caption: [Superficie de _score_: para cada valor de $alpha$ considerado, una cruz roja marca el valor de $h$ que maximizó el _score_.],
 )
-Nótese que la región amarilla, que representa los máximos puntajes durante el entrenamiento, se extiende diagonalmente a través de todos los valores de $alpha$. Es decir, no hay un _par_ de hiperparámetros óptimos $(alpha^star, h^star)$, sino que fijando $alpha$, siempre pareciera existir un(os) $h^star (alpha)$ que alcanza (o aproxima) la máxima exactitud _posible_ con el método en el dataset. En este ejemplo en particular, hasta pareciera ser que una relación log-lineal captura bastante bien el fenómeno, $log(h^star) prop alpha$. En particular, entonces, $"exac"(h^star (1), 1) approx "exac"(h^star, alpha^star)$, y se entiende que el algoritmo #fkdc, que agrega el hiperparámetro $alpha$ a #kdc no mejore significativamente su exactitud.
+Nótese que la región amarilla, que representa los máximos puntajes durante el entrenamiento, se extiende diagonalmente a través de todos los valores de $alpha$. Es decir, no hay _un_ par de hiperparámetros óptimos $(alpha^star, h^star)$, sino que fijando $alpha$, siempre pareciera existir un $tilde(h)(alpha)$ que alcanza (o aproxima) la máxima exactitud _posible_ con el método en el dataset. En este ejemplo en particular, hasta pareciera ser que una relación log-lineal captura bastante bien el fenómeno, $tilde(h) prop log(alpha)$. En particular, entonces, $"exac"(tilde(h)(alpha), alpha) approx "exac"(h^star), alpha^star) thin forall alpha$, y se entiende que el algoritmo #fkdc no mejore significativamente la exactitud por sobre #kdc. Este resultado es consistente con el ya mencionado comentario de @bijralSemisupervisedLearningDensity2012[§5.1], que encuentran que fijar $p=2$ para la norma "de base" y $q=alpha=8$ "representa una elección razonable para la mayoría de los datasets".
 
-// TODO: agregar referencia al paper que dice que "todo alfa da OK", que tomaba p=2 q=8 (bijral?)
-// TODO: aplicar q=8 a ver qué resulta
 
 Ahora bien, esto es solo en _un_ dataset, con _una_ semilla específica. ¿Se replicará el fenómeno en los otros datasets?
 
-// #let mejores_semillas = (7837, 5640, 4286)
-// #let peores_semillas = (1075, 1434, 9975)
-#let mejores_semillas = (9975, 1434, 7837)
-#let peores_semillas = (7354, 8527, 1188) //, 4286)
-#let semillas = peores_semillas // + peores_semillas
+#let semillas = (7354, 8527, 1188)
 
 #let imgs = (curvas.map(c => semillas.map(s => (c, s))).sum()).map(tup => image(
   "img/" + tup.at(0) + "_lo-" + str(tup.at(1)) + "-fkdc-bandwidth-alpha-loss_contour.svg",
@@ -1501,18 +1495,23 @@ Ahora bien, esto es solo en _un_ dataset, con _una_ semilla específica. ¿Se re
   #box(width: 150%)[
     #figure(
       grid(columns: semillas.len(), stroke: 0pt, ..imgs),
-      caption: [Superficies de pérdida para tres semillas y cada uno de los tres datasets. El patrón log-lineal previamente observado se replica casi perfectamente en todos los casos.],
+      caption: flex-caption(
+        [Superficies de pérdida para tres semillas $s in #semillas$ y cada uno de los tres datasets. El patrón log-lineal previamente observado se replica casi perfectamente en todos los casos.],
+        [Superficies de pérdida para `[lunas|circulos|espirales]_lo`],
+      ),
     ) <fig-19>
   ]
 ]
 
-¡Pues sí replica! Podemos observar también en datasets como `(circulos_lo, 7354)`, cómo la regla de parsimonia nos ayuda a elegir, dentro de la gran "meseta color lima" en que todas las hiperparametrizaciones alcanzan resultados similares, para cada $h$ el mínimo $alpha$ que no "cae" hacia la región azul de menores scores.
+¡Pues sí replica! Podemos observar también en datasets como `circulos_lo`, $s =7354$, cómo actúa la regla de parsimonia. Dentro de la "meseta color lima" que ocupa toda el área por encima de la diagonal principal del gráfico,  todas las hiperparametrizaciones alcanzan resultados similares. Sin embargo, la validación cruzada elige consistentemente para cada $h$ el menor $alpha$ posible que no "cae" hacia la región azul de menores _scores_.
 
-Estamos ahora frente a una contradicción: en la @fig-17 vimos que por ejemplo, para `lunas_lo`, #fkdc alcanzaba un $R^2$ consistentemente mejor que #kdc; mientras que de los paneles superiores de la @fig-19 observamos que los score que se alcanzan limitados a $alpha = 1$ son tan altos como los de $alpha > 1$. Es cierto que los resultados de @fig-17 son a través de _todas_ las semillas, y en el conjunto de _evaluación_, mientras que en la @fig-19 observamos _algunas semillas_ y sobre los datos de entrenamiento, pero la pregunta es válida: ¿de dónde proviene la ventaja de #fkdc en estos datasets?
+Estamos ahora frente a una contradicción: en la @fig-17 vimos que por ejemplo, para `lunas_lo`, #fkdc alcanzaba un $R^2$ consistentemente mejor que #kdc; mientras que de los paneles superiores de la @fig-19 observamos que los score que se alcanzan limitándonos a $alpha = 1$ son tan altos como los de $alpha > 1$. Es cierto que los resultados de @fig-17 son a través de _todas_ las semillas, y en el conjunto de evaluación, mientras que en la @fig-19 observamos _algunas_ semillas y sobre los datos de entrenamiento, pero la pregunta es válida: ¿de dónde proviene la ventaja de #fkdc en estos datasets?
 
 ==== Hiperparámetros óptimos en `lunas_lo` para #kdc, #fkdc
 
 Hacemos entonces una comprobación fundamental: ¿qué parametrizaciones están siendo elegidas en el esquema de validación cruzada con regla de parsimonia? Hete aquí el detalle para las #reps repeticiones de `lunas_lo`:
+
+// TODO: Agregar copetes a estas tablas
 
 #tabla_csv("data/lunas_lo-best_params.csv")
 
@@ -1758,6 +1757,8 @@ Es _infinita_ la cantidad de circunstancias en las que podemos poner a prueba un
 
 Sería interesante entonces investigar si existen condiciones reales en las que sepamos "a priori" que las variedades intrínsecas son altamente no-euclídeas, y en ese contexto probar si en ciertos tamaños muestrales $n$ (y por cada clase, $n_1, dots, n_k$) pequeños relativos a la dimensión ambiente es particularmente conveniente el uso de la distancia de Fermat.
 
+
+// TODO: grilla más grande de $alpha$ para reproducir resultados de @bijral? (alpha = 8)
 == A incorporar
 === Otros datasets: 15D
 #columns(4)[
