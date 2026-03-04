@@ -2,7 +2,7 @@
 // https://github.com/pncnmnp/typst-poster/blob/master/poster.typ
 // Veremos si funca
 
-#import "typst-poster.typ": *
+#import "poster-template.typ": *
 
 #set text(lang: "es")
 
@@ -11,7 +11,7 @@
   title: [Clasificación por KDE con Distancia de Fermat en variedades desconocidas: una aproximación empírica.  #text(0.8em)[]],
   authors: "Lic. Gonzalo Barrera Borla (IC), Dr. Pablo Groisman (DM)",
   departments: "Facultad de Ciencias Exactas y Naturales, UBA",
-  univ_logo: "logofac.jpg",
+  univ_logo: "img/logofac.jpg",
   footer_text: "II Jornada de Temas de Investigación en Estadística Matemática, 2024",
   footer_url: "https://github.com/capitantoto/fermat",
   footer_email_ids: "gonzalobb@gmail.com",
