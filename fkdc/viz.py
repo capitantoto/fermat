@@ -28,8 +28,8 @@ warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
 logger = logging.getLogger(__name__)
 run_dir = config.run_dir
 datasets_dir = run_dir / "../datasets"
-img_dir = root_dir / "docs/img"
-data_dir = root_dir / "docs/data"
+img_dir = root_dir / "img"
+data_dir = root_dir / "data"
 
 datasets = [*synth_datasets, *found_datasets]
 clfs = list(config.clasificadores.keys())
