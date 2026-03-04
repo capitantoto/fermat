@@ -312,7 +312,7 @@ Consideremos un _dataset_ compuesto por observaciones muestradas de dos círculo
     "Dos círculos concéntricos y sus KDE marginales por clase: a pesar de que la frontera entre ambos grupos de puntos es muy clara, es casi imposible distinguirlas a partir de sus densidades marginales.",
     "Dos círculos concéntricos",
   ),
-  image("img/dos-circulos-jointplot.png", width: 75%),
+  image("img/dos-circulos-jointplot.svg", width: 75%),
 )
 
 
@@ -1854,7 +1854,6 @@ Sería interesante entonces investigar si existen condiciones reales en las que 
 == Arenero
 
 // TODO: revisar forma de citar bibliografía, corregir autores y formato en textos enciclopédicos y otros
-#tabla_csv("data/2-blobs.csv")
 #let best(..contents) = {
   contents.pos().map(content => table.cell(fill: rgb("#7cff9dc9"), content))
 }
