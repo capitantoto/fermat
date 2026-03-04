@@ -27,3 +27,16 @@ infos
 runs
 **/sandbox/*
 .vscode/
+# Imagenes y datos en general
+docs/data/*
+docs/img/*
+# ...salvo CSVs e imagenes usados por docs/tesis.typ
+!docs/data/mejor-clf-por-dataset-segun-r2-mediano.csv
+!docs/data/mejor-clf-por-dataset-segun-accuracy-mediano.csv
+!docs/data/lunas_lo-best_params.csv
+!docs/data/lunas_lo-best_test_params.csv
+!docs/data/eslabones_0-params-2411.csv
+!docs/data/helices_0-parametros_comparados-kdc.csv
+!docs/data/hueveras_0-parametros_comparados-kdc.csv
+!docs/data/hueveras_0-parametros_comparados-kn.csv
+!docs/data/2-blobs.csv
