@@ -1490,7 +1490,8 @@ Veamos primero qué sucede durante el entrenamiento para `circulos_lo`: ¿es que
 
 #obs(
   "unidades de la pérdida",
-)[Si bien consideramos como _score_ (a más, mejor) $R^2$, el entrenamiento se realizó con `neg_log_loss` #footnote[Durante la edición de esta monografía, descubrimos que entre las numerosas funciones de puntaje --- _score_ --- que tolera `scikit-learn`, se incluye #link("https://scikit-learn.org/stable/modules/model_evaluation.html#d2-score-classification")[`d2_log_loss_score`], que es esencialmente el $R^2$ de McFadden que proponemos como métrica de evaluación. Sería ideal recomputar los experimentos entrenándolos con dicha función objetivo, pero no haby razones de peso apra suponer que el resultado sería demasiado distinto: al fin y al cabo, tanto la log-verosimilitud como el $R^2$ se maximizan en el mismo punto que la verosimilitud.], que aunque tiene la misma monotonicidad que $R^2$, está en otras unidades: entre $(-oo, 0]$.]
+)[Si bien consideramos como _score_ (a más, mejor) $R^2$, el entrenamiento se realizó con `neg_log_loss` #footnote[
+  N. del E.: A posteriori de la experimentación escubrimos que entre las numerosas funciones de puntaje --- _score_ --- que tolera `scikit-learn`, se incluye #link("https://scikit-learn.org/stable/modules/model_evaluation.html#d2-score-classification")[`d2_log_loss_score`], que es esencialmente el $R^2$ de McFadden que proponemos como métrica de evaluación. Sería ideal recomputar los experimentos entrenándolos con dicha función objetivo, pero no haby razones de peso apra suponer que el resultado sería demasiado distinto: al fin y al cabo, tanto la log-verosimilitud como el $R^2$ se maximizan en el mismo punto que la verosimilitud.], que aunque tiene la misma monotonicidad que $R^2$, está en otras unidades: entre $(-oo, 0]$.]
 
 #figure(
   image("img/circulos_lo-8527-fkdc-bandwidth-alpha-loss_contour.svg"),
@@ -1531,16 +1532,20 @@ Estamos ahora frente a una contradicción: en la @fig-17 vimos que por ejemplo, 
 
 Hacemos entonces una comprobación fundamental: ¿qué parametrizaciones están siendo elegidas en el esquema de validación cruzada con regla de parsimonia? Hete aquí el detalle para las #reps repeticiones de `lunas_lo`:
 
-#tabla_csv("data/lunas_lo-best_params.csv",
+#tabla_csv(
+  "data/lunas_lo-best_params.csv",
   caption: [Hiperparámetros seleccionados por CV con regla de parsimonia para #kdc y #fkdc en `lunas_lo`, por semilla.],
-  short-caption: [Hiperparámetros óptimos de #kdc y #fkdc en `lunas_lo`],
+  short-caption: [Hiperparámetros seleccionados por R1SD de #kdc y #fkdc en `lunas_lo`],
 )
 
-#obs(
-  "mejores corridas de _test_",
-)[En _test_, a veces el mejor puntaje lo obtienen _otros_ $alpha$, pero la diferencia no es lo suficientemente grande para descartar alguna opción con $alpha = 1$.
-  #tabla_csv("data/lunas_lo-best_test_params.csv")
-]
+Durante el entrenamiento, a veces el mejor se obtinene con _otros_ valores de $alpha$, pero la mejora no es lo suficientemente grande para descartar alguna hiperaprametrización con $alpha = 1$ bajo la regla de $1 sigma$  descrita en @r1sd.
+
+// TODO: Recortar a 4 decimales, simplificar a sólo $alpha$
+#tabla_csv(
+  "data/lunas_lo-best_test_params.csv",
+  caption: [Hiperparámetros minimizadores de pérdida en enrenamiento para #kdc y #fkdc en `lunas_lo`, por semilla.],
+  short-caption: [Hiperparámetros minimizadores de pérdida de #kdc y #fkdc en `lunas_lo`],
+)
 Resulta ser que
 - al entrenar #fkdc se está eligiendo $alpha=1$ para _todas_ las semillas, y
 - el ancho de banda seleccionado es ligera pero consistentemente _menor_ que el que toma #kdc.
@@ -1553,17 +1558,20 @@ Veamos cómo se comparan los valores de $R^2$ que alcanza cada algoritmo en cada
     #image("img/lunas_lo-[f]kdc-delta_r2-vs-delta_h.png")],
   caption: flex-caption(
     [(izq.) Dispersión de $R^2$ en función de $h$ por clasificador y semilla en `lunas_lo`, para #fkdc, #kdc;
-    (der.) dispersión de $Delta_(R^2) = R^2_#kdc - R^2_#fkdc$ en función de $Delta_h = h^star_#fkdc - h^star_#kdc$ para cada semilla.],
+      (der.) dispersión de $Delta_(R^2) = R^2_#kdc - R^2_#fkdc$ en función de $Delta_h = h^star_#fkdc - h^star_#kdc$ para cada semilla.],
     [$R^2$ vs. $h$ y $Delta_(R^2)$ vs. $Delta_h$ en `lunas_lo`],
   ),
 )
-En el panel izquierdo se observa una clara tendencia a mejorar ligeramente el $R^2$ a medida que disminuye el ancho de la ventana $h$ (en el rango en cuestión). En el panel derecho, para confirmar que la tendencia sucede _en cada repetición del experimento_, comparamos no los valores absolutos sino las diferencias _relativas_ en $R^2, h$ para #fkdc, #kdc, y vemos que a mayor diferencia en $h$, peor es la caída en $R^2$.
+En el panel izquierdo se observa una clara tendencia a mejorar ligeramente el $R^2$ a medida que disminuye el ancho de la ventana $h$ (en el rango en cuestión). En el panel derecho, para confirmar que la tendencia sucede _en cada repetición del experimento_, comparamos no los valores absolutos sino las diferencias relativas en $R^2, h$ entre #fkdc y #kdc apareando los resultados _para cada semilla_, y vemos que a mayor diferencia en el $h$ de #kdc por sobre #fkdc, peor es la caída en $R^2$.
 
-Cabe aquí una crítica al diseño experimental: si #fkdc está tomando siempre $alpha =1$, por qué #kdc no puede elegir el mismo $h$ que #fkdc y así "empatar" su performance? ¿Se exploró una grilla de hiperparámetros a propósito desfavorable para #kdc? Pues no, todo lo contrario #footnote[La definición exacta está en `fkdc/config.py`, y es `np.logspace(-5, 6, 45)` para #fkdc y `np.logspace(-5, 6, 136)` para #kdc]: las grillas de $h$ para #kdc y #fkdc
+Cabe aquí una crítica al diseño experimental: si #fkdc está tomando siempre $alpha =1$, por qué #kdc no puede elegir el mismo $h$ que #fkdc y así equiparar su rendimiento? ¿Se exploró una grilla de hiperparámetros a propósito desfavorable para #kdc? Pues no, todo lo contrario #footnote[La definición exacta está en `fkdc/config.py`, y es `np.logspace(-5, 6, 45)` para #fkdc y `np.logspace(-5, 6, 136)` para #kdc]: las grillas de $h$ para #kdc y #fkdc
 - cubren de manera "logarítmicamente equidistante" el mismo rango de $h: [10^(-5), 10^6]$ y
 - la grilla de #kdc cuenta con $approx$ el triple de puntos de #fkdc ($136 "vs." 45$).
 
-Como en el entrenamiento de #fkdc se gastaron 13 veces más recursos evaluando 13 valores distintos de $alpha$ #footnote[$alpha in {1 + 0.25 i, thick i in [13]} subset [1, 4]$], consideramos oportuno permitirle a #kdc explorar más valores de $h$, y la cantidad se eligió para que la grilla de #kdc coincida en lo posible con la de #fkdc, y tenga además otros dos valores "entre medio" de dos valores cualesquiera de la grilla de #fkdc. En efecto, en el rango de interés, las grillas contaban con los valores:
+Como en el entrenamiento de #fkdc se gastaron 13 veces más recursos evaluando 13 valores distintos de $alpha$ #footnote[$alpha in {1 + 0.25 i, thick i in [13]} subset [1, 4]$], consideramos oportuno permitirle a #kdc explorar más valores de $h$, y la cantidad se eligió para que la grilla de #kdc coincida en lo posible con la de #fkdc, y tenga además otros dos valores "entre medio" de dos valores cualesquiera de la grilla de #fkdc #footnote[
+  N. del E.: Para hace esto correctamente, deberíamos haber tomado $(45 - 1) times (2 + 1) + 1= 133$ elementos en la segunda grilla, pero olvidamos restar 1 a 45 --- hay 45 puntos pero 44 "espacios" entre puntos de la grilla --- y por eso obtuvimos 136 puntos, con lo cual las grillas difieren ligeramente y una no es un subconjunto de la otra. De todas maneras, la grilla de #kdc contiene el $0.173$, mucho más cercano al $0.178$ óptimo de #fkdc, con lo cual no se termina de explicar que la elección "modal" de #kdc haya sido $0.251$
+].
+En efecto, en el rango de interés, las grillas contaban con los valores:
 $
   #fkdc: & [0.1, 0.178, 0.316, 0.562] \
    #kdc: & [0.119, 0.143, 0.173, 0.208, 0.251, 0.303, 0.366, 0.441, 0.532] \
@@ -1655,7 +1663,8 @@ Toda la familia de estimadores de densidad por núcleos alcanza un $R^2 approx 1
 
 Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ - no así el de exactitud - revela un fuerte outlier de $approx 0.65$ para la semilla $2411$, que no corresponde a una parametrización particularmente extraña.
 
-#tabla_csv("data/eslabones_0-params-2411.csv",
+#tabla_csv(
+  "data/eslabones_0-params-2411.csv",
   caption: [Parametrización de #fkdc para `eslabones_0`, $s=2411$.],
   short-caption: [Parámetros de #fkdc en `eslabones_0`, $s=2411$],
 )
@@ -1675,7 +1684,8 @@ La clasificación dura con estimación de densidad por núcleos --- con distanci
 
 En prácticamente todas las semillas el $R^2$ de #fkdc es estrictamente mejor al "control" de #kdc. ¿Con qué parámetros sucede?
 
-#tabla_csv("data/helices_0-parametros_comparados-kdc.csv",
+#tabla_csv(
+  "data/helices_0-parametros_comparados-kdc.csv",
   caption: [Parámetros comparados de #fkdc vs. #kdc en `helices_0`, ordenados por $Delta_(R^2)$.],
   short-caption: [Parámetros de #fkdc vs. #kdc en `helices_0`],
 )
@@ -1745,14 +1755,16 @@ En efecto, observando los parámetros comparados de #fkdc v. #kdc, se repite que
 - la mejor hiperparametrización $(alpha_"opt", h_"opt")$ en la grilla de CV tiene $alpha > 1$,
 - hay una parametrización $(alpha_0, h_0)$ con $alpha_0 =1$ que cumple la regla de un desvío estándar,
 - con $h_0$ "significativamente distinto" a $h_"opt"$#footnote[ Por ello nos referimos a que durante el entrenamiento de #kdc existió un $h_"alt" approx h_0$, que la R1SD + #kdc _no_ eligió, y la R1SD + #fkdc sí.].
-#tabla_csv("data/hueveras_0-parametros_comparados-kdc.csv",
+#tabla_csv(
+  "data/hueveras_0-parametros_comparados-kdc.csv",
   caption: [Parámetros comparados de #fkdc vs. #kdc en `hueveras_0`, ordenados por $Delta_(R^2)$.],
   short-caption: [Parámetros de #fkdc vs. #kdc en `hueveras_0`],
 )
 
 Esta "sinergia" virtuosa no alcanza para explicar lo que observamos del efecto de la distancia de Fermat en #kn:
 
-#tabla_csv("data/hueveras_0-parametros_comparados-kn.csv",
+#tabla_csv(
+  "data/hueveras_0-parametros_comparados-kn.csv",
   caption: [Parámetros comparados de #fkn vs. #kn en `hueveras_0`, ordenados por $Delta_(R^2)$.],
   short-caption: [Parámetros de #fkn vs. #kn en `hueveras_0`],
 )
