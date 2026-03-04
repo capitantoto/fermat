@@ -1,0 +1,10 @@
+{
+    "dataset": "lunas_hi",
+    "summary": "clf,accuracy,r2\ngbt,0.8075,0.3827\nfkdc,0.81,0.372\nkn,0.8125,0.3634\nfkn,0.8125,0.3597\nkdc,0.81,0.352\ngnb,0.7925,0.3387\nslr,0.8,0.3376\nlr,0.79,0.3345\nsvc,0.8025,\n",
+    "best": "gbt",
+    "bad": [
+        "gnb",
+        "slr",
+        "lr"
+    ]
+}

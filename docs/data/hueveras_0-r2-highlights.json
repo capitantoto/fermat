@@ -1,0 +1,13 @@
+{
+    "dataset": "hueveras_0",
+    "summary": "clf,accuracy,r2\nfkn,0.7625,0.2988\nfkdc,0.755,0.2853\nkn,0.75,0.2596\nkdc,0.7425,0.2568\ngbt,0.56,0.0152\ngnb,0.5025,0.0001\nslr,0.4975,0.0\nlr,0.4975,0.0\nsvc,0.78,\n",
+    "best": "fkn",
+    "bad": [
+        "kn",
+        "kdc",
+        "gbt",
+        "gnb",
+        "slr",
+        "lr"
+    ]
+}

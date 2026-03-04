@@ -1,0 +1,11 @@
+{
+    "dataset": "eslabones_0",
+    "summary": "clf,accuracy,r2\nfkn,1.0,0.9954\nkn,1.0,0.9954\nkdc,0.9975,0.9924\nfkdc,1.0,0.9916\ngbt,0.99,0.9358\ngnb,0.8925,0.7477\nlr,0.6675,0.216\nslr,0.665,0.2136\nsvc,1.0,\n",
+    "best": "fkn",
+    "bad": [
+        "gbt",
+        "gnb",
+        "lr",
+        "slr"
+    ]
+}

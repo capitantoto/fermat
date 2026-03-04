@@ -1,0 +1,12 @@
+{
+    "dataset": "pionono_0",
+    "summary": "clf,accuracy,r2\nfkdc,0.935,0.8289\ngbt,0.92,0.8159\nkdc,0.935,0.8033\nfkn,0.9175,0.7528\nkn,0.9075,0.7083\ngnb,0.745,0.5901\nslr,0.65,0.469\nlr,0.6475,0.4685\nsvc,0.94,\n",
+    "best": "fkdc",
+    "bad": [
+        "fkn",
+        "kn",
+        "gnb",
+        "slr",
+        "lr"
+    ]
+}
