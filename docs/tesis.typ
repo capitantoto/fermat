@@ -78,10 +78,15 @@
 // ### utils ###
 // #############
 
-#let tabla_csv(path) = {
+#let tabla_csv(path, caption: none, short-caption: none) = {
   let data = csv(path)
   let eval_scope = (fkdc: fkdc, kn: kn, fkn: fkn, kdc: kdc, lr: logr, svc: svc, lsvc: `LSVC`, gnb: gnb, base: "base")
-  table(columns: data.at(0).len(), ..data.flatten().map(eval.with(mode: "markup", scope: eval_scope)))
+  let t = table(columns: data.at(0).len(), ..data.flatten().map(eval.with(mode: "markup", scope: eval_scope)))
+  if caption != none {
+    figure(t, caption: flex-caption(caption, if short-caption != none { short-caption } else { caption }))
+  } else {
+    t
+  }
 }
 
 
@@ -1411,7 +1416,10 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 
 #figure(
   image("img/lunas_lo-lr-decision_boundary.svg", height: 20em),
-  caption: [Frontera de decisión para #slr en `lunas_lo`, $s = #plotting_seed$],
+  caption: flex-caption(
+    [Frontera de decisión para #slr en `lunas_lo`, $s = #plotting_seed$],
+    [Frontera de #slr en `lunas_lo`],
+  ),
 )
 Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) aprendida por #logr separa _bastante_ bien la muestra: pasa por el punto del segmento que une el "centro" de cada luna, y de todas las direcciones con tal origen, elige la que mejor separa las clases. _Grosso modo_, en el tercio de la muestra más cercano a la frontera, alcanza una exactitud de $~50%$, pero en los tercios al interior de cada región está virtualmente en 100%, que da un promedio global de $1/3 50% + 2/3 100% = 86.7%$, casi exactamente la exactitud observada.
 
@@ -1439,11 +1447,17 @@ Entre #kn y #fkn casi no observamos diferencias, asunto en el que ahondaremos m�
 
 #kdc ofrece una frontera aún más regular que #kn, sin perder en $R^2$ y hasta mejorando la exactitud. Y por encima de esta ya destacable _performance_, el uso de la distancia de Fermat _incrementa_ la confianza en estas regiones --- nótese cómo se afinan las áreas grises y aumenta la superficie de rojo/azul sólido, mejorando otro poco el $R^2$.
 
-#figure(columns(2)[
-  #image("img/espirales_lo-fkdc-decision_boundary.svg")
-  #colbreak()
-  #image("img/espirales_lo-svc-decision_boundary.svg")
-])
+#figure(
+  columns(2)[
+    #image("img/espirales_lo-fkdc-decision_boundary.svg")
+    #colbreak()
+    #image("img/espirales_lo-svc-decision_boundary.svg")
+  ],
+  caption: flex-caption(
+    [Fronteras de decisión de #fkdc (izq.) y #svc (der.) en `espirales_lo`, $s = #plotting_seed$],
+    [Fronteras de #fkdc y #svc en `espirales_lo`],
+  ),
+)
 
 Por último, observamos las fronteras de #svc, que no tienen gradiente de color sino solo una frontera lineal #footnote[Como aprendimos: la frontera de una variedad riemanniana de dimensión intrínseca $d$ es una variedad sin frontera de dimensión intrínseca $d-1$; la frontera de estas regiones en es una curva parametrizable en $RR^1$ embebida en $RR^2$] puesto que al ser un clasificador duro determina una frontera abrupta donde cambia la clase predicha. Es sorprendente la flexibilidad del algoritmo, que consigue dibujar una única frontera sumamente no-lineal que separa los datos con altísima exactitud. La ventaja que #fkdc pareciera tener sobre #svc, es que la frontera que dibuja pasa "más lejos" de las observaciones de clase, mientras que la #svc parece estar muy pegada a los brazos de la espiral, particularmente en el giro más interno.
 
@@ -1462,7 +1476,10 @@ Según la #link("https://dle.rae.es/ablaci%C3%B3n")[RAE], "Del lat. tardío abla
       image("img/" + c + "_lo-kn-fkn-r2-scatter.svg")
     }
   ],
-  caption: [Gráficos de dispersión (_scatterplots_) de $R^2$ para #kdc (izq.) y #kn (der.) con (eje $y$) y sin (eje $x$) distancia de Fermat.],
+  caption: flex-caption(
+    [Gráficos de dispersión (_scatterplots_) de $R^2$ para #kdc (izq.) y #kn (der.) con (eje $y$) y sin (eje $x$) distancia de Fermat.],
+    [$R^2$ con y sin distancia de Fermat para #kdc y #kn],
+  ),
 ) <fig-17>
 
 Para #kn y #fkn, los resultados son casi exactamente iguales para todas las semillas en `lunas_lo` y `circulos_lo`; con ciertas semillas #fkn saca ventaja en `espirales_lo`, pero también tiene dos muy malos resultados con $R^2 approx 0$ que #kn evita.
@@ -1477,7 +1494,10 @@ Veamos primero qué sucede durante el entrenamiento para `circulos_lo`: ¿es que
 
 #figure(
   image("img/circulos_lo-8527-fkdc-bandwidth-alpha-loss_contour.svg"),
-  caption: [Superficie de _score_: para cada valor de $alpha$ considerado, una cruz roja marca el valor de $h$ que maximizó el _score_.],
+  caption: flex-caption(
+    [Superficie de _score_: para cada valor de $alpha$ considerado, una cruz roja marca el valor de $h$ que maximizó el _score_.],
+    [Superficie de _score_ en `circulos_lo`],
+  ),
 )
 Nótese que la región amarilla, que representa los máximos puntajes durante el entrenamiento, se extiende diagonalmente a través de todos los valores de $alpha$. Es decir, no hay _un_ par de hiperparámetros óptimos $(alpha^star, h^star)$, sino que fijando $alpha$, siempre pareciera existir un $tilde(h)(alpha)$ que alcanza (o aproxima) la máxima exactitud _posible_ con el método en el dataset. En este ejemplo en particular, hasta pareciera ser que una relación log-lineal captura bastante bien el fenómeno, $tilde(h) prop log(alpha)$. En particular, entonces, $"exac"(tilde(h)(alpha), alpha) approx "exac"(h^star), alpha^star) thin forall alpha$, y se entiende que el algoritmo #fkdc no mejore significativamente la exactitud por sobre #kdc. Este resultado es consistente con el ya mencionado comentario de @bijralSemisupervisedLearningDensity2012[§5.1], que encuentran que fijar $p=2$ para la norma "de base" y $q=alpha=8$ "representa una elección razonable para la mayoría de los datasets".
 
@@ -1511,9 +1531,10 @@ Estamos ahora frente a una contradicción: en la @fig-17 vimos que por ejemplo, 
 
 Hacemos entonces una comprobación fundamental: ¿qué parametrizaciones están siendo elegidas en el esquema de validación cruzada con regla de parsimonia? Hete aquí el detalle para las #reps repeticiones de `lunas_lo`:
 
-// TODO: Agregar copetes a estas tablas
-
-#tabla_csv("data/lunas_lo-best_params.csv")
+#tabla_csv("data/lunas_lo-best_params.csv",
+  caption: [Hiperparámetros seleccionados por CV con regla de parsimonia para #kdc y #fkdc en `lunas_lo`, por semilla.],
+  short-caption: [Hiperparámetros óptimos de #kdc y #fkdc en `lunas_lo`],
+)
 
 #obs(
   "mejores corridas de _test_",
@@ -1530,9 +1551,11 @@ Veamos cómo se comparan los valores de $R^2$ que alcanza cada algoritmo en cada
     #image("img/lunas_lo-[f]kdc-score-vs-bandwidth.png")
     #colbreak()
     #image("img/lunas_lo-[f]kdc-delta_r2-vs-delta_h.png")],
-  caption: [
-    (izq.) Dispersión de $R^2$ en función de $h$ por clasificador y semilla en lunas_lo, para #fkdc, #kdc;
-    (der.) Dispersión de $Delta_(R^2) = R^2_#kdc - R^2_#fkdc$ en función de $Delta_h = h^star_#fkdc - h^star_#kdc$ para cada semilla.],
+  caption: flex-caption(
+    [(izq.) Dispersión de $R^2$ en función de $h$ por clasificador y semilla en `lunas_lo`, para #fkdc, #kdc;
+    (der.) dispersión de $Delta_(R^2) = R^2_#kdc - R^2_#fkdc$ en función de $Delta_h = h^star_#fkdc - h^star_#kdc$ para cada semilla.],
+    [$R^2$ vs. $h$ y $Delta_(R^2)$ vs. $Delta_h$ en `lunas_lo`],
+  ),
 )
 En el panel izquierdo se observa una clara tendencia a mejorar ligeramente el $R^2$ a medida que disminuye el ancho de la ventana $h$ (en el rango en cuestión). En el panel derecho, para confirmar que la tendencia sucede _en cada repetición del experimento_, comparamos no los valores absolutos sino las diferencias _relativas_ en $R^2, h$ para #fkdc, #kdc, y vemos que a mayor diferencia en $h$, peor es la caída en $R^2$.
 
@@ -1587,9 +1610,10 @@ El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los 
     #colbreak()
     #image("img/espirales-caida_r2.svg")
   ],
-  caption: [
-    $R^2$ mediano por clasificador y dataset, comparado entre la variante con bajo (`_lo`) y alto (`_hi`) ruido en el sampleo.
-  ],
+  caption: flex-caption(
+    [$R^2$ mediano por clasificador y dataset, comparado entre la variante con bajo (`_lo`) y alto (`_hi`) ruido en el sampleo.],
+    [Caída de $R^2$ mediano al aumentar el ruido],
+  ),
 )
 
 
@@ -1609,7 +1633,10 @@ Por último, veamos las fronteras de decisión que resultan para nuestro método
       #image("img/circulos_hi-svc-decision_boundary.svg")
       #image("img/espirales_hi-svc-decision_boundary.svg")
     ],
-    caption: [Fronteras de decisión para #fkdc, #gbt, #svc en regímenes de alto ruido, $s = #plotting_seed$],
+    caption: flex-caption(
+      [Fronteras de decisión para #fkdc, #gbt, #svc en regímenes de alto ruido, $s = #plotting_seed$],
+      [Fronteras de decisión en alto ruido],
+    ),
   )]]
 
 Al ojo humano, queda claro que las fronteras y regiones de confianza que "dibuja" #fkdc se alinean "en espíritu" con la forma de las variedades que buscamos descubrir: la "región de indiferencia" gris en `lunas_hi` es una especie de curva casi-cúbica que efectivamente separa las lunas, el "huevo frito" de `circulos_hi` efectivamente tiene máxima confianza a favor de la clase interna en el centro de ambos círculos (y se va deformando progresivamente a medida que nos alejamos de él), y en `espirales_hi` casi logra dibujar la espiral. Sin embargo, esta deseable propiedad no es fácilmente reducible a una métrica en $RR$, y se desdibuja en las comparaciones puramente numéricas.
@@ -1628,7 +1655,10 @@ Toda la familia de estimadores de densidad por núcleos alcanza un $R^2 approx 1
 
 Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ - no así el de exactitud - revela un fuerte outlier de $approx 0.65$ para la semilla $2411$, que no corresponde a una parametrización particularmente extraña.
 
-#tabla_csv("data/eslabones_0-params-2411.csv")
+#tabla_csv("data/eslabones_0-params-2411.csv",
+  caption: [Parametrización de #fkdc para `eslabones_0`, $s=2411$.],
+  short-caption: [Parámetros de #fkdc en `eslabones_0`, $s=2411$],
+)
 
 ==== Hélices
 #image("img/helices-scatter-3d.svg")
@@ -1645,7 +1675,10 @@ La clasificación dura con estimación de densidad por núcleos --- con distanci
 
 En prácticamente todas las semillas el $R^2$ de #fkdc es estrictamente mejor al "control" de #kdc. ¿Con qué parámetros sucede?
 
-#tabla_csv("data/helices_0-parametros_comparados-kdc.csv")
+#tabla_csv("data/helices_0-parametros_comparados-kdc.csv",
+  caption: [Parámetros comparados de #fkdc vs. #kdc en `helices_0`, ordenados por $Delta_(R^2)$.],
+  short-caption: [Parámetros de #fkdc vs. #kdc en `helices_0`],
+)
 
 Ordenados por $Delta_(R^2) = R^2_#fkdc - R^2_#kdc$, la semilla con mayor diferencia a favor del resultado con distancia de Fermat corresponde a un no-trivial $(alpha = 1.25, h = 0.006)$ que resulta en un $Delta_(R^2) = 0.237 (= 0.953 - 0.716)$ puntos _en términos absolutos_#footnote[I.e., "un montón".] por encima de #kdc con $h = 0.208$, usando una ventana unas 35 veces más ancha.
 Salta a la vista también que tales parametrizaciones tienen muy variada _performance_ _out-of-sample_, pues para $s = 8096$ _también_ se eligió $(alpha = 1.25, h = 0.006)$ contra $h_#kdc = 0.143 approx 25 h_#fkdc$ y se dio la segunda diferencia _negativa_ más amplia en contra de #fkdc ($Delta_(R^2) = -0.098$).
@@ -1712,11 +1745,17 @@ En efecto, observando los parámetros comparados de #fkdc v. #kdc, se repite que
 - la mejor hiperparametrización $(alpha_"opt", h_"opt")$ en la grilla de CV tiene $alpha > 1$,
 - hay una parametrización $(alpha_0, h_0)$ con $alpha_0 =1$ que cumple la regla de un desvío estándar,
 - con $h_0$ "significativamente distinto" a $h_"opt"$#footnote[ Por ello nos referimos a que durante el entrenamiento de #kdc existió un $h_"alt" approx h_0$, que la R1SD + #kdc _no_ eligió, y la R1SD + #fkdc sí.].
-#tabla_csv("data/hueveras_0-parametros_comparados-kdc.csv")
+#tabla_csv("data/hueveras_0-parametros_comparados-kdc.csv",
+  caption: [Parámetros comparados de #fkdc vs. #kdc en `hueveras_0`, ordenados por $Delta_(R^2)$.],
+  short-caption: [Parámetros de #fkdc vs. #kdc en `hueveras_0`],
+)
 
 Esta "sinergia" virtuosa no alcanza para explicar lo que observamos del efecto de la distancia de Fermat en #kn:
 
-#tabla_csv("data/hueveras_0-parametros_comparados-kn.csv")
+#tabla_csv("data/hueveras_0-parametros_comparados-kn.csv",
+  caption: [Parámetros comparados de #fkn vs. #kn en `hueveras_0`, ordenados por $Delta_(R^2)$.],
+  short-caption: [Parámetros de #fkn vs. #kn en `hueveras_0`],
+)
 
 A primera vista, se observan unas cuantas semillas para las cuales la elección de un $alpha > 1$ resultó en una diferencia de $R^2$ bastante positiva. Pero mejor aún, en 5 de 25 semillas ($s in {7074, 7060, 8443, 1434, 1193}$), #fkn y #kn maximizaron el objetivo con la _misma_ cantidad de vecinos, ¡y sin embargo #fkn eligió un $alpha > 1$!
 
