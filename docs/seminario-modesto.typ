@@ -1,4 +1,4 @@
-#import "@preview/touying:0.6.1": *
+#import "@preview/touying:0.6.2": *
 
 #import themes.metropolis: *
 
@@ -479,14 +479,14 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
 
 
 == $R^2$ por semilla para $"(F)KN"$ en `eslabones_0`
-#align(center)[#image("img/outputa.png", height: 100%)]
+#align(center)[#image("img/eslabones_0-r2-fkn-vs-kn.png", height: 100%)]
 
 == $R^2$ y $alpha^star$ para $"(F)KN"$ en `eslabones_0`, `n_neighbors` seleccionados
-#align(center)[#image("img/Screenshot 2025-07-18 at 11.43.27 AM.png", height: 65%)]
+#align(center)[#image("img/helices_0-fkn-kn-best_params.png", height: 65%)]
 
 == Mejor $R^2$ para $"(F)KN"$ en `eslabones_0`, en función de `n_neighbors`
 
-#image("img/outputb.png")
+#image("img/helices_0-fkn-kn-mean_test_score-vs-n_neighbors.png")
 
 == Otros datasets: 2D mucho ruido
 #columns(3)[
