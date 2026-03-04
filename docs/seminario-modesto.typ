@@ -418,7 +418,7 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
 
 == Superficies (o paisajes) de _score_ para `(espirales_lo, 1434)`
 
-#align(center)[#image("img/heatmap-fkdc-2d-lo-new.svg", height: 110%)]
+#align(center)[#image("img/heatmap-fkdc-espirales_lo-1434-new.svg", height: 110%)]
 
 == Alt-viz: Perfiles de pérdida para `(espirales_lo, 1434)`
 
