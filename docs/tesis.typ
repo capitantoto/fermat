@@ -1582,7 +1582,7 @@ con lo cual #kdc _podría_ haber encontrado el ligeramente más conveniente $h^s
 
 Consideremos ahora los mismos datasets que hasta ahora, pero sampleando las observaciones sobre la variedad con "más ruido"; i.e., aumentando el valor de $sigma$ en el ruido blanco (@ruido-blanco) que le agregamos a los $X in MM$ según
 
-$ sigma_"lunas" = 0.5 quad sigma_"circulos" = 0.2 quad sigma_"espirales" = 0.2 $.
+$ sigma_"lunas" = 0.5 quad sigma_"circulos" = 0.2 quad sigma_"espirales" = 0.2 quad. $
 
 #figure(
   columns(3)[
@@ -1595,14 +1595,12 @@ $ sigma_"lunas" = 0.5 quad sigma_"circulos" = 0.2 quad sigma_"espirales" = 0.2 $
   caption: flex-caption["Lunas", "Círculos" y "Espirales" con "alto ruido"][ "Lunas", "Círculos" y "Espirales", alto ruido ],
 ) <fig-22>
 
-En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" se ha nivelado considerablemente, y las ventajas antes vistas disminuyen. En particular, en `lunas_hi, circulos_hi` observamos que #gbt alcanza un $R^2$ marginalmente mejor que el #fkdc, y en el segundo también lo supera ligeramente en exactitud. En `espirales_hi` todos los métodos basados en densidad por núcleos (#fkdc, #kdc, #fkn, #kn) alcanzan un $R^2$ muy similar mientras todos los demás quedan largamente atrás (#gbt) o no se distinguen del $0$, pero #svc obtiene la mejor exactitud. Las ventajas de #fkdc por sobre #kdc son casi nulas en este contexto.
+En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" se ha nivelado considerablemente, y las ventajas antes vistas disminuyen. En particular, en `lunas_hi, circulos_hi` observamos que #gbt alcanza un $R^2$ marginalmente mejor que el #fkdc, y en el segundo también lo supera ligeramente en exactitud. En `espirales_hi` todos los métodos basados en densidad por núcleos (#fkdc, #kdc, #fkn, #kn) alcanzan un $R^2$ muy similar, #gbt queda largamente atrás (#gbt) y #gnb, #logr y #slr no no se distinguen del $0$. #svc obtiene la mejor exactitud, pero no supera a #fkdc por mucho. Las ventajas de #fkdc por sobre #kdc son casi nulas en este contexto.
 
 
 #highlights_figure("lunas_hi")
-#pagebreak()
 
 #highlights_figure("circulos_hi")
-#pagebreak()
 
 #highlights_figure("espirales_hi")
 
@@ -1610,6 +1608,7 @@ En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" 
 
 El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los estimadores, pero los métodos basados en densidad por núcleos parecen sufrirlo particularmente, aunque solo sea porque "caen desde más alto", a un nivel de _performance_ similar al de otros métodos.
 
+//TODO: exxcluir logr, slr, svc de la comparacion
 #figure(
   columns(3)[
     #image("img/lunas-caida_r2.svg")
@@ -1625,7 +1624,7 @@ El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los 
 )
 
 
-Por último, veamos las fronteras de decisión que resultan para nuestro método, #fkdc, y los más competitivos en términos de $R^2$ (#gbt) y exactitud (#svc).
+Por último, veamos las fronteras de decisión de  #fkdc y los más competitivos en términos de $R^2$ (#gbt) y exactitud (#svc):
 #align(center)[#box(width: 160%)[
   #figure(
     columns(3)[
@@ -1659,7 +1658,7 @@ Consideraremos a continuación datasets sintéticos embebidos en 3 dimensiones (
 // TODO: poner scatter 3D en highlight por dataset para $D=3$
 #highlights_figure("eslabones_0")
 
-Toda la familia de estimadores de densidad por núcleos alcanza un $R^2 approx 1$, y aun Naive Bayes tiene una _performance_ aceptable: con este nivel de ruido blanco en el sampleo, el "margen de separación" entre ambos anillos es tan amplio que el problema resulta sencillo. Dicho esto, este dataset resulta ser particularmente fácil para (casi) todos los clasificadores.
+Toda la familia de estimadores de densidad por núcleos alcanza un $R^2 approx 1$, y aun Naive Bayes tiene una _performance_ aceptable: con este nivel de ruido blanco en el sampleo, el "margen de separación" entre ambos anillos es tan amplio que la tarea resulta trivial.
 
 Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ - no así el de exactitud - revela un fuerte outlier de $approx 0.65$ para la semilla $2411$, que no corresponde a una parametrización particularmente extraña.
 
