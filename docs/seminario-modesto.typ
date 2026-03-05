@@ -377,7 +377,11 @@ Sin embargo, un clasificador _peor_ que $cal(C)_0$ en tanto asigne bajas probabi
 == 2D, 2 clases: excelente $R^2$ con exactitud competitiva
 
 === Con Bajo Ruido
-#align(center)[#image("img/2d-lo-datasets.png")]
+#grid(columns: 3, gutter: 1em,
+  image("img/lunas_lo-scatter.svg"),
+  image("img/espirales_lo-scatter.svg"),
+  image("img/circulos_lo-scatter.svg"),
+)
 #pagebreak()
 #columns(3)[
   #image("img/lunas_lo-overall.png")
@@ -389,10 +393,18 @@ Sin embargo, un clasificador _peor_ que $cal(C)_0$ en tanto asigne bajas probabi
 ]
 #pagebreak()
 === Boxplot Accuracy
-#align(center)[#image("img/2d-lo-acc.png")]
+#grid(columns: 3, gutter: 1em,
+  image("img/lunas_lo-accuracy-boxplot.svg"),
+  image("img/circulos_lo-accuracy-boxplot.svg"),
+  image("img/espirales_lo-accuracy-boxplot.svg"),
+)
 #pagebreak()
 === Boxplot $R^2$
-#align(center)[#image("img/2d-lo-r2.png")]
+#grid(columns: 3, gutter: 1em,
+  image("img/lunas_lo-r2-boxplot.svg"),
+  image("img/circulos_lo-r2-boxplot.svg"),
+  image("img/espirales_lo-r2-boxplot.svg"),
+)
 
 == Superposición de parámetros: $alpha$ y $h$
 
@@ -426,19 +438,36 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
 
 == Fronteras de decisión para `(espirales_lo, 1434)`
 
-#align(center)[#image("img/gbt-lr-espirales.png")]
+#grid(columns: 2, gutter: 1em,
+  image("img/espirales_lo-gbt-decision_boundary.svg"),
+  image("img/espirales_lo-lr-decision_boundary.svg"),
+)
 #pagebreak()
-#align(center)[#image("img/kn-espirales.png")]
+#grid(columns: 2, gutter: 1em,
+  image("img/espirales_lo-kn-decision_boundary.svg"),
+  image("img/espirales_lo-fkn-decision_boundary.svg"),
+)
 #pagebreak()
-#align(center)[#image("img/kdc-espirales.png")]
+#grid(columns: 2, gutter: 1em,
+  image("img/espirales_lo-fkdc-decision_boundary.svg"),
+  image("img/espirales_lo-kdc-decision_boundary.svg"),
+)
 #pagebreak()
-#align(center)[#image("img/gnb-svc-espirales.png")]
+#grid(columns: 2, gutter: 1em,
+  image("img/espirales_lo-gnb-decision_boundary.svg"),
+  image("img/espirales_lo-svc-decision_boundary.svg"),
+)
 
 
 
 == 3D, 2 clases + piononos
 
-#align(center)[#image("img/3d.png")]
+#grid(columns: 2, gutter: 1em,
+  image("img/pionono-scatter-3d.svg"),
+  image("img/eslabones-scatter-3d.svg"),
+  image("img/helices-scatter-3d.svg"),
+  image("img/hueveras-scatter-3d.svg"),
+)
 #pagebreak()
 #align(center)[#image("img/pionono.png", height: 110%)]
 #pagebreak()
@@ -452,9 +481,15 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
   #image("img/hueveras_0-overall.png")  
 ]
 #pagebreak()
-#align(center)[#image("img/pionono-eslabones-r2.png")]
+#grid(columns: 2, gutter: 1em,
+  image("img/pionono_0-r2-boxplot.svg"),
+  image("img/eslabones_0-r2-boxplot.svg"),
+)
 #pagebreak()
-#align(center)[#image("img/helices-hueveras-r2.png")]
+#grid(columns: 2, gutter: 1em,
+  image("img/helices_0-r2-boxplot.svg"),
+  image("img/hueveras_0-r2-boxplot.svg"),
+)
 
 == Parámetros óptimos para $"(F)KDC"$ en `helices_0`
 #align(center)[#image("img/optimos-helices_0.png", height: 100%)]
