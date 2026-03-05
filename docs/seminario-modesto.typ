@@ -100,7 +100,7 @@ Observación 3: Si $ind(dot)$ es la función indicadora, resulta que $op(U_h)(x)
 == Núcleo uniforme
 
 
-#image("img/unif-gaus-kern.png")
+#image("img/unif-gaus-kern.svg")
 
 == Clasificador de densidad por núcleos
 [ESL §6.6.2]
@@ -172,7 +172,7 @@ $
 
 == Dificultades: La maldición de la dimensionalidad
 
-#image("img/curse-dim.png")
+#image("img/curse-dim.svg")
 Para $h <=0.5, Pr(dot) < 1 times 10^(-15)$. Aún para $h=0.95, Pr(dot) approx 0.0077$ #emoji.face.shock
 
 = Clasificación en variedades
@@ -503,25 +503,25 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
 
 
 == $R^2$ por semilla para $"(F)KN"$ en `helices_0`
-#align(center)[#image("img/r2-fkn-kn-helices_0.png", height: 100%)]
+#align(center)[#image("img/r2-fkn-kn-helices_0.svg", height: 100%)]
 
 == $R^2$ y $alpha^star$ para $"(F)KN"$ en `helices_0`, `n_neighbors` seleccionados
 #align(center)[#image("img/r2-fkn-kn-n_neighbors-seleccionados.png", height: 65%)]
 
 == Mejor $R^2$ para $"(F)KN"$ en `helices_0`, en función de `n_neighbors`
 
-#image("img/helices_0-fkn_kn-mean_test_score.png")
+#image("img/helices_0-fkn_kn-mean_test_score.svg")
 
 
 == $R^2$ por semilla para $"(F)KN"$ en `eslabones_0`
-#align(center)[#image("img/eslabones_0-r2-fkn-vs-kn.png", height: 100%)]
+#align(center)[#image("img/eslabones_0-r2-fkn-vs-kn.svg", height: 100%)]
 
 == $R^2$ y $alpha^star$ para $"(F)KN"$ en `eslabones_0`, `n_neighbors` seleccionados
 #align(center)[#image("img/helices_0-fkn-kn-best_params.png", height: 65%)]
 
 == Mejor $R^2$ para $"(F)KN"$ en `eslabones_0`, en función de `n_neighbors`
 
-#image("img/helices_0-fkn-kn-mean_test_score-vs-n_neighbors.png")
+#image("img/eslabones_0-fkn_kn-mean_test_score.svg")
 
 == Otros datasets: 2D mucho ruido
 #columns(3)[
