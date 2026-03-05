@@ -384,7 +384,7 @@ Para $h =#h, d=#d, thick Pr(X in [-#h,#h]^#d) = #h^(-#d) approx #calc.round(calc
     [Proporción de $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d)$ dentro de un $d$-cubo de lado $h$ para valore seleccionados de $h$.],
     [Proporción de $X$ dentro de un $d$-cubo de lado $h$],
   ),
-  image("img/curse-dim.png"),
+  image("img/curse-dim.svg"),
 )
 === La hipótesis de la variedad (_manifold hypothesis_)
 
@@ -1596,9 +1596,9 @@ Resulta ser que
 Veamos cómo se comparan los valores de $R^2$ que alcanza cada algoritmo en cada semilla:
 #figure(
   columns(2)[
-    #image("img/lunas_lo-[f]kdc-score-vs-bandwidth.png")
+    #image("img/lunas_lo-[f]kdc-score-vs-bandwidth.svg")
     #colbreak()
-    #image("img/lunas_lo-[f]kdc-delta_r2-vs-delta_h.png")],
+    #image("img/lunas_lo-[f]kdc-delta_r2-vs-delta_h.svg")],
   caption: flex-caption(
     [(izq.) Dispersión de $R^2$ en función de $h$ por clasificador y semilla en `lunas_lo`, para #fkdc, #kdc;
       (der.) dispersión de $Delta_(R^2) = R^2_#kdc - R^2_#fkdc$ en función de $Delta_h = h^star_#fkdc - h^star_#kdc$ para cada semilla.],
@@ -1769,7 +1769,7 @@ $
 con $h' = h slash c_alpha$ y efectivamente los parámetros se solapan en sus funciones. Lamentablemente, sabemos que localmente esto _es_ cierto. Por ejemplo, la serie $k_n$ que minimiza el error cuadrátrico medio cuando $n -> oo$ es $k prop n^(d/(d+4))$, que para nuestro problema resulta en $(400 * 4/5 )^(3/(3+4)) =320^(3/7) approx 12$. Pues bien, cuando miramos el mejor rendimiento en test por `n_neighbors` para #kdc y #fkdc, vemos que elegir $alpha$ le permite a #fkdc mantener una óptima performance en términos de "score" ($-cal(l)$) para _cualquier_ valor de $k$ #footnote[`n_neighbors` en la parametrización de `scikit-learn`.]
 
 
-#image("img/test-score-n_neighbors-fkn-kn.svg")
+#image("img/helices_0-fkn_kn-mean_test_score.svg")
 
 Por otra dirección, llegamos a la misma conclusión que antes: si un clasificador depende de distancias extremadamente locales, salvo que la muestra esté muy escasamente sampleada, el efecto de la distancia de Fermat aprendida de los datos no será muy notorio. // TODO: en trabajos posteriores estudiar efecto de alpha con $n$ fijo.
 
