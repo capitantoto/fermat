@@ -1769,7 +1769,7 @@ $
 con $h' = h slash c_alpha$ y efectivamente los parámetros se solapan en sus funciones. Lamentablemente, sabemos que localmente esto _es_ cierto. Por ejemplo, la serie $k_n$ que minimiza el error cuadrátrico medio cuando $n -> oo$ es $k prop n^(d/(d+4))$, que para nuestro problema resulta en $(400 * 4/5 )^(3/(3+4)) =320^(3/7) approx 12$. Pues bien, cuando miramos el mejor rendimiento en test por `n_neighbors` para #kdc y #fkdc, vemos que elegir $alpha$ le permite a #fkdc mantener una óptima performance en términos de "score" ($-cal(l)$) para _cualquier_ valor de $k$ #footnote[`n_neighbors` en la parametrización de `scikit-learn`.]
 
 
-#image("img/test-score-n_neighbors-fkn-kn.svg")
+#image("img/helices_0-fkn_kn-mean_test_score.svg")
 
 Por otra dirección, llegamos a la misma conclusión que antes: si un clasificador depende de distancias extremadamente locales, salvo que la muestra esté muy escasamente sampleada, el efecto de la distancia de Fermat aprendida de los datos no será muy notorio. // TODO: en trabajos posteriores estudiar efecto de alpha con $n$ fijo.
 
