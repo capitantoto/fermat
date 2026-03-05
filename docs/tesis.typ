@@ -1367,20 +1367,63 @@ En los tres datasets, el resultado es muy similar: #fkdc es el estimador que mej
 Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #fkn y #gbt, mientras que #gnb, #slr, #logr rinden mal pues las _fronteras de decisión_ que pueden representar no cortan bien a los datos.
 
 
+// Mapeo de nombres CSV a macros de clasificadores
+#let clf_macros = (
+  "fkdc": fkdc, "kdc": kdc, "fkn": fkn, "kn": kn,
+  "gnb": gnb, "lr": logr, "slr": slr, "svc": svc, "gbt": gbt,
+)
+
+#let highlights_table(highlights) = {
+  let csv_string = highlights.at("summary")
+  let best_clf = highlights.at("best", default: none)
+  let bad_clfs = highlights.at("bad", default: ())
+  let lines = csv_string.split("\n").filter(l => l.len() > 0)
+  let headers = lines.at(0).split(",")
+  let rows = lines.slice(1)
+
+  let best_fill = rgb("#7cff9dc9")
+  let bad_alpha = 70%
+
+  let cells = ()
+  for row_str in rows {
+    let fields = row_str.split(",")
+    let clf_key = fields.at(0)
+    let clf_label = clf_macros.at(clf_key, default: raw(clf_key))
+    let is_best = clf_key == best_clf
+    let is_bad = clf_key in bad_clfs
+
+    for (i, field) in fields.enumerate() {
+      let content = if i == 0 { clf_label } else if field == "" { align(center)[--] } else { field }
+      if is_best {
+        cells.push(table.cell(fill: best_fill)[#content])
+      } else if is_bad {
+        cells.push(table.cell()[#text(fill: black.transparentize(bad_alpha))[#content]])
+      } else {
+        cells.push([#content])
+      }
+    }
+  }
+
+  table(
+    columns: headers.len(),
+    stroke: none,
+    align: (x, y) => if y == 0 { center } else if x == 0 { right } else { left },
+    table.header(..headers.map(h => {
+      let label = if h == "clf" { [clf] }
+        else if h == "r2" { [$R^2$] }
+        else if h == "accuracy" { [exac] }
+        else { [#h] }
+      text(weight: "bold", label)
+    })),
+    table.hline(stroke: 1pt),
+    table.vline(x: 1, start: 1, stroke: .5pt),
+    ..cells,
+  )
+}
+
 #let highlights_figure(dataset) = {
   let highlights = json("data/" + dataset + "-r2-highlights.json")
-  let csv_string = highlights.at("summary")
-  let lines = csv_string.split("\n")
-  let data = ()
-  for line in lines {
-    let fields = line.split(",")
-    data.push(fields)
-  }
-  let headers = data.at(0)
-  let rows = data.slice(1, count: data.len() - 2)
-  // TODO: pintar de color fermat, negrita best acc, grisar mal R2
-  let tabla_resumen = table(columns: headers.len(), stroke: 0.5pt, table.header(..headers), ..rows.flatten())
-
+  let tabla_resumen = highlights_table(highlights)
 
   figure(
     table(
