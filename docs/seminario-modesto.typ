@@ -521,7 +521,7 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
 
 == Mejor $R^2$ para $"(F)KN"$ en `eslabones_0`, en función de `n_neighbors`
 
-#image("img/helices_0-fkn-kn-mean_test_score-vs-n_neighbors.svg")
+#image("img/eslabones_0-fkn_kn-mean_test_score.svg")
 
 == Otros datasets: 2D mucho ruido
 #columns(3)[
