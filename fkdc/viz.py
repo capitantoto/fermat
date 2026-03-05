@@ -239,7 +239,6 @@ def loss_contour(
     ax.scatter(best_X, Y, marker="x", color="red")
     left_index = max(np.where(X == min(best_X))[0][0] - 1, 0)
     right_index = min(np.where(X == max(best_X))[0][0] + 1, len(X) - 1)
-    logger.info([left_index, X[left_index], right_index, X[right_index]])
     ax.set_xlim(X[left_index], X[right_index])
     # Make a colorbar for the ContourSet returned by the contourf call.
     cbar = fig.colorbar(CS)
@@ -333,8 +332,7 @@ if __name__ == "__main__":
     for dataset, seed in product(datasets_D2, run_seeds):
         contours = (("fkdc", "bandwidth", "alpha"), ("fkn", "n_neighbors", "alpha"))
         for clf, x, y in contours:
-            logger.info([dataset, seed])
-            clf, x, y = "fkdc", "bandwidth", "alpha"
+            logger.debug([dataset, seed])
             fig, ax, *_ = loss_contour(dataset, seed, clf, x, y)
             ax.set_xscale("log")
             fpath = img_dir / f"{dataset}-{seed}-{clf}-{x}-{y}-loss_contour.svg"
