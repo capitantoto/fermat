@@ -26,7 +26,6 @@ configs
 infos
 runs
 **/sandbox/*
-.vscode/
 # Bulk output from fkdc/viz.py (root-level scratch folders)
 /img/
 /data/
