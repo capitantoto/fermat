@@ -1,9 +1,8 @@
 **/.DS_store
 .ipynb_checkpoints
 .venv
-# No publicar PDFs de bibliografía
-bib/*.pdf
-bib/*.djvu
+# Bibliografía local (PDFs, notas, etc.)
+bib/
 # caches
 .cache
 _cache
