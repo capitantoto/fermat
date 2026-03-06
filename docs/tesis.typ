@@ -1888,7 +1888,7 @@ Sería interesante entonces investigar si existen condiciones reales en las que 
 
 #outline(target: figure.where(kind: image), title: "Listado de Figuras")
 #outline(target: figure.where(kind: table), title: "Listado de Tablas")
-#bibliography("../bib/references.bib", style: "harvard-cite-them-right")
+#bibliography("references.bib", style: "harvard-cite-them-right")
 
 
 = Apéndice A: Fichas de resultados por dataset <apendice-a>
@@ -1924,5 +1924,3 @@ Sería interesante entonces investigar si existen condiciones reales en las que 
   ..bad([#gbt], [0.9995], [1.0]),
   ..bad([#svc], [#na], [1.0]),
 )
-
-#include "mi-tabla.typ"

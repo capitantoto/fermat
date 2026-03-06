@@ -42,7 +42,7 @@
 
 *Directora:* Dr. Pablo Groisman
 
-*Tema de trabajo:* Distancia de Fermat en Clasificadores de Densidad Nuclear
+*Tema de trabajo:* Distancia de Fermat en Clasificadores de Densidad por Núcleos
 
 *Lugar de trabajo:* Departamento de Matemática
 
@@ -83,7 +83,7 @@ _en la variedad_ es más informativa que la distancia (euclídea)
 en el espacio ambiente $#Rd$. A este supuesto se lo suele llamar
 "hipótesis de la variedad" (_manifold hypothesis_), y suele
 ser particularmente acertado cuando las observaciones provienen "del
-mundo real" (e.g., imágenes, sonido y texto). Según Bengio et al. (2013),
+mundo real" (e.g., imágenes, sonido y texto). Según @bengioRepresentationLearningReview2014,
 _aprender_ la estructura de $#M$ a partir de $bold(x)$
 es una forma (entre muchas) de _aprendizaje de representaciones_
 (_representation learning_), donde la representación de $x_i$ en
@@ -94,24 +94,24 @@ e inferencia.
 La ganancia en reducción de dimensionalidad con la hipótesis de la
 variedad debe ser contrastada con la dificultad extra de tener que
 trabajar en una variedad arbitraria $#M$ en lugar de $#Rd$, a priori
-desconocida y que debemos estimar. Pelletier (2005) describe
+desconocida y que debemos estimar. @pelletierKernelDensityEstimation2005 describe
 un estimador "nuclear" para la función de densidad de vv.aa. i.i.d.
 en variedades Riemannianas compactas sin borde, junto con resultados
-de consistencia y convergencia; Henry y Rodríguez (2009) los amplían para
+de consistencia y convergencia; @henryKernelDensityEstimation2009 los amplían para
 probar la consistencia uniforme fuerte y la distribución asintótica
 de estos estimadores.
 
-Tanto Pelletier (2005) como Henry y Rodríguez (2009) asumen que la
-distancia geodésica es conocida. Trabajos recientes (Sapienza et al., 2018; Groisman et al., 2022; McKenzie y Damelin, 2019; Little et al., 2022)
+Tanto @pelletierKernelDensityEstimation2005 como @henryKernelDensityEstimation2009 asumen que la
+distancia geodésica es conocida. Trabajos recientes (@sapienzaWeightedGeodesicDistance2018; @groismanNonhomogeneousEuclideanFirstpassage2019; @mckenziePowerWeightedShortest2019; @littleBalancingGeometryDensity2021)
 proponen aprender una distancia geodésica $cal(D)_f^p$ entre
 los nodos del grafo (aleatorio) completo de la muestra $bb(X)_n$#footnote[O por simplicidad de cómputo, su aproximación por el grafo de $k$-vecinos
-más cercanos.], con cada arista pesada por una potencia $p$ de la distancia euclídea
-entre sus extremos. En Sapienza et al. (2018), el uso de esta
+  más cercanos.], con cada arista pesada por una potencia $p$ de la distancia euclídea
+entre sus extremos. En @sapienzaWeightedGeodesicDistance2018, el uso de esta
 distancia --- que los autores llaman "de Fermat", por su analogía
 con el fenómeno óptico --- parece rendir considerables mejoras de _performance_
 empírica en tareas de clasificación. Cuando $p = 1$, el estimador
 de la distancia geodésica $cal(D)_f^1$ resultante es idéntico
-al que usa _Isomap_ (Tenenbaum et al., 2000) para construir los
+al que usa _Isomap_ @tenenbaumGlobalGeometricFramework2000 para construir los
 _embeddings_ de dimensión reducida.
 
 = Naturaleza del aporte original sobre el tema y objetivos
@@ -129,7 +129,7 @@ gama de condiciones:
 - en relación a la dimensión $d_x$ del espacio ambiente, y
 - en relación a las $k$ categorías posibles para $Y in {C_1, dots, C_k}$.
 
-Aprender un clasificador a partir de KDEs con distancia euclídea (Hastie et al., 2009, cap. 6.6)
+Aprender un clasificador a partir de KDEs con distancia euclídea @hastieElementsStatisticalLearning2009[cap. 6.6]
 es un método bastante eficiente en términos de cómputo. En cambio,
 un cálculo exacto del estimador muestral de $cal(D)_f^p$
 requiere $n^3$ pasos. La pregunta al respecto de su eficacia, entonces,
@@ -137,17 +137,19 @@ debe considerar además comparativamente los costos computacionales
 de ambas distancias, que en datasets "grandes" podrían ser demasiado
 altos para obtener ganancias de _performance_ relativamente menores.
 Para poner en contexto la capacidad predictiva de estos clasificadores
-y su costo computacional, incluiremos como métodos de referencia:
+y su costo computacional, incluiremos como métodos de referencia: eaea pp
 
-- clasificadores de _Naive Bayes_ (Hastie et al., 2009, cap. 6.6.3),
+- clasificadores de _Naive Bayes_ @hastieElementsStatisticalLearning2009[cap. 6.6.3],
   que usan $d$ KDEs unidimensionales en lugar de un KDE $d$-dimensional
   por clase,
-- _gradient boosting trees_ (GBTs, Hastie et al., 2009, cap. 10),
+- _gradient boosting trees_ (GBTs, @hastieElementsStatisticalLearning2009[cap. 10]),
   un método reconocido en la actualidad por su simplicidad de uso y
   escasez de requerimientos, y
-- _random forests_ (Hastie et al., 2009, cap. 15), que capturan
+- _random forests_ @hastieElementsStatisticalLearning2009[cap. 15], que capturan
   buena parte de las bondades de los GBTs con una estructura sencilla.
 
 Además, nos proponemos dar argumentos teóricos que garanticen la consistencia
 de la estimación de la densidad en el estilo de Pelletier, cuando
 se reemplaza la distancia geodésica por una estimación empírica (_plug-in_).
+
+#bibliography("references.bib", style: "harvard-cite-them-right")

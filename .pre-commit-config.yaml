@@ -11,3 +11,11 @@ repos:
         types_or: [python, jupyter]
       - id: ruff-format
         types_or: [python, jupyter]
+  - repo: local
+    hooks:
+      - id: typst-check
+        name: typst compile check
+        entry: bash -c 'tmp=$(mktemp /tmp/typst-check-XXXXXX.pdf); trap "rm -f $tmp" EXIT; for f in docs/tesis.typ docs/plan.typ; do [ -f "$f" ] && typst compile "$f" "$tmp" || exit 1; done'
+        language: system
+        files: '\.(typ|bib)$'
+        pass_filenames: false

@@ -160,4 +160,4 @@ La sensación es "agridulce": el algoritmo de clasificación por KDE resulta com
 
 Otra alternativa - no la única - es que cuando Mu dufiere de su espacio ambiente, $theta_(p)(q)$ (la _función de densidad volumétrica_ en Mu alrededor de $p$) sea sumamente variable en el espacio, e ignorarla nos haga pesar incorrectamente las observaciones. Al autor del trabajo no le resulta familiar la geometría riemanniana, lo cual dificulta la corroboración de dicha hipótesis. 
 
-#bibliography("../bib/references.bib")
+#bibliography("references.bib")

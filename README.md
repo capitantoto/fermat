@@ -11,7 +11,20 @@ Tesis en progreso para la Maestría en Estadística Matemática, IC, FCEN-UBA
 
 ### Requisitos previos
 - [uv](https://docs.astral.sh/uv/) (gestor de paquetes Python)
-- [Typst](https://typst.app/) (para compilar la tesis)
+- [Typst](https://typst.app/) (para compilar los documentos)
+- GNU Make
+
+### Instalar Typst
+
+```bash
+# macOS
+brew install typst
+
+# o con cargo
+cargo install typst-cli
+```
+
+Alternativamente, instalar la extensión [Tinymist](https://marketplace.visualstudio.com/items?itemName=myriad-dreamin.tinymist) en VS Code para compilación integrada y vista previa.
 
 ### Configuración del entorno
 
@@ -21,23 +34,30 @@ git clone https://github.com/gonzalobb/fkdc.git
 cd fkdc
 
 # Crear entorno virtual e instalar dependencias
-uv sync --all-extras
+uv sync
 
-# Instalar hooks de pre-commit
+# Instalar hooks de pre-commit y filtro de notebooks
 uv run pre-commit install
+uv run nbstripout --install
 ```
 
-## Compilar la tesis
+## Compilar documentos
 
 ```bash
-typst compile docs/tesis.typ docs/tesis.pdf
+# Compilar todos los .typ → .pdf (tesis, plan, poster)
+make docs
+
+# Compilar solo la tesis
+typst compile docs/tesis.typ
 ```
 
 Para compilación continua durante la edición:
 
 ```bash
-typst watch docs/tesis.typ docs/tesis.pdf
+typst watch docs/tesis.typ
 ```
+
+Ver `make help` para la lista completa de targets disponibles.
 
 ## Bibliografía
 
@@ -55,17 +75,17 @@ De ser necesario, una copia de la extensión está disponible en [src/zotero-bet
 
 ### Exportar referencias
 
-Para generar o actualizar `bib/references.bib`:
+Para generar o actualizar `docs/references.bib`:
 
 1. En Zotero, seleccionar la colección correspondiente a la tesis
 2. Clic derecho → "Export Collection..."
 3. Formato: "Better BibLaTeX" o "Better BibTeX"
-4. Guardar como `bib/references.bib`
+4. Guardar como `docs/references.bib`
 
 Alternativamente, configurar una exportación automática:
 1. Clic derecho en la colección → "Export Collection..."
 2. Marcar "Keep updated"
-3. Seleccionar la ruta `bib/references.bib`
+3. Seleccionar la ruta `docs/references.bib`
 
 ## Uso de IA
 
