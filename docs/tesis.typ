@@ -1963,3 +1963,49 @@ Sería interesante entonces investigar si existen condiciones reales en las que 
 
 = Anexo: Fichas de resultados para otros datasets <apendice>
 
+A continuación se presentan las fichas de resultados para los 10 datasets no discutidos en el cuerpo principal de la tesis. Cada ficha incluye el _scatterplot_ del dataset, una tabla resumen con la mediana de $R^2$ y exactitud por clasificador, y _boxplots_ de ambas métricas.
+
+== Datasets 15-dimensionales
+
+Los cuatro datasets tridimensionales del §5.3 se embebieron en $RR^15$ añadiendo 12 dimensiones de ruido gaussiano $cal(N)(0, 1)$ independientes.
+
+#figure(
+  image("img/anexo-15d-delta-r2.svg"),
+  caption: flex-caption(
+    [Caída de $R^2$ (mediana) al agregar 12 dimensiones de ruido a los datasets 3D. Valores negativos indican peor $R^2$ en 15D.],
+    [Caída de $R^2$: 3D vs. 15D],
+  ),
+)
+
+#highlights_figure("pionono_12")
+#highlights_figure("eslabones_12")
+#highlights_figure("helices_12")
+#highlights_figure("hueveras_12")
+
+== Datasets multiclase reales
+
+#figure(
+  image("img/anexo-multik-fkdc-vs-kdc.svg"),
+  caption: flex-caption(
+    [$R^2$ por semilla de #fkdc vs. #kdc en los 4 datasets multiclase reales.],
+    [$R^2$ de #fkdc vs. #kdc en datasets multiclase],
+  ),
+)
+
+#highlights_figure("iris")
+#highlights_figure("vino")
+#highlights_figure("pinguinos")
+#highlights_figure("anteojos")
+
+== Datasets de alta dimensión
+
+#figure(
+  image("img/anexo-hd-fkdc-vs-kdc.svg"),
+  caption: flex-caption(
+    [$R^2$ por semilla de #fkdc vs. #kdc en `digitos` ($D = 64$) y `mnist` ($D = 784$).],
+    [$R^2$ de #fkdc vs. #kdc en alta dimensión],
+  ),
+)
+
+#highlights_figure("digitos")
+#highlights_figure("mnist")

@@ -1,0 +1,13 @@
+{
+    "dataset": "helices_12",
+    "summary": "clf,accuracy,r2\nfkn,0.525,0.0019\nkn,0.525,0.0019\ngnb,0.5225,0.0013\nfkdc,0.4975,0.0001\nlr,0.4975,0.0\nslr,0.4975,0.0\nkdc,0.4975,0.0\ngbt,0.525,-0.0064\nsvc,0.4975,\n",
+    "best": "fkn",
+    "bad": [
+        "gnb",
+        "fkdc",
+        "lr",
+        "slr",
+        "kdc",
+        "gbt"
+    ]
+}

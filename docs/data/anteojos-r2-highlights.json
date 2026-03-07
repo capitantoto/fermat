@@ -1,0 +1,14 @@
+{
+    "dataset": "anteojos",
+    "summary": "clf,accuracy,r2\nfkdc,0.975,0.9326\nkdc,0.9775,0.922\nkn,0.975,0.9174\nfkn,0.975,0.914\ngbt,0.9625,0.856\ngnb,0.9725,0.8515\nlr,0.4275,0.2818\nslr,0.4075,0.2786\nsvc,0.9725,\n",
+    "best": "fkdc",
+    "bad": [
+        "kdc",
+        "kn",
+        "fkn",
+        "gbt",
+        "gnb",
+        "lr",
+        "slr"
+    ]
+}
