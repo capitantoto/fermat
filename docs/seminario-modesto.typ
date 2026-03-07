@@ -226,9 +226,14 @@ con la restricción de que la ventana $h <= h_0 <= op("inj")(cal(M))$, el _radio
 == Interludio: densidad de volumen en la esfera [Henry y Rodríguez, 2009]
 
 #columns(2)[
-  En _"Kernel Density Estimation on Riemannian Manifolds: Asymptotic Results" (2009)_, Guillermo Henry y Daniela Rodriguez estudian algunas propiedades asintótica de este estimador, y las ejemplifican con datos de sitios volcánicos en la superficie terrestre.
-  En particular, calculan la densidad de volumen $theta_p(q)$
-#image("img/densidad-volumen-esfera.png")
+  En _"Kernel Density Estimation on Riemannian Manifolds: Asymptotic Results" (2009)_, Guillermo Henry y Daniela Rodriguez estudian algunas propiedades asintóticas de este estimador, y las ejemplifican con datos de sitios volcánicos en la superficie terrestre.
+  En particular, calculan la densidad de volumen $theta_p(q)$ en $S^2$:
+  $
+    theta_p (q) = cases(
+      R abs(sin(d_g (p, q) slash R)) / d_g (p, q) & "si" q != p\, -p,
+      1 & "si" q = p
+    )
+  $
 #colbreak()
 #image("img/henry-rodriguez-bolas.png")
 ]
