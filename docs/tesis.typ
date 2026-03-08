@@ -504,7 +504,7 @@ La compatibilidad requiere que la transición entre cartas no sea solo continua,
   Una variedad diferenciable de dimensión $d$ es una terna $(MM, tau, cal(D))$ donde $(MM, tau)$ es una variedad topológica de dimensión $d$ y $cal(D)$ una estructura diferenciable.
 ]
 
-Una variedad diferenciable entonces, es aquella en la que la operación de diferenciación tiene sentido no solo punto a punto, sino globalmente. De no poder diferenciar, tampoco podremos tomar integrales, y definir funciones de densidad - ni hablar de estimarlas - resulta imposible.
+Una variedad diferenciable es aquella en la que la operación de diferenciación tiene sentido no solo punto a punto, sino globalmente. De no poder diferenciar, tampoco podremos tomar integrales, y definir funciones de densidad - ni hablar de estimarlas - resulta imposible.
 
 Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métrica_. En particular, toda variedad diferenciable admite una "métrica de Riemann" @docarmoRiemannianGeometry1992[§1, Proposición 2.10].
 
@@ -1536,7 +1536,7 @@ Por último, observamos las fronteras de #svc, que no tienen gradiente de color 
 
 === Estudio de ablación: $R^2$ para #kdc/ #kn con y sin distancia de Fermat.
 
-Según la #link("https://dle.rae.es/ablaci%C3%B3n")[RAE], "Del lat. tardío ablatio, -ōnis 'acción de quitar'." --- ¿qué se pierde en términos de $R^2$ al _no_ usar #sfd en estos algoritmos?. Sirvan para concentrar la atención en esta diferencia, los gráficos de dispersión del $R^2$ alcanzado en $XX_"test"$ para #kn y #kdc con y sin distancia de Fermat, en las #reps repeticiones de cada Tarea.
+Según la #link("https://dle.rae.es/ablaci%C3%B3n")[RAE], "Del lat. tardío ablatio, -ōnis 'acción de quitar'." --- ¿qué se pierde en términos de $R^2$ al _no_ usar #sfd en estos algoritmos? Sirvan para concentrar la atención en esta diferencia, los gráficos de dispersión del $R^2$ alcanzado en $XX_"test"$ para #kn y #kdc con y sin distancia de Fermat, en las #reps repeticiones de cada Tarea.
 
 #let curvas = ("lunas", "circulos", "espirales")
 #wide-figure(
