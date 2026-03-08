@@ -9,5 +9,8 @@
         "slr",
         "kdc",
         "gbt"
+    ],
+    "excluded": [
+        "gbt"
     ]
 }

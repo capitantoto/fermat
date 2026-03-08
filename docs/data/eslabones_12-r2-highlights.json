@@ -10,5 +10,14 @@
         "kn",
         "lr",
         "slr"
+    ],
+    "excluded": [
+        "gnb",
+        "fkn",
+        "kdc",
+        "fkdc",
+        "kn",
+        "lr",
+        "slr"
     ]
 }

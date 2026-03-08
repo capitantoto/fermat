@@ -9,5 +9,12 @@
         "kn",
         "fkdc",
         "kdc"
+    ],
+    "excluded": [
+        "lr",
+        "fkn",
+        "kn",
+        "fkdc",
+        "kdc"
     ]
 }
