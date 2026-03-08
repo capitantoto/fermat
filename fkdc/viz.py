@@ -498,15 +498,6 @@ if __name__ == "__main__":
             ds.scatter(ax=ax)
         save_fig(fig, img_dir / f"{dataset}-scatter.svg")
 
-    # Additional 3D scatters with base name (for seminario-modesto etc.)
-    for nombre in ["pionono", "eslabones", "helices", "hueveras"]:
-        ds_path = datasets_dir / f"{nombre}_0-{plotting_seed}.pkl"
-        with open(ds_path, "rb") as fp:
-            ds = pickle.load(fp)
-        fig, ax = plt.subplots(layout="tight", subplot_kw={"projection": "3d"})
-        ds.scatter_3d(ax=ax)
-        save_fig(fig, img_dir / f"{nombre}-scatter-3d.svg")
-
     # helices pairplot
     with open(datasets_dir / f"helices_0-{plotting_seed}.pkl", "rb") as fp:
         ds_helices = pickle.load(fp)
@@ -561,8 +552,8 @@ if __name__ == "__main__":
     # =====================================================================
     # Decision boundaries (curated pairs only)
     # =====================================================================
-    all_clfs = ["kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb"]
-    hi_clfs = ["fkdc", "gbt", "svc"]
+    all_clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb")
+    hi_clfs = ("fkdc", "gbt", "svc")
     hi_curves = ("lunas", "circulos", "espirales")
     db_pairs = (
         [("espirales_lo", clf) for clf in all_clfs]
@@ -645,15 +636,12 @@ if __name__ == "__main__":
         fname = f"{dataset}-{seed}-{clf_lc}-{x_lc}-{y_lc}-loss_contour.svg"
         save_fig(fig, img_dir / fname)
 
-    # helices_0, seed 1188
-    fig, ax = loss_contour("helices_0", 1188, clf_lc, x_lc, y_lc)
-    ax.set_xscale("log")
-    save_fig(fig, img_dir / f"helices_0-1188-{clf_lc}-{x_lc}-{y_lc}-loss_contour.svg")
-
-    # heatmap for seminario-modesto
-    fig, ax = loss_contour("espirales_lo", 1434, clf_lc, x_lc, y_lc)
-    ax.set_xscale("log")
-    save_fig(fig, img_dir / "heatmap-fkdc-espirales_lo-1434-new.svg")
+    # Standalone loss contours (helices_0 for tesis, espirales_lo for seminario)
+    for dataset, seed in [("helices_0", 1188), ("espirales_lo", 1434)]:
+        fig, ax = loss_contour(dataset, seed, clf_lc, x_lc, y_lc)
+        ax.set_xscale("log")
+        fname = f"{dataset}-{seed}-{clf_lc}-{x_lc}-{y_lc}-loss_contour.svg"
+        save_fig(fig, img_dir / fname)
 
     # =====================================================================
     # lunas_lo: best_params + score vs bandwidth analysis
@@ -781,18 +769,20 @@ if __name__ == "__main__":
     save_fig(fig, img_dir / "helices_0-boxplot-r2-zoomed.svg")
 
     # =====================================================================
-    # eslabones_0: params for seed 2411
+    # eslabones_0: params for a specific seed
     # =====================================================================
+    dataset_esl = "eslabones_0"
+    semilla_esl = 2411
     best_estimators_esl = {
         k: v[k[2]]["busqueda"].best_estimator_
         for k, v in infos.items()
-        if k[0] == "eslabones_0" and k[2].endswith("kdc")
+        if k[0] == dataset_esl and k[2].endswith("kdc")
     }
     best_params_esl = pd.DataFrame.from_records(
         [
             {
                 "clf": k[2],
-                "semilla": int(k[1 if "eslabones_0" in synth_datasets else 3]),
+                "semilla": int(k[1 if dataset_esl in synth_datasets else 3]),
                 "alpha": v.get_params().get("alpha", 1),
                 "bandwidth": v.get_params()["bandwidth"],
             }
@@ -800,15 +790,14 @@ if __name__ == "__main__":
         ]
     ).set_index(["semilla", "clf"])
     scores_esl = (
-        bi[bi.dataset.eq("eslabones_0") & bi.clf.str.endswith("kdc")]
+        bi[bi.dataset.eq(dataset_esl) & bi.clf.str.endswith("kdc")]
         .set_index(["semilla", "clf"])
         .r2
     )
     best_params_esl["r2"] = scores_esl
-    best_params_esl.loc[pd.IndexSlice[2411, :]].round(4).to_csv(
-        data_dir / "eslabones_0-params-2411.csv"
-    )
-    logger.info(f"Wrote {data_dir / 'eslabones_0-params-2411.csv'}")
+    fpath_esl = data_dir / f"{dataset_esl}-params-{semilla_esl}.csv"
+    best_params_esl.loc[pd.IndexSlice[semilla_esl, :]].round(4).to_csv(fpath_esl)
+    logger.info(f"Wrote {fpath_esl}")
 
     # =====================================================================
     # Parametros comparados CSVs
