@@ -9,5 +9,11 @@
         "gnb",
         "slr",
         "lr"
+    ],
+    "excluded": [
+        "gbt",
+        "gnb",
+        "slr",
+        "lr"
     ]
 }

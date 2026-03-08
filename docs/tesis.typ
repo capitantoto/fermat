@@ -1331,20 +1331,28 @@ En total, ejecutamos unas 4,500 tareas, producto de #reps repeticiones por datas
 La amplia distribución de algoritmos óptimos según las condiciones del dataset pone de relieve la existencia de ventajas relativas en todos ellos.
 
 #let data = csv("data/mejor-clf-por-dataset-segun-r2-mediano.csv")
-
 #let headers = data.at(0)
 #let rows = data.slice(1, count: data.len() - 1)
-#table(columns: headers.len(), table.header(..headers), ..rows.flatten())
+#figure(
+  table(columns: headers.len(), table.header(..headers), ..rows.flatten()),
+  caption: flex-caption([TODO: copete largo tabla mejor clf por R²], [TODO: copete corto tabla mejor clf por R²]),
+)
 
 El mismo análisis con métrica de exactitud es, desde luego, menos favorable a nuestros métodos entrenados para otra cosa. #svc, entrenado a tono, resulta un algoritmo casi imbatible, con sólidos números en todo tipo de datasets y máximos en 6 datasets. #gbt vuelve a brillar en datasets con mucho ruido y siguen figurando como competitivos un amplio abanico de estimadores: hasta #fkdc retiene su título en 1 dataset, `espirales_lo`.
 
 #let data = csv("data/mejor-clf-por-dataset-segun-accuracy-mediano.csv")
 #let headers = data.at(0)
 #let rows = data.slice(1, count: data.len() - 1)
-#table(columns: headers.len(), table.header(..headers), ..rows.flatten())
+#figure(
+  table(columns: headers.len(), table.header(..headers), ..rows.flatten()),
+  caption: flex-caption(
+    [TODO: copete largo tabla mejor clf por exactitud],
+    [TODO: copete corto tabla mejor clf por exactitud],
+  ),
+)
 
 
-Solo considerar la _performance_ de #fkdc y #fkn en los 20 datasets daría unas 40 unidades de análisis, y en el espíritu de indagación curiosa que guía esta tesis, existen aún más tendencias y patrones interesantes en los 4,500 experimentos realizados. No es nuestra intención matar de aburrimiento al lector, con lo cual a continuación haremos un paneo arbitrario por algunos de los resultados que (a) nos resultaron más llamativos o (b) se acercan lo suficiente a alguno de la literatura previa como para merecer un comentario aparte. Quien desee corroborar que no hice un uso injustificado de la discrecionalidad para elegir resultados, puede referirse al @apendice-a[Apéndice A2 - Hojas de resultados por experimento] y darse una panzada de tablas y gráficos.
+Solo considerar la _performance_ de #fkdc y #fkn en los 20 datasets daría unas 40 unidades de análisis, y en el espíritu de indagación curiosa que guía esta tesis, existen aún más tendencias y patrones interesantes en los 4,500 experimentos realizados. No es nuestra intención matar de aburrimiento al lector, con lo cual a continuación haremos un paneo arbitrario por algunos de los resultados que (a) nos resultaron más llamativos o (b) se acercan lo suficiente a alguno de la literatura previa como para merecer un comentario aparte. Quien desee corroborar que no hice un uso injustificado de la discrecionalidad para elegir resultados, puede referirse al @apendice[Apéndice A2 - Hojas de resultados por experimento] y darse una panzada de tablas y gráficos.
 == Lunas, círculos y espirales ($D=2, d=1, k=2$)
 
 Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=1, k=2$, y exploramos tres curvas sampleadas con un poco de "ruido blanco" añadido: dos "lunas" --- semicírculos no superpuestos con sus centros en un extremo del semicírculo opuesto ---, dos círculos concéntricos y dos espirales con el mismo origen y rotación en sentidos opuestos #footnote[No entraremos en demasiado detalle sobre cómo se generó o de dónde se tomó cada _dataset_ para mantener el foco en los resultados de la experimentación. En el paquete adjunto, las rutinas completas para generar cada conjunto de datos se puede leer en `fkdc/datasets.py`].
@@ -1382,8 +1390,15 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 
 // Mapeo de nombres CSV a macros de clasificadores
 #let clf_macros = (
-  "fkdc": fkdc, "kdc": kdc, "fkn": fkn, "kn": kn,
-  "gnb": gnb, "lr": logr, "slr": slr, "svc": svc, "gbt": gbt,
+  "fkdc": fkdc,
+  "kdc": kdc,
+  "fkn": fkn,
+  "kn": kn,
+  "gnb": gnb,
+  "lr": logr,
+  "slr": slr,
+  "svc": svc,
+  "gbt": gbt,
 )
 
 #let highlights_table(highlights) = {
@@ -1422,10 +1437,7 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
     stroke: none,
     align: (x, y) => if y == 0 { center } else if x == 0 { right } else { left },
     table.header(..headers.map(h => {
-      let label = if h == "clf" { [clf] }
-        else if h == "r2" { [$R^2$] }
-        else if h == "accuracy" { [exac] }
-        else { [#h] }
+      let label = if h == "clf" { [clf] } else if h == "r2" { [$R^2$] } else if h == "accuracy" { [exac] } else { [#h] }
       text(weight: "bold", label)
     })),
     table.hline(stroke: 1pt),
@@ -1439,14 +1451,14 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
   let tabla_resumen = highlights_table(highlights)
 
   figure(
-    box(width: width, grid(
-      columns: 4, gutter: 4pt,
-      image("img/" + dataset + "-scatter.svg", height: height),
-      text(size: 8pt)[#tabla_resumen],
-      image("img/" + dataset + "-r2-boxplot.svg", height: height),
-      image("img/" + dataset + "-accuracy-boxplot.svg", height: height),
-    )),
-    caption: flex-caption[Resumen para #raw(dataset)][],
+    table(
+      columns: 2,
+      rows: 2,
+      stroke: 0pt,
+      image("img/" + dataset + "-scatter.svg"), text(size: 8pt)[#tabla_resumen],
+      image("img/" + dataset + "-r2-boxplot.svg"), image("img/" + dataset + "-accuracy-boxplot.svg"),
+    ),
+    caption: flex-caption[_Scatterplot_, tabla resumen y _boxplots_ de $R^2$ y _accuracy_ en el _dataset_ #raw(dataset)][Resumen de resultados para #raw(dataset)],
   )
 }
 
@@ -1464,7 +1476,7 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 
   A ello se le suma que el cómputo de la distancia muestral de Fermat #sfd es realmente caro. Aun siguiendo "buenas prácticas computacionales" #footnote[Como sumar logaritmos en lugar de multiplicar valores "crudos" siempre que sea posible], implementaciones ingenuas pueden resultar impracticables hasta en datasets de baja cardinalidad y pocas dimensiones.
 
-  Por otra parte, el teorema de convergencia @convergencia-sfd nos garantiza que cuando $n->oo, quad sfd -> cal(D)_(f, beta)$, pero esa es una afirmación asintótica y aquí estamos tomando $k=5$ pliegos de entre $n = 800$ observaciones, con $n_"train" = n_"eval" = n slash 2$ observaciones para un tamaño muestral efectivo de $(k-1)/k n/2 = 360$. ¿Es 360 un tamaño muestral "lo suficientemente grande" para que sea válida?
+  Por otra parte, el teorema de convergencia @convergencia-sfd nos garantiza que cuando $n->oo, quad sfd -> cal(D)_(f, beta)$, pero esa es una afirmación asintótica y aquí estamos tomando $k=5$ pliegos de entre $n = 800$ observaciones, con $n_"train" = n_"eval" = n slash 2$ observaciones para un tamaño muestral efectivo de $(k-1)/k n/2 = 320$. ¿Es 320 un tamaño muestral "lo suficientemente grande" para que sea válida?
 
   Por todo ello, que la bondad de los clasificadores _no empeore_ con el uso de #sfd en lugar de #euc es de por sí un hito importante.
 ]
@@ -1637,7 +1649,7 @@ Cabe aquí una crítica al diseño experimental: si #fkdc está tomando siempre 
 - cubren de manera "logarítmicamente equidistante" el mismo rango de $h: [10^(-5), 10^6]$ y
 - la grilla de #kdc cuenta con $approx$ el triple de puntos de #fkdc ($136 "vs." 45$).
 
-Como en el entrenamiento de #fkdc se gastaron 13 veces más recursos evaluando 13 valores distintos de $alpha$ #footnote[$alpha in {1 + 0.25 i, thick i in [13]} subset [1, 4]$], consideramos oportuno permitirle a #kdc explorar más valores de $h$, y la cantidad se eligió para que la grilla de #kdc coincida en lo posible con la de #fkdc, y tenga además otros dos valores "entre medio" de dos valores cualesquiera de la grilla de #fkdc #footnote[
+Como en el entrenamiento de #fkdc se gastaron 13 veces más recursos evaluando 13 valores distintos de $alpha in {1 + 0.25 i, thick i in [13]} subset [1, 4]$, consideramos oportuno permitirle a #kdc explorar más valores de $h$, y la cantidad se eligió para que la grilla de #kdc coincida en lo posible con la de #fkdc, y tenga además otros dos valores "entre medio" de dos valores cualesquiera de la grilla de #fkdc #footnote[
   N. del E.: Para hace esto correctamente, deberíamos haber tomado $(45 - 1) times (2 + 1) + 1= 133$ elementos en la segunda grilla, pero olvidamos restar 1 a 45 --- hay 45 puntos pero 44 "espacios" entre puntos de la grilla --- y por eso obtuvimos 136 puntos, con lo cual las grillas difieren ligeramente y una no es un subconjunto de la otra. De todas maneras, la grilla de #kdc contiene el $0.173$, mucho más cercano al $0.178$ óptimo de #fkdc, con lo cual no se termina de explicar que la elección "modal" de #kdc haya sido $0.251$
 ].
 En efecto, en el rango de interés, las grillas contaban con los valores:
@@ -1645,7 +1657,7 @@ $
   #fkdc: & [0.1, 0.178, 0.316, 0.562] \
    #kdc: & [0.119, 0.143, 0.173, 0.208, 0.251, 0.303, 0.366, 0.441, 0.532] \
 $
-con lo cual #kdc _podría_ haber encontrado el ligeramente más conveniente $h^star approx 0.17$, pero la convalidación cruzada se inclinó por valores concentrados en el rango $[0.25, 0.3]$. De repetir el experimento tomando una grilla más fina en este rango crucial, es posible que $Delta_h^star approx 0$ y por ende $Delta_(R^2)$ también, aunque por el mismo argumento de tomar una grilla más fina para $alpha approx 1$ terminaríamos tal vez encontrando un $alpha^star > 1$ para #fkdc #footnote[Hete aquí la dificultad de enunciar propiedades generales a partir de experimentos particulares: siempre hay _un experimento más_ para hacer, pero lamentablemente, en algún momento había que culminar la etapa experimental.]. En cualquier caso, hemos de aceptar que la ventaja de #fkdc en `lunas_lo` (y también en `espirales_lo`, aunque de menor magnitud) sobre #kdc _no_ se debe a la inclusión del hiperparámetro $alpha$, sino a una validación cruzada aleatoriamente favorable.
+con lo cual #kdc _podría_ haber encontrado el ligeramente más conveniente $h^star approx 0.17$, pero la convalidación cruzada se inclinó por valores concentrados en el rango $[0.25, 0.3]$. De repetir el experimento tomando una grilla más fina en este rango crucial, es posible que $Delta_h^star approx 0$ y por ende $Delta_(R^2)$ también, aunque por el mismo argumento de tomar una grilla más fina para $alpha approx 1$ terminaríamos tal vez encontrando un $alpha^star > 1$ para #fkdc #footnote[Hete aquí la dificultad de enunciar propiedades generales a partir de experimentos particulares: siempre hay _un experimento más_ para hacer, pero lamentablemente, en algún momento había que culminar la etapa experimental.]. En cualquier caso, hemos de aceptar que la ventaja de #fkdc en `lunas_lo` y `espirales_lo` sobre #kdc _no_ se debe a la inclusión del hiperparámetro $alpha$, sino a una validación cruzada aleatoriamente favorable.
 
 === Efectos de aumentar el ruido
 
@@ -1662,13 +1674,21 @@ $ sigma_"lunas" = 0.5 quad sigma_"circulos" = 0.2 quad sigma_"espirales" = 0.2 q
   caption: flex-caption["Lunas", "Círculos" y "Espirales" con "alto ruido"][ "Lunas", "Círculos" y "Espirales", alto ruido ],
 ) <fig-22>
 
-En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" se ha nivelado considerablemente, y las ventajas antes vistas disminuyen. En particular, en `lunas_hi, circulos_hi` observamos que #gbt alcanza un $R^2$ marginalmente mejor que el #fkdc, y en el segundo también lo supera ligeramente en exactitud. En `espirales_hi` todos los métodos basados en densidad por núcleos (#fkdc, #kdc, #fkn, #kn) alcanzan un $R^2$ muy similar, #gbt queda largamente atrás (#gbt) y #gnb, #logr y #slr no se distinguen del $0$. #svc obtiene la mejor exactitud, pero no supera a #fkdc por mucho. Las ventajas de #fkdc por sobre #kdc son casi nulas en este contexto.
+En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" se ha nivelado considerablemente, y las ventajas antes vistas disminuyen.
 
+- En `lunas_hi` observamos que #gbt alcanza un $R^2$ marginalmente mejor que el #fkdc pero no por mucho, y todos los métodos basados en densidad por núcleos (#fkdc, #kdc, #fkn, #kn) alcanzan una exactitud ligeramente mejor que la de #gbt.
+- En `circulos_hi` #gnb  supera ligeramente pero significativamente en $R^2$ y exactitud, aunque aún su propia performance no es muy  alentadora con $R^2_#gbt approx 0.09$.
+
+- En `espirales_hi` todos los métodos basados en densidad por núcleos (#fkdc, #kdc, #fkn, #kn) alcanzan un $R^2$ muy similar, #gbt queda largamente atrás y #gnb, #logr y #slr no no se distinguen del $0$. #svc obtiene la mejor exactitud, pero no supera a #fkdc por mucho. Las ventajas de #fkdc por sobre #kdc son casi nulas en este contexto.
+
+==== `lunas_hi`
 
 #highlights_figure("lunas_hi")
 
+==== `circulos_hi`
 #highlights_figure("circulos_hi")
 
+==== `espirales_hi`
 #highlights_figure("espirales_hi")
 
 
@@ -1707,7 +1727,7 @@ Por último, veamos las fronteras de decisión de  #fkdc y los más competitivos
       )).sum(),
     ),
     caption: flex-caption(
-      [Fronteras de decisión para #fkdc, #gbt, #svc en regímenes de alto ruido, $s = #plotting_seed$],
+      [Fronteras de decisión para #fkdc, #gbt, #svc en regímenes de alto ruido, $s = #plotting_seed$. El $R^2$ de algunos pares `clasificador, dataset` no se logra distinguir del cero.],
       [Fronteras de decisión en alto ruido],
     ),
   )
@@ -1720,14 +1740,17 @@ Al ojo humano, queda claro que las fronteras y regiones de confianza que "dibuja
 Consideraremos a continuación datasets sintéticos embebidos en 3 dimensiones ($D = 3$), con variedades de dimensión intrínseca  $1$ (`eslabones, helices`) y $2$ (`pionono, hueveras`).
 
 === Eslabones
-#image("img/eslabones_0-scatter.svg")
+#figure(
+  image("img/eslabones-scatter-3d.svg"),
+  caption: flex-caption([TODO: copete largo eslabones scatter 3D], [TODO: copete corto eslabones scatter 3D]),
+)
 
 // TODO: poner scatter 3D en highlight por dataset para $D=3$
 #highlights_figure("eslabones_0")
 
 Toda la familia de estimadores de densidad por núcleos alcanza un $R^2 approx 1$, y aun Naive Bayes tiene una _performance_ aceptable: con este nivel de ruido blanco en el sampleo, el "margen de separación" entre ambos anillos es tan amplio que la tarea resulta trivial.
 
-Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ - no así el de exactitud - revela un fuerte outlier de $approx 0.65$ para la semilla $2411$, que no corresponde a una parametrización particularmente extraña.
+Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ - no así el de exactitud - revela un fuerte outlier de $R^2_#fkdc 0.65, thin R^2_#kdc = 0.9$ para la semilla $2411$.
 
 #tabla_csv(
   "data/eslabones_0-params-2411.csv",
@@ -1735,18 +1758,25 @@ Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ - no así el de e
   short-caption: [Parámetros de #fkdc en `eslabones_0`, $s=2411$],
 )
 
+La semilla resultó adversa para ambos #footnote[Aún $R^2_#kdc = 0.91$ es un mal score _relativo a_ el IQR de rendimiento de #kdc en el dataset], pero particularmente para #fkdc. #gbt queda técnicamente a más de $1 sigma$ del $R^2$ medio de #fkn, pero en la práctica, ofrece un $R^2$  excelente _sin ningún outlier_.
+
 ==== Hélices
-#image("img/helices_0-scatter.svg")
-Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la misma dirección, una de ellas empezando a "media altura" entre dos brazos consecutivos de la otra. El dataset es particularmente desafiante para #slr, #logr, y Naive Bayes, que no logran diferenciarse en nada de un clasificador trivial que prediga siempre la misma clase.
 
+Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la misma dirección, una de ellas empezando a "media altura" entre dos brazos consecutivos de la otra. El dataset es particularmente desafiante para Naive Bayes y regresión logística, que no logran diferenciarse en nada de un clasificador trivial que prediga siempre la misma clase.
 #highlights_figure("helices_0")
-Que a #gnb le resulte complejo no es sorprendente, ya que las distribuciones marginales son prácticamente idénticas:
+#obs[La performance de #logr es mala únicamente porque se aplicó ciegamente a los datos. La primer tarea cuando se busca inferir la geometría de unos datos es graficarlos, y al observar la hélice uno puede parametrizarla de manera natural como $f(x, y, z) = ("ángulo, velocidad radial, velocidad vertical") ,$ entrenar sobre esta _representación_ y obtener un $R^2 approx 1$.
+  Al final, "todo algoritmo funciona cuando los datos son buenos" --- la ventaja de algunos es que no hace falta ponerle demasaida cabeza a "masajearlos" hasta que "son buenos". Que a #gnb le resulte complejo no es sorprendente, ya que las distribuciones marginales son prácticamente idénticas.
+#figure(
+    image("img/helices-pairplot.svg", width: 16em),
+  caption: flex-caption([TODO: copete largo hélices pairplot], [TODO: copete corto hélices pairplot]),
+)
+]
+La clasificación dura con estimación de densidad por núcleos --- con distancia de Fermat o sin ella --- resulta ser superior a todas las alternativas en términos de exactitud --- ligeramente --- y $R^2$ --- por mucho. Encima de ello, #fkdc es todavía significativamente mejor en $R^2$ que #kdc por casi 5 puntos porcentualessalvo y consistentemente entoda las semillas salvo una particularmente negativa:
 
-#image("img/helices-pairplot.svg")
-
-La clasificación dura con estimación de densidad por núcleos --- con distancia de Fermat o sin ella --- resulta ser superior a todas las alternativas en términos de exactitud, pero encima de ello, #fkdc saca una diferencia significativa en términos de $R^2$, que ya es visible en un boxplot pero se ve aún más claramente en el gráfico de dispersión de los $R^2$ alcanzados por semilla:
-
-#image("img/helices_0-r2-fkdc-vs-kdc.svg")
+#figure(
+  image("img/helices_0-r2-fkdc-vs-kdc.svg", height: 16em),
+  caption: flex-caption([TODO: copete largo hélices R² fkdc vs kdc], [TODO: copete corto hélices R² fkdc vs kdc]),
+)
 
 En prácticamente todas las semillas el $R^2$ de #fkdc es estrictamente mejor al "control" de #kdc. ¿Con qué parámetros sucede?
 
@@ -1756,92 +1786,102 @@ En prácticamente todas las semillas el $R^2$ de #fkdc es estrictamente mejor al
   short-caption: [Parámetros de #fkdc vs. #kdc en `helices_0`],
 )
 
-Ordenados por $Delta_(R^2) = R^2_#fkdc - R^2_#kdc$, la semilla con mayor diferencia a favor del resultado con distancia de Fermat corresponde a un no-trivial $(alpha = 1.25, h = 0.006)$ que resulta en un $Delta_(R^2) = 0.237 (= 0.953 - 0.716)$ puntos _en términos absolutos_#footnote[I.e., "un montón".] por encima de #kdc con $h = 0.208$, usando una ventana unas 35 veces más ancha.
-Salta a la vista también que tales parametrizaciones tienen muy variada _performance_ _out-of-sample_, pues para $s = 8096$ _también_ se eligió $(alpha = 1.25, h = 0.006)$ contra $h_#kdc = 0.143 approx 25 h_#fkdc$ y se dio la segunda diferencia _negativa_ más amplia en contra de #fkdc ($Delta_(R^2) = -0.098$).
+Ordenados por $Delta_(R^2) = R^2_#fkdc - R^2_#kdc$, la semilla con mayor diferencia a favor del resultado con distancia de Fermat corresponde a $mu = (alpha = 1.25, h = 0.006)$ --- una hiperparametrización no-trivialmente reducible a #kdc --- que resulta en un $Delta_(R^2) = 0.237 (= 0.953 - 0.716)$ puntos _en términos absolutos_#footnote[I.e., "un montón".] por encima de #kdc con $h = 0.208$, usando una ventana unas 35 veces más ancha.
+Salta a la vista también que tales parametrizaciones tienen muy variado rendimiento por fuera del conjunto de entrenamiento #footnote[también OOS --- _out-of-sample_--- por sus siglas en inglés.] , pues para $s = 8096$ se eligió _la misma_ $mu$, contra $h_#kdc = 0.143 approx 25 h_#fkdc$ y se dio la segunda diferencia más amplia _en contra_ de #fkdc ($Delta_(R^2) = -0.098$).
 
-Gracias a la regla de parsimonia sabemos, por ejemplo, que para $s = 1188$ --- con el segundo mayor $Delta_(R^2) = 0.227$ --- no hay parametrizaciones con $alpha < 2.5$ a menos de 1SD de la mejor parametrización en _test_, cuyo $alpha = 3$.
+Se podría argumentar en contra de #fkdc que $alpha = 1.25 approx 1$, pero al revisar el comportamiento de la regla de parsimonia,  encontramos por ejemplo que para $s = 1188, thin Delta_(R^2) = 0.227$  la parametrización óptima fue con $nu = h = 10^(-3), alpha=3$ y todas las hiperparametrizaciones  a menos de $1 sigma$ de $nu$ tenían $alpha >= 2.5$, lejos de 1.
 
-#image("img/helices_0-1188-fkdc-bandwidth-alpha-loss_contour.svg")
-Nótese la mínima isla alrededor de $alpha=3; h = 0,000562$.
+Más aún, en unos cuantos casos --- $s in {1188, 1182, 2411}$ --- en que $alpha_#fkdc = alpha_#kdc = 1$, #fkdc todavía rinde un poco mejor que #kdc al elegir anchos de banda mucho más pequeños. Ya hemos visto que aún ligeras diferencias en la ventana $h$ podían llevar a mejoras en $R^2$ a favor de #fkdc por el detalle fino de la búsqueda en grilla que se definió. Por ejemplo,
 
+$ s = 1182, quad Delta_R^2=0.111, quad alpha_#fkdc = alpha_#kdc = 1, quad h_#fkdc / h_#kdc approx 14.3 $
 
-Lo tercero es que en unos cuantos casos en que $alpha_#fkdc = alpha_#kdc = 1$, #fkdc todavía performa un poco mejor que #kdc al elegir anchos de banda mucho más pequeños. Ya hemos visto que aún ligeras diferencias en la ventana $h$ podían llevar a mejoras en $R^2$ a favor de #fkdc por el detalle fino de la búsqueda en grilla que se definió. Sin embargo, aquí se encuentran sustanciales diferencias de $R^2$ como la tercera más alta ($Delta_R^2=0.111, alpha_#fkdc = alpha_#kdc = 1; h_#fkdc / h_#kdc approx 14)$, o la séptima ($Delta_R^2=0.111, h_#fkdc / h_#kdc approx 17$), que cuesta explicar como una ligera discrepancia en la grilla de $h$. Nuestra hipótesis es que el dominio ampliado de hiperparámetros de #fkdc junto con la regla de parsimonia trabajan en tándem:
+que cuesta explicar como una ligera discrepancia en la grilla de $h$.
 
-#image("img/r1sd+alpha.svg")
-
-Nuestro control, #kdc encuentra durante su entrenamiento y posterior testeo con R1SD la solución $h=0.143$ (cf. posición $(1)$ del diagrama). Presumiblemente, la varianza de la performance en testeo para dicha solución fue tal que ningún punto en el entorno de $h=0.01$ (cf. $(3)$) estaba a menos de 1SD de $(1)$. Cuando entrenamos #fkdc y ampliamos el dominio de la parametrización a $RR^2$ con $(h, alpha)$, la validación cruzada alcanza un máximo en $alpha=3; h = 0,000562$ (cf. $(2)$). Esta nueva solución, potencialmente "sobreparametrizada" con un $R^2_"train" = ; R^2_"test" = 0.988$, también tiene más varianza en sus resultados a través de cada pliego de CV, por lo que de repente ahora la cota inferior para ser considerada dentro de $cal(h)$ de @r1sd se vuelve más permisiva, en tanto se contrae menos por el aumento en el $R^2$ óptimo que lo que se relaja por el incremento en su varianza.
-En ese rango ampliado de parametrizaciones "suficientemente buenas", ahora sí se encuentra $alpha=1; h=0.01$, y la CV "se mueve" de $(2) " a " (3)$, encontrando un óptimo en el espacio reducido de #kdc que este no llegó a considerar.
-
-De hecho, es este fenómeno --- que se repite con las semillas `4286, 1182, 6610, 2411, 8527, 7060, 8591`, todas con $alpha <= 1.25$ --- el que termina desplazando la mediana de $R^2$ hasta $0.97$, por fuera de la "caja"#footnote[El rango intercuartil en el _boxplot_.] de $R^2_#kdc$.
 
 #figure(
-  image("img/helices_0-boxplot-r2-zoomed.svg"),
+  columns(2, gutter: .5em)[
+    #image("img/helices_0-1188-fkdc-bandwidth-alpha-loss_contour.svg")
+    #colbreak()
+    #image("img/r1sd+alpha.svg")
+  ],
   caption: flex-caption(
-    [$R^2$ de los clasificadores basados en densidad por núcleos en `helices_0` (detalle ampliado).],
-    [$R^2$ kernel-based en `helices_0` (zoom)],
+    [Superficie de pérdida de #fkdc en `helices_0`.
+      (izq., $s=1188$) Nótese la mínima "isla" alrededor de $h approx 10^(-3), alpha = 3$.(der., $s=1182$). #kdc encuentra (1) al entrenar, #fkdc se sale de $alpha=1$ y encuentra (2). La regla de parsimonia encuentra (3), de vuelta con $alpha = 1$.],
+    [Superficies de pérdida para #fkdc en `helices_0`],
+  ),
+) <alpha-ne-1>
+
+Nuestra hipótesis es que el dominio ampliado de hiperparámetros de #fkdc junto con la regla de parsimonia trabajan en tándem:
+
+Durante el entrenamiento, #kdc encuentra la solución $h_#kdc=0.143$ (cf. posición $(1)$ de @alpha-ne-1, der.) ceñido al perfil en que $alpha = 1$ --- el borde inferior de la superficie. Presumiblemente, la varianza de la performance en testeo para dicha solución fue tal que ningún punto en el entorno de $h_#fkdc=0.01$ (cf. pos. $(3)$) estaba a menos de $1 sigma$ del _score_ en $(1)$. Cuando entrenamos #fkdc y ampliamos el dominio de la parametrización a toda la superficie computada, el entrenamiento por CV alcanza un máximo en $alpha=3, h = 0,000562$ (cf. $(2)$). Esta nueva solución tiene más varianza en sus resultados a través de cada pliego de CV, por lo que $hat(s)(mu_#fkdc) > hat(s)(mu_#kdc)$ y, la cota inferior de la R1SD de @r1sd será más laxa. En ese rango ampliado de hiperparametrizaciones "suficientemente buenas" se encuentra $alpha=1, h=0.01$ --- la solución de $(3)$ que en entrenamiento #kdc vio pero ignoró.
+
+=== Efecto de #sfd en las vecindades óptimas de #kn
+
+En el estimador de densidad en variedades de  @loubesKernelbasedClassifierRiemannian2008, al núcleo $K$ se lo evalúa sobre
+$frac(d(x_0, X_i), h, style: "horizontal")$, y nuestra implementación de #fkdc estima $hat(d) = D_(Q_i, alpha)(XX)$. Si resultase que $D_(Q_i, alpha) prop ||dot||$ --- la distancia de Fermat es proporcional a la euclídea) --- podemos escribir
+
+$
+  (op(D_(Q_i, alpha))(x_0, X_i))/ h approx (c norm(x_0 - X_i))/ h = norm(x_0 - X_i) / h'
+$
+con $h' = h slash c$ y efectivamente los parámetros $(alpha, h)$ se solapan en sus funciones. Lamentablemente, sabemos que localmente esto _es_ cierto: en un vecindario de $x_0$, la densidad $f$ de $X$ es #math.approx constante, así que la distancia "macroscópica" $cal(D)_(f,beta)$, y el costo de integrarla al respecto de un sendero será proporcional a la longitud --- euclídea --- del mismo. Nuestra aproximación #sfd de $cal(D)_(f,beta)$ heredará las mismas características.
+
+// TODO: averiguar de dónde sale este hecho sobre k_n opt, optima en qué sentido
+La serie $k_n$ que minimiza el error cuadrátrico medio cuando $n -> oo$ es $k prop n^(d/(d+4))$, que para nuestros tamaños muestrales de CV resulta en $320^(3/(3+4)) =320^(3/7) approx 12$. Es decir que tomando #math.approx decena de vecinos, alcanzaría para entrenar un clasificado #kn decente --- #fkn podrá ser mejor con $k_#fkn >> 12$, pero no mejor que #kn con $k_#kn approx 12$.  le basta con conseguir un buen resultados en el primer  Pues bien, cuando miramos el mejor rendimiento en test por `n_neighbors` para #kn y #fkn, vemos que elegir un $alpha$ variable le permite a #fkn mantener una óptima performance en términos de log-verosimilitud #footnote[y por ende $R^2$ también]. para _cualquier_ valor de $k$ #footnote[`n_neighbors` en la parametrización de `scikit-learn`.]
+
+// TODO: esto es realmene el _mean_ test score? podemos hacer el mismo gráfico con una linea por semilla y clf, todas con menor alpha, para ver si la rutas de fkn son siempre mejores que las de kn?
+#figure(
+  image("img/helices_0-fkn_kn-mean_test_score.svg", height: 12em),
+  caption: flex-caption(
+    [TODO: Log-verosimilitud máxima durante el entrenamiento de lso clasificadores de veciones más cercanos sobre `helices_0`],
+    [$cal(l)$ en entrenamiento para #fkn y #kn en `helices_0`],
   ),
 )
 
-==== Efecto de #sfd en las vecindades óptimas de #kn
-
-Si recordamos $hat(f)_(K,N)$ según Loubes & Pelletier, al núcleo $K$ se lo evalúa sobre
-$
-  (d (x_0, X_i)) / h, quad d = D_(Q_i, alpha)
-$
-
-Lo que $alpha$ afecta a $hat(f)$ vía $d$, también se puede conseguir vía $h$.
-
-Si $D_(Q_i, alpha) prop ||dot||$ (la distancia de Fermat es proporcional a la euclídea), podemos escribir
-
-$
-  D_(Q_i, alpha) (x_0, X_i)) approx (c_alpha norm(dot))/ h = norm(x_0 - X_i) / h'
-$
-con $h' = h slash c_alpha$ y efectivamente los parámetros se solapan en sus funciones. Lamentablemente, sabemos que localmente esto _es_ cierto. Por ejemplo, la serie $k_n$ que minimiza el error cuadrátrico medio cuando $n -> oo$ es $k prop n^(d/(d+4))$, que para nuestro problema resulta en $(400 * 4/5 )^(3/(3+4)) =320^(3/7) approx 12$. Pues bien, cuando miramos el mejor rendimiento en test por `n_neighbors` para #kdc y #fkdc, vemos que elegir $alpha$ le permite a #fkdc mantener una óptima performance en términos de "score" ($-cal(l)$) para _cualquier_ valor de $k$ #footnote[`n_neighbors` en la parametrización de `scikit-learn`.]
-
-
-#image("img/helices_0-fkn_kn-mean_test_score.svg")
-
-Por otra dirección, llegamos a la misma conclusión que antes: si un clasificador depende de distancias extremadamente locales, salvo que la muestra esté muy escasamente sampleada, el efecto de la distancia de Fermat aprendida de los datos no será muy notorio. // TODO: en trabajos posteriores estudiar efecto de alpha con $n$ fijo.
+Llegamos a la misma conclusión que antes por otra dirección: si el espacio están tan biem sampleado que el clasificador depende de vecindarios muy pequeños #footnote[vía $k$ en $k$-vecinos-más-cercanos, $h$ en KDE] para estimar densidades el efecto de reemplazar la distancia euclídea por la distancia de Fermat aprendida de los datos no será muy notorio.
 
 === Pionono
 
-#image("img/pionono_0-scatter.svg")
+#figure(
+  image("img/pionono-scatter-3d.svg"),
+  caption: flex-caption([TODO: copete largo pionono scatter 3D], [TODO: copete corto pionono scatter 3D]),
+)
 #highlights_figure("pionono_0")
 
-Este dataset es "clásico" para testear algoritmos de _clustering_ no-lineales @sapienzaWeightedGeodesicDistance2018, así que decidimos incluirlo en la serie experimental como _benchmark_. El trabajo citado no hace _clasificación_ con densidad por núcleos, sino _clustering_ basado en el algoritmo $k-$medoides, pero provee un gráfico de exactitud #footnote[presuntamente fijando $k=4$ y comparando las asignaciones contra los clusters verdaderos] que compara con la obtenida por otro "primo" algorítmico ya citado, Isomap. Los autores encuentran que
-#quote[existe un amplio rango de $d$ #footnote[$alpha$ en nuestra notación] para los que la $d-$ distancia se porta significativamente mejor que Isomap. [...] para la exactitud esta región está limitada a $1.7 <= d <= 2.2$
+Este dataset "clásico" para testear algoritmos de _clustering_ no-lineales fue analizado ya con #sfd en @sapienzaWeightedGeodesicDistance2018, así que decidimos incluirlo en la serie experimental. El trabajo citado tiene otro objetivo ---  _clustering_ basado en el algoritmo $k-$medoides --- y provee un gráfico de exactitud que compara con la obtenida por Isomap. Los autores encuentran que
+#quote[existe un amplio rango de $d$ #footnote[$alpha$ en nuestra notación] para los que la $d-$distancia se porta significativamente mejor que Isomap. [...] para la exactitud esta región está limitada a $1.7 <= d <= 2.2$
 ]
 
-Por nuestra parte, en un ambiente ligeramente distinto, no encontramos diferencia significativa con la _performance_ "cruda" de #kdc, que a su vez no se distingue de los métodos estado-del-arte en exactitud (#svc) ni $R^2$ (#gbt).
+Con un objetivo distinto --- _clasificación_ con DBDs --- no encontramos diferencia significativa entre #kdc y #fkdc, que a su vez rinden tan bien como el estado-del-arte en exactitud (#svc) y $R^2$ (#gbt).
+
+// TODO: solamente dan igual las performances de fkdc/kdc, o ademas fkdc tambien elige alpha = 1 casi siempre?
 
 === Hueveras ($D=3, d=2, k=2$)
 
-Este dataset sumamente sintético consiste de dos clases con idénticas distribuciones pero signo opuesto en la dirección de la coordenada vertical#footnote[Cf. `fkdc/datasets.py` para ver el detalle de las fórmulas.], pero que se puede conceptualizar aproximadamente bien imaginando dos cartones de maple de huevos, uno invertido respecto al otro, intentando ocupar el mismo lugar en el espacio.
-#image("img/hueveras_0-scatter.svg")
+Este dataset sintético consiste de dos clases con idénticas distribuciones pero signo opuesto en la dirección de la coordenada vertical $ z = plus.minus(sin(x) times sin(y)) $ y se puede imaginar aproximadamente bien como cartones de maple de huevos, uno invertido respecto al otro, intentando ocupar el mismo lugar en el espacio.
 
-La exactitud de la familia $cal(K)={#fkdc, #kdc, #fkn, #kn}$ es competitiva contra la de #svc, que parece ser ligera y significativamente mejor. En términos de $R^2$, la familia $cal(K)$ es la única en alcanzar valores no-nulos, y #sfd parece resultar en mejoras significativas, sobre todo para #fkn.
 #highlights_figure("hueveras_0")
 
+// TODO: Mencionar la familia cal(K) antes y acá simplemente decir $cal(K)$
+La exactitud de la familia de estimadores basados en densidad por núcleos --- $cal(K)={#fkdc, #kdc, #fkn, #kn}$ --- es competitiva contra la de #svc, que parece ser ligera y significativamente mejor. En términos de $R^2$, la familia $cal(K)$ es la única en alcanzar valores no-nulos, y #sfd parece resultar en mejoras significativas al menos para #fkn.
 
-En efecto, observando los parámetros comparados de #fkdc v. #kdc, se repite que
-- la mejor hiperparametrización $(alpha_"opt", h_"opt")$ en la grilla de CV tiene $alpha > 1$,
-- hay una parametrización $(alpha_0, h_0)$ con $alpha_0 =1$ que cumple la regla de un desvío estándar,
-- con $h_0$ "significativamente distinto" a $h_"opt"$#footnote[ Por ello nos referimos a que durante el entrenamiento de #kdc existió un $h_"alt" approx h_0$, que la R1SD + #kdc _no_ eligió, y la R1SD + #fkdc sí.].
+
+En efecto, observando los parámetros comparados de #fkdc v. #kdc, se repite que la hiperparametrización $(alpha_"opt", h_"opt")$ que maximiza $R^2$ en entrenamientotiene tiene $alpha > 1$, pero existe otra  $(alpha_(1 sigma), h_(1_sigma))$ con $alpha_(1 sigma) =1$   y $h_(1_sigma)$ "significativamente distinto" a $h_"opt"$ que cumple la regla de parsimonia.  Las tres semillas en la que #fkdc saca más ventaja sobre #kdc tiene por óptimos
+// TODO: reemplazar tabla completa por únicamente las tres primeras columnas de la tabla: en cada columna que se repita tres veces el mismo valo, mostrarlo una sola vez en la fila del medio: delta_r^2, alhpa_fkdc, h_fkdc, h_kdc. no mostrarla columna de score_alpha_test
 #tabla_csv(
   "data/hueveras_0-parametros_comparados-kdc.csv",
   caption: [Parámetros comparados de #fkdc vs. #kdc en `hueveras_0`, ordenados por $Delta_(R^2)$.],
   short-caption: [Parámetros de #fkdc vs. #kdc en `hueveras_0`],
 )
 
-Esta "sinergia" virtuosa no alcanza para explicar lo que observamos del efecto de la distancia de Fermat en #kn:
+En #fkn, la distancia de Fermat parece ofrecer una diferencia significativa en $R^2$ sobre #kn, con varias repeticiones del experimento donde aún con regla de parsimonia, #fkn y #kn eligen _la misma cantidad_ de vecinos pero $alpha_#fkn > 1$:
 
+// TODO: filtrar lista a únicamente los casos con k_fkn = k_kn, dejar delta_r2, k=k_fkn=k_kn, alpha_fkn.
 #tabla_csv(
   "data/hueveras_0-parametros_comparados-kn.csv",
-  caption: [Parámetros comparados de #fkn vs. #kn en `hueveras_0`, ordenados por $Delta_(R^2)$.],
-  short-caption: [Parámetros de #fkn vs. #kn en `hueveras_0`],
+  caption: [Parámetros comparados de #fkn vs. #kn en `hueveras_0`, con idéntico $k = k_#fkn = k_#kn$. Nótese que $alpha_#fkn > 1$ y $Delta_(R^2) > 0$ en casi todas, indicando una ganancia neta de usar #sfd.],
+  short-caption: [$Delta_R^2= R^2_#fkn - R^2_#kn$ en `hueveras_0` con $k_#fkn = k_#kn, alpha_#fkn > 1$],
 )
 
-A primera vista, se observan unas cuantas semillas para las cuales la elección de un $alpha > 1$ resultó en una diferencia de $R^2$ bastante positiva. Pero mejor aún, en 5 de 25 semillas ($s in {7074, 7060, 8443, 1434, 1193}$), #fkn y #kn maximizaron el objetivo con la _misma_ cantidad de vecinos, ¡y sin embargo #fkn eligió un $alpha > 1$!
 
 = Conclusiones
 
@@ -1921,36 +1961,51 @@ Sería interesante entonces investigar si existen condiciones reales en las que 
 #bibliography("references.bib", style: "harvard-cite-them-right")
 
 
-= Apéndice A: Fichas de resultados por dataset <apendice-a>
+= Anexo: Fichas de resultados para otros datasets <apendice>
 
+A continuación se presentan las fichas de resultados para los 10 datasets no discutidos en el cuerpo principal de la tesis. Cada ficha incluye el _scatterplot_ del dataset, una tabla resumen con la mediana de $R^2$ y exactitud por clasificador, y _boxplots_ de ambas métricas.
 
-== Arenero
+== Datasets 15-dimensionales
 
-// TODO: revisar forma de citar bibliografía, corregir autores y formato en textos enciclopédicos y otros
-#let best(..contents) = {
-  contents.pos().map(content => table.cell(fill: rgb("#7cff9dc9"), content))
-}
+Los cuatro datasets tridimensionales del §5.3 se embebieron en $RR^15$ añadiendo 12 dimensiones de ruido gaussiano $cal(N)(0, 1)$ independientes.
 
-#let bad(..contents) = {
-  contents.pos().map(content => text(fill: black.transparentize(70%), content))
-}
-
-#show table.cell.where(y: 0): set text(weight: "bold")
-#let na = align(center)[--]
-#table(
-  columns: 3,
-  stroke: none,
-  align: (x, y) => if y == 0 { center } else { if x == 0 { right } else { top } },
-  table.header[clf][$R^2$][exac],
-  table.hline(stroke: 1pt),
-  table.vline(x: 1, start: 1, stroke: .5pt),
-  [#fkdc], [1.0], [1.0],
-  [#kdc], [1.0], [1.0],
-  [#gnb], [1.0], [1.0],
-  [#kn], [1.0], [1.0],
-  [#fkn], [1.0], [1.0],
-  [#logr], [0.99994], [1.0],
-  ..best([#slr], [0.99952], [1.0]),
-  ..bad([#gbt], [0.9995], [1.0]),
-  ..bad([#svc], [#na], [1.0]),
+#figure(
+  image("img/anexo-15d-delta-r2.svg"),
+  caption: flex-caption(
+    [Caída de $R^2$ (mediana) al agregar 12 dimensiones de ruido a los datasets 3D. Valores negativos indican peor $R^2$ en 15D.],
+    [Caída de $R^2$: 3D vs. 15D],
+  ),
 )
+
+#highlights_figure("pionono_12")
+#highlights_figure("eslabones_12")
+#highlights_figure("helices_12")
+#highlights_figure("hueveras_12")
+
+== Datasets multiclase reales
+
+#figure(
+  image("img/anexo-multik-fkdc-vs-kdc.svg"),
+  caption: flex-caption(
+    [$R^2$ por semilla de #fkdc vs. #kdc en los 4 datasets multiclase reales.],
+    [$R^2$ de #fkdc vs. #kdc en datasets multiclase],
+  ),
+)
+
+#highlights_figure("iris")
+#highlights_figure("vino")
+#highlights_figure("pinguinos")
+#highlights_figure("anteojos")
+
+== Datasets de alta dimensión
+
+#figure(
+  image("img/anexo-hd-fkdc-vs-kdc.svg"),
+  caption: flex-caption(
+    [$R^2$ por semilla de #fkdc vs. #kdc en `digitos` ($D = 64$) y `mnist` ($D = 784$).],
+    [$R^2$ de #fkdc vs. #kdc en alta dimensión],
+  ),
+)
+
+#highlights_figure("digitos")
+#highlights_figure("mnist")

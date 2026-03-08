@@ -1,0 +1,20 @@
+{
+    "dataset": "vino",
+    "summary": "clf,accuracy,r2\ngbt,0.9663,0.903\nslr,0.9775,0.8991\ngnb,0.9551,0.8846\nlr,0.9101,0.6885\nfkn,0.7079,0.4568\nkn,0.7079,0.4568\nfkdc,0.6854,0.4286\nkdc,0.6517,0.4001\nsvc,0.8989,\n",
+    "best": "gbt",
+    "bad": [
+        "gnb",
+        "lr",
+        "fkn",
+        "kn",
+        "fkdc",
+        "kdc"
+    ],
+    "excluded": [
+        "lr",
+        "fkn",
+        "kn",
+        "fkdc",
+        "kdc"
+    ]
+}

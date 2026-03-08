@@ -1,0 +1,21 @@
+{
+    "dataset": "pinguinos",
+    "summary": "clf,accuracy,r2\nslr,0.9942,0.9639\nlr,0.9825,0.9634\ngbt,0.9766,0.9164\ngnb,0.9532,0.8583\nfkn,0.7602,0.4977\nkn,0.7602,0.4971\nfkdc,0.731,0.4227\nkdc,0.731,0.4025\nsvc,0.9591,\n",
+    "best": "slr",
+    "bad": [
+        "gbt",
+        "gnb",
+        "fkn",
+        "kn",
+        "fkdc",
+        "kdc"
+    ],
+    "excluded": [
+        "gbt",
+        "gnb",
+        "fkn",
+        "kn",
+        "fkdc",
+        "kdc"
+    ]
+}

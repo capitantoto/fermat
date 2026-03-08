@@ -1,0 +1,23 @@
+{
+    "dataset": "eslabones_12",
+    "summary": "clf,accuracy,r2\ngbt,0.985,0.9246\ngnb,0.895,0.7535\nfkn,0.76,0.2633\nkdc,0.7625,0.2586\nfkdc,0.7575,0.2393\nkn,0.7575,0.2346\nlr,0.675,0.2069\nslr,0.6775,0.2019\nsvc,0.79,\n",
+    "best": "gbt",
+    "bad": [
+        "gnb",
+        "fkn",
+        "kdc",
+        "fkdc",
+        "kn",
+        "lr",
+        "slr"
+    ],
+    "excluded": [
+        "gnb",
+        "fkn",
+        "kdc",
+        "fkdc",
+        "kn",
+        "lr",
+        "slr"
+    ]
+}
