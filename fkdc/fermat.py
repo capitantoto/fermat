@@ -56,6 +56,14 @@ class SampleFermatDistance:
             lbl: fermat_muestral(Q[self.grupos == lbl], alpha) for lbl in self.etiquetas
         }
 
+    def __setstate__(self, state):
+        # Compatibilidad con pickles anteriores a la traducción al español
+        if "groups" in state and "grupos" not in state:
+            state["grupos"] = state.pop("groups")
+        if "labels" in state and "etiquetas" not in state:
+            state["etiquetas"] = state.pop("labels")
+        self.__dict__.update(state)
+
     def _distancia_muestral(self, X):
         """Distancia de cada punto en X a cada punto en Q, vía la muestra."""
         distancias_muestrales = -np.ones((X.shape[0], self.N))
@@ -107,7 +115,7 @@ class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
 
     def fit(self, X, y):
         self.classes_ = unique_labels(y)
-        self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha, groups=y)
+        self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha, grupos=y)
         self.classifier_ = KNeighborsClassifier(
             n_neighbors=self.n_neighbors,
             weights=self.weights,

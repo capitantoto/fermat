@@ -1446,14 +1446,20 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
   )
 }
 
+#let wide_figure(width: 140%, body, ..args) = figure(
+  box(width: width, body),
+  ..args,
+)
+
 #let highlights_figure(dataset, height: 8em, width: 140%) = {
   let highlights = json("data/" + dataset + "-r2-highlights.json")
   let tabla_resumen = highlights_table(highlights)
 
-  figure(
+  wide_figure(
+    width: width,
     table(
-      columns: 2,
-      rows: 2,
+      columns: 4,
+      rows: 1,
       stroke: 0pt,
       image("img/" + dataset + "-scatter.svg"), text(size: 8pt)[#tabla_resumen],
       image("img/" + dataset + "-r2-boxplot.svg"), image("img/" + dataset + "-accuracy-boxplot.svg"),
@@ -1461,11 +1467,6 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
     caption: flex-caption[_Scatterplot_, tabla resumen y _boxplots_ de $R^2$ y _accuracy_ en el _dataset_ #raw(dataset)][Resumen de resultados para #raw(dataset)],
   )
 }
-
-#let wide-figure(width: 140%, body, ..args) = figure(
-  box(width: width, body),
-  ..args,
-)
 
 
 #let euc = $norm(thin dot thin)_2$
@@ -1506,7 +1507,7 @@ Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) apren
 Una inspección ocular a las fronteras de decisión revela las limitaciones de distintos algoritmos, siendo el caso de las espirales el más vistoso y pedagógico. #logr y #slr solo pueden dibujar fronteras "lineales", y como ninguna frontera lineal que corte la muestra logra dividirla en dos regiones con densidades de clase realmente diferentes, el algoritmo falla. #gnb falla de manera análoga, aunque su problema es otro - no lidia bien con distribuciones con densidades marginales muy similares.
 
 #let clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb")
-#wide-figure(width: 160%,
+#wide_figure(width: 160%,
   grid(columns: 3, gutter: 4pt, ..clfs.map(clf => image(
     "img/espirales_lo-" + clf + "-decision_boundary.svg",
   ))),
@@ -1539,7 +1540,7 @@ Por último, observamos las fronteras de #svc, que no tienen gradiente de color 
 Según la #link("https://dle.rae.es/ablaci%C3%B3n")[RAE], "Del lat. tardío ablatio, -ōnis 'acción de quitar'." --- ¿qué se pierde en términos de $R^2$ al _no_ usar #sfd en estos algoritmos? Sirvan para concentrar la atención en esta diferencia, los gráficos de dispersión del $R^2$ alcanzado en $XX_"test"$ para #kn y #kdc con y sin distancia de Fermat, en las #reps repeticiones de cada Tarea.
 
 #let curvas = ("lunas", "circulos", "espirales")
-#wide-figure(
+#wide_figure(
   grid(
     columns: (auto, 1fr, 1fr),
     gutter: 4pt,
@@ -1584,7 +1585,7 @@ Ahora bien, esto es solo en _un_ dataset, con _una_ semilla específica. ¿Se re
 
 #let semillas = (7354, 8527, 1188)
 
-#wide-figure(width: 150%,
+#wide_figure(width: 150%,
   grid(
     columns: (auto, 1fr, 1fr, 1fr),
     gutter: 4pt,
@@ -1665,7 +1666,7 @@ Consideremos ahora los mismos datasets que hasta ahora, pero muestreando las obs
 
 $ sigma_"lunas" = 0.5 quad sigma_"circulos" = 0.2 quad sigma_"espirales" = 0.2 quad. $
 
-#wide-figure(
+#wide_figure(
   grid(columns: 3, gutter: 4pt,
     image("img/lunas_hi-scatter.svg"),
     image("img/circulos_hi-scatter.svg"),
@@ -1695,7 +1696,7 @@ En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" 
 
 El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los estimadores, pero los métodos basados en densidad por núcleos parecen sufrirlo particularmente, aunque solo sea porque "caen desde más alto", a un nivel de rendimiento similar al de otros métodos.
 
-#wide-figure(
+#wide_figure(
   grid(
     columns: 3, gutter: 4pt,
     image("img/lunas-caida_r2.svg"),
@@ -1713,7 +1714,7 @@ Por último, veamos las fronteras de decisión de  #fkdc y los más competitivos
 #{
   let hi_clfs = (("fkdc", fkdc), ("gbt", gbt), ("svc", svc))
   let hi_datasets = ("lunas_hi", "circulos_hi", "espirales_hi")
-  wide-figure(width: 160%,
+  wide_figure(width: 160%,
     grid(
       columns: (auto, 1fr, 1fr, 1fr),
       gutter: 4pt,
@@ -1740,10 +1741,6 @@ Al ojo humano, queda claro que las fronteras y regiones de confianza que "dibuja
 Consideraremos a continuación datasets sintéticos embebidos en 3 dimensiones ($D = 3$), con variedades de dimensión intrínseca  $1$ (`eslabones, helices`) y $2$ (`pionono, hueveras`).
 
 === Eslabones
-#figure(
-  image("img/eslabones-scatter-3d.svg"),
-  caption: flex-caption([TODO: copete largo eslabones scatter 3D], [TODO: copete corto eslabones scatter 3D]),
-)
 
 // TODO: poner scatter 3D en highlight por dataset para $D=3$
 #highlights_figure("eslabones_0")
@@ -1841,10 +1838,6 @@ Llegamos a la misma conclusión que antes por otra dirección: si el espacio est
 
 === Pionono
 
-#figure(
-  image("img/pionono-scatter-3d.svg"),
-  caption: flex-caption([TODO: copete largo pionono scatter 3D], [TODO: copete corto pionono scatter 3D]),
-)
 #highlights_figure("pionono_0")
 
 Este dataset "clásico" para evaluar algoritmos de _clustering_ no-lineales fue analizado ya con #sfd en @sapienzaWeightedGeodesicDistance2018, así que decidimos incluirlo en la serie experimental. El trabajo citado tiene otro objetivo ---  _clustering_ basado en el algoritmo $k-$medoides --- y provee un gráfico de exactitud que compara con la obtenida por Isomap. Los autores encuentran que
@@ -1983,7 +1976,7 @@ Dataset sintético bidimensional con tres clases en forma de anteojos ($k = 3$, 
 
 #{
   let clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb")
-  wide-figure(width: 160%,
+  wide_figure(width: 160%,
     grid(columns: 3, gutter: 4pt, ..clfs.map(clf => image(
       "img/anteojos-" + clf + "-decision_boundary.svg",
     ))),

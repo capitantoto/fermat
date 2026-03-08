@@ -170,3 +170,7 @@ def reajustar_parsimoniosamente(cv_results_: dict, ratio_std: float = 1) -> int:
     ]
     by, ascending = map(list, zip(*regularizadores, strict=True))
     return resultados.sort_values(by=by, ascending=ascending).index[0]
+
+
+# Alias para compatibilidad con pickles anteriores a la traducción al español
+refit_parsimoniously = reajustar_parsimoniosamente

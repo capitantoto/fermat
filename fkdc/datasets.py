@@ -282,6 +282,12 @@ class Dataset:
         ds.params = params
         return ds
 
+    def __setstate__(self, state):
+        # Compatibilidad con pickles anteriores a la traducción al español
+        if "labels" in state and "etiquetas" not in state:
+            state["etiquetas"] = state.pop("labels")
+        self.__dict__.update(state)
+
     def __str__(self):
         return f"Dataset('{self.nombre}', n={self.n}, p={self.p}, k={self.k})"
 
