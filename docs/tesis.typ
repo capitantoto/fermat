@@ -80,7 +80,7 @@
 
 #let tabla_csv(path, caption: none, short-caption: none) = {
   let data = csv(path)
-  let scope = (fkdc: fkdc, kn: kn, fkn: fkn, kdc: kdc, lr: logr, svc: svc, lsvc: `LSVC`, gnb: gnb, base: "base")
+  let scope = (fkdc: fkdc, kn: kn, fkn: fkn, kdc: kdc, lr: logr, svc: svc, gnb: gnb, gbt: gbt, slr: slr)
   let headers = data.at(0)
   let rows = data.slice(1)
   let cells = (
@@ -1434,12 +1434,12 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
   )
 }
 
-#let highlights_figure(dataset, height: 8em) = {
+#let highlights_figure(dataset, height: 8em, width: 140%) = {
   let highlights = json("data/" + dataset + "-r2-highlights.json")
   let tabla_resumen = highlights_table(highlights)
 
   figure(
-    box(width: 140%, grid(
+    box(width: width, grid(
       columns: 4, gutter: 4pt,
       image("img/" + dataset + "-scatter.svg", height: height),
       text(size: 8pt)[#tabla_resumen],
@@ -1536,7 +1536,7 @@ Según la #link("https://dle.rae.es/ablaci%C3%B3n")[RAE], "Del lat. tardío abla
     [], align(center)[*#kdc vs. #fkdc*], align(center)[*#kn vs. #fkn*],
     // rows: one per curve
     ..curvas.map(c => (
-      align(right)[#raw(c + "_lo")],
+      rotate(-90deg)[#raw(c + "_lo")],
       image("img/" + c + "_lo-kdc-fkdc-r2-scatter.svg"),
       image("img/" + c + "_lo-kn-fkn-r2-scatter.svg"),
     )).sum(),
@@ -1581,7 +1581,7 @@ Ahora bien, esto es solo en _un_ dataset, con _una_ semilla específica. ¿Se re
     [], ..semillas.map(s => align(center)[*s=#s*]),
     // rows: one per curve
     ..curvas.map(c => (
-      align(right)[#raw(c + "_lo")],
+      rotate(-90deg)[#raw(c + "_lo")],
       ..semillas.map(s =>
         image("img/" + c + "_lo-" + str(s) + "-fkdc-bandwidth-alpha-loss_contour.svg")
       ),
@@ -1690,21 +1690,28 @@ El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los 
 
 
 Por último, veamos las fronteras de decisión de  #fkdc y los más competitivos en términos de $R^2$ (#gbt) y exactitud (#svc):
-#wide-figure(width: 160%,
-  grid(
-    columns: (auto, 1fr, 1fr, 1fr),
-    gutter: 4pt,
-    align: horizon,
-    [], align(center)[*`lunas_hi`*], align(center)[*`circulos_hi`*], align(center)[*`espirales_hi`*],
-    align(right)[#fkdc], image("img/lunas_hi-fkdc-decision_boundary.svg"), image("img/circulos_hi-fkdc-decision_boundary.svg"), image("img/espirales_hi-fkdc-decision_boundary.svg"),
-    align(right)[#gbt], image("img/lunas_hi-gbt-decision_boundary.svg"), image("img/circulos_hi-gbt-decision_boundary.svg"), image("img/espirales_hi-gbt-decision_boundary.svg"),
-    align(right)[#svc], image("img/lunas_hi-svc-decision_boundary.svg"), image("img/circulos_hi-svc-decision_boundary.svg"), image("img/espirales_hi-svc-decision_boundary.svg"),
-  ),
-  caption: flex-caption(
-    [Fronteras de decisión para #fkdc, #gbt, #svc en regímenes de alto ruido, $s = #plotting_seed$],
-    [Fronteras de decisión en alto ruido],
-  ),
-)
+#{
+  let hi_clfs = (("fkdc", fkdc), ("gbt", gbt), ("svc", svc))
+  let hi_datasets = ("lunas_hi", "circulos_hi", "espirales_hi")
+  wide-figure(width: 160%,
+    grid(
+      columns: (auto, 1fr, 1fr, 1fr),
+      gutter: 4pt,
+      align: horizon,
+      [], ..hi_datasets.map(d => align(center)[*#raw(d)*]),
+      ..hi_clfs.map(((key, label)) => (
+        rotate(-90deg)[#label],
+        ..hi_datasets.map(d =>
+          image("img/" + d + "-" + key + "-decision_boundary.svg")
+        ),
+      )).sum(),
+    ),
+    caption: flex-caption(
+      [Fronteras de decisión para #fkdc, #gbt, #svc en regímenes de alto ruido, $s = #plotting_seed$],
+      [Fronteras de decisión en alto ruido],
+    ),
+  )
+}
 
 Al ojo humano, queda claro que las fronteras y regiones de confianza que "dibuja" #fkdc se alinean "en espíritu" con la forma de las variedades que buscamos descubrir: la "región de indiferencia" gris en `lunas_hi` es una especie de curva casi-cúbica que efectivamente separa las lunas, el "huevo frito" de `circulos_hi` efectivamente tiene máxima confianza a favor de la clase interna en el centro de ambos círculos (y se va deformando progresivamente a medida que nos alejamos de él), y en `espirales_hi` casi logra dibujar la espiral. Sin embargo, esta deseable propiedad no es fácilmente reducible a una métrica en $RR$, y se desdibuja en las comparaciones puramente numéricas.
 
@@ -1713,7 +1720,7 @@ Al ojo humano, queda claro que las fronteras y regiones de confianza que "dibuja
 Consideraremos a continuación datasets sintéticos embebidos en 3 dimensiones ($D = 3$), con variedades de dimensión intrínseca  $1$ (`eslabones, helices`) y $2$ (`pionono, hueveras`).
 
 === Eslabones
-#image("img/eslabones-scatter-3d.svg")
+#image("img/eslabones_0-scatter.svg")
 
 // TODO: poner scatter 3D en highlight por dataset para $D=3$
 #highlights_figure("eslabones_0")
@@ -1729,7 +1736,7 @@ Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ - no así el de e
 )
 
 ==== Hélices
-#image("img/helices-scatter-3d.svg")
+#image("img/helices_0-scatter.svg")
 Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la misma dirección, una de ellas empezando a "media altura" entre dos brazos consecutivos de la otra. El dataset es particularmente desafiante para #slr, #logr, y Naive Bayes, que no logran diferenciarse en nada de un clasificador trivial que prediga siempre la misma clase.
 
 #highlights_figure("helices_0")
@@ -1798,7 +1805,7 @@ Por otra dirección, llegamos a la misma conclusión que antes: si un clasificad
 
 === Pionono
 
-#image("img/pionono-scatter-3d.svg")
+#image("img/pionono_0-scatter.svg")
 #highlights_figure("pionono_0")
 
 Este dataset es "clásico" para testear algoritmos de _clustering_ no-lineales @sapienzaWeightedGeodesicDistance2018, así que decidimos incluirlo en la serie experimental como _benchmark_. El trabajo citado no hace _clasificación_ con densidad por núcleos, sino _clustering_ basado en el algoritmo $k-$medoides, pero provee un gráfico de exactitud #footnote[presuntamente fijando $k=4$ y comparando las asignaciones contra los clusters verdaderos] que compara con la obtenida por otro "primo" algorítmico ya citado, Isomap. Los autores encuentran que
@@ -1810,7 +1817,7 @@ Por nuestra parte, en un ambiente ligeramente distinto, no encontramos diferenci
 === Hueveras ($D=3, d=2, k=2$)
 
 Este dataset sumamente sintético consiste de dos clases con idénticas distribuciones pero signo opuesto en la dirección de la coordenada vertical#footnote[Cf. `fkdc/datasets.py` para ver el detalle de las fórmulas.], pero que se puede conceptualizar aproximadamente bien imaginando dos cartones de maple de huevos, uno invertido respecto al otro, intentando ocupar el mismo lugar en el espacio.
-#image("img/hueveras-scatter-3d.svg")
+#image("img/hueveras_0-scatter.svg")
 
 La exactitud de la familia $cal(K)={#fkdc, #kdc, #fkn, #kn}$ es competitiva contra la de #svc, que parece ser ligera y significativamente mejor. En términos de $R^2$, la familia $cal(K)$ es la única en alcanzar valores no-nulos, y #sfd parece resultar en mejoras significativas, sobre todo para #fkn.
 #highlights_figure("hueveras_0")

@@ -435,7 +435,7 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
 
 == Superficies (o paisajes) de _score_ para `(espirales_lo, 1434)`
 
-#align(center)[#image("img/heatmap-fkdc-espirales_lo-1434-new.svg", height: 110%)]
+#align(center)[#image("img/espirales_lo-1434-fkdc-bandwidth-alpha-loss_contour.svg", height: 110%)]
 
 == Alt-viz: Perfiles de pérdida para `(espirales_lo, 1434)`
 
@@ -468,10 +468,10 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
 == 3D, 2 clases + piononos
 
 #grid(columns: 2, gutter: 1em,
-  image("img/pionono-scatter-3d.svg"),
-  image("img/eslabones-scatter-3d.svg"),
-  image("img/helices-scatter-3d.svg"),
-  image("img/hueveras-scatter-3d.svg"),
+  image("img/pionono_0-scatter.svg"),
+  image("img/eslabones_0-scatter.svg"),
+  image("img/helices_0-scatter.svg"),
+  image("img/hueveras_0-scatter.svg"),
 )
 #pagebreak()
 #align(center)[#image("img/pionono.png", height: 110%)]
