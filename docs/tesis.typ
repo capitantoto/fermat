@@ -909,7 +909,7 @@ Una #link("https://es.wikipedia.org/wiki/Conexi%C3%B3n_af%C3%ADn")[_conexión_] 
 
 Recordemos que toda esta aventura comenzó cuando identificamos que
 + en alta dimensión, la distancia euclídea deja de proveer información útil sobre la similitud entre observaciones de #XX y
-+ de haber una estructura de menor dimensión que represente mejor las observaciones, ésta casi seguro sea fuertemente no-lineal.
++ de haber una estructura de menor dimensión que represente mejor las observaciones, esta casi seguro sea fuertemente no-lineal.
 
 #v(1em)
 
@@ -1069,7 +1069,7 @@ $
 $
 que los autores llaman "distancia de vecino más cercano", $d_bu(N) = D_(r_P)$.
 
-Considérese además la distancia de arista-al-cuadrado #footnote[cuando $P = XX$, ésta es la misma que @vincentDensitySensitiveMetrics2003 propusieran dieciséis años antes]:
+Considérese además la distancia de arista-al-cuadrado #footnote[cuando $P = XX$, esta es la misma que @vincentDensitySensitiveMetrics2003 propusieran dieciséis años antes]:
 $
   d_bu(2)(a, b) = inf_((p_0, dots, p_k)) sum_(i=1)^k norm(p_i - p_(i-1))^2
 $
@@ -1219,7 +1219,7 @@ La unidad de evaluación de los algoritmos a considerar es una `Tarea` #footnote
 - un _dataset_ con el conjunto de $N$ observaciones en $D$ dimensiones repartidas en $K$ clases, $(XX, bu(g))$,
 - un _split de evaluación_ $r in (0, 1)$, que determina las proporción de los datos a incluir en la muestra de entrenamiento $XX_"train"$ ($1 - r$) y la de evaluación $XX_"test"$ ($r$),
 - una _semilla_ $s in [2^32]$ que alimenta el generador de números aleatorios y define determinísticamente cómo realizar la división antedicha y
-- una _métrica de evaluación_ #footnote[en muchos casos ésta coincidirá con la función de pérdida $L$ a minimizar durante el entrenamiento, pero no necesariamente] que resume la "bondad" de las predicciones sobre $XX_"test"$ del clasficador entrenado en $XX_"train"$.
+- una _métrica de evaluación_ #footnote[en muchos casos esta coincidirá con la función de pérdida $L$ a minimizar durante el entrenamiento, pero no necesariamente] que resume la "bondad" de las predicciones sobre $XX_"test"$ del clasificador entrenado en $XX_"train"$.
 
 === Métricas de evaluación
 
@@ -1679,7 +1679,7 @@ En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" 
 - En `lunas_hi` observamos que #gbt alcanza un $R^2$ marginalmente mejor que el #fkdc pero no por mucho, y todos los métodos basados en densidad por núcleos (#fkdc, #kdc, #fkn, #kn) alcanzan una exactitud ligeramente mejor que la de #gbt.
 - En `circulos_hi` #gnb  supera ligeramente pero significativamente en $R^2$ y exactitud, aunque aún su propia performance no es muy  alentadora con $R^2_#gbt approx 0.09$.
 
-- En `espirales_hi` todos los métodos basados en densidad por núcleos (#fkdc, #kdc, #fkn, #kn) alcanzan un $R^2$ muy similar, #gbt queda largamente atrás y #gnb, #logr y #slr no no se distinguen del $0$. #svc obtiene la mejor exactitud, pero no supera a #fkdc por mucho. Las ventajas de #fkdc por sobre #kdc son casi nulas en este contexto.
+- En `espirales_hi` todos los métodos basados en densidad por núcleos (#fkdc, #kdc, #fkn, #kn) alcanzan un $R^2$ muy similar, #gbt queda largamente atrás y #gnb, #logr y #slr no se distinguen del $0$. #svc obtiene la mejor exactitud, pero no supera a #fkdc por mucho. Las ventajas de #fkdc por sobre #kdc son casi nulas en este contexto.
 
 ==== `lunas_hi`
 
@@ -1765,7 +1765,7 @@ La semilla resultó adversa para ambos #footnote[Aún $R^2_#kdc = 0.91$ es un ma
 Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la misma dirección, una de ellas empezando a "media altura" entre dos brazos consecutivos de la otra. El dataset es particularmente desafiante para Naive Bayes y regresión logística, que no logran diferenciarse en nada de un clasificador trivial que prediga siempre la misma clase.
 #highlights_figure("helices_0")
 #obs[La performance de #logr es mala únicamente porque se aplicó ciegamente a los datos. La primer tarea cuando se busca inferir la geometría de unos datos es graficarlos, y al observar la hélice uno puede parametrizarla de manera natural como $f(x, y, z) = ("ángulo, velocidad radial, velocidad vertical") ,$ entrenar sobre esta _representación_ y obtener un $R^2 approx 1$.
-  Al final, "todo algoritmo funciona cuando los datos son buenos" --- la ventaja de algunos es que no hace falta ponerle demasaida cabeza a "masajearlos" hasta que "son buenos". Que a #gnb le resulte complejo no es sorprendente, ya que las distribuciones marginales son prácticamente idénticas.
+  Al final, "todo algoritmo funciona cuando los datos son buenos" --- la ventaja de algunos es que no hace falta ponerle demasiada cabeza a "masajearlos" hasta que "son buenos". Que a #gnb le resulte complejo no es sorprendente, ya que las distribuciones marginales son prácticamente idénticas.
   #figure(
     image("img/helices-pairplot.svg", width: 16em),
     caption: flex-caption([TODO: copete largo hélices pairplot], [TODO: copete corto hélices pairplot]),
@@ -1972,7 +1972,7 @@ Nuevamente #gbt es el mejor clasificador ($R^2 approx 92$), seguido por #gnb ($R
 
 #highlights_figure("hueveras_12")
 
-Estos dos son de los datasets más difíciles del conjunto: la exactitud máxima de _cualquier_ clasificador apenas supera el 50%, valores muy cercanos al azar. Los clasificadores de densidad (#fkdc, #kdc) obtienen $R^2$ negativo, lo que indica un desempeño peor que el de un clasificador trivial. Estas geometríad ya de por sí adversa aún sin ruido añadido, se vuelven intratable con este nivel de ruido en alta dimensión.
+Estos dos son de los datasets más difíciles del conjunto: la exactitud máxima de _cualquier_ clasificador apenas supera el 50%, valores muy cercanos al azar. Los clasificadores de densidad (#fkdc, #kdc) obtienen $R^2$ negativo, lo que indica un desempeño peor que el de un clasificador trivial. Esta geometría ya de por sí adversa aún sin ruido añadido se vuelve intratable con este nivel de ruido en alta dimensión.
 
 El fenómeno de las dimensiones de ruido sin correlación es particularmente pernicioso para los algoritmos basados en densidad por núcleos, aún con distancias basadas en densidad. Como la distancia de Fermat está computada como una geodésica en un grafo completo, y los pesos de cada arista están basados en distancia euclídea, las dimensiones de ruido puro "alejan" puntos cercanos entre sí en las dimensiones que importan. La ventaja de #gbt en _algunos_ de etos datasets del régimen de alto ruido, es que al proceder con preguntas binarias sobre  _un predictor a la vez_, puede identificar más facilmente que cualquier pregunta sobre las colunas de ruido puro nunca sirve para partir la muestra en dos grupos con densidades bien distintas, y por eso las ignora.
 
@@ -1992,7 +1992,7 @@ Se evaluaron cuatro datasets de clasificación con tres o más clases, provenien
 
 #highlights_figure("iris")
 
-Este dataset es bien servido por métodos lineales: #logr ($R^2 approx 89$) tiene un desempeño tan bueno como el mejor de los métodos baados en densidad, #fkn. #fkdc tiene un $R^2$ ligeramente peor ($approx 0.86$) pero competitivo. Es un dataset donde los métodos simples bastan; las clases son casi linealmente separables en el espacio original y hasta #gnb alcanza una exactitud de $90%$ y $R^2 approx 0.8$.
+Este dataset es bien servido por métodos lineales: #logr ($R^2 approx 89$) tiene un desempeño tan bueno como el mejor de los métodos basados en densidad, #fkn. #fkdc tiene un $R^2$ ligeramente peor ($approx 0.86$) pero competitivo. Es un dataset donde los métodos simples bastan; las clases son casi linealmente separables en el espacio original y hasta #gnb alcanza una exactitud de $90%$ y $R^2 approx 0.8$.
 
 === `pinguinos` ($k = 3$, $D = 4$)
 
@@ -2000,7 +2000,7 @@ Este dataset es bien servido por métodos lineales: #logr ($R^2 approx 89$) tien
 
 El dataset de pingüinos de Palmer  es casi linealmente separable: #slr ($R^2 approx 96$) y #logr ($R^2 approx 96$) dominan. Los clasificadores de densidad y vecinos se ubican en un rango intermedio, muy por debajo de los métodos lineales. La diferencia entre #fkdc y #kdc es despreciable ($approx 1$ punto de $R^2$).
 
-Al investigar en mayor detalle qué es lo que sucede, la matriz de confusion muestra que dos clases se estan confundiendo en una sola (/* TODO: agregar matriz de confusi´øn */). Si miramos el _pairplot_ con los gráficos de dispersión diemnsión a dimensión, observamos que las dos clases antedichas se confunden en las dimensiones ??? y ???. 
+Al investigar en mayor detalle qué es lo que sucede, la matriz de confusión muestra que dos clases se están confundiendo en una sola (/* TODO: agregar matriz de confusi´øn */). Si miramos el _pairplot_ con los gráficos de dispersión dimensión a dimensión, observamos que las dos clases antedichas se confunden en las dimensiones ??? y ???. 
 // TODO: insertar pairplot
 Si entrenamos nuevamente #fkdc quitando una de las dimensiones altamente correlacionadas, la performance mejora y si bien no supera a la de los mejores métodos, se vuelve comparativamente razonable. Es una victoria pírrica, que nos recuerda la importancia de realizar inspecciones visuales de los _datasets_ antes de largarse a entrenar algoritmos en tareas del mundo real.
 
@@ -2014,7 +2014,7 @@ El dataset de vinos ($k = 3$, $D = 11$) favorece a #gbt ($R^2 approx 90$) y #slr
 
 #highlights_figure("anteojos")
 
-Dataset sintético bidimensional con tres clases en forma de anteojos ($k = 3$, $D = 2$), en el que rodos los estimadores salvo #logr y #slr alcanzan casi la misma exactitud, 97% --- casi perfecta. #fkdc saca una ventaja mínima pero significativa en $R^2$. Al ser bidimensional, es el único dataset multiclase donde las fronteras de decisión se pueden visualizar directamente.
+Dataset sintético bidimensional con tres clases en forma de anteojos ($k = 3$, $D = 2$), en el que todos los estimadores salvo #logr y #slr alcanzan casi la misma exactitud, 97% --- casi perfecta. #fkdc saca una ventaja mínima pero significativa en $R^2$. Al ser bidimensional, es el único dataset multiclase donde las fronteras de decisión se pueden visualizar directamente.
 
 // TODO: loss contours de anteojos. plotting seed as usual, los 9 clasificadorescomo en las de `espirales_lo`.
 
