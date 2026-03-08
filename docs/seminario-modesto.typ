@@ -226,9 +226,14 @@ con la restricción de que la ventana $h <= h_0 <= op("inj")(cal(M))$, el _radio
 == Interludio: densidad de volumen en la esfera [Henry y Rodríguez, 2009]
 
 #columns(2)[
-  En _"Kernel Density Estimation on Riemannian Manifolds: Asymptotic Results" (2009)_, Guillermo Henry y Daniela Rodriguez estudian algunas propiedades asintótica de este estimador, y las ejemplifican con datos de sitios volcánicos en la superficie terrestre.
-  En particular, calculan la densidad de volumen $theta_p(q)$
-#image("img/densidad-volumen-esfera.png")
+  En _"Kernel Density Estimation on Riemannian Manifolds: Asymptotic Results" (2009)_, Guillermo Henry y Daniela Rodriguez estudian algunas propiedades asintóticas de este estimador, y las ejemplifican con datos de sitios volcánicos en la superficie terrestre.
+  En particular, calculan la densidad de volumen $theta_p(q)$ en $S^2$:
+  $
+    theta_p (q) = cases(
+      R abs(sin(d_g (p, q) slash R)) / d_g (p, q) & "si" q != p\, -p,
+      1 & "si" q = p
+    )
+  $
 #colbreak()
 #image("img/henry-rodriguez-bolas.png")
 ]
@@ -430,7 +435,7 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
 
 == Superficies (o paisajes) de _score_ para `(espirales_lo, 1434)`
 
-#align(center)[#image("img/heatmap-fkdc-espirales_lo-1434-new.svg", height: 110%)]
+#align(center)[#image("img/espirales_lo-1434-fkdc-bandwidth-alpha-loss_contour.svg", height: 110%)]
 
 == Alt-viz: Perfiles de pérdida para `(espirales_lo, 1434)`
 
@@ -463,10 +468,10 @@ Si $D_(Q_i, alpha) prop ||dot|| $ (la distancia de fermat es proporcional a la e
 == 3D, 2 clases + piononos
 
 #grid(columns: 2, gutter: 1em,
-  image("img/pionono-scatter-3d.svg"),
-  image("img/eslabones-scatter-3d.svg"),
-  image("img/helices-scatter-3d.svg"),
-  image("img/hueveras-scatter-3d.svg"),
+  image("img/pionono_0-scatter.svg"),
+  image("img/eslabones_0-scatter.svg"),
+  image("img/helices_0-scatter.svg"),
+  image("img/hueveras_0-scatter.svg"),
 )
 #pagebreak()
 #align(center)[#image("img/pionono.png", height: 110%)]

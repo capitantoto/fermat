@@ -80,8 +80,21 @@
 
 #let tabla_csv(path, caption: none, short-caption: none) = {
   let data = csv(path)
-  let eval_scope = (fkdc: fkdc, kn: kn, fkn: fkn, kdc: kdc, lr: logr, svc: svc, lsvc: `LSVC`, gnb: gnb, base: "base")
-  let t = table(columns: data.at(0).len(), ..data.flatten().map(eval.with(mode: "markup", scope: eval_scope)))
+  let scope = (fkdc: fkdc, kn: kn, fkn: fkn, kdc: kdc, lr: logr, svc: svc, gnb: gnb, gbt: gbt, slr: slr)
+  let headers = data.at(0)
+  let rows = data.slice(1)
+  let cells = (
+    table.hline(stroke: 1pt),
+    ..headers.map(h => table.cell(align: center)[*#eval(h, mode: "markup", scope: scope)*]),
+    table.hline(stroke: 0.5pt),
+    ..rows.flatten().map(eval.with(mode: "markup", scope: scope)),
+    table.hline(stroke: 1pt),
+  )
+  let t = table(
+    columns: headers.len(),
+    stroke: none,
+    ..cells,
+  )
   if caption != none {
     figure(t, caption: flex-caption(caption, if short-caption != none { short-caption } else { caption }))
   } else {
@@ -556,17 +569,17 @@ Esta relación, entre vectores de $T_p MM$ y geodésicas de $MM$ con origen en $
   Si $exp_p$ es un difeomorfismo  en un vecindario (entorno) $V$ del origen en $T_p MM$, su imagen $U = exp_p (V)$ es un "vecindario normal" de $p$.
   Si $B_epsilon (0)$ es tal que $overline(B_epsilon (0)) subset V$, llamamos a $exp_p B_epsilon (0) = B_epsilon (p)$ la _bola normal_ – o "bola geodésica" - con centro $p$ y radio $epsilon$.
 ]
-La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geodésicas que irradian desde $p$. Una concepción intuitiva de qué es una bola normal, es "un entorno de $p$ en el que las geodésicas que pasan por $p$ son minimizadoras de distancias". El siguiente concepto es útil para entender "cuán lejos vale" la aproximación local a un espacio euclídeo en la variedad.
+La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geodésicas que irradian desde $p$. Una concepción intuitiva de qué es una bola normal es "un entorno de $p$ en el que las geodésicas que pasan por $p$ son minimizadoras de distancias". El siguiente concepto es útil para entender "cuán lejos vale" la aproximación local a un espacio euclídeo en la variedad.
 
 #defn(
-  [radio de inyectividad #footnote[Basado en @munozEstimacionNoParametrica2011[Def. 3.3.16] Una definición a mi entender más esclarecedora se encuentra en @docarmoRiemannianGeometry1992[§13.2, _The cut locus_], que introducimos aquí informalmente. El _cut locus_ o _ligne de partage_ $C_m (p)$ - algo así como la línea de corte - de un punto $p$ es la unión de todos los puntos de corte: los puntos a lo largo de las geodésicas que irradian de $p$ donde éstas dejan de ser minizadoras de distancia. El ínfimo de la distancia entre $p$ y su línea de corte, es el radio de inyectividad de #MM en $p$, de modo podemos escribir $ "iny" MM = inf_(p in MM) d(p, C_m (p)) $
+  [radio de inyectividad #footnote[Basado en @munozEstimacionNoParametrica2011[Def. 3.3.16] Una definición a mi entender más esclarecedora se encuentra en @docarmoRiemannianGeometry1992[§13.2, _The cut locus_], que introducimos aquí informalmente. El _cut locus_ o _ligne de partage_ $C_m (p)$ - algo así como la línea de corte - de un punto $p$ es la unión de todos los puntos de corte: los puntos a lo largo de las geodésicas que irradian de $p$ donde éstas dejan de ser minimizadoras de distancia. El ínfimo de la distancia entre $p$ y su línea de corte es el radio de inyectividad de #MM en $p$, de modo podemos escribir $ "iny" MM = inf_(p in MM) d(p, C_m (p)) $
       donde la distancia de un punto a una variedad es el ínfimo de la distancia a todos los puntos de la variedad.]],
 )[
   Sea $(MM, g)$ una $d-$variedad Riemanniana. Llamamos "radio de inyectividad en $p$" a
   $
     "iny"_p MM = sup{s in RR > 0 : B_s (p) " es una bola normal"}
   $
-  El ínfimo de los radios de inyectividad "puntuales", es el radio de inyectividad de la variedad #MM.
+  El ínfimo de los radios de inyectividad "puntuales" es el radio de inyectividad de la variedad #MM.
   $
     "iny"MM = inf_(p in MM) "iny"_p MM
   $
@@ -762,7 +775,7 @@ $
 $ <clf-kde-variedad>
 para todo $p in MM$ con $K_h_n$ un núcleo isotrópico con sucesión de ventanas $h_n$ @loubesKernelbasedClassifierRiemannian2008[Ecuación 3.1].
 
-La belleza de esta regla, es que combina "sin costuras" el peso de los _priors_ $hat(pi)_i$ - a través de los elementos no nulos de la suma cuando $ind(G_i = k) = 1$) - con el peso de la "evidencia" - vía su cercanía "suavizada" al punto de interés $K_h (p, X_i)$.
+La belleza de esta regla es que combina "sin costuras" el peso de los _priors_ $hat(pi)_i$ - a través de los elementos no nulos de la suma cuando $ind(G_i = k) = 1$) - con el peso de la "evidencia" - vía su cercanía "suavizada" al punto de interés $K_h (p, X_i)$.
 
 Los autores toman de @devroyeProbabilisticTheoryPattern1996 la siguiente definición de _consistencia_:
 
@@ -921,7 +934,7 @@ Desarrollado a fines del siglo XX por Joshua Tenenbaum et al.  @tenenbaumMapping
   ),
 )
 
-La pieza clave del algoritmo, es la estimación de la distancia geodésica en #MM a través de la distancia en el grafo de vecinos más cercanos. Si la muestra disponible es "suficientemente grande", es razonable esperar que en el entorno de una observación $x_0$ las distancias euclídeas aproximen bien las distancias geodésicas, y por ende un "paseo" por el grafo $bu(N N)$ debería describir una curva prácticamente contenida en #MM. Isomap resultó ser un algoritmo sumamente efectivo que avivó el interés por el aprendizaje de distancias, pero todavía cuenta con un talón de Aquiles: la elección del parámetro de cercanía, $epsilon$ ó $k$:
+La pieza clave del algoritmo es la estimación de la distancia geodésica en #MM a través de la distancia en el grafo de vecinos más cercanos. Si la muestra disponible es "suficientemente grande", es razonable esperar que en el entorno de una observación $x_0$ las distancias euclídeas aproximen bien las distancias geodésicas, y por ende un "paseo" por el grafo $bu(N N)$ debería describir una curva prácticamente contenida en #MM. Isomap resultó ser un algoritmo sumamente efectivo que avivó el interés por el aprendizaje de distancias, pero todavía cuenta con un talón de Aquiles: la elección del parámetro de cercanía, $epsilon$ ó $k$:
 - valores demasiado pequeños pueden "partir" $bu(N N)$ en más de una componente conexa, otorgando distancia "infinita" a puntos en componentes disjuntas, mientras que
 - valores demasiado grandes pueden "cortocircuitar" la representación - en particular en variedades con muchos pliegues -, uniendo secciones de la variedad subyacente a través del espacio ambiente.
 
@@ -1100,7 +1113,7 @@ El grueso del trabajo de Chu et al consiste en una prueba general de esta iguald
   1.b. $d_bu(N) >= d_bu(2)$
 2. (1) también es válido para toda colección de compactos $P$ de $RR^D$.
 
-Una utilidad de este resultado, es que permite calcular con precisión qué valores de $k$ estimar $d_bu(N)$ sobre el grafo pesado por aristas cuadradas $bu(N N)_k (XX)$  es un "suficientemente buen reemplazo" del cálculo equivalente --- pero mucho más costoso --- sobre $bu(C)(XX)$. En @chuExactComputationManifold2019[Theorema 1.3], observan que con tomar $k = O(2^d ln n)$ basta.
+Una utilidad de este resultado es que permite calcular con precisión qué valores de $k$ estimar $d_bu(N)$ sobre el grafo pesado por aristas cuadradas $bu(N N)_k (XX)$  es un "suficientemente buen reemplazo" del cálculo equivalente --- pero mucho más costoso --- sobre $bu(C)(XX)$. En @chuExactComputationManifold2019[Theorema 1.3], observan que con tomar $k = O(2^d ln n)$ basta.
 
 Lo que Chu et al llaman $d_bu(2)$ y figura en @chuExactComputationManifold2019 @vincentDensitySensitiveMetrics2003 como "distancia de arista-cuadrada", es la misma distancia $D_r$ que @bijralSemisupervisedLearningDensity2012 consideran con $p = 2$ (norma euclídea) y $r = 1/d$ --- de modo que $q=r d+1=2$.
 
@@ -1299,7 +1312,7 @@ La validación cruzada de $k$ pliegos nos provee naturalmente de $k$ realizacion
 
 Para definir $C$ en modelos con $dim(h) > 1$, definimos el orden de complejidad creciente _para cada clasificador_ jerárquicamente como una lista de pares ordenados de hiperparámetros y la dirección de complejidad creciente. Para #fkdc, por ejemplo,
 $ C_#fkdc (mu) = [(alpha, "ascendente"), (h, "descendente")]. $
-La decisión de ordenar así los parámetros, con $alpha$ primero y $C$ ascendente en $alpha$, hace que la evaluación "prefiera" naturalmente a #kdc por sobre #fkdc#footnote[$#kdc = op(#fkdc)(alpha = 1)$], ya que el mínimo $alpha = 1$ estudiado resulta siempre preferido. En consecuencia, sólo se elegirá un $alpha^star > 1$ cuando la _performance_ de #fkdc sea siginifcativamente mejor que la de KDC --- con $alpha equiv 1$.
+La decisión de ordenar así los parámetros, con $alpha$ primero y $C$ ascendente en $alpha$, hace que la evaluación "prefiera" naturalmente a #kdc por sobre #fkdc#footnote[$#kdc = op(#fkdc)(alpha = 1)$], ya que el mínimo $alpha = 1$ estudiado resulta siempre preferido. En consecuencia, solo se elegirá un $alpha^star > 1$ cuando la _performance_ de #fkdc sea significativamente mejor que la de KDC --- con $alpha equiv 1$.
 
 #obs([complejidad en $h$])[
   La complejidad es _descendente_ en el tamaño de la ventana $h$: a mayor $h$, tanto más grande se vuelve el vecindario donde $K_h (d(x, x_i)) >> 0$ y por ende pesa en la asignación. Análogamente, $k-"NN"$ y su primo $epsilon- "NN"$ tienen complejidad _descendente_ en $k, epsilon$.
@@ -1421,21 +1434,26 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
   )
 }
 
-#let highlights_figure(dataset) = {
+#let highlights_figure(dataset, height: 8em, width: 140%) = {
   let highlights = json("data/" + dataset + "-r2-highlights.json")
   let tabla_resumen = highlights_table(highlights)
 
   figure(
-    table(
-      columns: 2,
-      rows: 2,
-      stroke: 0pt,
-      image("img/" + dataset + "-scatter.svg"), text(size: 8pt)[#tabla_resumen],
-      image("img/" + dataset + "-r2-boxplot.svg"), image("img/" + dataset + "-accuracy-boxplot.svg"),
-    ),
-    caption: flex-caption[Resumen para #dataset][],
+    box(width: width, grid(
+      columns: 4, gutter: 4pt,
+      image("img/" + dataset + "-scatter.svg", height: height),
+      text(size: 8pt)[#tabla_resumen],
+      image("img/" + dataset + "-r2-boxplot.svg", height: height),
+      image("img/" + dataset + "-accuracy-boxplot.svg", height: height),
+    )),
+    caption: flex-caption[Resumen para #raw(dataset)][],
   )
 }
+
+#let wide-figure(width: 140%, body, ..args) = figure(
+  box(width: width, body),
+  ..args,
+)
 
 
 #let euc = $norm(thin dot thin)_2$
@@ -1446,7 +1464,7 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 
   A ello se le suma que el cómputo de la distancia muestral de Fermat #sfd es realmente caro. Aun siguiendo "buenas prácticas computacionales" #footnote[Como sumar logaritmos en lugar de multiplicar valores "crudos" siempre que sea posible], implementaciones ingenuas pueden resultar impracticables hasta en datasets de baja cardinalidad y pocas dimensiones.
 
-  Por otra parte, el teorema de convergencia @convergencia-sfd nos ganatiza que cuando $n->oo, quad sfd -> cal(D)_(f, beta)$, pero esa es una afirmación asintótica y aquí estamos tomando $k=5$ pliegos de entre $n = 800$ observaciones, con $n_"train" = n_"eval" = n slash 2$ observaciones para un tamaño muestral efectivo de $(k-1)/k n/2 = 360$. ¿Es 360 un tamaño muestral "lo suficientemente grande" para que sea válida?
+  Por otra parte, el teorema de convergencia @convergencia-sfd nos garantiza que cuando $n->oo, quad sfd -> cal(D)_(f, beta)$, pero esa es una afirmación asintótica y aquí estamos tomando $k=5$ pliegos de entre $n = 800$ observaciones, con $n_"train" = n_"eval" = n slash 2$ observaciones para un tamaño muestral efectivo de $(k-1)/k n/2 = 360$. ¿Es 360 un tamaño muestral "lo suficientemente grande" para que sea válida?
 
   Por todo ello, que la bondad de los clasificadores _no empeore_ con el uso de #sfd en lugar de #euc es de por sí un hito importante.
 ]
@@ -1476,17 +1494,17 @@ Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) apren
 Una inspección ocular a las fronteras de decisión revela las limitaciones de distintos algoritmos, siendo el caso de las espirales el más vistoso y pedagógico. #logr y #slr solo pueden dibujar fronteras "lineales", y como ninguna frontera lineal que corte la muestra logra dividirla en dos regiones con densidades de clase realmente diferentes, el algoritmo falla. #gnb falla de manera análoga, aunque su problema es otro - no lidia bien con distribuciones con densidades marginales muy similares.
 
 #let clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb")
-#figure(
-  align(center)[#box(width: 160%, table(columns: 3, stroke: 0pt, ..clfs.map(clf => image(
-      "img/espirales_lo-" + clf + "-decision_boundary.svg",
-    ))))],
+#wide-figure(width: 160%,
+  grid(columns: 3, gutter: 4pt, ..clfs.map(clf => image(
+    "img/espirales_lo-" + clf + "-decision_boundary.svg",
+  ))),
   caption: flex-caption(
     [Fronteras de decisión de los nueve algoritmos evaluados sobre `espirales_lo` con semilla $s=#plotting_seed$. Nótese la incapacidad de #logr, #slr y #gnb para separar las clases, la aproximación rectangular de #gbt, y la nitidez de las fronteras de #fkdc y #svc.],
     [Fronteras de decisión en `espirales_lo`],
   ),
 ) <fig-fronteras-espirales>
 
-Entre #kn y #fkn casi no observamos diferencias, asunto en el que ahondaremos más adelante. Por lo pronto, sí se nota que se adaptan bastante bien a los datos, con algunas regiones "claras" de incertidumbre que resultan onerosas en términos de $R^2$: a primera vista los mapas de decisión recién expuestos se ven muy similares, pero las pequeñas diferencias de probabilidades resultaron en una diferencia de $0.19$ en $R^2$ _en contra_ del modelo más complejo para esta semilla #footnote[La diferencia en la _mediana_ de $R^2$ para ambos es mucho menor, $approx 0.03$, lo cual resalta la sensibilidad de los resultados a la semilla aleatorizante y la importance de realizar muchas repeticiones de cada experimento para evitar resultados espurios]. También resulta llamativa la "creatividad" de #gbt para aproximar las verdaderas fronteras --- espirales curvas --- con una serie de preguntas binarias, que le permiten dibujar una especie "espirales rectabgulares".
+Entre #kn y #fkn casi no observamos diferencias, asunto en el que ahondaremos más adelante. Por lo pronto, sí se nota que se adaptan bastante bien a los datos, con algunas regiones "claras" de incertidumbre que resultan onerosas en términos de $R^2$: a primera vista los mapas de decisión recién expuestos se ven muy similares, pero las pequeñas diferencias de probabilidades resultaron en una diferencia de $0.19$ en $R^2$ _en contra_ del modelo más complejo para esta semilla #footnote[La diferencia en la _mediana_ de $R^2$ para ambos es mucho menor, $approx 0.03$, lo cual resalta la sensibilidad de los resultados a la semilla aleatorizante y la importancia de realizar muchas repeticiones de cada experimento para evitar resultados espurios]. También resulta llamativa la "creatividad" de #gbt para aproximar las verdaderas fronteras --- espirales curvas --- con una serie de preguntas binarias, que le permiten dibujar una especie "espirales rectangulares".
 
 #kdc ofrece una frontera aún más regular que #kn, sin perder en $R^2$ y hasta mejorando la exactitud. Y por encima de esta ya destacable _performance_, el uso de la distancia de Fermat _incrementa_ la confianza en estas regiones --- nótese cómo se afinan las áreas grises y aumenta la superficie de rojo/azul sólido, mejorando otro poco el $R^2$.
 
@@ -1502,25 +1520,29 @@ Entre #kn y #fkn casi no observamos diferencias, asunto en el que ahondaremos m�
   ),
 )
 
-Por último, observamos las fronteras de #svc, que no tienen gradiente de color sino solo una frontera lineal #footnote[Como aprendimos: la frontera de una variedad riemanniana de dimensión intrínseca $d$ es una variedad sin frontera de dimensión intrínseca $d-1$; la frontera de estas regiones en es una curva parametrizable en $RR^1$ embebida en $RR^2$] puesto que al ser un clasificador duro determina una frontera abrupta donde cambia la clase predicha. Es sorprendente la flexibilidad del algoritmo, que consigue dibujar una única frontera sumamente no-lineal que separa los datos con altísima exactitud. La ventaja que #fkdc pareciera tener sobre #svc, es que la frontera que dibuja pasa "más lejos" de las observaciones de clase, mientras que la #svc parece estar muy pegada a los brazos de la espiral, particularmente en el giro más interno.
+Por último, observamos las fronteras de #svc, que no tienen gradiente de color sino solo una frontera lineal #footnote[Como aprendimos: la frontera de una variedad riemanniana de dimensión intrínseca $d$ es una variedad sin frontera de dimensión intrínseca $d-1$; la frontera de estas regiones en es una curva parametrizable en $RR^1$ embebida en $RR^2$] puesto que al ser un clasificador duro determina una frontera abrupta donde cambia la clase predicha. Es sorprendente la flexibilidad del algoritmo, que consigue dibujar una única frontera sumamente no-lineal que separa los datos con altísima exactitud. La ventaja que #fkdc pareciera tener sobre #svc es que la frontera que dibuja pasa "más lejos" de las observaciones de clase, mientras que la #svc parece estar muy pegada a los brazos de la espiral, particularmente en el giro más interno.
 
 === Estudio de ablación: $R^2$ para #kdc/ #kn con y sin distancia de Fermat.
 
 Según la #link("https://dle.rae.es/ablaci%C3%B3n")[RAE], "Del lat. tardío ablatio, -ōnis 'acción de quitar'." --- ¿qué se pierde en términos de $R^2$ al _no_ usar #sfd en estos algoritmos?. Sirvan para concentrar la atención en esta diferencia, los gráficos de dispersión del $R^2$ alcanzado en $XX_"test"$ para #kn y #kdc con y sin distancia de Fermat, en las #reps repeticiones de cada Tarea.
 
 #let curvas = ("lunas", "circulos", "espirales")
-#figure(
-  columns(2)[
-    #for c in curvas {
-      image("img/" + c + "_lo-kdc-fkdc-r2-scatter.svg")
-    }
-    #colbreak()
-    #for c in curvas {
-      image("img/" + c + "_lo-kn-fkn-r2-scatter.svg")
-    }
-  ],
+#wide-figure(
+  grid(
+    columns: (auto, 1fr, 1fr),
+    gutter: 4pt,
+    align: horizon,
+    // column headers
+    [], align(center)[*#kdc vs. #fkdc*], align(center)[*#kn vs. #fkn*],
+    // rows: one per curve
+    ..curvas.map(c => (
+      rotate(-90deg)[#raw(c + "_lo")],
+      image("img/" + c + "_lo-kdc-fkdc-r2-scatter.svg"),
+      image("img/" + c + "_lo-kn-fkn-r2-scatter.svg"),
+    )).sum(),
+  ),
   caption: flex-caption(
-    [Gráficos de dispersión (_scatterplots_) de $R^2$ para #kdc (izq.) y #kn (der.) con (eje $y$) y sin (eje $x$) distancia de Fermat.],
+    [Gráficos de dispersión de $R^2$ para #kdc (izq.) y #kn (der.) con (eje $y$) y sin (eje $x$) distancia de Fermat.],
     [$R^2$ con y sin distancia de Fermat para #kdc y #kn],
   ),
 ) <fig-17>
@@ -1550,22 +1572,26 @@ Ahora bien, esto es solo en _un_ dataset, con _una_ semilla específica. ¿Se re
 
 #let semillas = (7354, 8527, 1188)
 
-#let imgs = (curvas.map(c => semillas.map(s => (c, s))).sum()).map(tup => image(
-  "img/" + tup.at(0) + "_lo-" + str(tup.at(1)) + "-fkdc-bandwidth-alpha-loss_contour.svg",
-))
-
-
-#align(center)[
-  #box(width: 150%)[
-    #figure(
-      grid(columns: semillas.len(), stroke: 0pt, ..imgs),
-      caption: flex-caption(
-        [Superficies de pérdida para tres semillas $s in #semillas$ y cada uno de los tres datasets. El patrón log-lineal previamente observado se replica casi perfectamente en todos los casos.],
-        [Superficies de pérdida para `[lunas|circulos|espirales]_lo`],
+#wide-figure(width: 150%,
+  grid(
+    columns: (auto, 1fr, 1fr, 1fr),
+    gutter: 4pt,
+    align: horizon,
+    // column headers (seeds)
+    [], ..semillas.map(s => align(center)[*s=#s*]),
+    // rows: one per curve
+    ..curvas.map(c => (
+      rotate(-90deg)[#raw(c + "_lo")],
+      ..semillas.map(s =>
+        image("img/" + c + "_lo-" + str(s) + "-fkdc-bandwidth-alpha-loss_contour.svg")
       ),
-    ) <fig-19>
-  ]
-]
+    )).sum(),
+  ),
+  caption: flex-caption(
+    [Superficies de pérdida para tres semillas $s in #semillas$ y cada uno de los tres datasets. El patrón log-lineal previamente observado se replica casi perfectamente en todos los casos.],
+    [Superficies de pérdida para `[lunas|circulos|espirales]_lo`],
+  ),
+) <fig-19>
 
 ¡Pues sí replica! Podemos observar también en datasets como `circulos_lo`, $s =7354$, cómo actúa la regla de parsimonia. Dentro de la "meseta color lima" que ocupa toda el área por encima de la diagonal principal del gráfico,  todas las hiperparametrizaciones alcanzan resultados similares. Sin embargo, la validación cruzada elige consistentemente para cada $h$ el menor $alpha$ posible que no "cae" hacia la región azul de menores _scores_.
 
@@ -1581,9 +1607,9 @@ Hacemos entonces una comprobación fundamental: ¿qué parametrizaciones están 
   short-caption: [Hiperparámetros seleccionados por R1SD de #kdc y #fkdc en `lunas_lo`],
 )
 
-Durante el entrenamiento, a veces el mejor se obtinene con _otros_ valores de $alpha$, pero la mejora no es lo suficientemente grande para descartar alguna hiperaprametrización con $alpha = 1$ bajo la regla de $1 sigma$  descrita en @r1sd.
+Durante el entrenamiento, a veces el mejor se obtiene con _otros_ valores de $alpha$, pero la mejora no es lo suficientemente grande para descartar alguna hiperparametrización con $alpha = 1$ bajo la regla de $1 sigma$  descrita en @r1sd.
 
-// TODO: Recortar a 4 decimales, simplificar a sólo $alpha$
+// TODO: Recortar a 4 decimales, simplificar a solo $alpha$
 #tabla_csv(
   "data/lunas_lo-best_test_params.csv",
   caption: [Hiperparámetros minimizadores de pérdida en enrenamiento para #kdc y #fkdc en `lunas_lo`, por semilla.],
@@ -1627,18 +1653,16 @@ Consideremos ahora los mismos datasets que hasta ahora, pero sampleando las obse
 
 $ sigma_"lunas" = 0.5 quad sigma_"circulos" = 0.2 quad sigma_"espirales" = 0.2 quad. $
 
-#figure(
-  columns(3)[
-    #image("img/lunas_hi-scatter.svg")
-    #colbreak()
-    #image("img/circulos_hi-scatter.svg")
-    #colbreak()
-    #image("img/espirales_hi-scatter.svg")
-  ],
+#wide-figure(
+  grid(columns: 3, gutter: 4pt,
+    image("img/lunas_hi-scatter.svg"),
+    image("img/circulos_hi-scatter.svg"),
+    image("img/espirales_hi-scatter.svg"),
+  ),
   caption: flex-caption["Lunas", "Círculos" y "Espirales" con "alto ruido"][ "Lunas", "Círculos" y "Espirales", alto ruido ],
 ) <fig-22>
 
-En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" se ha nivelado considerablemente, y las ventajas antes vistas disminuyen. En particular, en `lunas_hi, circulos_hi` observamos que #gbt alcanza un $R^2$ marginalmente mejor que el #fkdc, y en el segundo también lo supera ligeramente en exactitud. En `espirales_hi` todos los métodos basados en densidad por núcleos (#fkdc, #kdc, #fkn, #kn) alcanzan un $R^2$ muy similar, #gbt queda largamente atrás (#gbt) y #gnb, #logr y #slr no no se distinguen del $0$. #svc obtiene la mejor exactitud, pero no supera a #fkdc por mucho. Las ventajas de #fkdc por sobre #kdc son casi nulas en este contexto.
+En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" se ha nivelado considerablemente, y las ventajas antes vistas disminuyen. En particular, en `lunas_hi, circulos_hi` observamos que #gbt alcanza un $R^2$ marginalmente mejor que el #fkdc, y en el segundo también lo supera ligeramente en exactitud. En `espirales_hi` todos los métodos basados en densidad por núcleos (#fkdc, #kdc, #fkn, #kn) alcanzan un $R^2$ muy similar, #gbt queda largamente atrás (#gbt) y #gnb, #logr y #slr no se distinguen del $0$. #svc obtiene la mejor exactitud, pero no supera a #fkdc por mucho. Las ventajas de #fkdc por sobre #kdc son casi nulas en este contexto.
 
 
 #highlights_figure("lunas_hi")
@@ -1651,43 +1675,43 @@ En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" 
 
 El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los estimadores, pero los métodos basados en densidad por núcleos parecen sufrirlo particularmente, aunque solo sea porque "caen desde más alto", a un nivel de _performance_ similar al de otros métodos.
 
-//TODO: exxcluir logr, slr, svc de la comparacion
-#figure(
-  columns(3)[
-    #image("img/lunas-caida_r2.svg")
-    #colbreak()
-    #image("img/circulos-caida_r2.svg")
-    #colbreak()
-    #image("img/espirales-caida_r2.svg")
-  ],
+#wide-figure(
+  grid(
+    columns: 3, gutter: 4pt,
+    image("img/lunas-caida_r2.svg"),
+    image("img/circulos-caida_r2.svg"),
+    image("img/espirales-caida_r2.svg"),
+  ),
   caption: flex-caption(
-    [$R^2$ mediano por clasificador y dataset, comparado entre la variante con bajo (`_lo`) y alto (`_hi`) ruido en el sampleo.],
+    [$R^2$ mediano por clasificador y dataset, comparado entre la variante con bajo (`_lo`) y alto (`_hi`) ruido en el sampleo. Se excluyen clasificadores con $R^2 approx 0$ en ambas variantes.],
     [Caída de $R^2$ mediano al aumentar el ruido],
   ),
 )
 
 
 Por último, veamos las fronteras de decisión de  #fkdc y los más competitivos en términos de $R^2$ (#gbt) y exactitud (#svc):
-#align(center)[#box(width: 160%)[
-  #figure(
-    columns(3)[
-      #image("img/lunas_hi-fkdc-decision_boundary.svg")
-      #image("img/circulos_hi-fkdc-decision_boundary.svg")
-      #image("img/espirales_hi-fkdc-decision_boundary.svg")
-      #colbreak()
-      #image("img/lunas_hi-gbt-decision_boundary.svg")
-      #image("img/circulos_hi-gbt-decision_boundary.svg")
-      #image("img/espirales_hi-gbt-decision_boundary.svg")
-      #colbreak()
-      #image("img/lunas_hi-svc-decision_boundary.svg")
-      #image("img/circulos_hi-svc-decision_boundary.svg")
-      #image("img/espirales_hi-svc-decision_boundary.svg")
-    ],
+#{
+  let hi_clfs = (("fkdc", fkdc), ("gbt", gbt), ("svc", svc))
+  let hi_datasets = ("lunas_hi", "circulos_hi", "espirales_hi")
+  wide-figure(width: 160%,
+    grid(
+      columns: (auto, 1fr, 1fr, 1fr),
+      gutter: 4pt,
+      align: horizon,
+      [], ..hi_datasets.map(d => align(center)[*#raw(d)*]),
+      ..hi_clfs.map(((key, label)) => (
+        rotate(-90deg)[#label],
+        ..hi_datasets.map(d =>
+          image("img/" + d + "-" + key + "-decision_boundary.svg")
+        ),
+      )).sum(),
+    ),
     caption: flex-caption(
       [Fronteras de decisión para #fkdc, #gbt, #svc en regímenes de alto ruido, $s = #plotting_seed$],
       [Fronteras de decisión en alto ruido],
     ),
-  )]]
+  )
+}
 
 Al ojo humano, queda claro que las fronteras y regiones de confianza que "dibuja" #fkdc se alinean "en espíritu" con la forma de las variedades que buscamos descubrir: la "región de indiferencia" gris en `lunas_hi` es una especie de curva casi-cúbica que efectivamente separa las lunas, el "huevo frito" de `circulos_hi` efectivamente tiene máxima confianza a favor de la clase interna en el centro de ambos círculos (y se va deformando progresivamente a medida que nos alejamos de él), y en `espirales_hi` casi logra dibujar la espiral. Sin embargo, esta deseable propiedad no es fácilmente reducible a una métrica en $RR$, y se desdibuja en las comparaciones puramente numéricas.
 
@@ -1696,7 +1720,7 @@ Al ojo humano, queda claro que las fronteras y regiones de confianza que "dibuja
 Consideraremos a continuación datasets sintéticos embebidos en 3 dimensiones ($D = 3$), con variedades de dimensión intrínseca  $1$ (`eslabones, helices`) y $2$ (`pionono, hueveras`).
 
 === Eslabones
-#image("img/eslabones-scatter-3d.svg")
+#image("img/eslabones_0-scatter.svg")
 
 // TODO: poner scatter 3D en highlight por dataset para $D=3$
 #highlights_figure("eslabones_0")
@@ -1712,7 +1736,7 @@ Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ - no así el de e
 )
 
 ==== Hélices
-#image("img/helices-scatter-3d.svg")
+#image("img/helices_0-scatter.svg")
 Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la misma dirección, una de ellas empezando a "media altura" entre dos brazos consecutivos de la otra. El dataset es particularmente desafiante para #slr, #logr, y Naive Bayes, que no logran diferenciarse en nada de un clasificador trivial que prediga siempre la misma clase.
 
 #highlights_figure("helices_0")
@@ -1741,7 +1765,7 @@ Gracias a la regla de parsimonia sabemos, por ejemplo, que para $s = 1188$ --- c
 Nótese la mínima isla alrededor de $alpha=3; h = 0,000562$.
 
 
-Lo tercero, es que en unos cuantos casos en que $alpha_#fkdc = alpha_#kdc = 1$, #fkdc todavía performa un poco mejor que #kdc al elegir anchos de banda mucho más pequeños. Ya hemos visto que aún ligeras diferencias en la ventana $h$ podían llevar a mejoras en $R^2$ a favor de #fkdc por el detalle fino de la búsqueda en grilla que se definió. Sin embargo, aquí se encuentran sustanciales diferencias de $R^2$ como la tercera más alta ($Delta_R^2=0.111, alpha_#fkdc = alpha_#kdc = 1; h_#fkdc / h_#kdc approx 14)$, o la séptima ($Delta_R^2=0.111, h_#fkdc / h_#kdc approx 17$), que cuesta explicar como una ligera discrepancia en la grilla de $h$. Nuestra hipótesis es que el dominio ampliado de hiperparámetros de #fkdc junto con la regla de parsimonia trabajan en tándem:
+Lo tercero es que en unos cuantos casos en que $alpha_#fkdc = alpha_#kdc = 1$, #fkdc todavía performa un poco mejor que #kdc al elegir anchos de banda mucho más pequeños. Ya hemos visto que aún ligeras diferencias en la ventana $h$ podían llevar a mejoras en $R^2$ a favor de #fkdc por el detalle fino de la búsqueda en grilla que se definió. Sin embargo, aquí se encuentran sustanciales diferencias de $R^2$ como la tercera más alta ($Delta_R^2=0.111, alpha_#fkdc = alpha_#kdc = 1; h_#fkdc / h_#kdc approx 14)$, o la séptima ($Delta_R^2=0.111, h_#fkdc / h_#kdc approx 17$), que cuesta explicar como una ligera discrepancia en la grilla de $h$. Nuestra hipótesis es que el dominio ampliado de hiperparámetros de #fkdc junto con la regla de parsimonia trabajan en tándem:
 
 #image("img/r1sd+alpha.svg")
 
@@ -1750,7 +1774,13 @@ En ese rango ampliado de parametrizaciones "suficientemente buenas", ahora sí s
 
 De hecho, es este fenómeno --- que se repite con las semillas `4286, 1182, 6610, 2411, 8527, 7060, 8591`, todas con $alpha <= 1.25$ --- el que termina desplazando la mediana de $R^2$ hasta $0.97$, por fuera de la "caja"#footnote[El rango intercuartil en el _boxplot_.] de $R^2_#kdc$.
 
-#image("img/helices_0-boxplot-r2-zoomed.svg")
+#figure(
+  image("img/helices_0-boxplot-r2-zoomed.svg"),
+  caption: flex-caption(
+    [$R^2$ de los clasificadores basados en densidad por núcleos en `helices_0` (detalle ampliado).],
+    [$R^2$ kernel-based en `helices_0` (zoom)],
+  ),
+)
 
 ==== Efecto de #sfd en las vecindades óptimas de #kn
 
@@ -1775,7 +1805,7 @@ Por otra dirección, llegamos a la misma conclusión que antes: si un clasificad
 
 === Pionono
 
-#image("img/pionono-scatter-3d.svg")
+#image("img/pionono_0-scatter.svg")
 #highlights_figure("pionono_0")
 
 Este dataset es "clásico" para testear algoritmos de _clustering_ no-lineales @sapienzaWeightedGeodesicDistance2018, así que decidimos incluirlo en la serie experimental como _benchmark_. El trabajo citado no hace _clasificación_ con densidad por núcleos, sino _clustering_ basado en el algoritmo $k-$medoides, pero provee un gráfico de exactitud #footnote[presuntamente fijando $k=4$ y comparando las asignaciones contra los clusters verdaderos] que compara con la obtenida por otro "primo" algorítmico ya citado, Isomap. Los autores encuentran que
@@ -1787,7 +1817,7 @@ Por nuestra parte, en un ambiente ligeramente distinto, no encontramos diferenci
 === Hueveras ($D=3, d=2, k=2$)
 
 Este dataset sumamente sintético consiste de dos clases con idénticas distribuciones pero signo opuesto en la dirección de la coordenada vertical#footnote[Cf. `fkdc/datasets.py` para ver el detalle de las fórmulas.], pero que se puede conceptualizar aproximadamente bien imaginando dos cartones de maple de huevos, uno invertido respecto al otro, intentando ocupar el mismo lugar en el espacio.
-#image("img/hueveras-scatter-3d.svg")
+#image("img/hueveras_0-scatter.svg")
 
 La exactitud de la familia $cal(K)={#fkdc, #kdc, #fkn, #kn}$ es competitiva contra la de #svc, que parece ser ligera y significativamente mejor. En términos de $R^2$, la familia $cal(K)$ es la única en alcanzar valores no-nulos, y #sfd parece resultar en mejoras significativas, sobre todo para #fkn.
 #highlights_figure("hueveras_0")
