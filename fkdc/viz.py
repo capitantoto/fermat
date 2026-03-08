@@ -35,7 +35,19 @@ datasets = [*synth_datasets, *found_datasets]
 clfs = list(config.clasificadores.keys())
 infos = None
 basic_info = None
-default_palette = dict(zip(clfs, sns.color_palette("Set3"), strict=False))
+default_palette = {
+    "fkdc": "#2166ac",
+    "kdc": "#92c5de",
+    "fkn": "#b35806",
+    "kn": "#fdb863",
+    "slr": "#1b7837",
+    "lr": "#a6dba0",
+    "gnb": "#762a83",
+    "svc": "#de77ae",
+    "gbt": "#999999",
+}
+HATCHED_CLFS = frozenset({"kdc", "kn", "lr"})
+HATCH_PATTERN = "//"
 
 
 def load_infos(dir_or_paths: list[Path] | Path):
@@ -114,6 +126,28 @@ def get_highlights(
     )
 
 
+def apply_hatching(ax):
+    """Add hatching to boxplot boxes and legend patches for baseline classifiers."""
+    from matplotlib.patches import Patch
+
+    # Hatch the box artists
+    for artist in ax.get_children():
+        if isinstance(artist, Patch):
+            label = artist.get_label()
+            if label in HATCHED_CLFS:
+                artist.set_hatch(HATCH_PATTERN)
+                artist.set_edgecolor("white")
+
+    # Update legend handles to match
+    legend = ax.get_legend()
+    if legend is not None:
+        handles, texts = legend.legend_handles, legend.get_texts()
+        for handle, text in zip(handles, texts, strict=False):
+            if text.get_text() in HATCHED_CLFS and isinstance(handle, Patch):
+                handle.set_hatch(HATCH_PATTERN)
+                handle.set_edgecolor("white")
+
+
 def boxplot(
     dataset: str,
     metric: str = "r2",
@@ -128,6 +162,7 @@ def boxplot(
         ax = plt.gca()
     data = info[info.dataset.eq(dataset)].sort_values("clf").dropna(subset=metric)
     sns.boxplot(data, hue="clf", y=metric, gap=0.2, ax=ax, palette=palette)
+    apply_hatching(ax)
     ax.set_title(dataset)
     ax.axhline(
         data.groupby("clf")[metric].median().max(), linestyle="dotted", color="gray"
