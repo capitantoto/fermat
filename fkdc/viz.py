@@ -22,27 +22,27 @@ from sklearn.inspection import DecisionBoundaryDisplay
 from sklearn.neighbors import KernelDensity
 from sklearn.utils import Bunch
 
-from fkdc import cache_dir, config, root_dir
-from fkdc.datasets import Dataset, found_datasets, synth_datasets
+from fkdc import config, dir_cache, dir_raiz
+from fkdc.datasets import Dataset, datasets_reales, datasets_sinteticos
 from fkdc.tarea import Tarea
 
-# TODO: Retrain with consistent version to avoid issue
+# TODO: Reentrenar con versión consistente para evitar este problema
 warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
 
 logger = logging.getLogger(__name__)
-run_dir = config.run_dir
-datasets_dir = run_dir / "../datasets"
-img_dir = root_dir / "docs" / "img"
-data_dir = root_dir / "docs" / "data"
+dir_ejecucion = config.dir_ejecucion
+dir_datasets = dir_ejecucion / "../datasets"
+dir_imagenes = dir_raiz / "docs" / "img"
+dir_datos = dir_raiz / "docs" / "data"
 
-datasets = [*synth_datasets, *found_datasets]
+datasets = [*datasets_sinteticos, *datasets_reales]
 clfs = list(config.clasificadores.keys())
 infos = None
-basic_info = None
+info_basica = None
 
-# Palette: paired classifiers share the same base color, variants use hatching.
-# Families: dc (fkdc/kdc), kn (fkn/kn), logr (lr/slr), gbt, gnb, svc
-_clf_families = {
+# Paleta: clfs pareados comparten color base, variantes usan sombreado.
+# Familias: dc (fkdc/kdc), kn (fkn/kn), logr (lr/slr), gbt, gnb, svc
+_familias_clf = {
     "dc": ["fkdc", "kdc"],
     "kn": ["fkn", "kn"],
     "logr": ["lr", "slr"],
@@ -50,185 +50,213 @@ _clf_families = {
     "gnb": ["gnb"],
     "svc": ["svc"],
 }
-_family_colors = dict(zip(_clf_families, sns.color_palette("Pastel2", 6), strict=True))
-default_palette = {
-    clf: _family_colors[family]
-    for family, members in _clf_families.items()
-    for clf in members
+_colores_familia = dict(
+    zip(_familias_clf, sns.color_palette("Pastel2", 6), strict=True)
+)
+paleta_predeterminada = {
+    clf: _colores_familia[familia]
+    for familia, miembros in _familias_clf.items()
+    for clf in miembros
 }
-_hatched_clfs = {"kdc", "kn", "slr"}
+_clfs_sombreados = {"kdc", "kn", "slr"}
 
 
-def save_fig(fig: Figure, fpath: str | Path, **savefig_kw):
-    """Save figure, log, and close."""
-    savefig_kw.setdefault("bbox_inches", "tight")
-    fig.savefig(fpath, **savefig_kw)
-    logger.info(f"Wrote {fpath}")
+def guardar_fig(fig: Figure, ruta: str | Path, **kw_guardar):
+    """Guarda la figura, registra la ruta y cierra."""
+    kw_guardar.setdefault("bbox_inches", "tight")
+    fig.savefig(ruta, **kw_guardar)
+    logger.info(f"Escribió {ruta}")
     plt.close(fig)
 
 
-def load_infos(dir_or_paths: list[Path] | Path):
-    if isinstance(dir_or_paths, Path):
-        assert dir_or_paths.is_dir()
-        paths = dir_or_paths.glob("*.pkl")
-    elif isinstance(dir_or_paths, list):
-        paths = dir_or_paths
+def cargar_infos(dir_o_rutas: list[Path] | Path):
+    """Carga diccionarios de info desde pickles."""
+    if isinstance(dir_o_rutas, Path):
+        assert dir_o_rutas.is_dir()
+        rutas = dir_o_rutas.glob("*.pkl")
+    elif isinstance(dir_o_rutas, list):
+        rutas = dir_o_rutas
     else:
         raise ValueError(
-            "`dir_or_paths` debe ser un directorio con pickles de info "
+            "`dir_o_rutas` debe ser un directorio con pickles de info "
             "o una lista de rutas a pickles de info"
         )
-    return {tuple(fn.stem.split("-")): pickle.load(open(fn, "rb")) for fn in paths}
+    return {tuple(fn.stem.split("-")): pickle.load(open(fn, "rb")) for fn in rutas}
 
 
-def parse_basic_info(infos: dict, main_seed: int = config.main_seed):
-    basic_fields = ["accuracy", "r2", "logvero"]
-    basic_infos = {}
+def procesar_info_basica(
+    infos: dict, semilla_principal: int = config.semilla_principal
+):
+    """Extrae campos básicos (accuracy, r2, logvero) de los infos."""
+    campos_basicos = ["accuracy", "r2", "logvero"]
+    infos_basicos = {}
     for k, v in infos.items():
         clf = k[2]
-        basic_infos[k] = {k: v for k, v in v[clf].items() if k in basic_fields}
+        infos_basicos[k] = {k: v for k, v in v[clf].items() if k in campos_basicos}
 
-    basic_info = pd.DataFrame.from_records(
-        list(basic_infos.values()),
+    info_basica = pd.DataFrame.from_records(
+        list(infos_basicos.values()),
         index=pd.MultiIndex.from_tuples(
-            basic_infos.keys(), names=["dataset", "ds_seed", "clf", "run_seed", "score"]
+            infos_basicos.keys(),
+            names=["dataset", "semilla_ds", "clf", "semilla_corrida", "score"],
         ),
     ).reset_index()
-    if main_seed:  # Valida que las semillas se correspondan
+    if semilla_principal:  # Valida que las semillas se correspondan
         assert all(
-            (basic_info.ds_seed == "None") | (basic_info.run_seed == str(main_seed))
+            (info_basica.semilla_ds == "None")
+            | (info_basica.semilla_corrida == str(semilla_principal))
         )
-    basic_info["semilla"] = np.where(
-        basic_info.ds_seed == "None", basic_info.run_seed, basic_info.ds_seed
+    info_basica["semilla"] = np.where(
+        info_basica.semilla_ds == "None",
+        info_basica.semilla_corrida,
+        info_basica.semilla_ds,
     ).astype(int)
-    return basic_info.drop(columns=["ds_seed", "run_seed"])
+    return info_basica.drop(columns=["semilla_ds", "semilla_corrida"])
 
 
-def _render_basic_info(info: pd.DataFrame | None):
+def _resolver_info_basica(info: pd.DataFrame | None):
+    """Resuelve la info básica: la calcula si no fue proporcionada."""
     if info is None:
-        logger.debug("No info passed, defaulting to basic_info")
-        global infos, basic_info
+        logger.debug("No se pasó info, usando info_basica por defecto")
+        global infos, info_basica
         if infos is None:
-            logger.warning("Infos not parsed yet; parsing...")
-            infos = load_infos(config.run_dir)
-        if basic_info is None:
-            logger.warning("basic_info not extracted yet, extracting...")
-            basic_info = parse_basic_info(infos, config.main_seed)
-        info: pd.DataFrame = basic_info
+            logger.warning("Infos no parseados aún; parseando...")
+            infos = cargar_infos(config.dir_ejecucion)
+        if info_basica is None:
+            logger.warning("info_basica no extraída aún, extrayendo...")
+            info_basica = procesar_info_basica(infos, config.semilla_principal)
+        info: pd.DataFrame = info_basica
     return info
 
 
 def get_highlights(
-    dataset: str, by: str = "r2", info: None | pd.DataFrame = None
+    dataset: str, por: str = "r2", info: None | pd.DataFrame = None
 ) -> Bunch:
-    info = _render_basic_info(info)
-    this_dataset = info["dataset"].eq(dataset)
-    summary = (
-        info[this_dataset]
+    """Obtiene el mejor clasificador y los excluidos para un dataset."""
+    info = _resolver_info_basica(info)
+    este_dataset = info["dataset"].eq(dataset)
+    resumen = (
+        info[este_dataset]
         .groupby("clf")[["accuracy", "r2"]]
         .median()
-        .sort_values(by=by, ascending=False)
+        .sort_values(by=por, ascending=False)
     )
-    best = summary.idxmax()[by]
-    best_runs = info[this_dataset & info["clf"].eq(best)][by]
-    first_quartile = np.percentile(best_runs, 25)
-    best_min = best_runs.min()
-    logger.debug(f"best: {best} (by {by}); p25: {first_quartile}; min: {best_min}")
-    bad = summary[summary[by].lt(first_quartile)].index.tolist()
-    excluded = summary[summary[by].lt(best_min)].index.tolist()
+    mejor = resumen.idxmax()[por]
+    corridas_mejor = info[este_dataset & info["clf"].eq(mejor)][por]
+    primer_cuartil = np.percentile(corridas_mejor, 25)
+    min_mejor = corridas_mejor.min()
+    logger.debug(f"mejor: {mejor} (por {por}); p25: {primer_cuartil}; min: {min_mejor}")
+    malos = resumen[resumen[por].lt(primer_cuartil)].index.tolist()
+    excluidos = resumen[resumen[por].lt(min_mejor)].index.tolist()
     return Bunch(
         dataset=dataset,
-        summary=summary,
-        best=best,
-        bad=bad,
-        excluded=excluded,
+        summary=resumen,
+        best=mejor,
+        bad=malos,
+        excluded=excluidos,
     )
 
 
 def boxplot(
     dataset: str,
-    metric: str = "r2",
+    metrica: str = "r2",
     info: pd.DataFrame | None = None,
     ax=None,
-    palette: dict | None = None,
-    exclude_clfs: list[str] | None = None,
+    paleta: dict | None = None,
+    excluir_clfs: list[str] | None = None,
 ):
-    palette = palette or default_palette
-    info = _render_basic_info(info)
+    """Diagrama de caja (boxplot) de una métrica por clasificador."""
+    paleta = paleta or paleta_predeterminada
+    info = _resolver_info_basica(info)
 
     if ax is None:
         ax = plt.gca()
-    data = info[info.dataset.eq(dataset)].sort_values("clf").dropna(subset=metric)
-    if exclude_clfs:
-        data = data[~data.clf.isin(exclude_clfs)]
+    datos = info[info.dataset.eq(dataset)].sort_values("clf").dropna(subset=metrica)
+    if excluir_clfs:
+        datos = datos[~datos.clf.isin(excluir_clfs)]
     sns.boxplot(
-        data, hue="clf", y=metric, gap=0.2, ax=ax, palette=palette, saturation=1.0
+        datos, hue="clf", y=metrica, gap=0.2, ax=ax, palette=paleta, saturation=1.0
     )
-    apply_hatching(ax)
+    aplicar_sombreado(ax)
     ax.axhline(
-        data.groupby("clf")[metric].median().max(), linestyle="dotted", color="gray"
+        datos.groupby("clf")[metrica].median().max(),
+        linestyle="dotted",
+        color="gray",
     )
 
 
-def apply_hatching(ax, hatched_clfs=None):
-    """Apply hatching to boxplot boxes for variant classifiers."""
-    hatched_clfs = hatched_clfs or _hatched_clfs
-    legend = ax.get_legend()
-    if legend is None:
+def aplicar_sombreado(ax, clfs_sombreados=None):
+    """Aplica sombreado (hatching) a las cajas de clasificadores variantes."""
+    clfs_sombreados = clfs_sombreados or _clfs_sombreados
+    leyenda = ax.get_legend()
+    if leyenda is None:
         return
-    labels = [t.get_text() for t in legend.get_texts()]
-    handles = legend.legend_handles
-    box_patches = [p for p in ax.patches if isinstance(p, PathPatch)]
-    for i, label in enumerate(labels):
-        if label in hatched_clfs:
-            if i < len(box_patches):
-                box_patches[i].set_hatch("///")
+    etiquetas = [t.get_text() for t in leyenda.get_texts()]
+    handles = leyenda.legend_handles
+    parches_caja = [p for p in ax.patches if isinstance(p, PathPatch)]
+    for i, etiqueta in enumerate(etiquetas):
+        if etiqueta in clfs_sombreados:
+            if i < len(parches_caja):
+                parches_caja[i].set_hatch("///")
             handles[i].set_hatch("///")
 
 
-def decision_boundary(
+def frontera_decision(
     dataset: str,
-    seed: int,
+    semilla: int,
     clf: str,
     ax: Axes | None = None,
     cmap: str | Colormap | None = None,
 ):
+    """Grafica la frontera de decisión de un clasificador sobre un dataset 2D."""
     ax = ax or plt.gca()
     cmap = cmap or colormaps["coolwarm"]
 
     if isinstance(cmap, str):
         cmap = colormaps[cmap]
     if clf == "svc":
-        response_method, scoring = "predict", "accuracy"
+        metodo_respuesta, puntuacion = "predict", "accuracy"
     elif clf in clfs:
-        response_method, scoring = "predict_proba", "neg_log_loss"
+        metodo_respuesta, puntuacion = "predict_proba", "neg_log_loss"
     else:
-        raise ValueError(f"Clf not known: {clf}")
-    if dataset in synth_datasets:
-        ds_path = datasets_dir / f"{dataset}-{seed}.pkl"
-        plotting_key = (dataset, str(seed), clf, str(config.main_seed), scoring)
-    elif dataset in found_datasets:
-        ds_path = datasets_dir / f"{dataset}.pkl"
-        plotting_key = (dataset, str(None), clf, str(seed), scoring)
+        raise ValueError(f"Clasificador desconocido: {clf}")
+    if dataset in datasets_sinteticos:
+        ruta_ds = dir_datasets / f"{dataset}-{semilla}.pkl"
+        clave_grafico = (
+            dataset,
+            str(semilla),
+            clf,
+            str(config.semilla_principal),
+            puntuacion,
+        )
+    elif dataset in datasets_reales:
+        ruta_ds = dir_datasets / f"{dataset}.pkl"
+        clave_grafico = (
+            dataset,
+            str(None),
+            clf,
+            str(semilla),
+            puntuacion,
+        )
     else:
-        raise ValueError(f"Dataset not known: {dataset}-{seed}")
-    with open(ds_path, "rb") as fp:
+        raise ValueError(f"Dataset desconocido: {dataset}-{semilla}")
+    with open(ruta_ds, "rb") as fp:
         ds: Dataset = pickle.load(fp)
-    tarea = Tarea(ds, {}, seed=seed, split_evaluacion=config.split_evaluacion)
+    tarea = Tarea(ds, {}, semilla=semilla, split_evaluacion=config.split_evaluacion)
     X = tarea.X_eval
     y = tarea.y_eval
     k = ds.k
     X0, X1 = X[:, 0], X[:, 1]
     with open(
-        config.run_dir / f"{'-'.join(map(str, plotting_key))}.pkl", "rb"
+        config.dir_ejecucion / f"{'-'.join(map(str, clave_grafico))}.pkl", "rb"
     ) as fpath:
         info: dict = pickle.load(fpath)
-        best_est: BaseEstimator = info[clf]["busqueda"].best_estimator_
+        mejor_est: BaseEstimator = info[clf]["busqueda"].best_estimator_
     DecisionBoundaryDisplay.from_estimator(
-        best_est,
+        mejor_est,
         X,
         eps=0.05,
-        response_method=response_method if k == 2 else "predict",
+        response_method=metodo_respuesta if k == 2 else "predict",
         cmap=cmap,
         alpha=0.8,
         ax=ax,
@@ -244,71 +272,78 @@ def decision_boundary(
     return info, ds, tarea
 
 
-def loss_contour(
+def contorno_perdida(
     dataset: str,
-    seed: int,
+    semilla: int,
     clf: str,
     x: str,
     y: str,
-    other_params: dict | None = None,
+    otros_params: dict | None = None,
     cmap: str | Colormap = "viridis",
 ):
+    """Grafica el contorno de la función de pérdida en el espacio de hiperparámetros."""
     cmap = cmap or "viridis"
     if isinstance(cmap, str):
         cmap = colormaps[cmap]
-    scoring = "accuracy" if clf == "svc" else "neg_log_loss"
+    puntuacion = "accuracy" if clf == "svc" else "neg_log_loss"
     if clf not in clfs:
-        raise ValueError(f"Clf not known: {clf}")
-    if dataset in synth_datasets:
-        plotting_key = (dataset, str(seed), clf, str(config.main_seed), scoring)
-    elif dataset in found_datasets:
-        plotting_key = (dataset, str(None), clf, str(seed), scoring)
+        raise ValueError(f"Clasificador desconocido: {clf}")
+    if dataset in datasets_sinteticos:
+        clave_grafico = (
+            dataset,
+            str(semilla),
+            clf,
+            str(config.semilla_principal),
+            puntuacion,
+        )
+    elif dataset in datasets_reales:
+        clave_grafico = (dataset, str(None), clf, str(semilla), puntuacion)
     else:
-        raise ValueError(f"Dataset not known: {dataset}, {seed}")
-    fpath = config.run_dir / f"{'-'.join(map(str, plotting_key))}.pkl"
-    with open(fpath, "rb") as fp:
+        raise ValueError(f"Dataset desconocido: {dataset}, {semilla}")
+    ruta = config.dir_ejecucion / f"{'-'.join(map(str, clave_grafico))}.pkl"
+    with open(ruta, "rb") as fp:
         info: dict = pickle.load(fp)
-    cv_results = pd.DataFrame(info[clf]["busqueda"].cv_results_)
+    resultados_cv = pd.DataFrame(info[clf]["busqueda"].cv_results_)
 
-    data = cv_results.copy()
-    other_params = other_params or {}
-    if other_params:
-        for p, value in other_params.items():
-            data = data[data[f"param_{p}"] == value]
-    data = data.set_index([f"param_{y}", f"param_{x}"]).mean_test_score.unstack()
-    X = data.columns.values
-    Y = data.index.values
-    Z = data.values
+    datos = resultados_cv.copy()
+    otros_params = otros_params or {}
+    if otros_params:
+        for p, valor in otros_params.items():
+            datos = datos[datos[f"param_{p}"] == valor]
+    datos = datos.set_index([f"param_{y}", f"param_{x}"]).mean_test_score.unstack()
+    X = datos.columns.values
+    Y = datos.index.values
+    Z = datos.values
 
     fig, ax = plt.subplots(layout="constrained")
     CS = ax.contourf(X, Y, Z, 15, cmap=cmap)
     ax.set_xlabel(x)
     ax.set_ylabel(y)
-    best_X = X[Z.argmax(axis=1)]
-    ax.scatter(best_X, Y, marker="x", color="red")
-    left_index = max(np.where(X == min(best_X))[0][0] - 1, 0)
-    right_index = min(np.where(X == max(best_X))[0][0] + 1, len(X) - 1)
-    ax.set_xlim(X[left_index], X[right_index])
-    cbar = fig.colorbar(CS)
-    cbar.ax.set_ylabel("Score")
+    mejor_X = X[Z.argmax(axis=1)]
+    ax.scatter(mejor_X, Y, marker="x", color="red")
+    idx_izq = max(np.where(X == min(mejor_X))[0][0] - 1, 0)
+    idx_der = min(np.where(X == max(mejor_X))[0][0] + 1, len(X) - 1)
+    ax.set_xlim(X[idx_izq], X[idx_der])
+    barra_color = fig.colorbar(CS)
+    barra_color.ax.set_ylabel("Score")
     return fig, ax
 
 
 def parametros_comparados(
     dataset: str,
-    base_clf: str = "kdc",
+    clf_base: str = "kdc",
     infos: dict | None = None,
     bi: pd.DataFrame | None = None,
 ):
-    """Build and save parametros_comparados CSV for a dataset."""
-    infos = infos or globals().get("infos") or load_infos(config.run_dir)
-    bi = _render_basic_info(bi)
-    base_param = "bandwidth" if base_clf == "kdc" else "n_neighbors"
+    """Construye y guarda CSV de parámetros comparados para un dataset."""
+    infos = infos or globals().get("infos") or cargar_infos(config.dir_ejecucion)
+    bi = _resolver_info_basica(bi)
+    param_base = "bandwidth" if clf_base == "kdc" else "n_neighbors"
 
     infos_relevantes = {
         k: pd.DataFrame(v[k[2]]["busqueda"].cv_results_)
         for k, v in infos.items()
-        if k[0] == dataset and k[2].endswith(base_clf)
+        if k[0] == dataset and k[2].endswith(clf_base)
     }
     df = pd.concat(
         infos_relevantes.values(),
@@ -316,79 +351,87 @@ def parametros_comparados(
         names=("dataset", "seed", "clf", "main_seed", "scoring", "run"),
     )
 
-    best_estimators = {
+    mejores_estimadores = {
         k: v[k[2]]["busqueda"].best_estimator_
         for k, v in infos.items()
-        if k[0] == dataset and k[2].endswith(base_clf)
+        if k[0] == dataset and k[2].endswith(clf_base)
     }
-    best_params = [
+    mejores_params = [
         {
             "clf": k[2],
-            "semilla": int(k[1 if dataset in synth_datasets else 3]),
+            "semilla": int(k[1 if dataset in datasets_sinteticos else 3]),
             "alpha": v.get_params().get("alpha", 1),
-            base_param: v.get_params()[base_param],
+            param_base: v.get_params()[param_base],
         }
-        for k, v in best_estimators.items()
+        for k, v in mejores_estimadores.items()
     ]
-    best_params = pd.DataFrame.from_records(best_params).set_index(["semilla", "clf"])
+    mejores_params = pd.DataFrame.from_records(mejores_params).set_index(
+        ["semilla", "clf"]
+    )
 
-    scores = (
-        bi[bi.dataset.eq(dataset) & bi.clf.str.endswith(base_clf)]
+    puntajes = (
+        bi[bi.dataset.eq(dataset) & bi.clf.str.endswith(clf_base)]
         .set_index(["semilla", "clf"])
         .r2
     )
-    best_params["r2"] = scores
-    best_params = best_params.reset_index()
+    mejores_params["r2"] = puntajes
+    mejores_params = mejores_params.reset_index()
 
-    compared_params = (
-        best_params.pivot(
-            columns="clf", index="semilla", values=["r2", base_param, "alpha"]
+    params_comparados = (
+        mejores_params.pivot(
+            columns="clf",
+            index="semilla",
+            values=["r2", param_base, "alpha"],
         )
-        .drop(columns=("alpha", base_clf))
-        .assign(delta_r2=lambda df_: df_.r2[f"f{base_clf}"] - df_.r2[base_clf])
+        .drop(columns=("alpha", clf_base))
+        .assign(delta_r2=lambda df_: df_.r2[f"f{clf_base}"] - df_.r2[clf_base])
         .sort_values("delta_r2", ascending=False)
         .reorder_levels([1, 0], axis=1)
         .sort_index(axis=1)
     )
 
-    max_alpha_max_test_score = (
-        df.xs(f"f{base_clf}", level="clf")
+    max_alpha_max_puntaje_test = (
+        df.xs(f"f{clf_base}", level="clf")
         .query("rank_test_score == 1")
         .param_alpha.groupby("seed")
         .agg("unique")
     )
-    max_alpha_max_test_score.index = max_alpha_max_test_score.index.astype(int)
-    compared_params["max_score_alpha_test"] = max_alpha_max_test_score
+    max_alpha_max_puntaje_test.index = max_alpha_max_puntaje_test.index.astype(int)
+    params_comparados["max_score_alpha_test"] = max_alpha_max_puntaje_test
 
-    fpath = data_dir / f"{dataset}-parametros_comparados-{base_clf}.csv"
-    compared_params.round(3).to_csv(fpath)
-    logger.info(f"Wrote {fpath}")
-    return compared_params
+    ruta = dir_datos / f"{dataset}-parametros_comparados-{clf_base}.csv"
+    params_comparados.round(3).to_csv(ruta)
+    logger.info(f"Escribió {ruta}")
+    return params_comparados
 
 
-def plot_fkn_kn_score_vs_n_neighbors(dataset, seed, ax, infos=None):
-    """Plot mean_test_score vs n_neighbors for fkn and kn."""
-    infos = infos or globals().get("infos") or load_infos(config.run_dir)
-    scoring = "neg_log_loss"
-    info_fkn = infos[(dataset, str(seed), "fkn", str(config.main_seed), scoring)]
-    score_fkn = (
+def graficar_fkn_kn_score_vs_n_vecinos(dataset, semilla, ax, infos=None):
+    """Grafica mean_test_score vs n_neighbors para fkn y kn."""
+    infos = infos or globals().get("infos") or cargar_infos(config.dir_ejecucion)
+    puntuacion = "neg_log_loss"
+    info_fkn = infos[
+        (dataset, str(semilla), "fkn", str(config.semilla_principal), puntuacion)
+    ]
+    puntaje_fkn = (
         pd.DataFrame(info_fkn["fkn"].busqueda.cv_results_)
         .groupby("param_n_neighbors")
         .mean_test_score.max()
     ).rename("fkn")
-    info_kn = infos[(dataset, str(seed), "kn", str(config.main_seed), scoring)]
-    score_kn = (
+    info_kn = infos[
+        (dataset, str(semilla), "kn", str(config.semilla_principal), puntuacion)
+    ]
+    puntaje_kn = (
         pd.DataFrame(info_kn["kn"].busqueda.cv_results_)
         .groupby("param_n_neighbors")
         .mean_test_score.max()
     ).rename("kn")
-    pd.concat([score_kn, score_fkn], axis=1).plot(ax=ax)
+    pd.concat([puntaje_kn, puntaje_fkn], axis=1).plot(ax=ax)
     ax.set_xscale("log")
     return ax
 
 
 # ---------------------------------------------------------------------------
-# __main__: generate all figures and data files for the thesis
+# __main__: genera todas las figuras y archivos de datos para la tesis
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     import os
@@ -403,30 +446,30 @@ if __name__ == "__main__":
     plt.rcParams["axes.unicode_minus"] = False
     plt.rcParams["svg.hashsalt"] = "fkdc"
 
-    # --- Load data (with cache) ---
-    cache_path = cache_dir / "infos_bi.pkl"
-    cache_path.parent.mkdir(exist_ok=True)
-    if cache_path.exists():
-        logger.info(f"Loading cached infos+bi from {cache_path}")
-        with open(cache_path, "rb") as fp:
-            infos, basic_info = pickle.load(fp)
+    # --- Cargar datos (con caché) ---
+    ruta_cache = dir_cache / "infos_bi.pkl"
+    ruta_cache.parent.mkdir(exist_ok=True)
+    if ruta_cache.exists():
+        logger.info(f"Cargando infos+bi desde caché: {ruta_cache}")
+        with open(ruta_cache, "rb") as fp:
+            infos, info_basica = pickle.load(fp)
     else:
-        logger.info("Loading infos from disk (first run, will cache)...")
-        infos = load_infos(run_dir)
-        basic_info = parse_basic_info(infos, config.main_seed)
-        with open(cache_path, "wb") as fp:
-            pickle.dump((infos, basic_info), fp)
-        logger.info(f"Cached to {cache_path}")
+        logger.info("Cargando infos desde disco (primera ejecución, se cachea)...")
+        infos = cargar_infos(dir_ejecucion)
+        info_basica = procesar_info_basica(infos, config.semilla_principal)
+        with open(ruta_cache, "wb") as fp:
+            pickle.dump((infos, info_basica), fp)
+        logger.info(f"Cacheado en {ruta_cache}")
 
-    for d in [data_dir, img_dir]:
+    for d in [dir_datos, dir_imagenes]:
         d.mkdir(exist_ok=True)
 
-    run_seeds = config._get_run_seeds()
-    plotting_seed = run_seeds[0]
-    bi = basic_info  # short alias
+    semillas = config._obtener_semillas()
+    semilla_graficos = semillas[0]
+    bi = info_basica  # alias corto
 
-    # Curated datasets used in the thesis
-    all_datasets = [
+    # Datasets curados usados en la tesis
+    todos_datasets = [
         "lunas_lo",
         "circulos_lo",
         "espirales_lo",
@@ -440,101 +483,108 @@ if __name__ == "__main__":
     ]
 
     # =====================================================================
-    # §2 Preliminares: standalone figures
+    # §2 Preliminares: figuras independientes
     # =====================================================================
 
     # dos-circulos jointplot
-    ds_circles = Dataset.de_fabrica(
-        make_circles, n_samples=800, noise=0.05, random_state=plotting_seed
+    ds_circulos = Dataset.de_fabrica(
+        make_circles, n_samples=800, noise=0.05, random_state=semilla_graficos
     )
     g = sns.jointplot(
-        x=ds_circles.X[:, 0], y=ds_circles.X[:, 1], hue=ds_circles.y, legend=False
+        x=ds_circulos.X[:, 0],
+        y=ds_circulos.X[:, 1],
+        hue=ds_circulos.y,
+        legend=False,
     )
     g.ax_joint.set_xlim(-1.5, 1.5)
     g.ax_joint.set_ylim(-1.5, 1.5)
-    save_fig(g.figure, img_dir / "dos-circulos-jointplot.svg")
+    guardar_fig(g.figure, dir_imagenes / "dos-circulos-jointplot.svg")
 
-    # curse of dimensionality
+    # maldición de la dimensionalidad
     hs = [0.25, 0.5, 0.9, 0.95]
-    ds_range = np.arange(1, 51, 1)
-    df_curse = pd.DataFrame(
-        [(h, d, h**d) for h in hs for d in ds_range], columns=["h", "d", "h**d"]
+    rango_ds = np.arange(1, 51, 1)
+    df_maldicion = pd.DataFrame(
+        [(h, d, h**d) for h in hs for d in rango_ds], columns=["h", "d", "h**d"]
     )
     fig, ax = plt.subplots(figsize=(12, 4), layout="tight")
-    df_curse.set_index(["d", "h"]).unstack()["h**d"].plot(ax=ax)
-    save_fig(fig, img_dir / "curse-dim.svg")
+    df_maldicion.set_index(["d", "h"]).unstack()["h**d"].plot(ax=ax)
+    guardar_fig(fig, dir_imagenes / "curse-dim.svg")
 
-    # kernel comparison (gaussian vs tophat) for seminario-modesto
+    # comparación de kernels (gaussiano vs tophat) para seminario-modesto
     rng = np.random.default_rng(42)
     xs = np.sort(rng.standard_normal(200)).reshape(-1, 1)
-    grid = np.arange(-5, 5, 0.01).reshape(-1, 1)
+    grilla = np.arange(-5, 5, 0.01).reshape(-1, 1)
     fig, axs = plt.subplots(1, 2, figsize=(16, 6), sharey=True, layout="tight")
     for kernel, ax in zip(["gaussian", "tophat"], axs, strict=False):
         ax.plot(
-            grid, sp.stats.norm().pdf(grid), alpha=0.5, color="gray", linestyle="dashed"
+            grilla,
+            sp.stats.norm().pdf(grilla),
+            alpha=0.5,
+            color="gray",
+            linestyle="dashed",
         )
         for bw in [0.1, 0.3, 1, 3]:
             kde = KernelDensity(kernel=kernel, bandwidth=bw).fit(xs)
-            dens = np.exp(kde.score_samples(grid))
-            ax.plot(grid, dens, label=f"h = {bw}", alpha=0.5)
+            dens = np.exp(kde.score_samples(grilla))
+            ax.plot(grilla, dens, label=f"h = {bw}", alpha=0.5)
         ax.set_title(f"Kernel = {kernel}")
         ax.legend(loc="upper right")
-    save_fig(fig, img_dir / "unif-gaus-kern.svg")
+    guardar_fig(fig, dir_imagenes / "unif-gaus-kern.svg")
 
     # =====================================================================
-    # Scatter plots (adaptive by dimensionality)
+    # Gráficos de dispersión (adaptativos por dimensionalidad)
     # =====================================================================
-    for dataset in all_datasets:
-        ds_path = datasets_dir / f"{dataset}-{plotting_seed}.pkl"
-        with open(ds_path, "rb") as fp:
+    for dataset in todos_datasets:
+        ruta_ds = dir_datasets / f"{dataset}-{semilla_graficos}.pkl"
+        with open(ruta_ds, "rb") as fp:
             ds = pickle.load(fp)
         if ds.p == 3:
-            # 3D datasets: scatter_3d as the default scatter
+            # Datasets 3D: scatter_3d por defecto
             fig, ax = plt.subplots(layout="tight", subplot_kw={"projection": "3d"})
             ds.scatter_3d(ax=ax)
         else:
-            # 2D datasets: standard scatter
+            # Datasets 2D: dispersión estándar
             fig, ax = plt.subplots(layout="tight")
             ds.scatter(ax=ax)
-        save_fig(fig, img_dir / f"{dataset}-scatter.svg")
+        guardar_fig(fig, dir_imagenes / f"{dataset}-scatter.svg")
 
-    # helices pairplot
-    with open(datasets_dir / f"helices_0-{plotting_seed}.pkl", "rb") as fp:
+    # hélices pairplot
+    with open(dir_datasets / f"helices_0-{semilla_graficos}.pkl", "rb") as fp:
         ds_helices = pickle.load(fp)
-    graph = ds_helices.pairplot(
+    grafico = ds_helices.pairplot(
         dims=[2, 1, 0], height=2, plot_kws={"alpha": 0.5, "s": 5}, corner=True
     )
-    save_fig(graph.figure, img_dir / "helices-pairplot.svg")
+    guardar_fig(grafico.figure, dir_imagenes / "helices-pairplot.svg")
 
     # =====================================================================
-    # Highlights JSON + Boxplots
+    # Destacados JSON + Diagramas de caja
     # =====================================================================
-    highlights_by = "r2"
-    for dataset in all_datasets:
-        hl = get_highlights(dataset, by=highlights_by, info=bi)
-        excluded = hl.excluded
+    destacar_por = "r2"
+    for dataset in todos_datasets:
+        hl = get_highlights(dataset, por=destacar_por, info=bi)
+        excluidos = hl.excluded
 
-        # Save highlights JSON
+        # Guardar destacados JSON
         hl_json = dict(hl)
         hl_json["summary"] = hl.summary.round(4).to_csv()
-        fname = f"{dataset}-{highlights_by}-highlights.json"
-        with open(data_dir / fname, "w") as fp:
+        nombre_archivo = f"{dataset}-{destacar_por}-highlights.json"
+        with open(dir_datos / nombre_archivo, "w") as fp:
             json.dump(hl_json, fp, indent=4)
-        logger.info(f"Wrote {data_dir / fname}")
+        logger.info(f"Escribió {dir_datos / nombre_archivo}")
 
-        # Boxplots (R² and accuracy), excluding non-competitive classifiers
-        for metric in ["r2", "accuracy"]:
+        # Diagramas de caja (R² y accuracy), excluyendo clasificadores no competitivos
+        for metrica in ["r2", "accuracy"]:
             fig, ax = plt.subplots(layout="tight")
-            boxplot(dataset, metric, info=bi, ax=ax, exclude_clfs=excluded)
-            save_fig(fig, img_dir / f"{dataset}-{metric}-boxplot.svg")
+            boxplot(dataset, metrica, info=bi, ax=ax, excluir_clfs=excluidos)
+            guardar_fig(fig, dir_imagenes / f"{dataset}-{metrica}-boxplot.svg")
 
     # =====================================================================
-    # "mejor-clf-por-dataset" CSVs (aggregate over ALL datasets in bi)
+    # CSVs "mejor-clf-por-dataset" (agregado sobre TODOS los datasets en bi)
     # =====================================================================
-    for metric in ["r2", "accuracy"]:
-        best = (
-            bi.dropna(subset=metric)
-            .groupby(["dataset", "clf"])[metric]
+    for metrica in ["r2", "accuracy"]:
+        mejor = (
+            bi.dropna(subset=metrica)
+            .groupby(["dataset", "clf"])[metrica]
             .median()
             .sort_values()
             .reset_index("clf")
@@ -544,150 +594,164 @@ if __name__ == "__main__":
             .groupby("clf")
             .agg([len, ", ".join])
         )
-        best.columns = ["cant", "datasets"]
-        fname = f"mejor-clf-por-dataset-segun-{metric}-mediano.csv"
-        best.sort_values("cant", ascending=False).to_csv(data_dir / fname)
-        logger.info(f"Wrote {data_dir / fname}")
+        mejor.columns = ["cant", "datasets"]
+        nombre_archivo = f"mejor-clf-por-dataset-segun-{metrica}-mediano.csv"
+        mejor.sort_values("cant", ascending=False).to_csv(dir_datos / nombre_archivo)
+        logger.info(f"Escribió {dir_datos / nombre_archivo}")
 
     # =====================================================================
-    # Decision boundaries (curated pairs only)
+    # Fronteras de decisión (pares curados)
     # =====================================================================
-    all_clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb")
-    hi_clfs = ("fkdc", "gbt", "svc")
-    hi_curves = ("lunas", "circulos", "espirales")
-    db_pairs = (
-        [("espirales_lo", clf) for clf in all_clfs]
-        + [("lunas_lo", "lr")]
-        + [(f"{curve}_hi", clf) for curve in hi_curves for clf in hi_clfs]
+    todos_clfs = (
+        "kdc",
+        "fkdc",
+        "svc",
+        "kn",
+        "fkn",
+        "gbt",
+        "slr",
+        "lr",
+        "gnb",
     )
-    for dataset, clf in db_pairs:
+    clfs_destacados = ("fkdc", "gbt", "svc")
+    curvas_destacadas = ("lunas", "circulos", "espirales")
+    pares_frontera = (
+        [("espirales_lo", clf) for clf in todos_clfs]
+        + [("lunas_lo", "lr")]
+        + [
+            (f"{curva}_hi", clf)
+            for curva in curvas_destacadas
+            for clf in clfs_destacados
+        ]
+    )
+    for dataset, clf in pares_frontera:
         fig, ax = plt.subplots(layout="tight")
-        decision_boundary(dataset, plotting_seed, clf, ax=ax)
-        save_fig(fig, img_dir / f"{dataset}-{clf}-decision_boundary.svg")
+        frontera_decision(dataset, semilla_graficos, clf, ax=ax)
+        guardar_fig(fig, dir_imagenes / f"{dataset}-{clf}-decision_boundary.svg")
 
     # =====================================================================
-    # R² scatter plots: fkdc vs kdc, fkn vs kn (2D curves)
+    # Gráficos de dispersión R²: fkdc vs kdc, fkn vs kn (curvas 2D)
     # =====================================================================
     for dataset, sufijo in product(
         ("lunas_lo", "circulos_lo", "espirales_lo"), ("kn", "kdc")
     ):
-        x_col, y_col = sufijo, f"f{sufijo}"
-        data = (
+        col_x, col_y = sufijo, f"f{sufijo}"
+        datos = (
             bi[bi.dataset.eq(dataset) & bi.clf.str.endswith(sufijo)]
             .set_index(["semilla", "clf"])["r2"]
             .unstack()
         )
         fig, ax = plt.subplots(layout="tight")
-        data.plot(kind="scatter", y=y_col, x=x_col, ax=ax)
-        range_ = data.max().max() - data.min().min()
-        x_left = data.min()[x_col] - 0.1 * range_
-        ax.set_xlim(x_left)
-        ax.set_ylim(data.min()[y_col] - 0.1 * range_)
-        ax.axline((x_left, x_left), slope=1, color="gray", linestyle="dotted")
-        ax.set_title(f"$R^2$ por semilla para {y_col} y {x_col} en `{dataset}`")
-        save_fig(fig, img_dir / f"{dataset}-{x_col}-{y_col}-r2-scatter.svg")
+        datos.plot(kind="scatter", y=col_y, x=col_x, ax=ax)
+        rango = datos.max().max() - datos.min().min()
+        x_izq = datos.min()[col_x] - 0.1 * rango
+        ax.set_xlim(x_izq)
+        ax.set_ylim(datos.min()[col_y] - 0.1 * rango)
+        ax.axline((x_izq, x_izq), slope=1, color="gray", linestyle="dotted")
+        ax.set_title(f"$R^2$ por semilla para {col_y} y {col_x} en `{dataset}`")
+        guardar_fig(fig, dir_imagenes / f"{dataset}-{col_x}-{col_y}-r2-scatter.svg")
 
-    # R² scatter: fkdc vs kdc for helices_0
-    data_scatter = (
+    # Dispersión R²: fkdc vs kdc para helices_0
+    datos_disp = (
         bi[bi.dataset.eq("helices_0") & bi.clf.isin(["fkdc", "kdc"])]
         .set_index(["semilla", "clf"])["r2"]
         .unstack()
     )
     fig, ax = plt.subplots(layout="tight")
-    data_scatter.plot(kind="scatter", y="fkdc", x="kdc", ax=ax)
-    range_ = data_scatter.max().max() - data_scatter.min().min()
-    x_left = data_scatter.min()["kdc"] - 0.1 * range_
-    ax.set_xlim(x_left)
-    ax.set_ylim(data_scatter.min()["fkdc"] - 0.1 * range_)
-    ax.axline((x_left, x_left), slope=1, color="gray", linestyle="dotted")
+    datos_disp.plot(kind="scatter", y="fkdc", x="kdc", ax=ax)
+    rango = datos_disp.max().max() - datos_disp.min().min()
+    x_izq = datos_disp.min()["kdc"] - 0.1 * rango
+    ax.set_xlim(x_izq)
+    ax.set_ylim(datos_disp.min()["fkdc"] - 0.1 * rango)
+    ax.axline((x_izq, x_izq), slope=1, color="gray", linestyle="dotted")
     ax.set_title("$R^2$ por semilla para fkdc y kdc en `helices_0`")
-    save_fig(fig, img_dir / "helices_0-r2-fkdc-vs-kdc.svg")
+    guardar_fig(fig, dir_imagenes / "helices_0-r2-fkdc-vs-kdc.svg")
 
-    # R² scatter: fkn vs kn for helices_0 and eslabones_0 (seminario-modesto)
-    for dataset, fname in [
+    # Dispersión R²: fkn vs kn para helices_0 y eslabones_0 (seminario-modesto)
+    for dataset, nombre_archivo in [
         ("helices_0", "r2-fkn-kn-helices_0.svg"),
         ("eslabones_0", "eslabones_0-r2-fkn-vs-kn.svg"),
     ]:
-        data_scatter = (
+        datos_disp = (
             bi[bi.dataset.eq(dataset) & bi.clf.isin(["fkn", "kn"])]
             .set_index(["semilla", "clf"])["r2"]
             .unstack()
         )
         fig, ax = plt.subplots(layout="tight")
-        data_scatter.plot(kind="scatter", y="fkn", x="kn", ax=ax)
-        range_ = data_scatter.max().max() - data_scatter.min().min()
-        x_left = data_scatter.min()["kn"] - 0.1 * range_
-        ax.set_xlim(x_left)
-        ax.set_ylim(data_scatter.min()["fkn"] - 0.1 * range_)
-        ax.axline((x_left, x_left), slope=1, color="gray", linestyle="dotted")
+        datos_disp.plot(kind="scatter", y="fkn", x="kn", ax=ax)
+        rango = datos_disp.max().max() - datos_disp.min().min()
+        x_izq = datos_disp.min()["kn"] - 0.1 * rango
+        ax.set_xlim(x_izq)
+        ax.set_ylim(datos_disp.min()["fkn"] - 0.1 * rango)
+        ax.axline((x_izq, x_izq), slope=1, color="gray", linestyle="dotted")
         ax.set_title(f"$R^2$ por semilla para FKN y KN en `{dataset}`")
-        save_fig(fig, img_dir / fname)
+        guardar_fig(fig, dir_imagenes / nombre_archivo)
 
     # =====================================================================
-    # Loss contour surfaces (curated)
+    # Superficies de contorno de pérdida (curadas)
     # =====================================================================
     clf_lc, x_lc, y_lc = "fkdc", "bandwidth", "alpha"
     semillas_2d = [7354, 8527, 1188]
     curvas_2d = ["lunas", "circulos", "espirales"]
-    for curve, seed in product(curvas_2d, semillas_2d):
-        dataset = f"{curve}_lo"
-        fig, ax = loss_contour(dataset, seed, clf_lc, x_lc, y_lc)
+    for curva, semilla in product(curvas_2d, semillas_2d):
+        dataset = f"{curva}_lo"
+        fig, ax = contorno_perdida(dataset, semilla, clf_lc, x_lc, y_lc)
         ax.set_xscale("log")
-        fname = f"{dataset}-{seed}-{clf_lc}-{x_lc}-{y_lc}-loss_contour.svg"
-        save_fig(fig, img_dir / fname)
+        nombre_archivo = f"{dataset}-{semilla}-{clf_lc}-{x_lc}-{y_lc}-loss_contour.svg"
+        guardar_fig(fig, dir_imagenes / nombre_archivo)
 
-    # Standalone loss contours (helices_0 for tesis, espirales_lo for seminario)
-    for dataset, seed in [("helices_0", 1188), ("espirales_lo", 1434)]:
-        fig, ax = loss_contour(dataset, seed, clf_lc, x_lc, y_lc)
+    # Contornos de pérdida: helices_0 (tesis), espirales_lo (seminario)
+    for dataset, semilla in [("helices_0", 1188), ("espirales_lo", 1434)]:
+        fig, ax = contorno_perdida(dataset, semilla, clf_lc, x_lc, y_lc)
         ax.set_xscale("log")
-        fname = f"{dataset}-{seed}-{clf_lc}-{x_lc}-{y_lc}-loss_contour.svg"
-        save_fig(fig, img_dir / fname)
+        nombre_archivo = f"{dataset}-{semilla}-{clf_lc}-{x_lc}-{y_lc}-loss_contour.svg"
+        guardar_fig(fig, dir_imagenes / nombre_archivo)
 
     # =====================================================================
-    # lunas_lo: best_params + score vs bandwidth analysis
+    # lunas_lo: mejores_params + score vs bandwidth
     # =====================================================================
     dataset = "lunas_lo"
-    base_clf_lu, base_param_lu = "kdc", "bandwidth"
-    best_estimators_lu = {
+    clf_base_lu, param_base_lu = "kdc", "bandwidth"
+    mejores_estimadores_lu = {
         k: v[k[2]]["busqueda"].best_estimator_
         for k, v in infos.items()
-        if k[0] == dataset and k[2].endswith(base_clf_lu)
+        if k[0] == dataset and k[2].endswith(clf_base_lu)
     }
-    best_params_lu = pd.DataFrame.from_records(
+    mejores_params_lu = pd.DataFrame.from_records(
         [
             {
                 "clf": k[2],
-                "semilla": int(k[1 if dataset in synth_datasets else 3]),
+                "semilla": int(k[1 if dataset in datasets_sinteticos else 3]),
                 "alpha": v.get_params().get("alpha", 1),
-                base_param_lu: v.get_params()[base_param_lu],
+                param_base_lu: v.get_params()[param_base_lu],
             }
-            for k, v in best_estimators_lu.items()
+            for k, v in mejores_estimadores_lu.items()
         ]
     ).set_index(["semilla", "clf"])
-    scores_lu = (
-        bi[bi.dataset.eq(dataset) & bi.clf.str.endswith(base_clf_lu)]
+    puntajes_lu = (
+        bi[bi.dataset.eq(dataset) & bi.clf.str.endswith(clf_base_lu)]
         .set_index(["semilla", "clf"])
         .r2
     )
-    best_params_lu["r2"] = scores_lu
-    best_params_lu = best_params_lu.reset_index()
+    mejores_params_lu["r2"] = puntajes_lu
+    mejores_params_lu = mejores_params_lu.reset_index()
 
-    # best_params CSV (value counts)
+    # CSV mejores_params (conteos de valores)
     (
-        best_params_lu[["clf", "alpha", "bandwidth"]]
+        mejores_params_lu[["clf", "alpha", "bandwidth"]]
         .value_counts()
         .sort_index()
         .reset_index()
         .round(4)
-        .to_csv(data_dir / f"{dataset}-best_params.csv", index=False)
+        .to_csv(dir_datos / f"{dataset}-best_params.csv", index=False)
     )
-    logger.info(f"Wrote {data_dir / f'{dataset}-best_params.csv'}")
+    logger.info(f"Escribió {dir_datos / f'{dataset}-best_params.csv'}")
 
-    # best_test_params CSV
+    # CSV mejores_params_test
     infos_relevantes_lu = {
         k: pd.DataFrame(v[k[2]]["busqueda"].cv_results_)
         for k, v in infos.items()
-        if k[0] == dataset and k[2].endswith(base_clf_lu)
+        if k[0] == dataset and k[2].endswith(clf_base_lu)
     }
     df_lunas = pd.concat(
         infos_relevantes_lu.values(),
@@ -698,18 +762,18 @@ if __name__ == "__main__":
         ["param_alpha", "param_bandwidth"]
     ].round(4).value_counts().sort_index().reset_index().rename(
         columns=lambda s: s.replace("param_", "")
-    ).to_csv(data_dir / f"{dataset}-best_test_params.csv", index=False)
-    logger.info(f"Wrote {data_dir / f'{dataset}-best_test_params.csv'}")
+    ).to_csv(dir_datos / f"{dataset}-best_test_params.csv", index=False)
+    logger.info(f"Escribió {dir_datos / f'{dataset}-best_test_params.csv'}")
 
-    # score vs bandwidth scatter
+    # Dispersión score vs bandwidth
     fig, ax = plt.subplots(layout="tight")
-    sns.scatterplot(data=best_params_lu, x="bandwidth", y="r2", hue="clf", ax=ax)
+    sns.scatterplot(data=mejores_params_lu, x="bandwidth", y="r2", hue="clf", ax=ax)
     ax.set_xscale("log")
     ax.set_title(f"$R^2$ vs bandwidth para kdc y fkdc en `{dataset}`")
-    save_fig(fig, img_dir / f"{dataset}-[f]kdc-score-vs-bandwidth.svg")
+    guardar_fig(fig, dir_imagenes / f"{dataset}-[f]kdc-score-vs-bandwidth.svg")
 
     # delta R² vs delta h
-    cp = best_params_lu.pivot(
+    cp = mejores_params_lu.pivot(
         columns="clf", index="semilla", values=["r2", "bandwidth"]
     )
     cp["delta_r2"] = cp["r2"]["fkdc"] - cp["r2"]["kdc"]
@@ -721,86 +785,88 @@ if __name__ == "__main__":
     ax.set_xlabel("$\\Delta h$ (fkdc − kdc)")
     ax.set_ylabel("$\\Delta R^2$ (fkdc − kdc)")
     ax.set_title(f"$\\Delta R^2$ vs $\\Delta h$ en `{dataset}`")
-    save_fig(fig, img_dir / f"{dataset}-[f]kdc-delta_r2-vs-delta_h.svg")
+    guardar_fig(fig, dir_imagenes / f"{dataset}-[f]kdc-delta_r2-vs-delta_h.svg")
 
     # =====================================================================
     # Caída de R² (lo vs hi)
     # =====================================================================
     bi2d = bi[bi.dataset.str.endswith(("_lo", "_hi"))].copy()
     bi2d[["figura", "ruido"]] = bi2d.dataset.str.split("_", expand=True)
-    drops = (
+    caidas = (
         bi2d.groupby(["figura", "ruido", "clf"])[["r2", "accuracy"]]
         .mean()
         .unstack("ruido")
     )
-    # Exclude classifiers that don't differentiate from zero in either lo or hi
+    # Excluir clasificadores que no se diferencian de cero en ningún nivel de ruido
     for figura in bi2d.figura.unique():
-        fig_drops = drops.xs(figura)["r2"][["lo", "hi"]]
-        # Keep only clfs with meaningful R² in at least one noise level
-        lo_ok = fig_drops["lo"].abs() > 0.05
-        hi_ok = fig_drops["hi"].abs() > 0.05
-        meaningful = fig_drops[lo_ok | hi_ok]
+        caidas_fig = caidas.xs(figura)["r2"][["lo", "hi"]]
+        # Mantener solo clfs con R² significativo en al menos un nivel de ruido
+        lo_ok = caidas_fig["lo"].abs() > 0.05
+        hi_ok = caidas_fig["hi"].abs() > 0.05
+        significativos = caidas_fig[lo_ok | hi_ok]
         fig, ax = plt.subplots(layout="tight")
-        meaningful.sort_values("hi", ascending=False).plot(kind="bar", ax=ax)
-        save_fig(fig, img_dir / f"{figura}-caida_r2.svg")
+        significativos.sort_values("hi", ascending=False).plot(kind="bar", ax=ax)
+        guardar_fig(fig, dir_imagenes / f"{figura}-caida_r2.svg")
 
     # =====================================================================
-    # helices_0: boxplot R² zoomed (kernel classifiers only)
+    # helices_0: diagrama de caja R² ampliado (solo clasificadores kernel)
     # =====================================================================
     fig, ax = plt.subplots(layout="tight")
-    data_box = bi[
+    datos_caja = bi[
         bi.dataset.eq("helices_0") & bi.clf.isin(["fkdc", "kdc", "kn", "fkn"])
     ].sort_values("clf")
     sns.boxplot(
-        data_box,
+        datos_caja,
         hue="clf",
         y="r2",
         gap=0.2,
         ax=ax,
-        palette=default_palette,
+        palette=paleta_predeterminada,
         saturation=1.0,
     )
-    apply_hatching(ax)
+    aplicar_sombreado(ax)
     ax.axhline(
-        data_box.groupby("clf")["r2"].median().max(), linestyle="dotted", color="gray"
+        datos_caja.groupby("clf")["r2"].median().max(),
+        linestyle="dotted",
+        color="gray",
     )
-    ybot = np.percentile(data_box["r2"].dropna(), 10)
-    ax.set_ylim(ybot, None)
-    save_fig(fig, img_dir / "helices_0-boxplot-r2-zoomed.svg")
+    y_inf = np.percentile(datos_caja["r2"].dropna(), 10)
+    ax.set_ylim(y_inf, None)
+    guardar_fig(fig, dir_imagenes / "helices_0-boxplot-r2-zoomed.svg")
 
     # =====================================================================
-    # eslabones_0: params for a specific seed
+    # eslabones_0: parámetros para una semilla específica
     # =====================================================================
     dataset_esl = "eslabones_0"
     semilla_esl = 2411
-    best_estimators_esl = {
+    mejores_estimadores_esl = {
         k: v[k[2]]["busqueda"].best_estimator_
         for k, v in infos.items()
         if k[0] == dataset_esl and k[2].endswith("kdc")
     }
-    best_params_esl = pd.DataFrame.from_records(
+    mejores_params_esl = pd.DataFrame.from_records(
         [
             {
                 "clf": k[2],
-                "semilla": int(k[1 if dataset_esl in synth_datasets else 3]),
+                "semilla": int(k[1 if dataset_esl in datasets_sinteticos else 3]),
                 "alpha": v.get_params().get("alpha", 1),
                 "bandwidth": v.get_params()["bandwidth"],
             }
-            for k, v in best_estimators_esl.items()
+            for k, v in mejores_estimadores_esl.items()
         ]
     ).set_index(["semilla", "clf"])
-    scores_esl = (
+    puntajes_esl = (
         bi[bi.dataset.eq(dataset_esl) & bi.clf.str.endswith("kdc")]
         .set_index(["semilla", "clf"])
         .r2
     )
-    best_params_esl["r2"] = scores_esl
-    fpath_esl = data_dir / f"{dataset_esl}-params-{semilla_esl}.csv"
-    best_params_esl.loc[pd.IndexSlice[semilla_esl, :]].round(4).to_csv(fpath_esl)
-    logger.info(f"Wrote {fpath_esl}")
+    mejores_params_esl["r2"] = puntajes_esl
+    ruta_esl = dir_datos / f"{dataset_esl}-params-{semilla_esl}.csv"
+    mejores_params_esl.loc[pd.IndexSlice[semilla_esl, :]].round(4).to_csv(ruta_esl)
+    logger.info(f"Escribió {ruta_esl}")
 
     # =====================================================================
-    # Parametros comparados CSVs
+    # CSVs de parámetros comparados
     # =====================================================================
     parametros_comparados("helices_0", "kdc", infos=infos, bi=bi)
     parametros_comparados("hueveras_0", "kdc", infos=infos, bi=bi)
@@ -811,7 +877,7 @@ if __name__ == "__main__":
     # =====================================================================
     for dataset in ["helices_0", "eslabones_0"]:
         fig, ax = plt.subplots(figsize=(10, 5), layout="tight")
-        plot_fkn_kn_score_vs_n_neighbors(dataset, 2411, ax, infos=infos)
-        save_fig(fig, img_dir / f"{dataset}-fkn_kn-mean_test_score.svg")
+        graficar_fkn_kn_score_vs_n_vecinos(dataset, 2411, ax, infos=infos)
+        guardar_fig(fig, dir_imagenes / f"{dataset}-fkn_kn-mean_test_score.svg")
 
-    logger.info("Done.")
+    logger.info("Listo.")
