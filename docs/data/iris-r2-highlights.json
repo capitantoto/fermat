@@ -1,0 +1,12 @@
+{
+    "dataset": "iris",
+    "summary": "clf,accuracy,r2\nfkn,0.96,0.896\nlr,0.96,0.8909\nkn,0.96,0.8903\nslr,0.9467,0.8883\nfkdc,0.96,0.864\ngbt,0.9467,0.8598\nkdc,0.9467,0.8562\ngnb,0.9067,0.8066\nsvc,0.9467,\n",
+    "best": "fkn",
+    "bad": [
+        "fkdc",
+        "gbt",
+        "kdc",
+        "gnb"
+    ],
+    "excluded": []
+}

@@ -17,14 +17,13 @@ TARGETS := $(patsubst $(CONFIGS_DIR)/%, $(TARGETS_DIR)/%, $(CONFIGS:.yaml=.pkl))
 TYP_DOCS     := $(DOCS_DIR)/tesis.typ $(DOCS_DIR)/plan.typ
 TYP_PDFS     := $(TYP_DOCS:.typ=.pdf)
 
-# Archivos de datos e imágenes que usa la tesis
-DATA_FILES   := $(wildcard $(DOCS_DATA)/*.csv) $(wildcard $(DOCS_DATA)/*.json)
-IMG_FILES    := $(wildcard $(DOCS_IMG)/*.svg) $(wildcard $(DOCS_IMG)/*.png)
+# Stamp file for viz.py output
+DOCS_STAMP   := $(DOCS_DIR)/.viz-stamp
 
 # ========================
 # Targets principales
 # ========================
-.PHONY: all docs data clean clean-docs clean-data clean-all help lint fmt check strip-notebooks
+.PHONY: all docs data viz clean clean-docs clean-data clean-all help lint fmt check
 
 all: $(TARGETS)
 
@@ -38,17 +37,25 @@ data: $(TARGETS)
 # Reglas de compilación
 # ========================
 
-# Cada PDF depende de su .typ, de los datos, imágenes y bibliografía
-$(DOCS_DIR)/tesis.pdf: $(DOCS_DIR)/tesis.typ $(DATA_FILES) $(IMG_FILES) $(DOCS_DIR)/references.bib
+# Visualizaciones: regenerar si viz.py o sus dependencias cambian
+$(DOCS_STAMP): fkdc/viz.py fkdc/datasets.py fkdc/config.py
+	uv run python fkdc/viz.py
+	@touch $@
+
+## Generar figuras y datos para la tesis
+viz: $(DOCS_STAMP)
+
+# Cada PDF depende de su .typ, de las visualizaciones generadas y la bibliografía
+$(DOCS_DIR)/tesis.pdf: $(DOCS_DIR)/tesis.typ $(DOCS_STAMP) $(DOCS_DIR)/references.bib
 	typst compile $<
 
 $(DOCS_DIR)/plan.pdf: $(DOCS_DIR)/plan.typ
 	typst compile $<
 
-$(DOCS_DIR)/poster.pdf: $(DOCS_DIR)/poster.typ $(DOCS_DIR)/poster-template.typ $(IMG_FILES)
+$(DOCS_DIR)/poster.pdf: $(DOCS_DIR)/poster.typ $(DOCS_DIR)/poster-template.typ $(DOCS_STAMP)
 	typst compile $<
 
-$(DOCS_DIR)/seminario-modesto.pdf: $(DOCS_DIR)/seminario-modesto.typ $(IMG_FILES)
+$(DOCS_DIR)/seminario-modesto.pdf: $(DOCS_DIR)/seminario-modesto.typ $(DOCS_STAMP)
 	typst compile $<
 
 # Datos: configs → pkl
@@ -73,10 +80,6 @@ lint:
 ## Solo formatear
 fmt:
 	uv run ruff format .
-
-## Limpiar metadata y outputs de notebooks
-strip-notebooks:
-	uv run nbstripout docs/*.ipynb
 
 ## Verificar sin modificar (para CI / pre-commit)
 check:
@@ -116,18 +119,13 @@ clean: clean-data
 help:
 	@echo "Targets disponibles:"
 	@echo "  make docs          Compilar todos los .typ → .pdf"
+	@echo "  make viz           Generar figuras y datos (fkdc/viz.py)"
 	@echo "  make data          Procesar configs → pkl"
 	@echo "  make all           Solo data (retrocompatible)"
-	@echo "  make lint          Ruff check + format (Python/Jupyter)"
+	@echo "  make lint          Ruff check + format"
 	@echo "  make fmt           Solo ruff format"
-	@echo "  make strip-notebooks  Limpiar metadata y outputs de notebooks"
 	@echo "  make check         Verificar lint + compilación Typst (no modifica)"
 	@echo "  make clean-docs    Borrar PDFs generados"
 	@echo "  make clean-data    Borrar .pkl procesados"
 	@echo "  make clean-all     Borrar todo lo generado"
 	@echo "  make help          Mostrar esta ayuda"
-	@echo ""
-	@echo "Directorios:"
-	@echo "  DOCS_DATA = $(DOCS_DATA)  (CSV, JSON)"
-	@echo "  DOCS_IMG  = $(DOCS_IMG)   (SVG, PNG)"
-	@echo "  BIB       = $(DOCS_DIR)/references.bib"

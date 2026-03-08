@@ -1,0 +1,20 @@
+{
+    "dataset": "mnist",
+    "summary": "clf,accuracy,r2\nkdc,0.8325,0.7666\nlr,0.8275,0.7562\nfkdc,0.8325,0.7367\ngbt,0.765,0.6645\nslr,0.75,0.6067\ngnb,0.6825,0.5774\nfkn,0.7175,0.547\nkn,0.6875,0.5151\nsvc,0.87,\n",
+    "best": "kdc",
+    "bad": [
+        "fkdc",
+        "gbt",
+        "slr",
+        "gnb",
+        "fkn",
+        "kn"
+    ],
+    "excluded": [
+        "gbt",
+        "slr",
+        "gnb",
+        "fkn",
+        "kn"
+    ]
+}

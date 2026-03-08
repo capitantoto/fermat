@@ -1,0 +1,22 @@
+{
+    "dataset": "digitos",
+    "summary": "clf,accuracy,r2\nfkdc,0.9844,0.9787\nkdc,0.9855,0.9738\ngbt,0.96,0.9428\nlr,0.9611,0.9333\nslr,0.96,0.9312\nfkn,0.9655,0.9281\nkn,0.9533,0.9066\ngnb,0.8999,0.8632\nsvc,0.9822,\n",
+    "best": "fkdc",
+    "bad": [
+        "kdc",
+        "gbt",
+        "lr",
+        "slr",
+        "fkn",
+        "kn",
+        "gnb"
+    ],
+    "excluded": [
+        "gbt",
+        "lr",
+        "slr",
+        "fkn",
+        "kn",
+        "gnb"
+    ]
+}
