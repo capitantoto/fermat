@@ -10,7 +10,7 @@ import yaml
 from sklearn.exceptions import ConvergenceWarning
 
 from fkdc import config
-from fkdc.datasets import ConjuntoDatos
+from fkdc.datasets import Dataset
 from fkdc.tarea import Tarea
 
 simplefilter("ignore", category=ConvergenceWarning)
@@ -32,7 +32,7 @@ def main(
     dir_trabajo.mkdir(parents=True, exist_ok=True)
     logger.info("Leyendo config %s", archivo_config)
     cfg = yaml.safe_load(open(archivo_config))
-    dataset = ConjuntoDatos.cargar(cfg["dataset"])
+    dataset = Dataset.cargar(cfg["dataset"])
     clf = cfg["clasificador"]
     clasificador = config.clasificadores.get(clf)
     if clasificador is None:

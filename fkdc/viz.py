@@ -23,7 +23,7 @@ from sklearn.neighbors import KernelDensity
 from sklearn.utils import Bunch
 
 from fkdc import config, dir_cache, dir_raiz
-from fkdc.datasets import ConjuntoDatos, datasets_reales, datasets_sinteticos
+from fkdc.datasets import Dataset, datasets_reales, datasets_sinteticos
 from fkdc.tarea import Tarea
 
 # TODO: Reentrenar con versión consistente para evitar este problema
@@ -129,7 +129,7 @@ def _resolver_info_basica(info: pd.DataFrame | None):
     return info
 
 
-def obtener_destacados(
+def get_highlights(
     dataset: str, por: str = "r2", info: None | pd.DataFrame = None
 ) -> Bunch:
     """Obtiene el mejor clasificador y los excluidos para un dataset."""
@@ -157,7 +157,7 @@ def obtener_destacados(
     )
 
 
-def diagrama_caja(
+def boxplot(
     dataset: str,
     metrica: str = "r2",
     info: pd.DataFrame | None = None,
@@ -241,7 +241,7 @@ def frontera_decision(
     else:
         raise ValueError(f"Dataset desconocido: {dataset}-{semilla}")
     with open(ruta_ds, "rb") as fp:
-        ds: ConjuntoDatos = pickle.load(fp)
+        ds: Dataset = pickle.load(fp)
     tarea = Tarea(ds, {}, semilla=semilla, split_evaluacion=config.split_evaluacion)
     X = tarea.X_eval
     y = tarea.y_eval
@@ -487,7 +487,7 @@ if __name__ == "__main__":
     # =====================================================================
 
     # dos-circulos jointplot
-    ds_circulos = ConjuntoDatos.de_fabrica(
+    ds_circulos = Dataset.de_fabrica(
         make_circles, n_samples=800, noise=0.05, random_state=semilla_graficos
     )
     g = sns.jointplot(
@@ -539,19 +539,19 @@ if __name__ == "__main__":
         with open(ruta_ds, "rb") as fp:
             ds = pickle.load(fp)
         if ds.p == 3:
-            # Datasets 3D: dispersar_3d como dispersión por defecto
+            # Datasets 3D: scatter_3d por defecto
             fig, ax = plt.subplots(layout="tight", subplot_kw={"projection": "3d"})
-            ds.dispersar_3d(ax=ax)
+            ds.scatter_3d(ax=ax)
         else:
             # Datasets 2D: dispersión estándar
             fig, ax = plt.subplots(layout="tight")
-            ds.dispersar(ax=ax)
+            ds.scatter(ax=ax)
         guardar_fig(fig, dir_imagenes / f"{dataset}-scatter.svg")
 
     # hélices pairplot
     with open(dir_datasets / f"helices_0-{semilla_graficos}.pkl", "rb") as fp:
         ds_helices = pickle.load(fp)
-    grafico = ds_helices.grafico_pares(
+    grafico = ds_helices.pairplot(
         dims=[2, 1, 0], height=2, plot_kws={"alpha": 0.5, "s": 5}, corner=True
     )
     guardar_fig(grafico.figure, dir_imagenes / "helices-pairplot.svg")
@@ -561,7 +561,7 @@ if __name__ == "__main__":
     # =====================================================================
     destacar_por = "r2"
     for dataset in todos_datasets:
-        hl = obtener_destacados(dataset, por=destacar_por, info=bi)
+        hl = get_highlights(dataset, por=destacar_por, info=bi)
         excluidos = hl.excluded
 
         # Guardar destacados JSON
@@ -575,7 +575,7 @@ if __name__ == "__main__":
         # Diagramas de caja (R² y accuracy), excluyendo clasificadores no competitivos
         for metrica in ["r2", "accuracy"]:
             fig, ax = plt.subplots(layout="tight")
-            diagrama_caja(dataset, metrica, info=bi, ax=ax, excluir_clfs=excluidos)
+            boxplot(dataset, metrica, info=bi, ax=ax, excluir_clfs=excluidos)
             guardar_fig(fig, dir_imagenes / f"{dataset}-{metrica}-boxplot.svg")
 
     # =====================================================================

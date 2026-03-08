@@ -15,7 +15,7 @@ from sklearn.svm import SVC
 from sklearn.utils import Bunch
 
 from fkdc import dir_raiz
-from fkdc.fermat import ClasificadorDensidadKernel, ClasificadorFermatKVecinos
+from fkdc.fermat import FermatKNeighborsClassifier, KDClassifier
 from fkdc.utils import yaml
 
 logging.basicConfig(
@@ -41,11 +41,11 @@ grillas = {
     "gbt": {"learning_rate": [0.025, 0.05, 0.1], "max_depth": [3, 5, 8, 13]},
 }
 clasificadores = Bunch(
-    fkdc=ClasificadorDensidadKernel(metric="fermat"),
-    kdc=ClasificadorDensidadKernel(metric="euclidean"),
+    fkdc=KDClassifier(metric="fermat"),
+    kdc=KDClassifier(metric="euclidean"),
     gnb=GaussianNB(),
     kn=KNeighborsClassifier(),
-    fkn=ClasificadorFermatKVecinos(),
+    fkn=FermatKNeighborsClassifier(),
     lr=LogisticRegression(max_iter=50_000),
     slr=Pipeline(
         [("scaler", StandardScaler()), ("logreg", LogisticRegression(max_iter=50_000))]
@@ -92,7 +92,7 @@ def hacer_configuraciones(
         for nombre_dataset, ruta_dataset in datasets.items():
             grilla_hipers = grilla_base.copy()
             if n_neighbors := grilla_hipers.get("n_neighbors"):
-                ds = ConjuntoDatos.cargar(ruta_dataset)
+                ds = Dataset.cargar(ruta_dataset)
                 n_muestras_ajuste = floor(ds.n * (cv - 1) / cv * (1 - split_evaluacion))
                 n_neighbors = [n for n in n_neighbors if n < n_muestras_ajuste]
                 grilla_hipers["n_neighbors"] = n_neighbors
@@ -137,6 +137,6 @@ def hacer_configuraciones(
 
 
 if __name__ == "__main__":
-    from fkdc.datasets import ConjuntoDatos
+    from fkdc.datasets import Dataset
 
     typer.run(hacer_configuraciones)

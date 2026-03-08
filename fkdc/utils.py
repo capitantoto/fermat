@@ -17,14 +17,14 @@ yaml.add_representer(np.float64, lambda dumper, num: dumper.represent_float(num)
 yaml.add_representer(np.ndarray, lambda dumper, array: dumper.represent_list(array))
 
 
-def ric(X):
+def iqr(X):
     """Rango intercuartílico."""
     return np.percentile(X, 75) - np.percentile(X, 25)
 
 
 def h_piloto(dists):
     """Ancho de banda piloto según regla de Silverman."""
-    return 0.9 * np.minimum(dists.std(), ric(dists) / 1.34) * len(dists) ** (-1 / 5)
+    return 0.9 * np.minimum(dists.std(), iqr(dists) / 1.34) * len(dists) ** (-1 / 5)
 
 
 def _longitud_elipse(d1, d2) -> float:

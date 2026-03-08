@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score, log_loss
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.utils import Bunch
 
-from fkdc.datasets import ConjuntoDatos
+from fkdc.datasets import Dataset
 from fkdc.utils import reajustar_parsimoniosamente
 
 logger = logging.getLogger(__name__)
@@ -19,7 +19,7 @@ class Tarea:
 
     def __init__(
         self,
-        dataset: str | ConjuntoDatos,
+        dataset: str | Dataset,
         algoritmos: list | dict,
         busqueda_factory=GridSearchCV,
         scoring="accuracy",
@@ -29,7 +29,7 @@ class Tarea:
         semilla=None,
     ):
         self.dataset = ds = (
-            ConjuntoDatos.cargar(dataset) if isinstance(dataset, str) else dataset
+            Dataset.cargar(dataset) if isinstance(dataset, str) else dataset
         )
         if isinstance(algoritmos, list):
             self.algoritmos = {

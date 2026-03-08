@@ -20,8 +20,8 @@ MAX_PUNTAJE_LOG = np.log(np.finfo("float64").max)
 
 
 @memoria.cache
-def euclidiana(X, Y=None):
-    """Matriz de distancias euclidianas."""
+def euclidean(X, Y=None):
+    """Matriz de distancias euclideans."""
     if Y is None:
         return squareform(pdist(X, metric="euclidean"))
     else:
@@ -32,14 +32,14 @@ def euclidiana(X, Y=None):
 def fermat_muestral(Q, alpha=1, valor_relleno=np.inf):
     """Distancia de Fermat muestral sobre el grafo completo de Q."""
     adyacencias = np.ma.masked_array(
-        euclidiana(Q) ** alpha,
+        euclidean(Q) ** alpha,
         np.diag([True] * Q.shape[0]),
         fill_value=valor_relleno,
     )
     return shortest_path(csgraph_from_dense(adyacencias, valor_relleno), directed=False)
 
 
-class DistanciaFermatMuestral:
+class SampleFermatDistance:
     """Distancia de Fermat muestral con soporte para grupos."""
 
     def __init__(self, Q, alpha: float = 1, grupos=None):
@@ -62,7 +62,7 @@ class DistanciaFermatMuestral:
 
         for lbl in self.etiquetas:
             mascara_grupo = self.grupos == lbl
-            a_Q_lbl = euclidiana(X, self.Q[mascara_grupo]) ** self.alpha
+            a_Q_lbl = euclidean(X, self.Q[mascara_grupo]) ** self.alpha
             for i in range(len(X)):
                 distancias_muestrales[i, mascara_grupo] = np.min(
                     a_Q_lbl[i].T + self.A[lbl], axis=1
@@ -74,7 +74,7 @@ class DistanciaFermatMuestral:
         """Distancia de Fermat muestral entre cada par (x, y) en X × Y."""
         dfs_XQ = self._distancia_muestral(X)
         dfs_YQ = self._distancia_muestral(Y)
-        euc_XY = euclidiana(X, Y)
+        euc_XY = euclidean(X, Y)
         nX, nY = X.shape[0], Y.shape[0]
         distancias = -np.ones((nX, nY))
         for i in range(nX):
@@ -96,7 +96,7 @@ class DistanciaFermatMuestral:
             return self._distancia(X, Y)
 
 
-class ClasificadorFermatKVecinos(ClassifierMixin, BaseEstimator):
+class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
     """Clasificador K-vecinos con distancia de Fermat."""
 
     def __init__(self, n_neighbors=5, alpha=1, weights="uniform", n_jobs=-1):
@@ -107,7 +107,7 @@ class ClasificadorFermatKVecinos(ClassifierMixin, BaseEstimator):
 
     def fit(self, X, y):
         self.classes_ = unique_labels(y)
-        self.distance_ = DistanciaFermatMuestral(Q=X, alpha=self.alpha, groups=y)
+        self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha, groups=y)
         self.classifier_ = KNeighborsClassifier(
             n_neighbors=self.n_neighbors,
             weights=self.weights,
@@ -124,7 +124,7 @@ class ClasificadorFermatKVecinos(ClassifierMixin, BaseEstimator):
         return self.classifier_.predict_proba(self.distance_(X))
 
 
-class EDKFermat(BaseEstimator, DensityMixin):
+class FermatKDE(BaseEstimator, DensityMixin):
     """Estimador de densidad kernel con distancia de Fermat."""
 
     def __init__(self, alpha: float = 1, bandwidth: float = 1, d: int = -1):
@@ -133,7 +133,7 @@ class EDKFermat(BaseEstimator, DensityMixin):
         self.d = d  # TODO: ¿Evitar completamente? Quitando el h^-d del score?
 
     def fit(self, X):
-        self.distance_ = DistanciaFermatMuestral(Q=X, alpha=self.alpha)
+        self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha)
         if self.d == -1:
             self.d = self.distance_.D
         return self
@@ -163,7 +163,7 @@ class EDKFermat(BaseEstimator, DensityMixin):
         return self.score_samples(X).sum()
 
 
-class ClasificadorDensidadKernel(ClassifierMixin, BaseEstimator):
+class KDClassifier(ClassifierMixin, BaseEstimator):
     """Clasificador por densidad kernel (Bayes ingenuo con KDE)."""
 
     def __init__(self, bandwidth=1.0, metric="euclidean", alpha=1.0):
@@ -175,7 +175,7 @@ class ClasificadorDensidadKernel(ClassifierMixin, BaseEstimator):
         self.classes_ = unique_labels(y)
         conjuntos_entrenamiento = [X[y == yi] for yi in self.classes_]
         if self.metric == "fermat":
-            fabrica_densidad = partial(EDKFermat, alpha=self.alpha)
+            fabrica_densidad = partial(FermatKDE, alpha=self.alpha)
         else:
             fabrica_densidad = partial(KernelDensity, metric=self.metric)
         self.models_ = [

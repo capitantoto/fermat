@@ -258,7 +258,7 @@ def agregar_dims_ruido(X, ndims=None, scale=None, random_state=None):
     return np.hstack([X, ruido])
 
 
-class ConjuntoDatos:
+class Dataset:
     """Conjunto de datos con etiquetas, dimensiones y métodos de visualización."""
 
     def __init__(self, X, y, nombre=None):
@@ -271,28 +271,28 @@ class ConjuntoDatos:
 
     @staticmethod
     def de_fabrica(fabrica, ruido=None, nombre=None, **params_fabrica):
-        """Crea un ConjuntoDatos a partir de una función de fábrica."""
+        """Crea un Dataset desde una función de fábrica."""
         params = Bunch(**(params_fabrica or {}))
         X, y = fabrica(**params)
         if ruido:
             X = agregar_dims_ruido(X, **({} if ruido is True else ruido))
         params.factory = fabrica.__name__
         params.ruido = ruido
-        ds = ConjuntoDatos(X, y, nombre)
+        ds = Dataset(X, y, nombre)
         ds.params = params
         return ds
 
     def __str__(self):
-        return f"ConjuntoDatos('{self.nombre}', n={self.n}, p={self.p}, k={self.k})"
+        return f"Dataset('{self.nombre}', n={self.n}, p={self.p}, k={self.k})"
 
     def __hash__(self):
         return hash(tuple(tuple(row) for row in self.X)) * hash(tuple(self.y)) % 2**64
 
-    def dispersar(self, x=0, y=1, ax=None, **plot_kws):
+    def scatter(self, x=0, y=1, ax=None, **plot_kws):
         """Gráfico de dispersión 2D."""
         scatterplot(x=self.X[:, x], y=self.X[:, y], hue=self.y, ax=ax, **plot_kws)
 
-    def dispersar_3d(self, x=0, y=1, z=2, ax=None, **plot_kws):
+    def scatter_3d(self, x=0, y=1, z=2, ax=None, **plot_kws):
         """Gráfico de dispersión 3D."""
         if self.p < 3:
             raise ValueError(f"{self.nombre} tiene solo {self.p} dimensiones")
@@ -304,7 +304,7 @@ class ConjuntoDatos:
             ax.scatter(X, Y, Z, c=f"C{i}", label=str(lbl), **plot_kws)
         ax.legend(title="Clase")
 
-    def grafico_pares(self, dims: list[int] | None = None, **plot_kws):
+    def pairplot(self, dims: list[int] | None = None, **plot_kws):
         """Gráfico de pares (pairplot) de las dimensiones seleccionadas."""
         if dims is None:
             dims = list(range(self.p))
@@ -350,7 +350,7 @@ def hacer_datasets(
         espirales=Bunch(factory=hacer_espirales, noise_levels=Bunch(lo=0.1, hi=0.2)),
     )
     datasets_2d = {
-        (f"{nombre}_{nivel_ruido}", semilla): ConjuntoDatos.de_fabrica(
+        (f"{nombre}_{nivel_ruido}", semilla): Dataset.de_fabrica(
             cfg.factory, n_samples=n_muestras, noise=ruido, random_state=semilla
         )
         for nombre, cfg in config_2d.items()
@@ -368,18 +368,16 @@ def hacer_datasets(
     y_pinguinos = "species"
     pinguinos = load_dataset("penguins")[X_pinguinos + [y_pinguinos]].dropna()
     datasets_multik = {
-        "anteojos": ConjuntoDatos.de_fabrica(
+        "anteojos": Dataset.de_fabrica(
             hacer_anteojos,
             n_samples=n_muestras,
             noise=0.1,
             random_state=semilla_principal,
         ),
-        "iris": ConjuntoDatos.de_fabrica(load_iris, return_X_y=True),
-        "vino": ConjuntoDatos.de_fabrica(load_wine, return_X_y=True),
-        "pinguinos": ConjuntoDatos(
-            pinguinos[X_pinguinos].values, pinguinos.species.values
-        ),
-        "digitos": ConjuntoDatos.de_fabrica(load_digits, return_X_y=True),
+        "iris": Dataset.de_fabrica(load_iris, return_X_y=True),
+        "vino": Dataset.de_fabrica(load_wine, return_X_y=True),
+        "pinguinos": Dataset(pinguinos[X_pinguinos].values, pinguinos.species.values),
+        "digitos": Dataset.de_fabrica(load_digits, return_X_y=True),
     }
 
     logger.info("Instanciando datasets 3D")
@@ -390,7 +388,7 @@ def hacer_datasets(
         pionono=Bunch(factory=hacer_pionono, noise=0.5),
     )
     datasets_3d = {
-        (f"{nombre}_{ndims}", semilla): ConjuntoDatos.de_fabrica(
+        (f"{nombre}_{ndims}", semilla): Dataset.de_fabrica(
             cfg.factory,
             n_samples=n_muestras,
             noise=cfg.noise,
@@ -410,7 +408,7 @@ def hacer_datasets(
     pca = PCA(n_componentes).fit(X)
     _X = pca.transform(X)
     datasets_mnist = {
-        ("mnist", semilla): ConjuntoDatos(
+        ("mnist", semilla): Dataset(
             *muestra(_X, y, n_muestras=n_muestras, random_state=semilla)
         )
         for semilla in semillas
