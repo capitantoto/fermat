@@ -162,7 +162,7 @@ El _aprendizaje estadístico supervisado_ busca estimar (aprender) una variable 
 
 Para construir $hat(G)$, contaremos con una muestra o _conjunto de entrenamiento_ $XX, bu(g)$,  de pares $(x_i, g_i), i in {1, dots, N}$ conocidos.
 
-Para discernir cuán bien se "ajusta" un clasificador a los datos, la teoría requiere de una "función de pérdida" $L(G, hat(G)(X))$ #footnote[_loss function_ en inglés. A veces también "función de riesgo" - _risk function_.]. Será de especial interés la función de clasificación $f$ que minimiza el "error de predicción esperado" $"EPE"$ #footnote[del inglés #emph[expected prediction error]]:
+Para discernir cuán bien se "ajusta" un clasificador a los datos, la teoría requiere de una "función de pérdida" $L(G, hat(G)(X))$ #footnote[_loss function_ en inglés. A veces también "función de riesgo" --- _risk function_.]. Será de especial interés la función de clasificación $f$ que minimiza el "error de predicción esperado" $"EPE"$ #footnote[del inglés #emph[expected prediction error]]:
 
 $
   hat(G) = arg min_f "EPE"(f) =arg min_f EE(L(G, f(X)))
@@ -190,7 +190,7 @@ Esta razonable solución se conoce como el _clasificador de Bayes_, y sugiere qu
 Su error esperado de predicción $"EPE"$ se conoce como la _tasa de Bayes_. Un aproximador directo de este resultado es el clasificador de "k vecinos más cercanos" #footnote[del inglés _k-nearest-neighbors_]
 
 #defn("clasificador de k-vecinos-más-cercanos")[
-  Sean $x^((1)), dots, x^((k))$ los $k$ #footnote[que no guarda relación alguna con la cantidad $K$ del problema de clasificación] vecinos más cercanos a $x$, y $g^((1)), dots, g^((k))$ sus respectivas clases. El clasificador de k-vecinos-más-cercanos - que notaremos #kn - le asignará a $x$ la clase más frecuente entre $g^((1)), dots, g^((k))$. Más formalmente:
+  Sean $x^((1)), dots, x^((k))$ los $k$ #footnote[que no guarda relación alguna con la cantidad $K$ del problema de clasificación] vecinos más cercanos a $x$, y $g^((1)), dots, g^((k))$ sus respectivas clases. El clasificador de k-vecinos-más-cercanos --- que notaremos #kn --- le asignará a $x$ la clase más frecuente entre $g^((1)), dots, g^((k))$. Más formalmente:
   $
     hat(G)_("kn")(x) & = g = arg max_(g in GG) sum_(i in [k]) ind(g^((i)) = g)
   $
@@ -280,7 +280,7 @@ Si $hat(f)_k, k in [K]$ son estimadores de densidad por núcleos de cada una de 
 
 #defn(
   "clasificador de densidad por núcleos",
-)[ Sean $hat(f)_1, dots, hat(f)_K$ estimadores de densidad por núcleos según @parzen. Sean además $hat(pi)_1, dots, hat(pi)_K$ las estimaciones de la probabilidad incondicional de pertenecer a cada grupo $GG_1, dots, GG_k$. Luego, la siguiente regla constituye un clasificador de densidad por núcleos - lo notaremos #kdc :
+)[ Sean $hat(f)_1, dots, hat(f)_K$ estimadores de densidad por núcleos según @parzen. Sean además $hat(pi)_1, dots, hat(pi)_K$ las estimaciones de la probabilidad incondicional de pertenecer a cada grupo $GG_1, dots, GG_k$. Luego, la siguiente regla constituye un clasificador de densidad por núcleos --- lo notaremos #kdc ---:
   $
     hat(G)_"KD" (x) = g & = arg max_(i in [K]) hat(Pr)(GG_i | X = x) \
                         & = arg max_(i in [K]) hat(Pr)(X=x|GG_i) times hat(Pr)(GG_i) \
@@ -462,7 +462,7 @@ A continuación, damos un recorrido sumario e idiosincrático por ciertos concep
 A los conjuntos pertenecientes a la topología $T$ se les llama conjuntos abiertos o simplemente abiertos de $(X, T)$; y a sus complementos en $X$, conjuntos cerrados.
 
 #defn([entorno @wikipediaEntornoMatematica2025])[
-  Si $(X,Τ)$ es un espacio topológico y $p$ es un punto perteneciente a X, un _entorno_ #footnote[ También se los conoce como "vecindarios" - por _neighborhoods_, su nombre en inglés.] del punto $p$ es un conjunto $V$ en el que está contenido un conjunto abierto $U$ que incluye al propio $p: p in U subset.eq V$.
+  Si $(X,Τ)$ es un espacio topológico y $p$ es un punto perteneciente a X, un _entorno_ #footnote[ También se los conoce como "vecindarios" --- por _neighborhoods_, su nombre en inglés.] del punto $p$ es un conjunto $V$ en el que está contenido un conjunto abierto $U$ que incluye al propio $p: p in U subset.eq V$.
 ]
 
 #defn([espacio de Hausdorff @wikipediaEspacioHausdorff2024])[
@@ -490,7 +490,7 @@ Un _homeomorfismo_ #footnote[del griego _homo-_: igual, _-morfo_: forma; de igua
 
 A un conjunto numerable de tales cartas que cubran completamente la variedad se lo denomina "atlas". Simbólicamente, #box[$cal(A) = {(U_alpha, phi_alpha) : alpha in cal(I)}$] es un atlas sí y solo si $MM = union_alpha U_alpha$. Al conjunto de entornos ${U_alpha : (U_alpha, phi_alpha) in cal(A)}$ que componen un atlas se lo denomina "cobertura" de #MM.
 
-Cuando un homeomorfismo - y su inversa - es $r-$veces diferenciable, se le llama _$C^r$-difeomorfismo_, o simplemente difeomorfismo #footnote[Luego, un homeomorfismo es un $C^0-$difeomorfismo]. En particular, un $C^oo-$difeomorfismo es un difeomorfismo _suave_.
+Cuando un homeomorfismo --- y su inversa --- es $r-$veces diferenciable, se le llama _$C^r$-difeomorfismo_, o simplemente difeomorfismo #footnote[Luego, un homeomorfismo es un $C^0-$difeomorfismo]. En particular, un $C^oo-$difeomorfismo es un difeomorfismo _suave_.
 
 #defn([cartas suavemente compatibles])[
   Sean $(MM, T)$ una variedad topológica de dimensión $d$ y sean $(U, phi), (V, psi)$ dos cartas. Diremos que son _suavemente compatibles_ #footnote[_smoothly compatible_ según @leeIntroductionRiemannianManifolds2018[ § "Smooth Manifolds and Smooth Maps"]. @munozEstimacionNoParametrica2011 lo denomina _compatible_ a secas.] si $U inter V = emptyset$ o bien si la función cambio de coordenadas restringida a $U inter V$ es un difeomorfismo.]
@@ -504,12 +504,12 @@ La compatibilidad requiere que la transición entre cartas no sea solo continua,
   Una variedad diferenciable de dimensión $d$ es una terna $(MM, tau, cal(D))$ donde $(MM, tau)$ es una variedad topológica de dimensión $d$ y $cal(D)$ una estructura diferenciable.
 ]
 
-Una variedad diferenciable entonces, es aquella en la que la operación de diferenciación tiene sentido no solo punto a punto, sino globalmente. De no poder diferenciar, tampoco podremos tomar integrales, y definir funciones de densidad - ni hablar de estimarlas - resulta imposible.
+Una variedad diferenciable entonces, es aquella en la que la operación de diferenciación tiene sentido no solo punto a punto, sino globalmente. De no poder diferenciar, tampoco podremos tomar integrales, y definir funciones de densidad --- ni hablar de estimarlas --- resulta imposible.
 
 Sobre una variedad diferenciable, cobra sentido plantear el concepto de _métrica_. En particular, toda variedad diferenciable admite una "métrica de Riemann" @docarmoRiemannianGeometry1992[§1, Proposición 2.10].
 
 #defn(["métrica Riemanniana" @docarmoRiemannianGeometry1992[§1, Def. 2.1]])[
-  Sea $T_p MM$ el _espacio tangente_ a un punto $p in MM$. Una métrica Riemanniana -  o estructura Riemanniana  - en una variedad diferenciable $MM$ es una correspondencia que asocia a cada punto $p in MM$ un producto interno $dotp(dot, dot)$ (i.e., una forma bilinear simétrica definida positiva) en el espacio tangente $T_p MM$ que "varía diferenciablemente" #footnote[para el lector riguroso, el texto original define precisamente el sentido de esta expresión] en el entorno de $p$.
+  Sea $T_p MM$ el _espacio tangente_ a un punto $p in MM$. Una métrica Riemanniana --- o estructura Riemanniana --- en una variedad diferenciable $MM$ es una correspondencia que asocia a cada punto $p in MM$ un producto interno $dotp(dot, dot)$ (i.e., una forma bilinear simétrica definida positiva) en el espacio tangente $T_p MM$ que "varía diferenciablemente" #footnote[para el lector riguroso, el texto original define precisamente el sentido de esta expresión] en el entorno de $p$.
 
   A dicho producto interno se lo denomina $g_p$ e induce naturalmente una norma: $norm(v)_p= sqrt(op(g_p)(v, v)) = sqrt(dotp(v, v))$. Decimos entonces que $g_p$ es una métrica Riemanniana y el par $(MM, g)$ es una variedad de Riemann.
 ] <metrica-riemanniana>
@@ -567,7 +567,7 @@ Esta relación, entre vectores de $T_p MM$ y geodésicas de $MM$ con origen en $
   Sea $B_epsilon (x) subset RR^d$ la bola cerrada de radio $epsilon$ centrada en $x$:
   $ B_epsilon (x) = {y in RR^d : dg(x, y) = norm(x - y) <= epsilon} $
   Si $exp_p$ es un difeomorfismo  en un vecindario (entorno) $V$ del origen en $T_p MM$, su imagen $U = exp_p (V)$ es un "vecindario normal" de $p$.
-  Si $B_epsilon (0)$ es tal que $overline(B_epsilon (0)) subset V$, llamamos a $exp_p B_epsilon (0) = B_epsilon (p)$ la _bola normal_ – o "bola geodésica" - con centro $p$ y radio $epsilon$.
+  Si $B_epsilon (0)$ es tal que $overline(B_epsilon (0)) subset V$, llamamos a $exp_p B_epsilon (0) = B_epsilon (p)$ la _bola normal_ – o "bola geodésica" --- con centro $p$ y radio $epsilon$.
 ]
 La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geodésicas que irradian desde $p$. Una concepción intuitiva de qué es una bola normal es "un entorno de $p$ en el que las geodésicas que pasan por $p$ son minimizadoras de distancias". El siguiente concepto es útil para entender "cuán lejos vale" la aproximación local a un espacio euclídeo en la variedad.
 
@@ -607,16 +607,16 @@ Agregamos una última definición para restringir la clase de variedades de Riem
 ]
 
 #obs[
-  Un círculo en el plano, $S^1 subset RR^2 = {(x, y) : x^2 + y^2 = 1}$ es una variedad compacta: es acotada --- ninguna distancia es mayor a medio gran círculo, $pi$ --- y cerrada. $RR^2$ es una variedad cerrada pero no acotada. El "disco sin borde" ${(x, y) in RR^2 : x^2 + y^2 < 1}$ es acotado pero no cerrado - pues no incluye su frontera $S^1$. El "cilindro infinito" ${(x, y, z) in RR^3 : x^2 + y^2 < 1}$ no es ni acotado ni cerrado.
+  Un círculo en el plano, $S^1 subset RR^2 = {(x, y) : x^2 + y^2 = 1}$ es una variedad compacta: es acotada --- ninguna distancia es mayor a medio gran círculo, $pi$ --- y cerrada. $RR^2$ es una variedad cerrada pero no acotada. El "disco sin borde" ${(x, y) in RR^2 : x^2 + y^2 < 1}$ es acotado pero no cerrado --- pues no incluye su frontera $S^1$. El "cilindro infinito" ${(x, y, z) in RR^3 : x^2 + y^2 < 1}$ no es ni acotado ni cerrado.
 ]
 
 Ahora sí, hemos arribado a un objeto lo suficientemente "bien portado" para soportar funciones diferenciables, una noción de distancia y todo aquello que precisamos para definir elementos aleatorios: la _variedad de Riemann compacta sin frontera_. Cuando hablemos de una variedad de Riemann sin calificarla, nos referiremos a esta.
 
 
 === Probabilidad en Variedades
-Hemos definido una clase bastante general de variedades - las variedades de Riemann - capaces de soportar funciones de densidad y sus estimaciones @pelletierKernelDensityEstimation2005. Estos desarrollos relativamente modernos no constituyen el origen de la probabilidad en variedades. Mucho antes de su sistematización, ciertos casos particulares fueron ya bien estudiados y allanaron el camino para el interés en variedades más generales.
+Hemos definido una clase bastante general de variedades --- las variedades de Riemann --- capaces de soportar funciones de densidad y sus estimaciones @pelletierKernelDensityEstimation2005. Estos desarrollos relativamente modernos no constituyen el origen de la probabilidad en variedades. Mucho antes de su sistematización, ciertos casos particulares fueron ya bien estudiados y allanaron el camino para el interés en variedades más generales.
 
-Probablemente la referencia más antigua a un elemento aleatorio en una variedad distinta a $RR^d$, se deba a Richard von Mises, en _Sobre la naturaleza entera del peso atómico y cuestiones relacionadas_ @vonmisesUberGanzzahligkeitAtomgewicht1918 #footnote["Über die 'ganzzahligkeit der' atomgewichte und verwandte fragen", en el alemán original]. En él, von Mises se plantea si los pesos atómicos - que empíricamente se observan siempre muy cercanos a la unidad para los elementos más livianos - son enteros con un cierto error de medición, y argumenta que para tal tratamiento, el "error gaussiano" clásico es inadecuado:
+Probablemente la referencia más antigua a un elemento aleatorio en una variedad distinta a $RR^d$, se deba a Richard von Mises, en _Sobre la naturaleza entera del peso atómico y cuestiones relacionadas_ @vonmisesUberGanzzahligkeitAtomgewicht1918 #footnote["Über die 'ganzzahligkeit der' atomgewichte und verwandte fragen", en el alemán original]. En él, von Mises se plantea si los pesos atómicos --- que empíricamente se observan siempre muy cercanos a la unidad para los elementos más livianos - son enteros con un cierto error de medición, y argumenta que para tal tratamiento, el "error gaussiano" clásico es inadecuado:
 
 #quote(attribution: [traducido de @vonmisesUberGanzzahligkeitAtomgewicht1918])[
   ($dots$) Pues no es evidente desde el principio que, por ejemplo, para un peso atómico de $35,46$ (Cl), el error sea de $+0,46$ y no de $-0,54$: es muy posible que se logre una mejor concordancia con ciertos supuestos con la segunda determinación. A continuación, se desarrollan los elementos — esencialmente muy simples — de una "teoría del error cíclico", que se complementa con la teoría gaussiana o "lineal" y permite un tratamiento completamente inequívoco del problema de la "enteridad" y cuestiones similares.
@@ -625,7 +625,7 @@ Probablemente la referencia más antigua a un elemento aleatorio en una variedad
 #figure(
   image("img/von-mises-s1.png", height: 16em),
   caption: flex-caption(
-    [Pretendido "error" - diferencia módulo 1 - de los pesos atómicos medidos para ciertos elementos sobre $S^1$. Nótese como la mayoría de las mediciones se agrupan en torno al $0.0$. Fuente: @vonmisesUberGanzzahligkeitAtomgewicht1918],
+    [Pretendido "error" --- diferencia módulo 1 --- de los pesos atómicos medidos para ciertos elementos sobre $S^1$. Nótese como la mayoría de las mediciones se agrupan en torno al $0.0$. Fuente: @vonmisesUberGanzzahligkeitAtomgewicht1918],
     [Pesos atómicos "módulo 1" sobre $S^1$],
   ),
 )
@@ -775,7 +775,7 @@ $
 $ <clf-kde-variedad>
 para todo $p in MM$ con $K_h_n$ un núcleo isotrópico con sucesión de ventanas $h_n$ @loubesKernelbasedClassifierRiemannian2008[Ecuación 3.1].
 
-La belleza de esta regla es que combina "sin costuras" el peso de los _priors_ $hat(pi)_i$ - a través de los elementos no nulos de la suma cuando $ind(G_i = k) = 1$) - con el peso de la "evidencia" - vía su cercanía "suavizada" al punto de interés $K_h (p, X_i)$.
+La belleza de esta regla es que combina "sin costuras" el peso de los _priors_ $hat(pi)_i$ --- a través de los elementos no nulos de la suma cuando $ind(G_i = k) = 1$) --- con el peso de la "evidencia" --- vía su cercanía "suavizada" al punto de interés $K_h (p, X_i)$.
 
 Los autores toman de @devroyeProbabilisticTheoryPattern1996 la siguiente definición de _consistencia_:
 
@@ -861,7 +861,7 @@ $
 $
 Ahora bien, computar una $hat(SS)_cal(K)_i$  para cada una de las $N$ observaciones, más su inversa y la "raíz cuadrada" de ésta última es computacionalemnte muy costoso, por lo que los autores agregan un refinamiento: si la variedad en cuestión es $d-$dimensional, es de esperar que las direcciones principales a partir de la $d+1$ --- ésima sean "negligibles" #footnote[la sugerente metáfora que usan en el trabajo, es que en lugar de ubicar una "bola" de densidad alrededor de cada observación $x_i$, quieren ubicar un "panqueque" tangente a la variedad] en lugar computar las componentes principales de $hat(SS)_cal(K)_i$, simplemente:
 + fijan de antemano la dimensión $d$ esperada para la variedad,
-+ se quedan con las $d$ direcciones principales #footnote[en la práctica, las obtienen usando SVD - descomposición en valores singulares @hastieElementsStatisticalLearning2009[§3, Eq. 45, p. 64]],
++ se quedan con las $d$ direcciones principales #footnote[en la práctica, las obtienen usando SVD --- descomposición en valores singulares @hastieElementsStatisticalLearning2009[§3, Eq. 45, p. 64]],
 + "ponen en cero" el resto y
 + "completan" la aproximación con un poco de "ruido" $sigma^2 bu(I)$.
 
@@ -913,7 +913,7 @@ Recordemos que toda esta aventura comenzó cuando identificamos que
 
 #v(1em)
 
-En rigor, no es necesario conocer #MM para estimar densidades en ella; bastaría con conocer una aproximación a la distancia geodésica en #MM que sirva de sustituto a la distancia euclídea en el espacio ambiente. Probablemente el algoritmo más conocido a tal fin, sea Isomap - por "mapeo isométrico de _features_".
+En rigor, no es necesario conocer #MM para estimar densidades en ella; bastaría con conocer una aproximación a la distancia geodésica en #MM que sirva de sustituto a la distancia euclídea en el espacio ambiente. Probablemente el algoritmo más conocido a tal fin, sea Isomap --- por "mapeo isométrico de _features_".
 
 Desarrollado a fines del siglo XX por Joshua Tenenbaum et al.  @tenenbaumMappingManifoldPerceptual1997 @tenenbaumGlobalGeometricFramework2000, el algoritmo consta de tres pasos:
 
@@ -936,7 +936,7 @@ Desarrollado a fines del siglo XX por Joshua Tenenbaum et al.  @tenenbaumMapping
 
 La pieza clave del algoritmo es la estimación de la distancia geodésica en #MM a través de la distancia en el grafo de vecinos más cercanos. Si la muestra disponible es "suficientemente grande", es razonable esperar que en el entorno de una observación $x_0$ las distancias euclídeas aproximen bien las distancias geodésicas, y por ende un "paseo" por el grafo $bu(N N)$ debería describir una curva prácticamente contenida en #MM. Isomap resultó ser un algoritmo sumamente efectivo que avivó el interés por el aprendizaje de distancias, pero todavía cuenta con un talón de Aquiles: la elección del parámetro de cercanía, $epsilon$ ó $k$:
 - valores demasiado pequeños pueden "partir" $bu(N N)$ en más de una componente conexa, otorgando distancia "infinita" a puntos en componentes disjuntas, mientras que
-- valores demasiado grandes pueden "cortocircuitar" la representación - en particular en variedades con muchos pliegues -, uniendo secciones de la variedad subyacente a través del espacio ambiente.
+- valores demasiado grandes pueden "cortocircuitar" la representación --- en particular en variedades con muchos pliegues ---, uniendo secciones de la variedad subyacente a través del espacio ambiente.
 
 === Distancias basadas en densidad
 
@@ -1327,7 +1327,7 @@ Nos dedicaremos a la  estimación de densidad basada en distancia de Fermat en u
 // TODO: Repasar esta sección al terminar la edición de "= Resultados"
 En total, ejecutamos unas 4,500 tareas, producto de #reps repeticiones por dataset y clasificador, sobre un total de 20 datasets y 9 clasificadores diferentes. Recordemos que todos los estimadores se entrenaron con _score_ `neg_log_loss` (para optimizar por $R^2$), salvo #svc, que al ser un clasificador duro se entrenó con `accuracy`. Así, entre los clasificadores blandos la distancia de Fermat rindió frutos, con el máximo $R^2$ mediano en 10 de los 20 experimentos: 7 preseas fueron para #fkdc y 3 para #fkn.
 
-#gbt "ganó" en 5 datasets, entre ellos en varios con mucho ruido (`_hi` y `_12`). #kdc resultó óptimo en 2 datasets, consolidando la técnica del @kde-variedad como competitiva de por sí. Por último, tanto #kn como #logr (en su versión escalada, #slr) resultaron medianamente mejores que todos los demás en ciertos datasets, y solo #gnb no consiguió ningún podio - aunque resultó competitivo en casi todo el tablero.
+#gbt "ganó" en 5 datasets, entre ellos en varios con mucho ruido (`_hi` y `_12`). #kdc resultó óptimo en 2 datasets, consolidando la técnica del @kde-variedad como competitiva de por sí. Por último, tanto #kn como #logr (en su versión escalada, #slr) resultaron medianamente mejores que todos los demás en ciertos datasets, y solo #gnb no consiguió ningún podio --- aunque resultó competitivo en casi todo el tablero.
 La amplia distribución de algoritmos óptimos según las condiciones del dataset pone de relieve la existencia de ventajas relativas en todos ellos.
 
 #let data = csv("data/mejor-clf-por-dataset-segun-r2-mediano.csv")
@@ -1750,7 +1750,7 @@ Consideraremos a continuación datasets sintéticos embebidos en 3 dimensiones (
 
 Toda la familia de estimadores de densidad por núcleos alcanza un $R^2 approx 1$, y aun Naive Bayes tiene un rendimiento aceptable: con este nivel de ruido blanco en el sampleo, el "margen de separación" entre ambos anillos es tan amplio que la tarea resulta trivial.
 
-Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ - no así el de exactitud - revela un fuerte _outlier_ de $R^2_#fkdc 0.65, thin R^2_#kdc = 0.9$ para la semilla $2411$.
+Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ --- no así el de exactitud --- revela un fuerte _outlier_ de $R^2_#fkdc 0.65, thin R^2_#kdc = 0.9$ para la semilla $2411$.
 
 #tabla_csv(
   "data/eslabones_0-params-2411.csv",
@@ -1897,7 +1897,7 @@ Nuestros resultados son consistentes con la observación de @bijralSemisupervise
 
 En ninguno de los datasets estudiados con bajo $D in {2, 3}$ se vieron modos "catastróficos" donde el rendimiento de #fkdc/#fkn fuese muchísimo peor que la de sus pares euclídeos. Sí hubo dos datasets "reales" --- `vino` y `pinguinos`, $k=3$ --- en los que #fkdc confunde dos de las clases por estar muy "ensimismadas" en algunas direcciones, y pierde mucho en exactitud. En los datasets en que se comprueba una ventaja sistemática de #fkdc (resp. #fkn) sobre #kdc (resp. #kn), se puede explicar por dos efectos:
 1. En todos los casos examinados, una parte importante de la ventaja se da por una "simbiosis" positiva entre el mecanismo de selección de modelos de @r1sd, y el espacio de parámetros ampliado por la dimensión de $alpha$. Esta resulta en parametrizaciones de #fkdc (resp. #fkn) con $alpha=1$ y ligeramente mejor $R^2$ que las que #kdc (resp. #kn) selecciona.
-2. En ciertos casos (como #fkn en `hueveras_0` o #fkdc en `helices_0`), al menos parte de la mejora se debe a la elección de parametrizaciones de #fkn (resp. #fkdc) que coinciden en el $k$ (resp. $h$) elegido con #kn (resp. #kdc), pero además registran un $alpha > 1$ - i.e., *una mejora netamente gracias al uso de la distancia de Fermat muestral*.
+2. En ciertos casos (como #fkn en `hueveras_0` o #fkdc en `helices_0`), al menos parte de la mejora se debe a la elección de parametrizaciones de #fkn (resp. #fkdc) que coinciden en el $k$ (resp. $h$) elegido con #kn (resp. #kdc), pero además registran un $alpha > 1$ --- i.e., *una mejora netamente gracias al uso de la distancia de Fermat muestral*.
 
 En el "caso general" en el que #fkdc anda aproximadamente como #kdc, observamos una relación log-lineal, $ log(h) prop alpha $ que se discierne en la _superficie de pérdida_ de entrenamiento como un "risco" de parametrizaciones equivalentes en bondad. Entendemos que esto sucede porque
 - los datasets están "bien sampleados" y
