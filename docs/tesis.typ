@@ -1568,7 +1568,7 @@ Veamos primero qué sucede durante el entrenamiento para `circulos_lo`: ¿es que
 #obs(
   "unidades de la pérdida",
 )[Si bien consideramos como _score_ (a más, mejor) $R^2$, el entrenamiento se realizó con `neg_log_loss` #footnote[
-  N. del E.: A posteriori de la experimentación escubrimos que entre las numerosas funciones de puntaje --- _score_ --- que tolera `scikit-learn`, se incluye #link("https://scikit-learn.org/stable/modules/model_evaluation.html#d2-score-classification")[`d2_log_loss_score`], que es esencialmente el $R^2$ de McFadden que proponemos como métrica de evaluación. Sería ideal recomputar los experimentos entrenándolos con dicha función objetivo, pero no haby razones de peso apra suponer que el resultado sería demasiado distinto: al fin y al cabo, tanto la log-verosimilitud como el $R^2$ se maximizan en el mismo punto que la verosimilitud.], que aunque tiene la misma monotonicidad que $R^2$, está en otras unidades: entre $(-oo, 0]$.]
+    N. del E.: A posteriori de la experimentación escubrimos que entre las numerosas funciones de puntaje --- _score_ --- que tolera `scikit-learn`, se incluye #link("https://scikit-learn.org/stable/modules/model_evaluation.html#d2-score-classification")[`d2_log_loss_score`], que es esencialmente el $R^2$ de McFadden que proponemos como métrica de evaluación. Sería ideal recomputar los experimentos entrenándolos con dicha función objetivo, pero no haby razones de peso apra suponer que el resultado sería demasiado distinto: al fin y al cabo, tanto la log-verosimilitud como el $R^2$ se maximizan en el mismo punto que la verosimilitud.], que aunque tiene la misma monotonicidad que $R^2$, está en otras unidades: entre $(-oo, 0]$.]
 
 #figure(
   image("img/circulos_lo-8527-fkdc-bandwidth-alpha-loss_contour.svg"),
@@ -1766,10 +1766,10 @@ Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la m
 #highlights_figure("helices_0")
 #obs[La performance de #logr es mala únicamente porque se aplicó ciegamente a los datos. La primer tarea cuando se busca inferir la geometría de unos datos es graficarlos, y al observar la hélice uno puede parametrizarla de manera natural como $f(x, y, z) = ("ángulo, velocidad radial, velocidad vertical") ,$ entrenar sobre esta _representación_ y obtener un $R^2 approx 1$.
   Al final, "todo algoritmo funciona cuando los datos son buenos" --- la ventaja de algunos es que no hace falta ponerle demasaida cabeza a "masajearlos" hasta que "son buenos". Que a #gnb le resulte complejo no es sorprendente, ya que las distribuciones marginales son prácticamente idénticas.
-#figure(
+  #figure(
     image("img/helices-pairplot.svg", width: 16em),
-  caption: flex-caption([TODO: copete largo hélices pairplot], [TODO: copete corto hélices pairplot]),
-)
+    caption: flex-caption([TODO: copete largo hélices pairplot], [TODO: copete corto hélices pairplot]),
+  )
 ]
 La clasificación dura con estimación de densidad por núcleos --- con distancia de Fermat o sin ella --- resulta ser superior a todas las alternativas en términos de exactitud --- ligeramente --- y $R^2$ --- por mucho. Encima de ello, #fkdc es todavía significativamente mejor en $R^2$ que #kdc por casi 5 puntos porcentualessalvo y consistentemente entoda las semillas salvo una particularmente negativa:
 
@@ -1922,36 +1922,6 @@ Sería interesante entonces investigar si existen condiciones reales en las que 
 
 
 // TODO: grilla más grande de $alpha$ para reproducir resultados de @bijral? (alpha = 8)
-== A incorporar
-=== Otros datasets: 15D
-#columns(4)[
-  #image("img/pionono_12-overall.png")
-  #colbreak()
-  #image("img/eslabones_12-overall.png")
-  #colbreak()
-  #image("img/helices_12-overall.png")
-  #colbreak()
-  #image("img/hueveras_12-overall.png")
-]
-=== Otros datasets: multiclase
-#columns(4)[
-  #image("img/iris-overall.png")
-  #colbreak()
-  #image("img/vino-overall.png")
-  #colbreak()
-  #image("img/pinguinos-overall.png")
-  #colbreak()
-  #image("img/anteojos.png")
-]
-=== Otros datasets: `digitos` y `mnist`
-
-#columns(2)[
-  #image("img/digitos-overall.png")
-  #colbreak()
-  #image("img/mnist-overall.png")
-]
-
-
 
 
 = Listados
@@ -1963,11 +1933,11 @@ Sería interesante entonces investigar si existen condiciones reales en las que 
 
 = Anexo: Fichas de resultados para otros datasets <apendice>
 
-A continuación se presentan las fichas de resultados para los 10 datasets no discutidos en el cuerpo principal de la tesis. Cada ficha incluye el _scatterplot_ del dataset, una tabla resumen con la mediana de $R^2$ y exactitud por clasificador, y _boxplots_ de ambas métricas.
+Presentamos aquí los resultados para diez datasets que no se incluyeron en el cuerpo principal de la tesis. Se agrupan en tres categorías: versiones en 15 dimensiones de los datasets 3D (con 12 dimensiones de ruido gaussiano añadidas), datasets multiclase de uso común en la literatura, y datasets de alta dimensionalidad.
 
-== Datasets 15-dimensionales
+== Datasets 3D con ruido añadido (15D)
 
-Los cuatro datasets tridimensionales del §5.3 se embebieron en $RR^15$ añadiendo 12 dimensiones de ruido gaussiano $cal(N)(0, 1)$ independientes.
+Los cuatro datasets tridimensionales del cuerpo principal (pionono, eslabones, hélices, hueveras) se ampliaron con 12 dimensiones de ruido gaussiano para evaluar la robustez de los clasificadores ante dimensiones irrelevantes.
 
 #figure(
   image("img/anexo-15d-delta-r2.svg"),
@@ -1977,12 +1947,33 @@ Los cuatro datasets tridimensionales del §5.3 se embebieron en $RR^15$ añadien
   ),
 )
 
+=== `pionono_12`
+
 #highlights_figure("pionono_12")
+
+En la versión 15D del pionono, #gbt domina con claridad ($R^2 approx 79$), seguido de lejos por #gnb ($R^2 approx 54$). Los clasificadores de densidad (#fkdc, #kdc) y los de vecinos (#fkn, #kn) colapsan a valores de $R^2 approx 10$, prácticamente indistinguibles entre variantes Fermat y euclídea. Los métodos lineales (#slr, #logr) se ubican en un rango intermedio ($R^2 approx 42$). Las 12 dimensiones de ruido degradan severamente a los estimadores por densidad de núcleos, cuya localidad los hace particularmente vulnerables a la maldición de la dimensionalidad.
+
+=== `eslabones_12`
+
 #highlights_figure("eslabones_12")
+
+Nuevamente #gbt es el mejor clasificador ($R^2 approx 92$), seguido por #gnb ($R^2 approx 75$). Los clasificadores de densidad y vecinos se agrupan alrededor de $R^2 approx 24$, sin diferencia significativa entre variantes Fermat y euclídeas. La estructura de los eslabones --- dos anillos entrelazados --- se vuelve difícil de capturar por métodos locales cuando se añade ruido en 12 dimensiones adicionales.
+
+=== `helices_12`
+
 #highlights_figure("helices_12")
+
+Este es el dataset más difícil del conjunto: la exactitud máxima apenas supera el 53%, cercana al azar. Los clasificadores de densidad (#fkdc, #kdc) obtienen $R^2$ negativo, lo que indica un desempeño peor que el de un clasificador trivial. Solo #fkn y #kn logran un $R^2$ marginalmente positivo ($approx 0.2$). #fkdc ($R^2 approx -2.7$) sufre menos que #kdc ($R^2 approx -6$), pero ambos fallan. La geometría helicoidal, ya de por sí adversa, se vuelve intratable con ruido en alta dimensión.
+
+=== `hueveras_12`
+
 #highlights_figure("hueveras_12")
 
-== Datasets multiclase reales
+Perfil similar a hélices: exactitud cercana al azar ($approx 54%$), $R^2$ profundamente negativo para los clasificadores de densidad (#kdc $approx -15$, #fkdc $approx -11$). Solo #kn ($R^2 approx 0.2$) y #fkn ($R^2 approx 0.17$) superan marginalmente al clasificador trivial. La superficie de huevera --- con sus crestas y valles periódicos --- resulta particularmente adversa para la estimación de densidad en 15 dimensiones.
+
+== Datasets multiclase
+
+Se evaluaron cuatro datasets de clasificación con tres o más clases, provenientes de repositorios clásicos de _machine learning_ o generados sintéticamente.
 
 #figure(
   image("img/anexo-multik-fkdc-vs-kdc.svg"),
@@ -1992,12 +1983,31 @@ Los cuatro datasets tridimensionales del §5.3 se embebieron en $RR^15$ añadien
   ),
 )
 
+=== `iris`
+
 #highlights_figure("iris")
+
+El dataset de Fisher ($k = 3$, $D = 4$) es bien servido por métodos lineales: #logr ($R^2 approx 89$) y #slr ($R^2 approx 88$) lideran, seguidos por #gbt ($R^2 approx 86$). Los clasificadores de densidad se ubican al final pero con desempeño respetable ($R^2 > 73$). #fkdc ($R^2 approx 79$) supera ligeramente a #kdc ($R^2 approx 78$), una diferencia marginal. Es un dataset donde los métodos simples bastan; las clases son casi linealmente separables en el espacio original.
+
+=== `vino`
+
 #highlights_figure("vino")
+
+El dataset de vinos ($k = 3$, $D = 11$) favorece a #gbt ($R^2 approx 90$) y #slr ($R^2 approx 90$), con #gnb en tercer lugar ($R^2 approx 85$). Hay una brecha notable entre #logr ($R^2 approx 67$) y #slr ($R^2 approx 90$), lo que sugiere que la regularización del escalado es importante en este espacio de 11 features. #fkdc ($R^2 approx 42$) aventaja modestamente a #kdc ($R^2 approx 39$) pero ambos quedan lejos de los líderes.
+
+=== `pinguinos`
+
 #highlights_figure("pinguinos")
+
+El dataset de pingüinos de Palmer ($k = 3$, $D = 4$) es casi linealmente separable: #slr ($R^2 approx 96$) y #logr ($R^2 approx 96$) dominan. Los clasificadores de densidad y vecinos se ubican en un rango intermedio ($R^2 approx 40$--$49$), muy por debajo de los métodos lineales. La diferencia entre #fkdc y #kdc es despreciable ($approx 1$ punto de $R^2$).
+
+=== `anteojos`
+
 #highlights_figure("anteojos")
 
-== Datasets de alta dimensión
+Dataset sintético bidimensional con tres clases en forma de anteojos ($k = 3$, $D = 2$). Al ser bidimensional, es el único dataset multiclase donde las fronteras de decisión se pueden visualizar directamente.
+
+== Datasets de alta dimensionalidad
 
 #figure(
   image("img/anexo-hd-fkdc-vs-kdc.svg"),
@@ -2007,5 +2017,14 @@ Los cuatro datasets tridimensionales del §5.3 se embebieron en $RR^15$ añadien
   ),
 )
 
+=== `digitos`
+
 #highlights_figure("digitos")
+
+El dataset de dígitos de scikit-learn ($k = 10$, $D = 64$, imágenes de $8 times 8$ píxeles) es el caso más favorable para la distancia de Fermat en todo el experimento: #fkdc es el mejor clasificador global ($R^2 approx 98$), superando a #kdc ($R^2 approx 97$), #gbt ($R^2 approx 94$) y todos los demás. También #fkn ($R^2 approx 92$) aventaja a #kn ($R^2 approx 91$). En este espacio de alta dimensión con estructura manifiesta de variedades, la distancia de Fermat captura relaciones distribucionales que la euclídea no detecta.
+
+=== `mnist`
+
 #highlights_figure("mnist")
+
+La versión grande del problema de dígitos (MNIST, reducido a $D = 96$ por PCA) presenta un resultado interesante: #kdc ($R^2 approx 76$) supera a #fkdc ($R^2 approx 73$), invirtiendo la relación observada en `digitos`. Sin embargo, #fkn ($R^2 approx 54$) sí supera a #kn ($R^2 approx 50$). La inversión en el par de densidad sugiere que la estimación de la distancia de Fermat puede degradarse en dimensiones muy altas, mientras que su efecto en la clasificación por vecinos se mantiene.
