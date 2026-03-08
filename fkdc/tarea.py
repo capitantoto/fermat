@@ -8,26 +8,28 @@ from sklearn.metrics import accuracy_score, log_loss
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.utils import Bunch
 
-from fkdc.datasets import Dataset
-from fkdc.utils import refit_parsimoniously
+from fkdc.datasets import ConjuntoDatos
+from fkdc.utils import reajustar_parsimoniosamente
 
 logger = logging.getLogger(__name__)
 
 
 class Tarea:
+    """Tarea de evaluación: entrena y evalúa clasificadores sobre un dataset."""
+
     def __init__(
         self,
-        dataset: str | Dataset,
+        dataset: str | ConjuntoDatos,
         algoritmos: list | dict,
         busqueda_factory=GridSearchCV,
         scoring="accuracy",
-        refit=refit_parsimoniously,
+        refit=reajustar_parsimoniosamente,
         cv=5,
         split_evaluacion=0.5,
-        seed=None,
+        semilla=None,
     ):
         self.dataset = ds = (
-            Dataset.cargar(dataset) if isinstance(dataset, str) else dataset
+            ConjuntoDatos.cargar(dataset) if isinstance(dataset, str) else dataset
         )
         if isinstance(algoritmos, list):
             self.algoritmos = {
@@ -48,11 +50,11 @@ class Tarea:
         self.refit = refit
         self.cv = cv
         self.split_evaluacion = split_evaluacion
-        self.seed = seed or np.random.randint(0, 2**32)
-        self._fitted = False
+        self.semilla = semilla or np.random.randint(0, 2**32)
+        self._ajustado = False
 
-        self.X_train, self.X_eval, self.y_train, self.y_eval = train_test_split(
-            ds.X, ds.y, test_size=self.split_evaluacion, random_state=self.seed
+        self.X_entr, self.X_eval, self.y_entr, self.y_eval = train_test_split(
+            ds.X, ds.y, test_size=self.split_evaluacion, random_state=self.semilla
         )
         self.info = Bunch()
 
@@ -60,6 +62,7 @@ class Tarea:
         return f"Tarea({self.dataset.nombre}, [{', '.join(self.algoritmos)}])"
 
     def entrenar(self):
+        """Entrena todos los clasificadores con búsqueda de hiperparámetros."""
         self.clasificadores = Bunch()
         for nombre, algo in self.algoritmos.items():
             logger.info("Entrenando %s", nombre)
@@ -74,20 +77,21 @@ class Tarea:
                 return_train_score=True,
             )
             t0 = time()
-            busqueda.fit(self.X_train, self.y_train)
+            busqueda.fit(self.X_entr, self.y_entr)
             info.t_entrenar = time() - t0
             self.clasificadores[nombre] = busqueda.best_estimator_
             info.busqueda = busqueda
-        self._fitted = True
+        self._ajustado = True
 
     def evaluar(self, verosimilitud=True, forzar_entrenamiento=True):
-        if not self._fitted:
+        """Evalúa todos los clasificadores en el conjunto de evaluación."""
+        if not self._ajustado:
             if forzar_entrenamiento:
                 self.entrenar()
             else:
                 raise ValueError("Aún no se ha(n) ajustado el(los) modelo(s)")
         self.info.base = base = Bunch(
-            probas=pd.Series(self.y_train).value_counts(normalize=True)
+            probas=pd.Series(self.y_entr).value_counts(normalize=True)
         )
         base.accuracy = (self.y_eval == base.probas.idxmax()).mean()
         if verosimilitud:
@@ -105,7 +109,7 @@ class Tarea:
                         self.y_eval,
                         info.probas,
                         normalize=False,
-                        labels=self.dataset.labels,
+                        labels=self.dataset.etiquetas,
                     )
                     info.r2 = 1 - info.logvero / base.logvero
                 t0 = time()
@@ -115,6 +119,9 @@ class Tarea:
             except Exception as exc:
                 logger.warning(exc, exc_info=True)
 
-    def guardar(self, path=None):
-        path = path or f"{self.dataset.nombre}-{self.seed}-{self.split_evaluacion}.pkl"
-        pickle.dump(self, open(path, "wb"))
+    def guardar(self, ruta=None):
+        """Guarda la tarea como pickle."""
+        ruta = (
+            ruta or f"{self.dataset.nombre}-{self.semilla}-{self.split_evaluacion}.pkl"
+        )
+        pickle.dump(self, open(ruta, "wb"))

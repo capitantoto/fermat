@@ -1,4 +1,4 @@
 from pathlib import Path
 
-root_dir = root_dir = Path(__file__).parent.parent.absolute()
-cache_dir = root_dir / ".cache"
+dir_raiz = dir_raiz = Path(__file__).parent.parent.absolute()
+dir_cache = dir_raiz / ".cache"

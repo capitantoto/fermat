@@ -8,87 +8,97 @@ from sklearn.base import BaseEstimator, ClassifierMixin, DensityMixin
 from sklearn.neighbors import KernelDensity, KNeighborsClassifier
 from sklearn.utils.multiclass import unique_labels
 
-from fkdc import cache_dir
+from fkdc import dir_cache
 
-# Ignore warnings for np.log(0) and siimilar
+# Ignorar advertencias para np.log(0) y similares
 np.seterr(divide="ignore", invalid="ignore")
 
-memory = Memory(cache_dir, verbose=0)
+memoria = Memory(dir_cache, verbose=0)
 
-MIN_LOG_SCORE = np.log(1e-323)  # For numpy, 1e-324 == 0 and  1e-323 != 0
-MAX_LOG_SCORE = np.log(np.finfo("float64").max)
+MIN_PUNTAJE_LOG = np.log(1e-323)  # Para numpy, 1e-324 == 0 y 1e-323 != 0
+MAX_PUNTAJE_LOG = np.log(np.finfo("float64").max)
 
 
-@memory.cache
-def euclidean(X, Y=None):
+@memoria.cache
+def euclidiana(X, Y=None):
+    """Matriz de distancias euclidianas."""
     if Y is None:
         return squareform(pdist(X, metric="euclidean"))
     else:
         return cdist(X, Y, metric="euclidean")
 
 
-@memory.cache
-def sample_fermat(Q, alpha=1, fill_value=np.inf):
+@memoria.cache
+def fermat_muestral(Q, alpha=1, valor_relleno=np.inf):
+    """Distancia de Fermat muestral sobre el grafo completo de Q."""
     adyacencias = np.ma.masked_array(
-        euclidean(Q) ** alpha, np.diag([True] * Q.shape[0]), fill_value=fill_value
+        euclidiana(Q) ** alpha,
+        np.diag([True] * Q.shape[0]),
+        fill_value=valor_relleno,
     )
-    return shortest_path(csgraph_from_dense(adyacencias, fill_value), directed=False)
+    return shortest_path(csgraph_from_dense(adyacencias, valor_relleno), directed=False)
 
 
-class SampleFermatDistance:
-    def __init__(self, Q, alpha: float = 1, groups=None):
+class DistanciaFermatMuestral:
+    """Distancia de Fermat muestral con soporte para grupos."""
+
+    def __init__(self, Q, alpha: float = 1, grupos=None):
         self.Q = Q
         self.N, self.D = Q.shape
-        self.groups = np.array(np.zeros(self.N) if groups is None else groups)
-        self.labels = unique_labels(self.groups)
-        if len(self.groups) != self.N:
+        self.grupos = np.array(np.zeros(self.N) if grupos is None else grupos)
+        self.etiquetas = unique_labels(self.grupos)
+        if len(self.grupos) != self.N:
             raise ValueError(
-                "`groups` debe ser None, o de igual númnero que las filas de Q"
+                "`grupos` debe ser None, o de igual número que las filas de Q"
             )
         self.alpha = alpha
         self.A = {
-            lbl: sample_fermat(Q[self.groups == lbl], alpha) for lbl in self.labels
+            lbl: fermat_muestral(Q[self.grupos == lbl], alpha) for lbl in self.etiquetas
         }
 
-    def _sample_distance(self, X):
-        sample_distances = -np.ones((X.shape[0], self.N))
+    def _distancia_muestral(self, X):
+        """Distancia de cada punto en X a cada punto en Q, vía la muestra."""
+        distancias_muestrales = -np.ones((X.shape[0], self.N))
 
-        for lbl in self.labels:
-            group_mask = self.groups == lbl
-            to_Q_lbl = euclidean(X, self.Q[group_mask]) ** self.alpha
+        for lbl in self.etiquetas:
+            mascara_grupo = self.grupos == lbl
+            a_Q_lbl = euclidiana(X, self.Q[mascara_grupo]) ** self.alpha
             for i in range(len(X)):
-                sample_distances[i, group_mask] = np.min(
-                    to_Q_lbl[i].T + self.A[lbl], axis=1
+                distancias_muestrales[i, mascara_grupo] = np.min(
+                    a_Q_lbl[i].T + self.A[lbl], axis=1
                 )
-        assert np.all(sample_distances >= 0)
-        return sample_distances
+        assert np.all(distancias_muestrales >= 0)
+        return distancias_muestrales
 
-    def _distance(self, X, Y):
-        sfd_XQ = self._sample_distance(X)
-        sfd_YQ = self._sample_distance(Y)
-        euc_XY = euclidean(X, Y)
+    def _distancia(self, X, Y):
+        """Distancia de Fermat muestral entre cada par (x, y) en X × Y."""
+        dfs_XQ = self._distancia_muestral(X)
+        dfs_YQ = self._distancia_muestral(Y)
+        euc_XY = euclidiana(X, Y)
         nX, nY = X.shape[0], Y.shape[0]
-        distances = -np.ones((nX, nY))
+        distancias = -np.ones((nX, nY))
         for i in range(nX):
             for j in range(nY):
-                bypass_sfd = euc_XY[i, j] ** self.alpha
-                cross_sfd = np.min(sfd_XQ[i] + sfd_YQ[j])
-                distances[i, j] = np.min([bypass_sfd, cross_sfd])
-        assert np.all(distances >= 0)
-        return distances
+                bypass_dfs = euc_XY[i, j] ** self.alpha
+                cruce_dfs = np.min(dfs_XQ[i] + dfs_YQ[j])
+                distancias[i, j] = np.min([bypass_dfs, cruce_dfs])
+        assert np.all(distancias >= 0)
+        return distancias
 
     def __call__(self, X, Y=None):
         if X.ndim == 1:  # en caso de que lo llamen con una sola observación en X
             X = X.reshape(1, self.D)
         if Y is None:
-            return self._sample_distance(X)
+            return self._distancia_muestral(X)
         else:
             if Y.ndim == 1:  # en caso de que lo llamen con una sola observación en Y
                 Y = Y.reshape(1, self.D)
-            return self._distance(X, Y)
+            return self._distancia(X, Y)
 
 
-class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
+class ClasificadorFermatKVecinos(ClassifierMixin, BaseEstimator):
+    """Clasificador K-vecinos con distancia de Fermat."""
+
     def __init__(self, n_neighbors=5, alpha=1, weights="uniform", n_jobs=-1):
         self.n_neighbors = n_neighbors
         self.alpha = alpha
@@ -97,7 +107,7 @@ class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
 
     def fit(self, X, y):
         self.classes_ = unique_labels(y)
-        self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha, groups=y)
+        self.distance_ = DistanciaFermatMuestral(Q=X, alpha=self.alpha, groups=y)
         self.classifier_ = KNeighborsClassifier(
             n_neighbors=self.n_neighbors,
             weights=self.weights,
@@ -114,44 +124,48 @@ class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
         return self.classifier_.predict_proba(self.distance_(X))
 
 
-class FermatKDE(BaseEstimator, DensityMixin):
+class EDKFermat(BaseEstimator, DensityMixin):
+    """Estimador de densidad kernel con distancia de Fermat."""
+
     def __init__(self, alpha: float = 1, bandwidth: float = 1, d: int = -1):
         self.bandwidth = bandwidth
         self.alpha = alpha
-        self.d = d  # TODO: Evitar completamente? Quitando el h^-d del score?
+        self.d = d  # TODO: ¿Evitar completamente? Quitando el h^-d del score?
 
     def fit(self, X):
-        self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha)
+        self.distance_ = DistanciaFermatMuestral(Q=X, alpha=self.alpha)
         if self.d == -1:
             self.d = self.distance_.D
         return self
 
     def score_samples(self, X=None, log=True):
         if X is None:
-            distances = self.distance_.A[0]
+            distancias = self.distance_.A[0]
         else:
-            distances = self.distance_(X)
-        score = np.exp(-0.5 * (distances / self.bandwidth) ** 2).sum(1)
+            distancias = self.distance_(X)
+        puntaje = np.exp(-0.5 * (distancias / self.bandwidth) ** 2).sum(1)
         if log:
             return (
                 -np.log(self.distance_.N)
                 - self.d * np.log(self.bandwidth)
                 - self.d / 2 * np.log(2 * np.pi)
-                + np.maximum(np.log(score), MIN_LOG_SCORE)
+                + np.maximum(np.log(puntaje), MIN_PUNTAJE_LOG)
             )
         else:
             return (
                 self.distance_.N**-1
                 * (self.bandwidth**-self.d)
                 * (2 * np.pi) ** (-self.d / 2)
-                * score
+                * puntaje
             )
 
     def score(self, X=None, y=None):
         return self.score_samples(X).sum()
 
 
-class KDClassifier(ClassifierMixin, BaseEstimator):
+class ClasificadorDensidadKernel(ClassifierMixin, BaseEstimator):
+    """Clasificador por densidad kernel (Bayes ingenuo con KDE)."""
+
     def __init__(self, bandwidth=1.0, metric="euclidean", alpha=1.0):
         self.bandwidth = bandwidth
         self.metric = metric
@@ -159,24 +173,29 @@ class KDClassifier(ClassifierMixin, BaseEstimator):
 
     def fit(self, X, y):
         self.classes_ = unique_labels(y)
-        training_sets = [X[y == yi] for yi in self.classes_]
+        conjuntos_entrenamiento = [X[y == yi] for yi in self.classes_]
         if self.metric == "fermat":
-            density_factory = partial(FermatKDE, alpha=self.alpha)
+            fabrica_densidad = partial(EDKFermat, alpha=self.alpha)
         else:
-            density_factory = partial(KernelDensity, metric=self.metric)
+            fabrica_densidad = partial(KernelDensity, metric=self.metric)
         self.models_ = [
-            density_factory(bandwidth=self.bandwidth).fit(Xi) for Xi in training_sets
+            fabrica_densidad(bandwidth=self.bandwidth).fit(Xi)
+            for Xi in conjuntos_entrenamiento
         ]
-        self.logpriors_ = [np.log(Xi.shape[0] / X.shape[0]) for Xi in training_sets]
+        self.logpriors_ = [
+            np.log(Xi.shape[0] / X.shape[0]) for Xi in conjuntos_entrenamiento
+        ]
         return self
 
     def predict_proba(self, X):
-        logscores = np.array([model.score_samples(X) for model in self.models_]).T
-        logprobs = (logscores + self.logpriors_).clip(MIN_LOG_SCORE, MAX_LOG_SCORE)
-        # Tomo factor común de la máxima logprob para evitar problemas numericos
+        logpuntajes = np.array([modelo.score_samples(X) for modelo in self.models_]).T
+        logprobs = (logpuntajes + self.logpriors_).clip(
+            MIN_PUNTAJE_LOG, MAX_PUNTAJE_LOG
+        )
+        # Tomo factor común de la máxima logprob para evitar problemas numéricos
         deltas = logprobs - logprobs.max(axis=1, keepdims=True)
-        result = np.exp(deltas)
-        return result / result.sum(axis=1, keepdims=True)
+        resultado = np.exp(deltas)
+        return resultado / resultado.sum(axis=1, keepdims=True)
 
     def predict(self, X):
         return self.classes_[np.argmax(self.predict_proba(X), 1)]

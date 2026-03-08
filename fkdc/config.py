@@ -14,8 +14,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.utils import Bunch
 
-from fkdc import root_dir
-from fkdc.fermat import FermatKNeighborsClassifier, KDClassifier
+from fkdc import dir_raiz
+from fkdc.fermat import ClasificadorDensidadKernel, ClasificadorFermatKVecinos
 from fkdc.utils import yaml
 
 logging.basicConfig(
@@ -41,11 +41,11 @@ grillas = {
     "gbt": {"learning_rate": [0.025, 0.05, 0.1], "max_depth": [3, 5, 8, 13]},
 }
 clasificadores = Bunch(
-    fkdc=KDClassifier(metric="fermat"),
-    kdc=KDClassifier(metric="euclidean"),
+    fkdc=ClasificadorDensidadKernel(metric="fermat"),
+    kdc=ClasificadorDensidadKernel(metric="euclidean"),
     gnb=GaussianNB(),
     kn=KNeighborsClassifier(),
-    fkn=FermatKNeighborsClassifier(),
+    fkn=ClasificadorFermatKVecinos(),
     lr=LogisticRegression(max_iter=50_000),
     slr=Pipeline(
         [("scaler", StandardScaler()), ("logreg", LogisticRegression(max_iter=50_000))]
@@ -53,84 +53,90 @@ clasificadores = Bunch(
     svc=SVC(),
     gbt=HistGradientBoostingClassifier(max_features=0.5),
 )
-n_samples = 800
-main_seed = 1312
+n_muestras = 800
+semilla_principal = 1312
 split_evaluacion = 0.5
 cv = 5
-scoring = "neg_log_loss"
-repetitions = 25
-run_dir = root_dir / "sandbox/v5/infos"
+puntuacion = "neg_log_loss"
+repeticiones = 25
+dir_ejecucion = dir_raiz / "sandbox/v5/infos"
 
 
-def _get_run_seeds(main_seed=main_seed, repetitions=repetitions):
-    rng = np.random.default_rng(main_seed)
-    return sorted(rng.integers(1000, 10000, size=repetitions).tolist())
+def _obtener_semillas(semilla_principal=semilla_principal, repeticiones=repeticiones):
+    """Genera semillas reproducibles a partir de una semilla principal."""
+    rng = np.random.default_rng(semilla_principal)
+    return sorted(rng.integers(1000, 10000, size=repeticiones).tolist())
 
 
-def make_configs(
-    main_seed: int = main_seed,
+def hacer_configuraciones(
+    semilla_principal: int = semilla_principal,
     split_evaluacion: float = split_evaluacion,
     cv: int = cv,
-    run_seeds: list[int] | None = None,
-    repetitions: int = repetitions,
-    datasets_dir: Path = Path("datasets"),
-    configs_dir: Path = Path("configs"),
+    semillas: list[int] | None = None,
+    repeticiones: int = repeticiones,
+    dir_datasets: Path = Path("datasets"),
+    dir_configs: Path = Path("configs"),
     verbose: Annotated[bool, typer.Option("--verbose")] = False,
 ):
-    configs_dir.mkdir(parents=True, exist_ok=True)
+    """Genera configs YAML para cada combinación dataset × clf."""
+    dir_configs.mkdir(parents=True, exist_ok=True)
     logger.setLevel(logging.DEBUG if verbose else logging.INFO)
     logger.info("Generando configuraciones")
 
-    datasets = {ds.stem: ds for ds in datasets_dir.glob("*.pkl")}
+    datasets = {ds.stem: ds for ds in dir_datasets.glob("*.pkl")}
     for nombre_clf, clf in clasificadores.items():
-        grilla_base = {  # Evita usar np.array quer serializa fiero
-            param: values if isinstance(values, list) else values.tolist()
-            for param, values in grillas[nombre_clf].items()
+        grilla_base = {  # Evita usar np.array que serializa feo
+            param: valores if isinstance(valores, list) else valores.tolist()
+            for param, valores in grillas[nombre_clf].items()
         }
-        for nombre_dataset, dataset_path in datasets.items():
+        for nombre_dataset, ruta_dataset in datasets.items():
             grilla_hipers = grilla_base.copy()
             if n_neighbors := grilla_hipers.get("n_neighbors"):
-                ds = Dataset.cargar(dataset_path)
-                n_samples_fit = floor(ds.n * (cv - 1) / cv * (1 - split_evaluacion))
-                n_neighbors = [n for n in n_neighbors if n < n_samples_fit]
+                ds = ConjuntoDatos.cargar(ruta_dataset)
+                n_muestras_ajuste = floor(ds.n * (cv - 1) / cv * (1 - split_evaluacion))
+                n_neighbors = [n for n in n_neighbors if n < n_muestras_ajuste]
                 grilla_hipers["n_neighbors"] = n_neighbors
-            base_config = {
-                "dataset": str(dataset_path),
+            config_base = {
+                "dataset": str(ruta_dataset),
                 "clasificador": nombre_clf,
                 "grilla_hipers": grilla_hipers,
                 "cv": cv,
                 "split_evaluacion": split_evaluacion,
             }
             partes = nombre_dataset.split("-")
-            run_seeds = run_seeds or _get_run_seeds(main_seed, repetitions)
+            semillas = semillas or _obtener_semillas(semilla_principal, repeticiones)
             if len(partes) == 2:
                 nombre_dataset, semilla_dataset = partes
                 semilla_dataset = int(semilla_dataset)
-                task_seeds = [main_seed] if semilla_dataset in run_seeds else run_seeds
+                semillas_tarea = (
+                    [semilla_principal] if semilla_dataset in semillas else semillas
+                )
             elif len(partes) == 1:
                 nombre_dataset = partes[0]
                 semilla_dataset = None
-                task_seeds = run_seeds
+                semillas_tarea = semillas
             else:
-                raise ValueError(f"Nombre de dataset invalido: {nombre_dataset}")
-            for task_seed in task_seeds:
-                scoring = (
+                raise ValueError(f"Nombre de dataset inválido: {nombre_dataset}")
+            for semilla_tarea in semillas_tarea:
+                puntuacion_tarea = (
                     "neg_log_loss" if hasattr(clf, "predict_proba") else "accuracy"
                 )
-                config = dict(**base_config, seed=task_seed, scoring=scoring)
+                configuracion = dict(
+                    **config_base, seed=semilla_tarea, scoring=puntuacion_tarea
+                )
                 clave = (
                     nombre_dataset,
                     semilla_dataset,
                     nombre_clf,
-                    task_seed,
-                    scoring,
+                    semilla_tarea,
+                    puntuacion_tarea,
                 )
                 nombre_config = "-".join(map(str, clave)) + ".yaml"
-                logger.debug("Generando configuracion %s", nombre_config)
-                yaml.dump(config, open(configs_dir / nombre_config, "w"))
+                logger.debug("Generando configuración %s", nombre_config)
+                yaml.dump(configuracion, open(dir_configs / nombre_config, "w"))
 
 
 if __name__ == "__main__":
-    from fkdc.datasets import Dataset
+    from fkdc.datasets import ConjuntoDatos
 
-    typer.run(make_configs)
+    typer.run(hacer_configuraciones)
