@@ -83,7 +83,7 @@ _en la variedad_ es más informativa que la distancia (euclídea)
 en el espacio ambiente $#Rd$. A este supuesto se lo suele llamar
 "hipótesis de la variedad" (_manifold hypothesis_), y suele
 ser particularmente acertado cuando las observaciones provienen "del
-mundo real" (e.g., imágenes, sonido y texto). Según @bengioRepresentationLearningReview2014,
+mundo real" (e.g., imágenes, sonido y texto). Según @bengioRepresentationLearningReview2013,
 _aprender_ la estructura de $#M$ a partir de $bold(x)$
 es una forma (entre muchas) de _aprendizaje de representaciones_
 (_representation learning_), donde la representación de $x_i$ en

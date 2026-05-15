@@ -825,10 +825,10 @@ La distancia entre dos puntos $p$ y $q$ de #MM es la longitud de la curva geodé
 
 En el ejemplo de @variedad-u, con  tan solo $n=3$ observaciones es imposible distinguir $cal(U)$, pero con una muestra #XX "suficientemente grande", es de esperar que los propios datos revelen la forma de la variedad; encima de esta observación es que se edifica la teoría de "aprendizaje de distancias" a partir de la propia muestra.
 
-La distancia nos da entonces una _representación_ útil de cuán similares son dos puntos: a menor distancia, mayor similitud. Por ello, la estimación de variedades es fundamental al _aprendizaje de representaciones_. En una extensa reseña de dicho campo, @bengioRepresentationLearningReview2014 así lo explican:
+La distancia nos da entonces una _representación_ útil de cuán similares son dos puntos: a menor distancia, mayor similitud. Por ello, la estimación de variedades es fundamental al _aprendizaje de representaciones_. En una extensa reseña de dicho campo, @bengioRepresentationLearningReview2013 así lo explican:
 
 
-#quote(attribution: [ @bengioRepresentationLearningReview2014[§8]])[
+#quote(attribution: [ @bengioRepresentationLearningReview2013[§8]])[
   (...) [L]a principal tarea del aprendizaje no-supervisado se considera entonces como el modelado de la estructura de la variedad que sustenta los datos. La representación asociada que se aprende puede asociarse con un sistema de coordenadas intrínseco en la variedad embebida.
 ]
 
