@@ -266,7 +266,7 @@ Esta estimación es irregular, con saltos discretos en el numerador, por lo que 
 ] <parzen>
 
 #obs[
-  La densidad de la distribución uniforme centrada en 0 de diámetro 1, $U(x) = ind(1/2 < x <= 1/2)$ es un núcleo.  Luego, $ U_h (x) = 1/h ind(-h/2 < x < h/2) $ también es un núcleo válido, y por ende el estimador de @eps-nn resulta estrechamente emparentado al estimador de @parzen:
+  La densidad de la distribución uniforme centrada en 0 de diámetro 1, $U(x) = ind(-1/2 < x <= 1/2)$ es un núcleo.  Luego, $ U_h (x) = 1/h ind(-h/2 < x < h/2) $ también es un núcleo válido, y por ende el estimador de @eps-nn resulta estrechamente emparentado al estimador de @parzen:
   $
     hat(f)(x_0) & = \#{x_i in cal(N)(x_0)} / (N times h) \
                 & = 1 / N sum_(i in [N]) 1/h ind(-h/2 < x_i - x_0 < h/2) \
