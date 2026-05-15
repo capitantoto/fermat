@@ -35,7 +35,7 @@
 
 = Síntesis
 
-Siguiendo a Loubes & Pelletier @loubesKernelbasedClassifierRiemannian2008, programamos y evaluamos un algoritmo de clasificación basado en _Kernel Density Estimation_ ("KDC") para v.a. soportadas en variedades de Riemann, "KDC". Luego, reemplazamos la distancia euclídea por  la _Distancia (muestral) de Fermat_ investigada por Groisman et al. @groismanNonhomogeneousEuclideanFirstpassage2019, e implementamos el clasificador resultante, Fermat KDC (FKDC")". Finalmente, evaluamos la exactitud ("accuracy") de ambos clasificadores contra otros algoritmos estándares: SVC, regresión logística, kNN y Naive Bayes. Resultados preliminares muestran que tanto KDC como FKDC performan consistentemente como los mejores algoritmos en cada tarea, pero la performance de FKDC nunca supera la de su par euclídeo, técnicamente es un caso particular de FKDC. Concluimos con algunas hipótesis sobre el comportamiento observado.
+Siguiendo a Loubes & Pelletier @loubesKernelbasedClassifierRiemannian2008, programamos y evaluamos un algoritmo de clasificación basado en _Kernel Density Estimation_ ("KDC") para v.a. soportadas en variedades de Riemann, "KDC". Luego, reemplazamos la distancia euclídea por  la _Distancia (muestral) de Fermat_ investigada por Groisman et al. @groismanNonhomogeneousEuclideanFirstpassage2022, e implementamos el clasificador resultante, Fermat KDC (FKDC")". Finalmente, evaluamos la exactitud ("accuracy") de ambos clasificadores contra otros algoritmos estándares: SVC, regresión logística, kNN y Naive Bayes. Resultados preliminares muestran que tanto KDC como FKDC performan consistentemente como los mejores algoritmos en cada tarea, pero la performance de FKDC nunca supera la de su par euclídeo, técnicamente es un caso particular de FKDC. Concluimos con algunas hipótesis sobre el comportamiento observado.
 
 = Contexto
 == KDE en variedades de Riemann
@@ -55,7 +55,7 @@ $ hat(y) = arg max_(j in 1, dots, k) hat(f_j)(x) hat(p)_j = sum_(i=1)^N bb(1){Y_
 donde $bb(1){dot}$ es la función indicadora, y $K_h (x, X_i) = frac(1, h^d)frac(1, theta_(X_i)(x))K(frac(d_g (x, X_i), h))$. Implementar la regla de @clf requiere conocer la geometría de la(s) variedad(es) involucradas, que rara vez es factible. Una alternativa es _aprender la distancia de los datos_.
 == Aprendizaje de Distancias: Isomap, Distancia de Fermat
 Si los elementos muestrales $X_i in cal(M)$, y la variedad es "suficientemente regular", el segmento $overline(X_i X_j)$ también pertenece a Mu. Isomap (Tenenbaum et al @tenenbaumGlobalGeometricFramework2000), pionero en esta tónica, plantea esencialmente aproximar la distancia en Mu por la geodésica en el grafo geométrico de $k$ o $epsilon$ vecinos más cercanos.
-En una propuesta tal vez superadora, Groisman et al @groismanNonhomogeneousEuclideanFirstpassage2019 proponen la "Distancia de Fermat", una distancia propiamente dicha en Mu, y muestran cómo ésta se puede aproximar "microscópicamente". Sea $Q$ el grafo completo de la muestra, y $alpha >= 1$, luego
+En una propuesta tal vez superadora, Groisman et al @groismanNonhomogeneousEuclideanFirstpassage2022 proponen la "Distancia de Fermat", una distancia propiamente dicha en Mu, y muestran cómo ésta se puede aproximar "microscópicamente". Sea $Q$ el grafo completo de la muestra, y $alpha >= 1$, luego
 
 $ D_(Q, alpha)(x, y) = inf{sum_(i=1)^K ||q_(i-1) - q_i||^alpha : (q_0, dots, q_K) "es un camino de x a y"} $ <sample_fermat>
 
