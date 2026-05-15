@@ -1148,7 +1148,7 @@ Este objeto "macroscópico" se puede aproximar a partir de una versión "microsc
 
 #defn([Distancia muestral o "microscópica" de Fermat])[
 
-  Sea $Q$ un conjunto no-vacío, _localmente finito_ #footnote[Es decir, que para todo compacto $U subset RR^D$, la cardinalidad de $Q inter U$ es finita, $abs(Q inter U) < oo$.] de $RR^D$. Para $alpha >=1$ y $x, y in RR^d$, la _Distancia Muestral de Fermat_ se define como
+  Sea $Q$ un conjunto no-vacío, _localmente finito_ #footnote[Es decir, que para todo compacto $U subset RR^D$, la cardinalidad de $Q inter U$ es finita, $abs(Q inter U) < oo$.] de $RR^D$. Para $alpha >=1$ y $x, y in RR^D$, la _Distancia Muestral de Fermat_ se define como
 
 
   $
@@ -1156,7 +1156,7 @@ Este objeto "macroscópico" se puede aproximar a partir de una versión "microsc
                 & "es un camino de x a y", K>=1}
   $
 
-  donde los $q_j in Q thin forall j in [K]$. Nótese que #sfd satisface la desigualdad triangular, define una métrica sobre $Q$ y una pseudo-métrica #footnote[una métrica tal que la distancia puede ser nula entre puntos no-idénticos:  $ exists a != b : d(a, b) = 0 $] sobre $RR^d$.
+  donde los $q_j in Q thin forall j in [K]$. Nótese que #sfd satisface la desigualdad triangular, define una métrica sobre $Q$ y una pseudo-métrica #footnote[una métrica tal que la distancia puede ser nula entre puntos no-idénticos:  $ exists a != b : d(a, b) = 0 $] sobre $RR^D$.
 ] <sample-fermat-distance>
 
 Antes de presentar en qué sentido  #sfd converge a $cal(D)_(f, beta)$, una definición más:
