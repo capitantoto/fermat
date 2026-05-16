@@ -825,10 +825,10 @@ La distancia entre dos puntos $p$ y $q$ de #MM es la longitud de la curva geodé
 
 En el ejemplo de @variedad-u, con  tan solo $n=3$ observaciones es imposible distinguir $cal(U)$, pero con una muestra #XX "suficientemente grande", es de esperar que los propios datos revelen la forma de la variedad; encima de esta observación es que se edifica la teoría de "aprendizaje de distancias" a partir de la propia muestra.
 
-La distancia nos da entonces una _representación_ útil de cuán similares son dos puntos: a menor distancia, mayor similitud. Por ello, la estimación de variedades es fundamental al _aprendizaje de representaciones_. En una extensa reseña de dicho campo, @bengioRepresentationLearningReview2014 así lo explican:
+La distancia nos da entonces una _representación_ útil de cuán similares son dos puntos: a menor distancia, mayor similitud. Por ello, la estimación de variedades es fundamental al _aprendizaje de representaciones_. En una extensa reseña de dicho campo, @bengioRepresentationLearningReview2013 así lo explican:
 
 
-#quote(attribution: [ @bengioRepresentationLearningReview2014[§8]])[
+#quote(attribution: [ @bengioRepresentationLearningReview2013[§8]])[
   (...) [L]a principal tarea del aprendizaje no-supervisado se considera entonces como el modelado de la estructura de la variedad que sustenta los datos. La representación asociada que se aprende puede asociarse con un sistema de coordenadas intrínseco en la variedad embebida.
 ]
 
@@ -976,7 +976,7 @@ Consideremos el grafo _planar_ de @grafo-completo-3-vertices. Bajo la con la nor
 
 En las dos últimas décadas han surgido numerosos algoritmos para calcular DBDs y hasta algunos _surveys_ comparando las bondades relativas de cada una, nos detendremos arbitrariamente en algunos. En @caytonAlgorithmsManifoldLearning2005 el autor provee un resumen de los algoritmos de aprendizaje de variedades más relevantes (hasta entonces). En sus reflexiones finales #footnote[cf. @caytonAlgorithmsManifoldLearning2005[§5, "¿Qué queda por hacer?"], la lectura de cuyas conclusiones al menos --- si no el trabajo entero --- recomendamos. ], el autor considera que es tan amplio el espectro de variedades subyacentes y de representaciones "útiles" que se pueden concebir, que (a) en el plano teórico resulta muy difícil de obtener garantías de eficiencia y rendimiento#footnote[adoptamos "rendimiento" como traducción del inglés _performance_, anglicismo extendido en uso aun entre practicantes del habla hispana.], y (b) en el plano experimental, quedamos reducidos a elegir un conjunto representativo de variedades y observar si los resultados obtenidos son "intuitivamente agradables". Más aún, las evaluaciones experimentales requieren _conocer_ la variedad subyacente para luego evaluar si el algoritmo de aprendizaje preserva información útil. Determinar si un dataset del mundo real efectivamente yace sobre cierta variedad es tan difícil como aprender la variedad; usar datos artificiales puede no rendir resultados realistas. Veintiún años más tarde, en esta monografía nos topamos con las mismas dificultades de antaño.
 
-A nuestro entender, @bijralSemisupervisedLearningDensity2012 ofrece una de las primeras formalizaciones de qué constituye una DBD. Para abordarla, revisaremos una definición previa. En @longitud definimos la longitud de una curva $gamma$ parametrizada y diferenciable sobre una variedad de Riemann compacta y sin frontera $(MM, g)$.
+A nuestro entender, @bijralSemisupervisedLearningDensity2011 ofrece una de las primeras formalizaciones de qué constituye una DBD. Para abordarla, revisaremos una definición previa. En @longitud definimos la longitud de una curva $gamma$ parametrizada y diferenciable sobre una variedad de Riemann compacta y sin frontera $(MM, g)$.
 
 #defn(
   "curva rectificable",
@@ -1030,7 +1030,7 @@ donde la minimización es con respecto a todos los senderos rectificables con ex
   $ norm(x)_(p->oo) = max_(1 <= i <= d) |x_i - y_i| $
 ] <lp-metric>
 
-¿Es posible estimar $D_(g compose f)$ de manera consistente? Intuitivamente, consideremos dos puntos $a, b in U subset MM, thick dim MM = d$ #footnote[reemplazamos la notación habitual de $p, q in MM$ por $a, b in MM$ y $d_MM$ por $d$ como en @bijralSemisupervisedLearningDensity2012[§3], y así evitar confusiones con la $p-$norma.] en un vecindario $U$ de $a$ lo "suficientemente pequeño" como para que $f$ sea esencialmente uniforme en él, y en particular en el segmento $gamma_(a b) = overline(a b)$ y tomemos $g = 1 slash f^r$:
+¿Es posible estimar $D_(g compose f)$ de manera consistente? Intuitivamente, consideremos dos puntos $a, b in U subset MM, thick dim MM = d$ #footnote[reemplazamos la notación habitual de $p, q in MM$ por $a, b in MM$ y $d_MM$ por $d$ como en @bijralSemisupervisedLearningDensity2011[§3], y así evitar confusiones con la $p-$norma.] en un vecindario $U$ de $a$ lo "suficientemente pequeño" como para que $f$ sea esencialmente uniforme en él, y en particular en el segmento $gamma_(a b) = overline(a b)$ y tomemos $g = 1 slash f^r$:
 
 $J_(r)(gamma_(a b)) = D_r (a, b) & approx g lr((f("alrededor de " a " y " b)), size: #140%) norm(b - a)_p \
 & prop g(norm(b -a)_p^(-d)) norm(b-a)_p \
@@ -1048,7 +1048,7 @@ $
 
 Finalmente, si #XX es una muestra "duficientemente densa", podemos estimar las distancias geodésicas $D_r$ como los "caminos mínimos" en el grafo completo de $XX$ con aristas pesadas por $norm(b - a)_p^q), thick a, b^T in XX$.
 
-Esta estimación es particularmente atractiva, en tanto no depende para nada de la dimensión ambiente $D$, y solo depende de la dimensión intrínseca $d$ de #MM a través de $q=r d+1$. De hecho, los autores mencionan que "casi cualquier par de valores $(p, q)$ funciona", y en particular encuentran que en sus experimento, $p=2, q=8$ "anda bien en general" @bijralSemisupervisedLearningDensity2012[5.1] #footnote[tendremos más para decir al respecto en la @resultados, "Resultados"].
+Esta estimación es particularmente atractiva, en tanto no depende para nada de la dimensión ambiente $D$, y solo depende de la dimensión intrínseca $d$ de #MM a través de $q=r d+1$. De hecho, los autores mencionan que "casi cualquier par de valores $(p, q)$ funciona", y en particular encuentran que en sus experimento, $p=2, q=8$ "anda bien en general" @bijralSemisupervisedLearningDensity2011[5.1] #footnote[tendremos más para decir al respecto en la @resultados, "Resultados"].
 
 #v(1em)
 #align(center)[$quad * quad * quad *$]
@@ -1115,13 +1115,13 @@ El grueso del trabajo de Chu et al consiste en una prueba general de esta iguald
 
 Una utilidad de este resultado es que permite calcular con precisión qué valores de $k$ estimar $d_bu(N)$ sobre el grafo pesado por aristas cuadradas $bu(N N)_k (XX)$  es un "suficientemente buen reemplazo" del cálculo equivalente --- pero mucho más costoso --- sobre $bu(C)(XX)$. En @chuExactComputationManifold2019[Theorema 1.3], observan que con tomar $k = O(2^d ln n)$ basta.
 
-Lo que Chu et al llaman $d_bu(2)$ y figura en @chuExactComputationManifold2019 @vincentDensitySensitiveMetrics2003 como "distancia de arista-cuadrada", es la misma distancia $D_r$ que @bijralSemisupervisedLearningDensity2012 consideran con $p = 2$ (norma euclídea) y $r = 1/d$ --- de modo que $q=r d+1=2$.
+Lo que Chu et al llaman $d_bu(2)$ y figura en @chuExactComputationManifold2019 @vincentDensitySensitiveMetrics2003 como "distancia de arista-cuadrada", es la misma distancia $D_r$ que @bijralSemisupervisedLearningDensity2011 consideran con $p = 2$ (norma euclídea) y $r = 1/d$ --- de modo que $q=r d+1=2$.
 
 === Distancia de Fermat
 
 No conocemos pruebas de equivalencia para valores arbitrarios de $p, q$, ni se deriva de la prueba mencionada que deban de existir. Sin embargo, sí existe en la literatura una familia de DBDs  para la cual se conocen tasas de convergencia asintótica de la aproximación muestral en el grafo completo a la distancia propiamente dicha, sobre una variedad Riemanniana compacta sin frontera --- la familia de _Distancia(s) de Fermat_.
 
-El trabajo de @groismanNonhomogeneousEuclideanFirstpassage2019 considera la misma familia de distancias basadas en funciones monótonamente decrecientes de la densidad que @bijralSemisupervisedLearningDensity2012, $g = 1 / f^r$, salvo que en Groisman et al,
+El trabajo de @groismanNonhomogeneousEuclideanFirstpassage2019 considera la misma familia de distancias basadas en funciones monótonamente decrecientes de la densidad que @bijralSemisupervisedLearningDensity2011, $g = 1 / f^r$, salvo que en Groisman et al,
 $
   p = 2; quad q = alpha; quad r = beta = (alpha - 1) / d
 $
@@ -1182,7 +1182,7 @@ Antes de presentar en qué sentido  #sfd converge a $cal(D)_(f, beta)$, una defi
 
 La distancia muestral de Fermat $D_(Q, alpha)$ se puede aproximar a partir de una muestra "lo suficientemente grande _sin conocer ni la variedad #MM ni su dimensión intrínseca_. Además, tiene garantías de convergencia a una distancia basada en densidad (DBD) --- la distancia de Fermat "macroscópica" $cal(D)_(f, beta)$ --- para todo $beta,$. ¡Hemos encontrado la pieza faltante para nuestro clasificador en variedades _desconocidas_! Estamos finalmente en condiciones de proponer un algoritmo de clasificación que reúna todos los cabos del tejido teórico hasta aquí desplegado.
 
-Los trabajos de @littleBalancingGeometryDensity2021 @mckenziePowerWeightedShortest2019 --- contemporáneos a Groisman et al --- consideran lo que ellos llaman "distancias de caminos mínimos pesadas por potencias" #footnote["power-weighted shortest-path distances" o PWSPDs por sus siglas en inglés], aplicándoles no a problemas de clasificación, sino de _clustering_ #footnote[i.e., de identificación de grupos en datos no etiquetados]. Las definiciones de ambos grupos son muy similares en espíritu, con una diferencia menor: la distancia microscópica que plantean Little et al no es la suma de las aristas pesadas por $q=alpha$ como en Bijral et al y Groisman et al, sino la raíz $alpha$-ésima de tal suma, en una especia de reversión de la distancia de Minkowski. Siendo la sustancia de ambos trabajos en esencia la misma, pasaremos directamente a la próxima sección --- nuestra propuesta original.
+Los trabajos de @littleBalancingGeometryDensity2022 @mckenziePowerWeightedShortest2019 --- contemporáneos a Groisman et al --- consideran lo que ellos llaman "distancias de caminos mínimos pesadas por potencias" #footnote["power-weighted shortest-path distances" o PWSPDs por sus siglas en inglés], aplicándoles no a problemas de clasificación, sino de _clustering_ #footnote[i.e., de identificación de grupos en datos no etiquetados]. Las definiciones de ambos grupos son muy similares en espíritu, con una diferencia menor: la distancia microscópica que plantean Little et al no es la suma de las aristas pesadas por $q=alpha$ como en Bijral et al y Groisman et al, sino la raíz $alpha$-ésima de tal suma, en una especia de reversión de la distancia de Minkowski. Siendo la sustancia de ambos trabajos en esencia la misma, pasaremos directamente a la próxima sección --- nuestra propuesta original.
 
 = Propuesta Original
 
@@ -1578,7 +1578,7 @@ Veamos primero qué sucede durante el entrenamiento para `circulos_lo`: ¿es que
     [Superficie de _score_ en `circulos_lo`],
   ),
 )
-Nótese que la región amarilla, que representa los máximos puntajes durante el entrenamiento, se extiende diagonalmente a través de todos los valores de $alpha$. Es decir, no hay _un_ par de hiperparámetros óptimos $(alpha^star, h^star)$, sino que fijando $alpha$, siempre pareciera existir un $tilde(h)(alpha)$ que alcanza (o aproxima) la máxima exactitud _posible_ con el método en el dataset. En este ejemplo en particular, hasta pareciera ser que una relación log-lineal captura bastante bien el fenómeno, $tilde(h) prop log(alpha)$. En particular, entonces, $"exac"(tilde(h)(alpha), alpha) approx "exac"(h^star), alpha^star) thin forall alpha$, y se entiende que el algoritmo #fkdc no mejore significativamente la exactitud por sobre #kdc. Este resultado es consistente con el ya mencionado comentario de @bijralSemisupervisedLearningDensity2012[§5.1], que encuentran que fijar $p=2$ para la norma "de base" y $q=alpha=8$ "representa una elección razonable para la mayoría de los datasets".
+Nótese que la región amarilla, que representa los máximos puntajes durante el entrenamiento, se extiende diagonalmente a través de todos los valores de $alpha$. Es decir, no hay _un_ par de hiperparámetros óptimos $(alpha^star, h^star)$, sino que fijando $alpha$, siempre pareciera existir un $tilde(h)(alpha)$ que alcanza (o aproxima) la máxima exactitud _posible_ con el método en el dataset. En este ejemplo en particular, hasta pareciera ser que una relación log-lineal captura bastante bien el fenómeno, $tilde(h) prop log(alpha)$. En particular, entonces, $"exac"(tilde(h)(alpha), alpha) approx "exac"(h^star), alpha^star) thin forall alpha$, y se entiende que el algoritmo #fkdc no mejore significativamente la exactitud por sobre #kdc. Este resultado es consistente con el ya mencionado comentario de @bijralSemisupervisedLearningDensity2011[§5.1], que encuentran que fijar $p=2$ para la norma "de base" y $q=alpha=8$ "representa una elección razonable para la mayoría de los datasets".
 
 
 Ahora bien, esto es solo en _un_ dataset, con _una_ semilla específica. ¿Se replicará el fenómeno en los otros datasets?
@@ -2017,7 +2017,7 @@ Ya existía una implementación previa de la Distancia de Fermat #link("https://
 - compatible con el marco de métricas aceptado por los clasificadores de `scikit-learn`, para extenderlos con Distancia de Fermat pero mantener la capacidad de evaluación sistemática comparada.
 
 
-Nuestros resultados son consistentes con la observación de @bijralSemisupervisedLearningDensity2012 de que basta con aprender un único parámetro $alpha$ ---que subsume los efectos de la dimensión intrínseca $d$ y el exponente $beta$--- sin necesidad de estimar la dimensión intrínseca de la variedad para que la distancia de Fermat resulte efectiva.
+Nuestros resultados son consistentes con la observación de @bijralSemisupervisedLearningDensity2011 de que basta con aprender un único parámetro $alpha$ ---que subsume los efectos de la dimensión intrínseca $d$ y el exponente $beta$--- sin necesidad de estimar la dimensión intrínseca de la variedad para que la distancia de Fermat resulte efectiva.
 
 En ninguno de los datasets estudiados con bajo $D in {2, 3}$ se vieron modos "catastróficos" donde el rendimiento de #fkdc/#fkn fuese muchísimo peor que la de sus pares euclídeos. Sí hubo dos datasets "reales" --- `vino` y `pinguinos`, $k=3$ --- en los que #fkdc confunde dos de las clases por estar muy "ensimismadas" en algunas direcciones, y pierde mucho en exactitud. En los datasets en que se comprueba una ventaja sistemática de #fkdc (resp. #fkn) sobre #kdc (resp. #kn), se puede explicar por dos efectos:
 1. En todos los casos examinados, una parte importante de la ventaja se da por una "simbiosis" positiva entre el mecanismo de selección de modelos de @r1sd, y el espacio de parámetros ampliado por la dimensión de $alpha$. Esta resulta en parametrizaciones de #fkdc (resp. #fkn) con $alpha=1$ y ligeramente mejor $R^2$ que las que #kdc (resp. #kn) selecciona.
@@ -2049,7 +2049,7 @@ Es _infinita_ la cantidad de circunstancias en las que podemos poner a prueba un
 Sería interesante entonces investigar si existen condiciones reales en las que sepamos "a priori" que las variedades intrínsecas son altamente no-euclídeas, y en ese contexto probar si en ciertos tamaños muestrales $n$ (y por cada clase, $n_1, dots, n_k$) pequeños relativos a la dimensión ambiente es particularmente conveniente el uso de la distancia de Fermat.
 
 
-Asimismo, la grilla de $alpha in [1, 4]$ utilizada en nuestros experimentos podría ampliarse ---@bijralSemisupervisedLearningDensity2012 reportan buenos resultados con $alpha = 8$--- para explorar si valores más extremos del parámetro ofrecen ventajas adicionales en datasets con geometrías particularmente complejas.
+Asimismo, la grilla de $alpha in [1, 4]$ utilizada en nuestros experimentos podría ampliarse ---@bijralSemisupervisedLearningDensity2011 reportan buenos resultados con $alpha = 8$--- para explorar si valores más extremos del parámetro ofrecen ventajas adicionales en datasets con geometrías particularmente complejas.
 
 
 = Listados
