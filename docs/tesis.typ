@@ -1168,7 +1168,7 @@ Antes de presentar en qué sentido  #sfd converge a $cal(D)_(f, beta)$, una defi
 
   Asuma que #MM es una variedad $C^1$ $d$-dimensional isométrica embebida en $RR^D$ y $f: MM -> R_+$ es una función de densidad de probabilidad continua. Sea $Q_n = {q_1, ..., q_n}$ un conjunto de elementos aleatorios independientes con densidad común $f$. Entonces, para $alpha > 1$ y $x,y in M$ tenemos:
 
-  $ lim_(n->oo) n^beta D_(Q_n,alpha)(x,y) = mu D_(f,beta)(x,y) " casi seguramente." $
+  $ lim_(n->oo) n^beta D_(Q_n,alpha)(x,y) = mu cal(D)_(f,beta)(x,y) " casi seguramente." $
 
   Aquí,
   - $beta = (alpha-1) slash d$,
