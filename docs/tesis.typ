@@ -266,7 +266,7 @@ Esta estimación es irregular, con saltos discretos en el numerador, por lo que 
 ] <parzen>
 
 #obs[
-  La densidad de la distribución uniforme centrada en 0 de diámetro 1, $U(x) = ind(1/2 < x <= 1/2)$ es un núcleo.  Luego, $ U_h (x) = 1/h ind(-h/2 < x < h/2) $ también es un núcleo válido, y por ende el estimador de @eps-nn resulta estrechamente emparentado al estimador de @parzen:
+  La densidad de la distribución uniforme centrada en 0 de diámetro 1, $U(x) = ind(-1/2 < x <= 1/2)$ es un núcleo.  Luego, $ U_h (x) = 1/h ind(-h/2 < x < h/2) $ también es un núcleo válido, y por ende el estimador de @eps-nn resulta estrechamente emparentado al estimador de @parzen:
   $
     hat(f)(x_0) & = \#{x_i in cal(N)(x_0)} / (N times h) \
                 & = 1 / N sum_(i in [N]) 1/h ind(-h/2 < x_i - x_0 < h/2) \
@@ -664,7 +664,7 @@ El autor prueba la convergencia en $L^2(MM)$:
 #thm([convergencia de $hat(f)$ en $L^2$ @pelletierKernelDensityEstimation2005[§3 Teorema 5]])[
   Sea $f$ una densidad de probabilidad dos veces diferenciable en #MM con segunda derivada covariante acotada. Sea $hat(f)_n$ el estimador de densidad definido en @kde-variedad con ventana $h_n < h_0 < "iny" MM$. Luego, existe una constante $C_f$ tal que
   $
-    EE norm(hat(f)_n - f)_(L^2(MM))^2 <= C_f (1/ (n h^d)+ r^4).
+    EE norm(hat(f)_n - f)_(L^2(MM))^2 <= C_f (1/ (n h^d)+ h^4).
   $
   En consecuencia, para $h tilde n^(-1/(d+4))$, tenemos $ EE norm(hat(f)_n - f)_(L^2(MM))^2 = O(n^(-4/(d+4))) $
 ]
@@ -1121,14 +1121,14 @@ Lo que Chu et al llaman $d_bu(2)$ y figura en @chuExactComputationManifold2019 @
 
 No conocemos pruebas de equivalencia para valores arbitrarios de $p, q$, ni se deriva de la prueba mencionada que deban de existir. Sin embargo, sí existe en la literatura una familia de DBDs  para la cual se conocen tasas de convergencia asintótica de la aproximación muestral en el grafo completo a la distancia propiamente dicha, sobre una variedad Riemanniana compacta sin frontera --- la familia de _Distancia(s) de Fermat_.
 
-El trabajo de @groismanNonhomogeneousEuclideanFirstpassage2019 considera la misma familia de distancias basadas en funciones monótonamente decrecientes de la densidad que @bijralSemisupervisedLearningDensity2011, $g = 1 / f^r$, salvo que en Groisman et al,
+El trabajo de @groismanNonhomogeneousEuclideanFirstpassage2022 considera la misma familia de distancias basadas en funciones monótonamente decrecientes de la densidad que @bijralSemisupervisedLearningDensity2011, $g = 1 / f^r$, salvo que en Groisman et al,
 $
   p = 2; quad q = alpha; quad r = beta = (alpha - 1) / d
 $
 
 y no se limitan a sugerir que la distancia en el espacio ambiente se puede aproximar a través de la distancia basada en el grafo completo con aristas pesadas como en Bijral et al , sino que precisan en qué sentido la una converge a la otra, y a qué tasa.#footnote[Con respecto a fijar $p=2$, en la "Observación 2.6" los autores mencionan que es posible y hasta sería interesante reemplazar la norma euclídea --- $2-$norma --- por otra distancia --- otra $p-$norma, por ejemplo --, reemplazando las integrales con respecto a la longitud de arco, por integrales con respecto a la distancia involucrada. Entendemos de ello que no es una condición _necesaria_ para el desarrolo del trabajo, sino solo _conveniente_. Omitiremos el subíndice en la $2-$norma de aquí en más.]
 
-#defn([Distancia "macroscrópica" de Fermat @groismanNonhomogeneousEuclideanFirstpassage2019[Definición 2.2]])[
+#defn([Distancia "macroscrópica" de Fermat @groismanNonhomogeneousEuclideanFirstpassage2022[Definición 2.2]])[
 
   Sea $f$ una función continua y positiva, $beta >=0$
   y $x, y in S subset.eq RR^D$. Definimos la _Distancia de Fermat_ $cal(D)_(f, beta)(x, y)$ como:
@@ -1148,7 +1148,7 @@ Este objeto "macroscópico" se puede aproximar a partir de una versión "microsc
 
 #defn([Distancia muestral o "microscópica" de Fermat])[
 
-  Sea $Q$ un conjunto no-vacío, _localmente finito_ #footnote[Es decir, que para todo compacto $U subset RR^D$, la cardinalidad de $Q inter U$ es finita, $abs(Q inter U) < oo$.] de $RR^D$. Para $alpha >=1$ y $x, y in RR^d$, la _Distancia Muestral de Fermat_ se define como
+  Sea $Q$ un conjunto no-vacío, _localmente finito_ #footnote[Es decir, que para todo compacto $U subset RR^D$, la cardinalidad de $Q inter U$ es finita, $abs(Q inter U) < oo$.] de $RR^D$. Para $alpha >=1$ y $x, y in RR^D$, la _Distancia Muestral de Fermat_ se define como
 
 
   $
@@ -1156,7 +1156,7 @@ Este objeto "macroscópico" se puede aproximar a partir de una versión "microsc
                 & "es un camino de x a y", K>=1}
   $
 
-  donde los $q_j in Q thin forall j in [K]$. Nótese que #sfd satisface la desigualdad triangular, define una métrica sobre $Q$ y una pseudo-métrica #footnote[una métrica tal que la distancia puede ser nula entre puntos no-idénticos:  $ exists a != b : d(a, b) = 0 $] sobre $RR^d$.
+  donde los $q_j in Q thin forall j in [K]$. Nótese que #sfd satisface la desigualdad triangular, define una métrica sobre $Q$ y una pseudo-métrica #footnote[una métrica tal que la distancia puede ser nula entre puntos no-idénticos:  $ exists a != b : d(a, b) = 0 $] sobre $RR^D$.
 ] <sample-fermat-distance>
 
 Antes de presentar en qué sentido  #sfd converge a $cal(D)_(f, beta)$, una definición más:
@@ -1164,11 +1164,11 @@ Antes de presentar en qué sentido  #sfd converge a $cal(D)_(f, beta)$, una defi
   Diremos que #MM es una variedad $d-$dimensional $C^1$ _isométrica_ embebida en $RR^D$ si existe un conjunto abierto y conexo $S subset RR^D$ y $phi : S -> RR^D$ una transformación isométrica #footnote[Que preserva las métricas o distancias; del griego "isos" (igual) y "metron" (medida)] tal que $phi(overline(S)) = MM$. Como se mencionó con anterioridad, se espera que $d << D$, pero no es necesario.
 ]
 
-#defn([Convergencia de $D_(Q, alpha)$, @groismanNonhomogeneousEuclideanFirstpassage2019[Teorema 2.7]])[
+#defn([Convergencia de $D_(Q, alpha)$, @groismanNonhomogeneousEuclideanFirstpassage2022[Teorema 2.7]])[
 
   Asuma que #MM es una variedad $C^1$ $d$-dimensional isométrica embebida en $RR^D$ y $f: MM -> R_+$ es una función de densidad de probabilidad continua. Sea $Q_n = {q_1, ..., q_n}$ un conjunto de elementos aleatorios independientes con densidad común $f$. Entonces, para $alpha > 1$ y $x,y in M$ tenemos:
 
-  $ lim_(n->oo) n^beta D_(Q_n,alpha)(x,y) = mu D_(f,beta)(x,y) " casi seguramente." $
+  $ lim_(n->oo) n^beta D_(Q_n,alpha)(x,y) = mu cal(D)_(f,beta)(x,y) " casi seguramente." $
 
   Aquí,
   - $beta = (alpha-1) slash d$,
@@ -1822,8 +1822,7 @@ $
 $
 con $h' = h slash c$ y efectivamente los parámetros $(alpha, h)$ se solapan en sus funciones. Lamentablemente, sabemos que localmente esto _es_ cierto: en un vecindario de $x_0$, la densidad $f$ de $X$ es #math.approx constante, así que la distancia "macroscópica" $cal(D)_(f,beta)$, y el costo de integrarla al respecto de un sendero será proporcional a la longitud --- euclídea --- del mismo. Nuestra aproximación #sfd de $cal(D)_(f,beta)$ heredará las mismas características.
 
-// TODO: averiguar de dónde sale este hecho sobre k_n opt, optima en qué sentido
-La serie $k_n$ que minimiza el error cuadrátrico medio cuando $n -> oo$ es $k prop n^(d/(d+4))$, que para nuestros tamaños muestrales de CV resulta en $320^(3/(3+4)) =320^(3/7) approx 12$. Es decir que tomando #math.approx decena de vecinos, alcanzaría para entrenar un clasificado #kn decente --- #fkn podrá ser mejor con $k_#fkn >> 12$, pero no mejor que #kn con $k_#kn approx 12$.  le basta con conseguir un buen resultados en el primer  Pues bien, cuando miramos el mejor rendimiento en test por `n_neighbors` para #kn y #fkn, vemos que elegir un $alpha$ variable le permite a #fkn mantener una óptimo rendimiento en términos de log-verosimilitud #footnote[y por ende $R^2$ también]. para _cualquier_ valor de $k$ #footnote[`n_neighbors` en la parametrización de `scikit-learn`.]
+La serie $k_n$ que minimiza el error cuadrático medio del estimador $k$-NN cuando $n -> oo$ es $k prop n^(4/(d+4))$, que para nuestros tamaños muestrales de CV resulta en $320^(4/(3+4)) = 320^(4/7) approx 27$. Es decir que tomando #math.approx tres decenas de vecinos alcanzaría para entrenar un clasificador #kn decente --- #fkn podrá ser mejor con $k_#fkn >> 27$, pero no mejor que #kn con $k_#kn approx 27$. Pues bien, cuando miramos el mejor rendimiento en test por `n_neighbors` para #kn y #fkn, vemos que elegir un $alpha$ variable le permite a #fkn mantener un óptimo rendimiento en términos de log-verosimilitud #footnote[y por ende $R^2$ también] para _cualquier_ valor de $k$ #footnote[`n_neighbors` en la parametrización de `scikit-learn`.].
 
 // TODO: esto es realmene el _mean_ test score? podemos hacer el mismo gráfico con una linea por semilla y clf, todas con menor alpha, para ver si la rutas de fkn son siempre mejores que las de kn?
 #figure(
@@ -2005,7 +2004,7 @@ El dataset de dígitos de scikit-learn ($N = 1797$, $k = 10$, $D = 64$, imágene
 === `mnist` ($k=10, D=96$)
 #highlights_figure("mnist")
 
-La versión grande del problema de `digitos`, al dataset de `mnist` ($N = 800$, $approx 80$ observaciones por clase) se lo redujo de $D = 768$ a $D = 96$ #footnote[número que se eligió para conservar al menos el 90% de la variación en los datos originales] por PCA para volverlo más manejable. Presenta un resultado interesante: #kdc ($R^2 approx 0.77$) supera a #fkdc ($R^2 approx 0.74$), con bastante menor dispersión también según se observa en el _boxplot_. Nos llena de orgullo que la implementación propia del clasificador de @loubesKernelbasedClassifierRiemannian2008 obtenga un $R^2$ que se separa por bastante de otros métodos más complejos como #gbt y casi tan bueno como el mejor en exactitud (#svc), aunque hemos de admitir que termina obteniendo la misma _performance_ que el más que clásico #logr en exactitud y $R^2$.
+La versión grande del problema de `digitos`, al dataset de `mnist` ($N = 800$, $approx 80$ observaciones por clase) se lo redujo de $D = 784$ a $D = 96$ #footnote[número que se eligió para conservar al menos el 90% de la variación en los datos originales] por PCA para volverlo más manejable. Presenta un resultado interesante: #kdc ($R^2 approx 0.77$) supera a #fkdc ($R^2 approx 0.74$), con bastante menor dispersión también según se observa en el _boxplot_. Nos llena de orgullo que la implementación propia del clasificador de @loubesKernelbasedClassifierRiemannian2008 obtenga un $R^2$ que se separa por bastante de otros métodos más complejos como #gbt y casi tan bueno como el mejor en exactitud (#svc), aunque hemos de admitir que termina obteniendo la misma _performance_ que el más que clásico #logr en exactitud y $R^2$.
 
 = Conclusiones
 
@@ -2044,7 +2043,7 @@ Cabe notar que _todo_ algoritmo evaluado --- incluso #logr sin escalar--- obtuvo
 == Trabajo Futuro
 En el presente trabajo hemos desarrollado una biblioteca y un marco teórico sumamente riguroso para intentar identificar condiciones en las cuales estimadores de densidad entrenados con distancia de Fermat muestral son estrictamente mejores que sus versiones euclídeas.
 
-Es _infinita_ la cantidad de circunstancias en las que podemos poner a prueba una técnica de clasificación, y en los experimentos ejecutados y presentados apenas hemos arañado la superficie. Así y todo, pareciera ser que en espacios ralamente muestreados o altamente curvos, donde "no quede otra" que tomar una ventana $h > "iny" MM$ para tener una densidad "viable", el uso de la distancia de Fermat mejora, si no la exactitud de los algoritmos, sí su $R^2$ y por ende la capacidad de discernimiento "relativo" de estos estimadores.
+Es _infinita_ la cantidad de circunstancias en las que podemos poner a prueba una técnica de clasificación, y en los experimentos ejecutados y presentados apenas hemos arañado la superficie. Así y todo, pareciera ser que en espacios ralamente muestreados o altamente curvos ---donde para obtener una densidad "viable" no queda otra que tomar una ventana $h > "iny" MM$, violando el supuesto $h < "iny" MM$ bajo el cual @pelletierKernelDensityEstimation2005 garantiza la convergencia del KDE en variedades--- el uso de la distancia de Fermat mejora, si no la exactitud de los algoritmos, sí su $R^2$ y por ende la capacidad de discernimiento "relativo" de estos estimadores.
 
 Sería interesante entonces investigar si existen condiciones reales en las que sepamos "a priori" que las variedades intrínsecas son altamente no-euclídeas, y en ese contexto probar si en ciertos tamaños muestrales $n$ (y por cada clase, $n_1, dots, n_k$) pequeños relativos a la dimensión ambiente es particularmente conveniente el uso de la distancia de Fermat.
 
