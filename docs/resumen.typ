@@ -1,15 +1,32 @@
 // Resúmenes en castellano e inglés de la tesis.
-// Se compila como documento independiente: `typst compile docs/resumen.typ`.
-// El contenido es una síntesis de la Introducción, Propuesta Original y
-// Conclusiones de tesis.typ — para revisión del autor antes de la entrega.
+//
+// El archivo expone dos versiones de cada resumen, controladas por la variable
+// `version` (definida abajo): "larga" (≤400 palabras, default) o "corta"
+// (≤240 palabras). La versión larga es la que arma `make TESIS_BARRERA_GONZALO.pdf`.
+//
+// Citas: las menciones inline a Pelletier, Loubes & Pelletier y Groisman et al.
+// corresponden a las siguientes claves en `docs/references.bib`:
+//   - Pelletier (2005)                  → @pelletierKernelDensityEstimation2005
+//   - Loubes & Pelletier (2008)         → @loubesKernelbasedClassifierRiemannian2008
+//   - Groisman, Jonckheere & Sapienza (2022) → @groismanNonhomogeneousEuclideanFirstpassage2022
+//
+// Compilación: `typst compile docs/resumen.typ`.
 
+// =====================
+//  Parámetro de versión
+// =====================
+#let version = "larga"  // "larga" (≤400 palabras) | "corta" (≤240 palabras)
+
+// =====================
+//  Estilo de página
+// =====================
 #set page(paper: "a4", margin: 1.5in, numbering: none)
 #set text(font: "New Computer Modern", lang: "es", size: 11pt)
 #set par(leading: 0.55em, first-line-indent: 0pt, justify: true)
 #show heading: set block(above: 1.4em, below: 1em)
 
 // =====================
-//  Resumen en español
+//  Resumen en castellano
 // =====================
 
 #align(center)[
@@ -18,33 +35,76 @@
 
 #v(0.5em)
 
-En esta tesis se propone, implementa y evalúa una familia de clasificadores
-supervisados no paramétricos que reemplazan la distancia euclídea por la
-_distancia muestral de Fermat_ — una distancia basada en densidad que aproxima
-la distancia geodésica sobre variedades de Riemann desconocidas.
+#if version == "larga" [
+  La distancia entre observaciones es un ingrediente central en casi todo
+  algoritmo de clasificación supervisada. La euclídea ---elección canónica---
+  es trivial de computar, pero su poder discriminativo decae con la dimensión:
+  la distancia en el espacio ambiente deja de ser informativa, y no es claro
+  cuál es el dominio sobre el cual sí lo sería.
 
-Sobre la base del estimador de densidad por núcleos en variedades de Riemann de
-Pelletier (2005) y su extensión a clasificación de Loubes y Pelletier (2008),
-implementamos tres algoritmos: el clasificador de densidad por núcleos *KDC*;
-su contraparte basada en distancia muestral de Fermat, *f-KDC*; y un análogo
-de $k$-vecinos más cercanos también basado en distancia de Fermat, *f-KN*. Los
-tres se distribuyen como biblioteca de código abierto, compatible con la
-interfaz de `scikit-learn`.
+  La _hipótesis de la variedad_ propone que tal dominio existe: las
+  observaciones de interés en alta dimensión yacen sobre una variedad
+  ---típicamente embebida, compacta, sin frontera y de dimensión intrínseca
+  mucho menor--- en la que cobra sentido una distancia geodésica informativa.
+  Conjeturar la existencia de la variedad no alcanza, sin embargo, si no se
+  la conoce. Pelletier (2005) y Loubes & Pelletier (2008) muestran que,
+  conocida la variedad, el estimador de densidad por núcleos ---y por ende
+  el clasificador basado en él--- admiten una adaptación natural a este
+  contexto.
 
-La evaluación experimental sistemática abarcó 20 _datasets_ — sintéticos y
-reales, de dimensiones intrínsecas y ambientes diversas — y nueve algoritmos.
-Las propuestas resultaron competitivas con técnicas de referencia paramétricas
-(regresión logística, SVM) y no paramétricas (_gradient boosting_): f-KDC
-obtuvo el máximo $R^2$ mediano en 7 _datasets_, f-KN en 3 y KDC en 2 más. La
-ventaja atribuible específicamente al uso de la distancia de Fermat se
-concentra en espacios ralamente muestreados o altamente curvos, en los que el
-ancho de banda requerido supera el radio de inyectividad de la variedad y los
-supuestos de Pelletier dejan de cumplirse. En el régimen "bien muestreado",
-los hiperparámetros de ancho de banda y exponente de Fermat se vuelven
-intercambiables y no se observa ganancia neta. Sin embargo, las fronteras de
-decisión que dibuja f-KDC se alinean cualitativamente con la geometría
-subyacente — una propiedad deseable que escapa a las métricas escalares de
-comparación.
+  En esta tesis recorremos la literatura fundacional ---el problema de
+  clasificación, las variedades de Riemann, y la estimación de densidad desde
+  Parzen hasta el contexto de variedades compactas--- y la cerramos con un
+  desarrollo más reciente: el aprendizaje de distancias y, en particular, la
+  _distancia muestral de Fermat_ (Groisman, Jonckheere & Sapienza, 2022), que
+  aproxima la geodésica directamente desde los datos, sin necesidad de
+  conocer la variedad.
+
+  Nuestro aporte es empírico: examinar el efecto neto de reemplazar la
+  distancia euclídea por la de Fermat en clasificadores basados en densidad
+  ---el de densidad por núcleos (KDC) y el de $k$ vecinos más cercanos
+  ($k$-NN). La implementación de la distancia y los estimadores conforma una
+  biblioteca de código abierto compatible con la interfaz de `scikit-learn`,
+  disponible en #link("https://github.com/capitantoto/fermat").
+
+  Sobre 20 _datasets_ que varían en dimensión ambiente, dimensión intrínseca
+  y cantidad de clases observamos que: (i) en _datasets_ de muy alta
+  curvatura, la distancia de Fermat ofrece ventajas claras sobre la euclídea;
+  (ii) en regímenes bien muestreados, su parámetro adicional $alpha$ ---que
+  pondera las aristas del grafo completo--- se vuelve funcionalmente
+  intercambiable con el ancho de banda, y las dos distancias arrojan
+  resultados equivalentes. Las conclusiones discuten líneas de trabajo
+  futuro.
+] else [
+  La distancia entre observaciones es central en casi todo algoritmo de
+  clasificación supervisada. La euclídea ---elección canónica--- pierde
+  poder discriminativo en alta dimensión, y el dominio sobre el cual lo
+  conservaría es desconocido.
+
+  La _hipótesis de la variedad_ propone que tal dominio existe: las
+  observaciones yacen sobre una variedad compacta, sin frontera y de
+  dimensión intrínseca menor, donde la distancia geodésica recobra
+  significado. Pelletier (2005) y Loubes & Pelletier (2008) muestran que,
+  conocida la variedad, la estimación de densidad por núcleos admite una
+  adaptación natural a este contexto.
+
+  En esta tesis recorremos la literatura fundacional ---clasificación,
+  variedades de Riemann, KDE desde Parzen hasta variedades compactas--- y
+  la cerramos con un desarrollo más reciente: el aprendizaje de distancias
+  y la _distancia muestral de Fermat_ (Groisman, Jonckheere & Sapienza,
+  2022), que aproxima la geodésica directamente desde los datos.
+
+  Nuestro aporte es empírico: examinar el efecto neto de reemplazar la
+  euclídea por la de Fermat en clasificadores basados en densidad ---KDC y
+  $k$-NN. La implementación es una biblioteca de código abierto compatible
+  con `scikit-learn`
+  (#link("https://github.com/capitantoto/fermat")).
+
+  Sobre 20 _datasets_ observamos que la distancia de Fermat aventaja a la
+  euclídea en regímenes de alta curvatura; en regímenes bien muestreados,
+  su parámetro $alpha$ se vuelve funcionalmente intercambiable con el ancho
+  de banda y los resultados son equivalentes.
+]
 
 #v(1em)
 
@@ -66,33 +126,76 @@ densidad, aprendizaje no paramétrico.
 
 #v(0.5em)
 
-This thesis proposes, implements, and evaluates a family of non-parametric
-supervised classifiers that replace the Euclidean distance with the _sample
-Fermat distance_ — a density-based distance that approximates the geodesic
-distance on unknown Riemannian manifolds.
+#if version == "larga" [
+  The distance between observations is a central ingredient in nearly every
+  supervised classification algorithm. The Euclidean distance ---the
+  canonical choice--- is trivial to compute, but its discriminative power
+  decays with dimension: distance in the ambient space ceases to be
+  informative, and the domain on which it would remain so is unclear.
 
-Building on Pelletier's (2005) kernel density estimator on Riemannian
-manifolds and its classification extension by Loubes and Pelletier (2008), we
-implement three algorithms: the kernel density classifier *KDC*; its
-Fermat-distance counterpart *f-KDC*; and an analogous Fermat-distance-based
-$k$-nearest-neighbours classifier *f-KN*. All three are distributed as an
-open-source library compatible with the `scikit-learn` interface.
+  The _manifold hypothesis_ posits that such a domain exists:
+  high-dimensional observations of interest lie on a manifold ---typically
+  embedded, compact, boundary-free, and of much lower intrinsic dimension---
+  on which a meaningful geodesic distance exists. Conjecturing the existence
+  of the manifold, however, is of no use unless the manifold itself is
+  known. Pelletier (2005) and Loubes & Pelletier (2008) show that, given
+  knowledge of the manifold, the kernel density estimator ---and therefore
+  the classifier based on it--- admit a natural adaptation to this setting.
 
-A systematic experimental evaluation was carried out on 20 datasets —
-synthetic and real, with diverse intrinsic and ambient dimensions — using
-nine algorithms in total. The proposed methods are competitive with both
-parametric (logistic regression, SVM) and non-parametric (gradient boosting)
-baselines: f-KDC achieves the highest median $R^2$ on 7 datasets, f-KN on 3
-more, and KDC on a further 2. The advantage specifically attributable to the
-Fermat distance concentrates in sparsely sampled or highly curved spaces,
-where the required bandwidth exceeds the manifold's injectivity radius and
-Pelletier's assumptions break down. In the "well-sampled" regime, the
-bandwidth and Fermat exponent hyperparameters become interchangeable, and no
-net gain is observed. Nonetheless, the decision boundaries drawn by f-KDC
-align qualitatively with the underlying manifold geometry — a desirable
-property that escapes scalar comparison metrics.
+  This thesis traces the foundational literature ---the classification
+  problem, Riemannian manifolds, and density estimation from Parzen windows
+  through the compact-manifold setting--- and closes with a more recent
+  development: distance learning and, in particular, the _sample Fermat
+  distance_ (Groisman, Jonckheere & Sapienza, 2022), which approximates the
+  geodesic directly from the data, without requiring knowledge of the
+  manifold.
+
+  Our contribution is empirical: we examine the net effect of replacing the
+  Euclidean distance with the Fermat distance in density-based classifiers
+  ---the kernel density classifier (KDC) and $k$-nearest neighbours ($k$-NN).
+  The implementation of the distance and the estimators is an open-source
+  library compatible with the `scikit-learn` interface, available at
+  #link("https://github.com/capitantoto/fermat").
+
+  Over 20 datasets varying in ambient dimension, intrinsic dimension, and
+  number of classes we observe that: (i) on highly curved datasets, the
+  Fermat distance offers clear advantages over the Euclidean; (ii) in
+  well-sampled regimes its additional parameter $alpha$ ---which weights
+  the edges of the complete graph--- becomes functionally interchangeable
+  with the bandwidth, and the two distances yield equivalent results. The
+  conclusions discuss avenues for future work.
+] else [
+  The distance between observations is central to nearly every supervised
+  classification algorithm. The Euclidean distance ---the canonical
+  choice--- loses discriminative power in high dimensions, and the domain
+  on which it would remain informative is unknown.
+
+  The _manifold hypothesis_ posits that such a domain exists: observations
+  lie on a compact, boundary-free manifold of much lower intrinsic
+  dimension, on which the geodesic distance recovers meaning. Pelletier
+  (2005) and Loubes & Pelletier (2008) show that, given the manifold,
+  kernel density estimation admits a natural adaptation to this setting.
+
+  This thesis traces the foundational literature ---classification,
+  Riemannian manifolds, KDE from Parzen through the compact-manifold
+  setting--- and closes with a more recent development: distance learning
+  and the _sample Fermat distance_ (Groisman, Jonckheere & Sapienza, 2022),
+  which approximates the geodesic directly from the data.
+
+  Our contribution is empirical: we examine the net effect of replacing the
+  Euclidean distance with the Fermat distance in density-based classifiers
+  ---KDC and $k$-NN. The implementation is an open-source library
+  compatible with `scikit-learn`
+  (#link("https://github.com/capitantoto/fermat")).
+
+  Over 20 datasets we observe that the Fermat distance outperforms the
+  Euclidean in high-curvature regimes; in well-sampled regimes its
+  parameter $alpha$ becomes functionally interchangeable with the
+  bandwidth, and the results are equivalent.
+]
 
 #v(1em)
 
 *Keywords:* supervised classification, kernel density estimation, Riemannian
-manifolds, Fermat distance, density-based distances, non-parametric learning.
+manifolds, Fermat distance, density-based distances, non-parametric
+learning.
