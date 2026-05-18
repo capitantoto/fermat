@@ -2088,19 +2088,13 @@ Asimismo, la grilla de $alpha in [1, 4]$ utilizada en nuestros experimentos podr
       #box(width: 6cm, height: 1.8cm)[
         #align(center + bottom, firma-img-thesis("img/firma-gonzalo.png"))
       ]
-      #box(width: 6cm, stroke: (top: 0.5pt), inset: (top: 0.3em))[
-        Lic. Gonzalo Barrera Borla \
-        _Maestrando_
-      ]
+      #emph[Lic. Gonzalo Barrera Borla]
     ],
     [
       #box(width: 6cm, height: 1.8cm)[
         #align(center + bottom, firma-img-thesis("img/firma-pablo.png"))
       ]
-      #box(width: 6cm, stroke: (top: 0.5pt), inset: (top: 0.3em))[
-        Dr. Pablo Groisman \
-        _Director_
-      ]
+      #emph[Dr. Pablo Groisman]
     ],
   )
 

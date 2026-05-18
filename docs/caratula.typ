@@ -79,7 +79,6 @@ e Instituto de Cálculo, FCEN, UBA
 #text(weight: "bold")[Fecha de presentación del ejemplar:] mayo de 2026
 
 #text(weight: "bold")[Fecha de Defensa:] #h(0.4em) #box(width: 5cm, stroke: (bottom: 0.5pt))
-#h(0.4em) #text(size: 9pt)[(se completará el día de la defensa)]
 
 #v(3em)
 
@@ -91,16 +90,12 @@ e Instituto de Cálculo, FCEN, UBA
     #box(width: 6cm, height: 1.5cm)[
       #align(center + bottom, firma-img("img/firma-gonzalo.png"))
     ]
-    #box(width: 6cm, stroke: (top: 0.5pt), inset: (top: 0.3em))[
-      Firma del maestrando
-    ]
+    #emph[Lic. Gonzalo Barrera Borla]
   ],
   [
     #box(width: 6cm, height: 1.5cm)[
       #align(center + bottom, firma-img("img/firma-pablo.png"))
     ]
-    #box(width: 6cm, stroke: (top: 0.5pt), inset: (top: 0.3em))[
-      Firma del director
-    ]
+    #emph[Dr. Pablo Groisman]
   ],
 )
