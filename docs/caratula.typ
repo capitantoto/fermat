@@ -3,11 +3,26 @@
 // Directivo de la FCEN, tomando como referencia visual la portada de la
 // tesis de Daniela L. Parada (2023, dirigida por Graciela Boente).
 //
-// Se compila como documento independiente: `typst compile docs/caratula.typ`.
+// Compilación:
+//   typst compile docs/caratula.typ                    # sin firmas (default)
+//   typst compile --input firmas=true docs/caratula.typ  # con firmas escaneadas
+//
+// Si `firmas=true` y existen las imágenes
+// `docs/img/firma-gonzalo.png` y `docs/img/firma-pablo.png`,
+// se insertan sobre las líneas de firma. Si no existen, igual se imprimen
+// las líneas vacías (no rompe la compilación).
+
+#let firmas = sys.inputs.at("firmas", default: "false") == "true"
 
 #set page(paper: "a4", margin: (top: 1in, bottom: 1in, left: 1.5in, right: 1.5in), numbering: none)
 #set text(font: "New Computer Modern", lang: "es", size: 11pt)
 #set par(leading: 0.55em, justify: false)
+
+// Helper para insertar una firma escaneada sobre la línea de firma.
+// Si `firmas=true`, espera encontrar la imagen en la ruta indicada
+// (Typst falla con error claro si no existe). Si `firmas=false`, no
+// imprime nada y la línea queda en blanco para firma manual.
+#let firma-img(path) = if firmas { image(path, height: 1.2cm) }
 
 #align(center)[
   // Logo de la Facultad
@@ -73,11 +88,17 @@ e Instituto de Cálculo, FCEN, UBA
   align: (center, center),
   gutter: 1em,
   [
+    #box(width: 6cm, height: 1.5cm)[
+      #align(center + bottom, firma-img("img/firma-gonzalo.png"))
+    ]
     #box(width: 6cm, stroke: (top: 0.5pt), inset: (top: 0.3em))[
       Firma del maestrando
     ]
   ],
   [
+    #box(width: 6cm, height: 1.5cm)[
+      #align(center + bottom, firma-img("img/firma-pablo.png"))
+    ]
     #box(width: 6cm, stroke: (top: 0.5pt), inset: (top: 0.3em))[
       Firma del director
     ]
