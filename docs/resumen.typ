@@ -1,8 +1,12 @@
 // Resúmenes en castellano e inglés de la tesis.
 //
-// El archivo expone dos versiones de cada resumen, controladas por la variable
-// `version` (definida abajo): "larga" (≤400 palabras, default) o "corta"
-// (≤240 palabras). La versión larga es la que arma `make TESIS_BARRERA_GONZALO.pdf`.
+// Tres versiones disponibles vía la variable `version`:
+//   - "breve"  (≈6 oraciones, ~200 palabras)  DEFAULT — estilo paper
+//   - "corta"  (≤240 palabras)
+//   - "larga"  (≤400 palabras)
+//
+// La versión por default es la que arma `make TESIS_BARRERA_GONZALO.pdf`.
+// El toggle desde CLI: `typst compile --input version=larga docs/resumen.typ`.
 //
 // Citas: las menciones inline a Pelletier, Loubes & Pelletier y Groisman et al.
 // corresponden a las siguientes claves en `docs/references.bib`:
@@ -15,7 +19,7 @@
 // =====================
 //  Parámetro de versión
 // =====================
-#let version = "larga"  // "larga" (≤400 palabras) | "corta" (≤240 palabras)
+#let version = sys.inputs.at("version", default: "breve")  // "breve" | "corta" | "larga"
 
 // =====================
 //  Estilo de página
@@ -35,7 +39,29 @@
 
 #v(0.5em)
 
-#if version == "larga" [
+#if version == "breve" [
+  Los clasificadores basados en densidad son herramientas no paramétricas
+  cuyo desempeño está dominado por la elección de la distancia ---y la
+  euclídea, opción canónica, pierde poder discriminativo en alta dimensión.
+  Sobre variedades de baja dimensión intrínseca embebidas en espacios
+  ambientes de alta dimensión la distancia geodésica recobra significado,
+  pero los métodos clásicos (Pelletier 2005; Loubes & Pelletier 2008)
+  exigen que la variedad sea conocida. Adoptamos la _distancia muestral de
+  Fermat_ (Groisman, Jonckheere & Sapienza, 2022) ---un estimador de la
+  geodésica basado en densidad que no requiere conocer la variedad ni su
+  dimensión intrínseca--- y la usamos para extender el clasificador de
+  densidad por núcleos (KDC) y $k$-vecinos más cercanos a f-KDC y f-KN,
+  publicados como biblioteca de código abierto compatible con `scikit-learn`
+  (#link("https://github.com/capitantoto/fermat")). Evaluados
+  sistemáticamente en 20 _datasets_, f-KDC obtiene el mejor $R^2$ mediano
+  en 7 _datasets_ y f-KN en otros 3, con las mayores ganancias concentradas
+  en regímenes de alta curvatura y muestreo ralo ---justamente aquellos
+  donde el supuesto de ancho de banda de Pelletier deja de cumplirse. En
+  regímenes bien muestreados el parámetro adicional de Fermat se vuelve
+  funcionalmente intercambiable con el ancho de banda y las dos distancias
+  arrojan resultados equivalentes, haciendo de la de Fermat una alternativa
+  útil pero no universal a la euclídea.
+] else if version == "larga" [
   La distancia entre observaciones es un ingrediente central en casi todo
   algoritmo de clasificación supervisada. La euclídea ---elección canónica---
   es trivial de computar, pero su poder discriminativo decae con la dimensión:
@@ -126,7 +152,29 @@ densidad, aprendizaje no paramétrico.
 
 #v(0.5em)
 
-#if version == "larga" [
+#if version == "breve" [
+  Density-based classifiers are nonparametric tools whose performance is
+  dominated by the choice of distance ---and the Euclidean distance, the
+  canonical default, loses discriminative power in high dimensions. On
+  low-dimensional manifolds embedded in high-dimensional space the
+  geodesic distance is informative, but classical methods (Pelletier
+  2005; Loubes & Pelletier 2008) require the manifold to be known. We
+  adopt the sample Fermat distance (Groisman, Jonckheere & Sapienza,
+  2022) ---a density-based estimator of the geodesic that requires
+  neither the manifold nor its intrinsic dimension--- and use it to
+  extend the kernel density classifier (KDC) and $k$-nearest neighbours
+  to f-KDC and f-KN, released as an open-source library compatible with
+  the `scikit-learn` interface
+  (#link("https://github.com/capitantoto/fermat")). Evaluated
+  systematically on 20 datasets, f-KDC achieves the highest median $R^2$
+  on 7 datasets and f-KN on 3 more, with the largest gains concentrated
+  in high-curvature, sparsely-sampled regimes ---precisely those where
+  Pelletier's bandwidth assumption breaks down. In well-sampled regimes
+  the additional Fermat hyperparameter becomes functionally
+  interchangeable with the bandwidth and the two distances yield
+  equivalent results, making the Fermat distance a useful but not
+  universal alternative to the Euclidean.
+] else if version == "larga" [
   The distance between observations is a central ingredient in nearly every
   supervised classification algorithm. The Euclidean distance ---the
   canonical choice--- is trivial to compute, but its discriminative power
