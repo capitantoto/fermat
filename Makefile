@@ -101,8 +101,11 @@ $(ENTREGA_PDF): $(DOCS_DIR)/caratula.typ $(DOCS_DIR)/resumen.typ \
 	@echo "==> Concatenando con pdfunite"
 	@TMP_RAW=$$(mktemp -t TESIS_RAW_XXXXXX) && mv $$TMP_RAW $$TMP_RAW.pdf && TMP_RAW=$$TMP_RAW.pdf; \
 	pdfunite $(DOCS_DIR)/caratula.pdf $(DOCS_DIR)/resumen.pdf $(DOCS_DIR)/tesis.pdf $$TMP_RAW 2>/dev/null; \
-	echo "==> Comprimiendo con ghostscript (PDFSETTINGS=/ebook)"; \
-	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook \
+	echo "==> Comprimiendo con ghostscript (/printer + sRGB)"; \
+	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer \
+	   -dColorConversionStrategy=/sRGB \
+	   -dColorImageResolution=200 -dGrayImageResolution=200 \
+	   -dColorImageDownsampleThreshold=1.5 \
 	   -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$(ENTREGA_PDF) $$TMP_RAW; \
 	rm -f $$TMP_RAW
 	@echo "==> Listo: $(ENTREGA_PDF) ($$(du -h $(ENTREGA_PDF) | awk '{print $$1}'))"
