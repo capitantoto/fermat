@@ -84,23 +84,16 @@ $(DOCS_DIR)/poster.pdf: $(DOCS_DIR)/poster.typ $(DOCS_DIR)/poster-template.typ $
 $(DOCS_DIR)/seminario-modesto.pdf: $(DOCS_DIR)/seminario-modesto.typ $(DOCS_STAMP)
 	typst compile $<
 
-# Bundle final: caratula + resumen + tesis, concatenados y comprimidos.
+# Bundle final: tesis.typ ya integra carátula + resúmenes + cuerpo + firmas.
 # El nombre del archivo respeta el formato exigido por la maestría
 # (TESIS_APELLIDO_NOMBRE.pdf). Toggles: FIRMA=1 para firmas escaneadas,
 # VERSION=breve|corta|larga para elegir longitud del resumen.
-$(ENTREGA_PDF): $(DOCS_DIR)/caratula.typ $(DOCS_DIR)/resumen.typ \
-                $(DOCS_DIR)/tesis.typ $(DOCS_DIR)/references.bib \
+$(ENTREGA_PDF): $(DOCS_DIR)/tesis.typ $(DOCS_DIR)/references.bib \
                 $(DOCS_DIR)/img/Logo-fcenuba.png $(DOCS_STAMP) \
                 $(if $(filter 1,$(FIRMA)),$(DOCS_DIR)/img/firma-gonzalo.png $(DOCS_DIR)/img/firma-pablo.png,)
-	@echo "==> Compilando carátula (FIRMA=$(FIRMA))"
-	typst compile $(TYPST_FIRMAS) $(DOCS_DIR)/caratula.typ
-	@echo "==> Compilando resúmenes (VERSION=$(VERSION))"
-	typst compile $(TYPST_VERSION) $(DOCS_DIR)/resumen.typ
-	@echo "==> Compilando cuerpo de la tesis (FIRMA=$(FIRMA))"
-	typst compile $(TYPST_FIRMAS) $(DOCS_DIR)/tesis.typ
-	@echo "==> Concatenando con pdfunite"
+	@echo "==> Compilando tesis completa (FIRMA=$(FIRMA), VERSION=$(VERSION))"
 	@TMP_RAW=$$(mktemp -t TESIS_RAW_XXXXXX) && mv $$TMP_RAW $$TMP_RAW.pdf && TMP_RAW=$$TMP_RAW.pdf; \
-	pdfunite $(DOCS_DIR)/caratula.pdf $(DOCS_DIR)/resumen.pdf $(DOCS_DIR)/tesis.pdf $$TMP_RAW 2>/dev/null; \
+	typst compile $(TYPST_FIRMAS) $(TYPST_VERSION) $(DOCS_DIR)/tesis.typ $$TMP_RAW; \
 	echo "==> Comprimiendo con ghostscript (/printer + sRGB)"; \
 	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer \
 	   -dColorConversionStrategy=/sRGB \
