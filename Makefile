@@ -99,12 +99,12 @@ $(ENTREGA_PDF): $(DOCS_DIR)/caratula.typ $(DOCS_DIR)/resumen.typ \
 	@echo "==> Compilando cuerpo de la tesis (FIRMA=$(FIRMA))"
 	typst compile $(TYPST_FIRMAS) $(DOCS_DIR)/tesis.typ
 	@echo "==> Concatenando con pdfunite"
-	@tmp=$$(mktemp /tmp/$(ENTREGA_PDF).raw.XXXXXX.pdf); \
-	pdfunite $(DOCS_DIR)/caratula.pdf $(DOCS_DIR)/resumen.pdf $(DOCS_DIR)/tesis.pdf $$tmp 2>/dev/null; \
+	@TMP_RAW=$$(mktemp -t TESIS_RAW_XXXXXX) && mv $$TMP_RAW $$TMP_RAW.pdf && TMP_RAW=$$TMP_RAW.pdf; \
+	pdfunite $(DOCS_DIR)/caratula.pdf $(DOCS_DIR)/resumen.pdf $(DOCS_DIR)/tesis.pdf $$TMP_RAW 2>/dev/null; \
 	echo "==> Comprimiendo con ghostscript (PDFSETTINGS=/printer)"; \
 	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer \
-	   -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$(ENTREGA_PDF) $$tmp; \
-	rm -f $$tmp
+	   -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$(ENTREGA_PDF) $$TMP_RAW; \
+	rm -f $$TMP_RAW
 	@echo "==> Listo: $(ENTREGA_PDF) ($$(du -h $(ENTREGA_PDF) | awk '{print $$1}'))"
 	@pdfinfo $(ENTREGA_PDF) 2>/dev/null | grep -E "^Pages|^File size" | sed 's/^/    /'
 
