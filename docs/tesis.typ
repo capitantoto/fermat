@@ -118,14 +118,14 @@
   align: (center, center),
   gutter: 1em,
   [
-    #box(width: 6cm, height: 1.5cm)[
-      #align(center + bottom, firma-img-doc("img/firma-gonzalo.png", height: 1.2cm))
+    #box(width: 7cm, height: 2.4cm)[
+      #align(center + bottom, firma-img-doc("img/firma-gonzalo.png", height: 2cm))
     ]
     #emph[Lic. Gonzalo Barrera Borla]
   ],
   [
-    #box(width: 6cm, height: 1.5cm)[
-      #align(center + bottom, firma-img-doc("img/firma-pablo.png", height: 1.2cm))
+    #box(width: 7cm, height: 2.4cm)[
+      #align(center + bottom, firma-img-doc("img/firma-pablo.png", height: 2cm))
     ]
     #emph[Dr. Pablo Groisman]
   ],
@@ -2377,13 +2377,10 @@ Asimismo, la grilla de $alpha in [1, 4]$ utilizada en nuestros experimentos podr
 
 
 // Firmas posteriores al cuerpo del trabajo y antes de la bibliografía,
-// según Anexo II de la Res. 2265/18.
-
-#v(4em)
-
-#firmas-bloque()
-
-#pagebreak()
+// según Anexo II de la Res. 2265/18. Flotan al pie de la próxima página
+// disponible (típicamente la primera del Listado de Figuras), de modo de
+// no generar una hoja exclusiva para ellas ni overlapearse con el texto.
+#place(bottom + center, scope: "parent", float: true, firmas-bloque())
 
 = Listados
 
