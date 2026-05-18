@@ -2052,6 +2052,66 @@ Sería interesante entonces investigar si existen condiciones reales en las que 
 Asimismo, la grilla de $alpha in [1, 4]$ utilizada en nuestros experimentos podría ampliarse ---@bijralSemisupervisedLearningDensity2011 reportan buenos resultados con $alpha = 8$--- para explorar si valores más extremos del parámetro ofrecen ventajas adicionales en datasets con geometrías particularmente complejas.
 
 
+// =====================
+//  Página de firmas
+// =====================
+// Anexo II de la Res. 2265/18: "la firma se debe ubicar posterior al cuerpo
+// del trabajo y antes de la bibliografía".
+//
+// El parámetro `firmas` se acepta vía CLI:
+//   typst compile [--input firmas=true] docs/tesis.typ
+//
+// Con firmas=true espera docs/img/firma-{gonzalo,pablo}.png.
+// Sin la flag, imprime líneas vacías para firma manual.
+
+#let firmas-thesis = sys.inputs.at("firmas", default: "false") == "true"
+#let firma-img-thesis(path) = if firmas-thesis { image(path, height: 1.5cm) }
+
+#pagebreak()
+
+#align(center)[
+  #v(2cm)
+  #text(size: 14pt, weight: "bold")[Constancia de presentación]
+
+  #v(1cm)
+
+  El presente trabajo de tesis ha sido completado en su forma final
+  para ser presentado al jurado designado por la Maestría en Estadística
+  Matemática.
+
+  #v(3cm)
+
+  #grid(
+    columns: (1fr, 1fr),
+    align: (center, center),
+    gutter: 1em,
+    [
+      #box(width: 6cm, height: 1.8cm)[
+        #align(center + bottom, firma-img-thesis("img/firma-gonzalo.png"))
+      ]
+      #box(width: 6cm, stroke: (top: 0.5pt), inset: (top: 0.3em))[
+        Lic. Gonzalo Barrera Borla \
+        _Maestrando_
+      ]
+    ],
+    [
+      #box(width: 6cm, height: 1.8cm)[
+        #align(center + bottom, firma-img-thesis("img/firma-pablo.png"))
+      ]
+      #box(width: 6cm, stroke: (top: 0.5pt), inset: (top: 0.3em))[
+        Dr. Pablo Groisman \
+        _Director_
+      ]
+    ],
+  )
+
+  #v(2cm)
+
+  Buenos Aires, mayo de 2026
+]
+
+#pagebreak()
+
 = Listados
 
 #outline(target: figure.where(kind: image), title: "Listado de Figuras")
