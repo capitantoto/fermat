@@ -27,14 +27,11 @@ DOCS_STAMP   := $(DOCS_DIR)/.viz-stamp
 # + bibliografía y lo comprime con ghostscript para entrar al límite de 15 MB.
 APELLIDO ?= BARRERA
 NOMBRE   ?= GONZALO
-# FIRMA = 0 → líneas vacías (firma manual posterior); 1 → imágenes embebidas
+# FIRMA = 0 → sin firmas ni aclaraciones; 1 → imágenes escaneadas + Lic./Dr.
 FIRMA    ?= 0
-# VERSION = breve (default) | corta | larga
-VERSION  ?= breve
 
 ENTREGA_PDF   := TESIS_$(APELLIDO)_$(NOMBRE).pdf
 TYPST_FIRMAS  := $(if $(filter 1,$(FIRMA)),--input firmas=true,)
-TYPST_VERSION := --input version=$(VERSION)
 
 # ========================
 # Targets principales
@@ -86,14 +83,13 @@ $(DOCS_DIR)/seminario-modesto.pdf: $(DOCS_DIR)/seminario-modesto.typ $(DOCS_STAM
 
 # Bundle final: tesis.typ ya integra carátula + resúmenes + cuerpo + firmas.
 # El nombre del archivo respeta el formato exigido por la maestría
-# (TESIS_APELLIDO_NOMBRE.pdf). Toggles: FIRMA=1 para firmas escaneadas,
-# VERSION=breve|corta|larga para elegir longitud del resumen.
+# (TESIS_APELLIDO_NOMBRE.pdf). Toggle: FIRMA=1 para firmas escaneadas.
 $(ENTREGA_PDF): $(DOCS_DIR)/tesis.typ $(DOCS_DIR)/references.bib \
                 $(DOCS_DIR)/img/Logo-fcenuba.png $(DOCS_STAMP) \
                 $(if $(filter 1,$(FIRMA)),$(DOCS_DIR)/img/firma-gonzalo.png $(DOCS_DIR)/img/firma-pablo.png,)
-	@echo "==> Compilando tesis completa (FIRMA=$(FIRMA), VERSION=$(VERSION))"
+	@echo "==> Compilando tesis completa (FIRMA=$(FIRMA))"
 	@TMP_RAW=$$(mktemp -t TESIS_RAW_XXXXXX) && mv $$TMP_RAW $$TMP_RAW.pdf && TMP_RAW=$$TMP_RAW.pdf; \
-	typst compile $(TYPST_FIRMAS) $(TYPST_VERSION) $(DOCS_DIR)/tesis.typ $$TMP_RAW; \
+	typst compile $(TYPST_FIRMAS) $(DOCS_DIR)/tesis.typ $$TMP_RAW; \
 	echo "==> Comprimiendo con ghostscript (/printer + sRGB)"; \
 	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer \
 	   -dColorConversionStrategy=/sRGB \
@@ -187,7 +183,6 @@ help:
 	@echo "  make clean-entrega            Borrar el bundle"
 	@echo ""
 	@echo "Variables ajustables:"
-	@echo "  FIRMA=0|1            (default: 0 / líneas vacías)"
-	@echo "  VERSION=breve|corta|larga  (default: breve)"
+	@echo "  FIRMA=0|1            (default: 0 / sin firmas)"
 	@echo "  APELLIDO=...         (default: BARRERA)"
 	@echo "  NOMBRE=...           (default: GONZALO)"

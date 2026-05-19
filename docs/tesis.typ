@@ -102,6 +102,76 @@
   }
 }
 
+// CSV con metadata de columnas en las primeras `skip-rows` filas (default 3):
+// fila 0 con clasificador asociado, fila 1 con nombre de variable, fila 2
+// vacía marcando "semilla". Se descarta toda esa cabecera y se usa `labels`
+// (array de contenido, típicamente fórmulas math) como encabezado real.
+// Opcionalmente `columns` proyecta sólo los índices de columna deseados,
+// útil para descartar columnas no relevantes para la tesis.
+#let tabla_params(path, labels, columns: none, skip-rows: 3, caption: none, short-caption: none) = {
+  let data = csv(path)
+  let rows = data.slice(skip-rows)
+  let projected = if columns != none {
+    rows.map(r => columns.map(i => r.at(i)))
+  } else {
+    rows
+  }
+  let cells = (
+    table.hline(stroke: 1pt),
+    ..labels.map(l => table.cell(align: center)[*#l*]),
+    table.hline(stroke: 0.5pt),
+    ..projected.flatten().map(c => align(center)[#c]),
+    table.hline(stroke: 1pt),
+  )
+  let t = table(
+    columns: labels.len(),
+    stroke: none,
+    ..cells,
+  )
+  if caption != none {
+    figure(t, caption: flex-caption(caption, if short-caption != none { short-caption } else { caption }))
+  } else { t }
+}
+
+// Wrapper de `figure` que estira el cuerpo por encima del ancho del texto.
+// Por defecto 140%; útil para gráficos triples (lunas/circulos/espirales) y
+// figuras-resumen panorámicas.
+#let wide_figure(width: 140%, body, ..args) = figure(
+  box(width: width, body),
+  ..args,
+)
+
+// CSV con columnas (clf, cant, datasets). Renderiza la primera columna
+// pasando por los macros estilizados de clasificador, la última envolviendo
+// cada nombre de dataset en `raw` (monoespaciado).
+#let tabla_clf_destacados(path, caption: none, short-caption: none) = {
+  let data = csv(path)
+  let clf-macros = (fkdc: fkdc, kn: kn, fkn: fkn, kdc: kdc, lr: logr, svc: svc, gnb: gnb, gbt: gbt, slr: slr)
+  let headers = data.at(0)
+  let rows = data.slice(1)
+  let format_row(row) = (
+    clf-macros.at(row.at(0).trim(), default: row.at(0)),
+    row.at(1),
+    row.at(2).split(", ").map(d => raw(d.trim())).join([, ]),
+  )
+  let cells = (
+    table.hline(stroke: 1pt),
+    ..headers.map(h => table.cell(align: center)[*#h*]),
+    table.hline(stroke: 0.5pt),
+    ..rows.map(format_row).flatten(),
+    table.hline(stroke: 1pt),
+  )
+  let t = table(
+    columns: (auto, auto, 1fr),
+    stroke: none,
+    align: (center, center, left),
+    ..cells,
+  )
+  if caption != none {
+    figure(t, caption: flex-caption(caption, if short-caption != none { short-caption } else { caption }))
+  } else { t }
+}
+
 
 // ##################################
 // ### Carátula (Anexo II Res. 2265/18)
@@ -113,23 +183,27 @@
 #let firma-img-doc(path, height: 1.5cm) = if firmas-doc { image(path, height: height) }
 
 // Bloque de firmas reutilizable (carátula, resúmenes, antes de bibliografía).
-#let firmas-bloque() = grid(
-  columns: (1fr, 1fr),
-  align: (center, center),
-  gutter: 1em,
-  [
-    #box(width: 7cm, height: 2.4cm)[
-      #align(center + bottom, firma-img-doc("img/firma-gonzalo.png", height: 2cm))
-    ]
-    #emph[Lic. Gonzalo Barrera Borla]
-  ],
-  [
-    #box(width: 7cm, height: 2.4cm)[
-      #align(center + bottom, firma-img-doc("img/firma-pablo.png", height: 2cm))
-    ]
-    #emph[Dr. Pablo Groisman]
-  ],
-)
+// Solo aparece cuando `firmas=true`: en la versión sin firmar no se imprimen
+// ni las imágenes ni las aclaraciones de Lic./Dr.
+#let firmas-bloque() = if firmas-doc {
+  grid(
+    columns: (1fr, 1fr),
+    align: (center, center),
+    gutter: 1em,
+    [
+      #box(width: 7cm, height: 2.4cm)[
+        #align(center + bottom, firma-img-doc("img/firma-gonzalo.png", height: 2cm))
+      ]
+      #emph[Lic. Gonzalo Barrera Borla]
+    ],
+    [
+      #box(width: 7cm, height: 2.4cm)[
+        #align(center + bottom, firma-img-doc("img/firma-pablo.png", height: 2cm))
+      ]
+      #emph[Dr. Pablo Groisman]
+    ],
+  )
+}
 
 #set page(
   margin: (top: 1in, bottom: 1in, left: 1.5in, right: 1.5in),
@@ -177,7 +251,7 @@ e Instituto de Cálculo, FCEN, UBA
 
 #v(0.6em)
 
-#text(weight: "bold")[Fecha de presentación del ejemplar:] mayo de 2026
+#text(weight: "bold")[Fecha de presentación del ejemplar:] 19 de Mayo de 2026
 
 #text(weight: "bold")[Fecha de Defensa:] #h(0.4em) #box(width: 5cm, stroke: (bottom: 0.5pt))
 
@@ -190,16 +264,6 @@ e Instituto de Cálculo, FCEN, UBA
 // ##################################
 // ### Resúmenes (castellano + inglés)
 // ##################################
-// `version` controla la longitud:
-//   - "breve" (≈200 palabras, default) — estilo paper
-//   - "corta" (≤240 palabras)
-//   - "larga" (≤400 palabras)
-//
-// Citas inline: Pelletier (2005) → @pelletierKernelDensityEstimation2005;
-//   Loubes & Pelletier (2008) → @loubesKernelbasedClassifierRiemannian2008;
-//   Groisman, Jonckheere & Sapienza (2022) → @groismanNonhomogeneousEuclideanFirstpassage2022.
-
-#let resumen-version = sys.inputs.at("version", default: "breve")
 
 #set page(paper: "a4", margin: 1.5in, numbering: none)
 #set par(leading: 0.55em, first-line-indent: 0pt, justify: true)
@@ -208,98 +272,28 @@ e Instituto de Cálculo, FCEN, UBA
 #align(center)[#text(size: 14pt, weight: "bold")[Resumen]]
 #v(0.5em)
 
-#if resumen-version == "breve" [
-    Los clasificadores basados en densidad son herramientas no paramétricas
-    cuyo desempeño está dominado por la elección de la distancia ---y la
-    euclídea, opción canónica, pierde poder discriminativo en alta dimensión.
-    Sobre variedades de baja dimensión intrínseca embebidas en espacios
-    ambientes de alta dimensión la distancia geodésica recobra significado,
-    pero los métodos clásicos (Pelletier 2005; Loubes & Pelletier 2008)
-    exigen que la variedad sea conocida. Adoptamos la _distancia muestral de
-    Fermat_ (Groisman, Jonckheere & Sapienza, 2022) ---un estimador de la
-    geodésica basado en densidad que no requiere conocer la variedad ni su
-    dimensión intrínseca--- y la usamos para extender el clasificador de
-    densidad por núcleos (KDC) y $k$-vecinos más cercanos a f-KDC y f-KN,
-    publicados como biblioteca de código abierto compatible con `scikit-learn`
-    (#link("https://github.com/capitantoto/fermat")). Evaluados
-    sistemáticamente en 20 _datasets_, f-KDC obtiene el mejor $R^2$ mediano
-    en 7 _datasets_ y f-KN en otros 3, con las mayores ganancias concentradas
-    en regímenes de alta curvatura y muestreo ralo ---justamente aquellos
-    donde el supuesto de ancho de banda de Pelletier deja de cumplirse. En
-    regímenes bien muestreados el parámetro adicional de Fermat se vuelve
-    funcionalmente intercambiable con el ancho de banda y las dos distancias
-    arrojan resultados equivalentes, haciendo de la de Fermat una alternativa
-    útil pero no universal a la euclídea.
-  ] else if resumen-version == "larga" [
-    La distancia entre observaciones es un ingrediente central en casi todo
-    algoritmo de clasificación supervisada. La euclídea ---elección canónica---
-    es trivial de computar, pero su poder discriminativo decae con la dimensión:
-    la distancia en el espacio ambiente deja de ser informativa, y no es claro
-    cuál es el dominio sobre el cual sí lo sería.
-
-    La _hipótesis de la variedad_ propone que tal dominio existe: las
-    observaciones de interés en alta dimensión yacen sobre una variedad
-    ---típicamente embebida, compacta, sin frontera y de dimensión intrínseca
-    mucho menor--- en la que cobra sentido una distancia geodésica informativa.
-    Conjeturar la existencia de la variedad no alcanza, sin embargo, si no se
-    la conoce. Pelletier (2005) y Loubes & Pelletier (2008) muestran que,
-    conocida la variedad, el estimador de densidad por núcleos ---y por ende
-    el clasificador basado en él--- admiten una adaptación natural a este
-    contexto.
-
-    En esta tesis recorremos la literatura fundacional ---el problema de
-    clasificación, las variedades de Riemann, y la estimación de densidad desde
-    Parzen hasta el contexto de variedades compactas--- y la cerramos con un
-    desarrollo más reciente: el aprendizaje de distancias y, en particular, la
-    _distancia muestral de Fermat_ (Groisman, Jonckheere & Sapienza, 2022), que
-    aproxima la geodésica directamente desde los datos, sin necesidad de
-    conocer la variedad.
-
-    Nuestro aporte es empírico: examinar el efecto neto de reemplazar la
-    distancia euclídea por la de Fermat en clasificadores basados en densidad
-    ---el de densidad por núcleos (KDC) y el de $k$ vecinos más cercanos
-    ($k$-NN). La implementación de la distancia y los estimadores conforma una
-    biblioteca de código abierto compatible con la interfaz de `scikit-learn`,
-    disponible en #link("https://github.com/capitantoto/fermat").
-
-    Sobre 20 _datasets_ que varían en dimensión ambiente, dimensión intrínseca
-    y cantidad de clases observamos que: (i) en _datasets_ de muy alta
-    curvatura, la distancia de Fermat ofrece ventajas claras sobre la euclídea;
-    (ii) en regímenes bien muestreados, su parámetro adicional $alpha$ ---que
-    pondera las aristas del grafo completo--- se vuelve funcionalmente
-    intercambiable con el ancho de banda, y las dos distancias arrojan
-    resultados equivalentes. Las conclusiones discuten líneas de trabajo
-    futuro.
-  ] else [
-    La distancia entre observaciones es central en casi todo algoritmo de
-    clasificación supervisada. La euclídea ---elección canónica--- pierde
-    poder discriminativo en alta dimensión, y el dominio sobre el cual lo
-    conservaría es desconocido.
-
-    La _hipótesis de la variedad_ propone que tal dominio existe: las
-    observaciones yacen sobre una variedad compacta, sin frontera y de
-    dimensión intrínseca menor, donde la distancia geodésica recobra
-    significado. Pelletier (2005) y Loubes & Pelletier (2008) muestran que,
-    conocida la variedad, la estimación de densidad por núcleos admite una
-    adaptación natural a este contexto.
-
-    En esta tesis recorremos la literatura fundacional ---clasificación,
-    variedades de Riemann, KDE desde Parzen hasta variedades compactas--- y
-    la cerramos con un desarrollo más reciente: el aprendizaje de distancias
-    y la _distancia muestral de Fermat_ (Groisman, Jonckheere & Sapienza,
-    2022), que aproxima la geodésica directamente desde los datos.
-
-    Nuestro aporte es empírico: examinar el efecto neto de reemplazar la
-    euclídea por la de Fermat en clasificadores basados en densidad ---KDC y
-    $k$-NN. La implementación es una biblioteca de código abierto compatible
-    con `scikit-learn`
-    (#link("https://github.com/capitantoto/fermat")).
-
-    Sobre 20 _datasets_ observamos que la distancia de Fermat aventaja a la
-    euclídea en regímenes de alta curvatura; en regímenes bien muestreados,
-    su parámetro $alpha$ se vuelve funcionalmente intercambiable con el ancho
-    de banda y los resultados son equivalentes.
-  ]
+Los clasificadores basados en densidad son herramientas no paramétricas
+cuyo desempeño está dominado por la elección de la distancia ---y la
+euclídea, opción canónica, pierde poder discriminativo en alta dimensión.
+Sobre variedades de baja dimensión intrínseca embebidas en espacios
+ambientes de alta dimensión la distancia geodésica recobra significado,
+pero los métodos clásicos @pelletierKernelDensityEstimation2005
+@loubesKernelbasedClassifierRiemannian2008 exigen que la variedad sea
+conocida. Adoptamos la _distancia muestral de Fermat_
+@groismanNonhomogeneousEuclideanFirstpassage2022 ---un estimador de la
+geodésica basado en densidad que no requiere conocer la variedad ni su
+dimensión intrínseca--- y la usamos para extender el clasificador de
+densidad por núcleos (#kdc) y $k$-vecinos más cercanos a #fkdc y #fkn,
+publicados como biblioteca de código abierto compatible con `scikit-learn`
+(#link("https://github.com/capitantoto/fermat")). Evaluados
+sistemáticamente en 20 _datasets_, #fkdc obtiene el mejor $R^2$ mediano
+en 7 _datasets_ y #fkn en otros 3, con las mayores ganancias concentradas
+en regímenes de alta curvatura y muestreo ralo ---justamente aquellos
+donde el supuesto de ancho de banda de Pelletier deja de cumplirse. En
+regímenes bien muestreados el parámetro adicional de Fermat se vuelve
+funcionalmente intercambiable con el ancho de banda y las dos distancias
+arrojan resultados equivalentes, haciendo de la de Fermat una alternativa
+útil pero no universal a la euclídea.
 
 #v(1em)
 
@@ -318,95 +312,28 @@ densidad, aprendizaje no paramétrico.
 #align(center)[#text(size: 14pt, weight: "bold")[Abstract]]
 #v(0.5em)
 
-#if resumen-version == "breve" [
-    Density-based classifiers are nonparametric tools whose performance is
-    dominated by the choice of distance ---and the Euclidean distance, the
-    canonical default, loses discriminative power in high dimensions. On
-    low-dimensional manifolds embedded in high-dimensional space the
-    geodesic distance is informative, but classical methods (Pelletier
-    2005; Loubes & Pelletier 2008) require the manifold to be known. We
-    adopt the sample Fermat distance (Groisman, Jonckheere & Sapienza,
-    2022) ---a density-based estimator of the geodesic that requires
-    neither the manifold nor its intrinsic dimension--- and use it to
-    extend the kernel density classifier (KDC) and $k$-nearest neighbours
-    to f-KDC and f-KN, released as an open-source library compatible with
-    the `scikit-learn` interface
-    (#link("https://github.com/capitantoto/fermat")). Evaluated
-    systematically on 20 datasets, f-KDC achieves the highest median $R^2$
-    on 7 datasets and f-KN on 3 more, with the largest gains concentrated
-    in high-curvature, sparsely-sampled regimes ---precisely those where
-    Pelletier's bandwidth assumption breaks down. In well-sampled regimes
-    the additional Fermat hyperparameter becomes functionally
-    interchangeable with the bandwidth and the two distances yield
-    equivalent results, making the Fermat distance a useful but not
-    universal alternative to the Euclidean.
-  ] else if resumen-version == "larga" [
-    The distance between observations is a central ingredient in nearly every
-    supervised classification algorithm. The Euclidean distance ---the
-    canonical choice--- is trivial to compute, but its discriminative power
-    decays with dimension: distance in the ambient space ceases to be
-    informative, and the domain on which it would remain so is unclear.
-
-    The _manifold hypothesis_ posits that such a domain exists:
-    high-dimensional observations of interest lie on a manifold ---typically
-    embedded, compact, boundary-free, and of much lower intrinsic dimension---
-    on which a meaningful geodesic distance exists. Conjecturing the existence
-    of the manifold, however, is of no use unless the manifold itself is
-    known. Pelletier (2005) and Loubes & Pelletier (2008) show that, given
-    knowledge of the manifold, the kernel density estimator ---and therefore
-    the classifier based on it--- admit a natural adaptation to this setting.
-
-    This thesis traces the foundational literature ---the classification
-    problem, Riemannian manifolds, and density estimation from Parzen windows
-    through the compact-manifold setting--- and closes with a more recent
-    development: distance learning and, in particular, the _sample Fermat
-    distance_ (Groisman, Jonckheere & Sapienza, 2022), which approximates the
-    geodesic directly from the data, without requiring knowledge of the
-    manifold.
-
-    Our contribution is empirical: we examine the net effect of replacing the
-    Euclidean distance with the Fermat distance in density-based classifiers
-    ---the kernel density classifier (KDC) and $k$-nearest neighbours ($k$-NN).
-    The implementation of the distance and the estimators is an open-source
-    library compatible with the `scikit-learn` interface, available at
-    #link("https://github.com/capitantoto/fermat").
-
-    Over 20 datasets varying in ambient dimension, intrinsic dimension, and
-    number of classes we observe that: (i) on highly curved datasets, the
-    Fermat distance offers clear advantages over the Euclidean; (ii) in
-    well-sampled regimes its additional parameter $alpha$ ---which weights
-    the edges of the complete graph--- becomes functionally interchangeable
-    with the bandwidth, and the two distances yield equivalent results. The
-    conclusions discuss avenues for future work.
-  ] else [
-    The distance between observations is central to nearly every supervised
-    classification algorithm. The Euclidean distance ---the canonical
-    choice--- loses discriminative power in high dimensions, and the domain
-    on which it would remain informative is unknown.
-
-    The _manifold hypothesis_ posits that such a domain exists: observations
-    lie on a compact, boundary-free manifold of much lower intrinsic
-    dimension, on which the geodesic distance recovers meaning. Pelletier
-    (2005) and Loubes & Pelletier (2008) show that, given the manifold,
-    kernel density estimation admits a natural adaptation to this setting.
-
-    This thesis traces the foundational literature ---classification,
-    Riemannian manifolds, KDE from Parzen through the compact-manifold
-    setting--- and closes with a more recent development: distance learning
-    and the _sample Fermat distance_ (Groisman, Jonckheere & Sapienza, 2022),
-    which approximates the geodesic directly from the data.
-
-    Our contribution is empirical: we examine the net effect of replacing the
-    Euclidean distance with the Fermat distance in density-based classifiers
-    ---KDC and $k$-NN. The implementation is an open-source library
-    compatible with `scikit-learn`
-    (#link("https://github.com/capitantoto/fermat")).
-
-    Over 20 datasets we observe that the Fermat distance outperforms the
-    Euclidean in high-curvature regimes; in well-sampled regimes its
-    parameter $alpha$ becomes functionally interchangeable with the
-    bandwidth, and the results are equivalent.
-  ]
+Density-based classifiers are nonparametric tools whose performance is
+dominated by the choice of distance ---and the Euclidean distance, the
+canonical default, loses discriminative power in high dimensions. On
+low-dimensional manifolds embedded in high-dimensional space the
+geodesic distance is informative, but classical methods
+@pelletierKernelDensityEstimation2005
+@loubesKernelbasedClassifierRiemannian2008 require the manifold to be
+known. We adopt the sample Fermat distance
+@groismanNonhomogeneousEuclideanFirstpassage2022 ---a density-based
+estimator of the geodesic that requires neither the manifold nor its
+intrinsic dimension--- and use it to extend the kernel density
+classifier (#kdc) and $k$-nearest neighbours to #fkdc and #fkn,
+released as an open-source library compatible with the `scikit-learn`
+interface (#link("https://github.com/capitantoto/fermat")). Evaluated
+systematically on 20 datasets, #fkdc achieves the highest median $R^2$
+on 7 datasets and #fkn on 3 more, with the largest gains concentrated
+in high-curvature, sparsely-sampled regimes ---precisely those where
+Pelletier's bandwidth assumption breaks down. In well-sampled regimes
+the additional Fermat hyperparameter becomes functionally
+interchangeable with the bandwidth and the two distances yield
+equivalent results, making the Fermat distance a useful but not
+universal alternative to the Euclidean.
 
 #v(1em)
 
@@ -453,20 +380,27 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 / $RR^p$: el espacio euclídeo de dimensión $p$
 / $[k]$: el conjunto de los enteros positivos del $1$ hasta $k$, ${1, 2, 3, dots, k}$
 / #MM: una variedad arbitraria #footnote[típicamente Riemanniana, compacta y sin frontera; oportunamente definiremos estos calificativos]
-/ $d_x$: la dimensión "natural" #footnote[la dimensión de un elemento es su cantidad de componentes, la dimensión de un espacio es la dimensión de cualquiera de sus elementos] del elemento $x$
+/ $T_p MM$: el espacio tangente a #MM en el punto $p in MM$
+/ $dotp(u, v)$: producto interno entre $u, v in T_p MM$ (la métrica Riemanniana de #MM en $p$)
+/ $dg(p, q)$: distancia Riemanniana (geodésica) entre $p, q in MM$
+/ $exp_p$: el mapa exponencial $T_p MM -> MM$ alrededor de $p$
 / $h$: la ventana ($h in RR$) en un estimador de densidad por núcleos en $RR$
 / $bu(H)$: ídem $h$, para estimadores en $RR^p$ ($bu(H) in RR^(p times p)$)
+/ $K$: función núcleo $RR^d -> RR$
+/ $K_h, KH$: el núcleo $K$ reescalado por la ventana $h$ o por la matriz $bu(H)$
 / $norm(dot)$: norma euclídea del elemento $x$
 / $bu(X)$: una muestra de $N$ elementos $p$-dimensionales ($XX in RR^(N times p)$)
-/ $X_(i, j)$: la j-ésima dimensión del i-ésimo elemento de #XX
+/ $XX_(i, j)$: la j-ésima dimensión del i-ésimo elemento de #XX
+/ $cal(D)_(f, beta)(x, y)$: distancia macroscópica de Fermat entre $x$ e $y$ inducida por la densidad $f$ (parámetro $beta >= 1$)
+/ $D_(Q, alpha)(x, y)$: distancia muestral de Fermat entre $x$ e $y$ a través del conjunto $Q$ (parámetro $alpha >= 1$)
 / $ind(x)$: la función indicadora, $ind(x)=cases(1 "si" x "es verdadero", 0 "si no")$
 / $Pr(dot)$: función de probabilidad #footnote[en general no hará falta definir el espacio muestral ni la $sigma-$álgebra correspondientes; de hacer falta se indicarán con subíndices] <fn-pr>
 / $EE(dot)$: la función esperanza @fn-pr
-/ $var(dot)$: la función varianza @fn-pr
 / $iid$: independientes e idénticamente distribuidos #footnote[típicamente los elementos aleatorios de #XX son $iid$]
+/ $op("exac")(clf | XX)$: exactitud del clasificador $clf$ sobre la muestra #XX
+/ $op(R^2)(clf | XX)$: pseudo-$R^2$ de McFadden del clasificador $clf$ sobre la muestra #XX
 / $emptyset$: el conjunto vacío
-/ $A slash B$: el complemento de $B$ en $A$, $A slash B = {a:a in A, a in.not B}$
-/ $overline(S)$: la _clausura_ de S (la unión de S y sus puntos límites)
+/ $overline(S)$: la _clausura_ del conjunto $S$ (la unión de $S$ y sus puntos límite); ocasionalmente, también el segmento entre dos puntos $overline(a b)$
 / $lambda(x)$: la medida de Lebesgue de $x$ en $RR^d$
 / $a |-> b$: la función que "toma" $a$ y "devuelve" $b$  en notación de flechas
 / $y prop x$: "y es proporcional a x", existe una constante $c : y = c times x$
@@ -1105,7 +1039,7 @@ La belleza de esta regla es que combina "sin costuras" el peso de los _priors_ $
 Los autores toman de @devroyeProbabilisticTheoryPattern1996 la siguiente definición de _consistencia_:
 
 #defn([consistencia de un clasificador @devroyeProbabilisticTheoryPattern1996[§6.1]])[
-  Sea $hat(G)_1, dots, hat(G)_n$ una secuencia de clasificadores #footnote[A veces también llama una _regla_ de clasificación] de modo que el $n-$ésimo clasificador está construido con las primeras $n$ observaciones de la muestra $XX, bu(g)$. Sea $L_n$ la pérdida $0-1$ que alcanza $hat(G)_n$, y $L^*$ la pérdida que alcanza el clasificador de Bayes de @clf-bayes.
+  Sea $hat(G)_1, dots, hat(G)_n$ una secuencia de clasificadores #footnote[A veces también llamada una _regla_ de clasificación] de modo que el $n-$ésimo clasificador está construido con las primeras $n$ observaciones de la muestra $XX, bu(g)$. Sea $L_n$ la pérdida $0-1$ que alcanza $hat(G)_n$, y $L^*$ la pérdida que alcanza el clasificador de Bayes de @clf-bayes.
 
   Diremos que la regla ${hat(G)_i}_(i=1)^n$ es (débilmente) consistente --- o asintóticamente eficiente en el sentido del riesgo de Bayes --- para cierta distribución $(X, G)$ si cuando $n-> oo$
   $
@@ -1655,25 +1589,18 @@ En total, ejecutamos unas 4,500 tareas, producto de #reps repeticiones por datas
 #gbt "ganó" en 5 datasets, entre ellos en varios con mucho ruido (`_hi` y `_12`). #kdc resultó óptimo en 2 datasets, consolidando la técnica del @kde-variedad como competitiva de por sí. Por último, tanto #kn como #logr (en su versión escalada, #slr) resultaron medianamente mejores que todos los demás en ciertos datasets, y solo #gnb no consiguió ningún podio --- aunque resultó competitivo en casi todo el tablero.
 La amplia distribución de algoritmos óptimos según las condiciones del dataset pone de relieve la existencia de ventajas relativas en todos ellos.
 
-#let data = csv("data/mejor-clf-por-dataset-segun-r2-mediano.csv")
-#let headers = data.at(0)
-#let rows = data.slice(1, count: data.len() - 1)
-#figure(
-  table(columns: headers.len(), table.header(..headers), ..rows.flatten()),
-  caption: flex-caption([TODO: copete largo tabla mejor clf por R²], [TODO: copete corto tabla mejor clf por R²]),
+#tabla_clf_destacados(
+  "data/mejor-clf-por-dataset-segun-r2-mediano.csv",
+  caption: [_Clasificadores con mayor $R^2$ mediano por dataset._ #fkdc gana en 7 de los 20 datasets, #gbt en 5, #fkn en 3 y #kdc en 2.],
+  short-caption: [Mejor clasificador por dataset según $R^2$ mediano.],
 )
 
 El mismo análisis con métrica de exactitud es, desde luego, menos favorable a nuestros métodos entrenados para otra cosa. #svc, entrenado a tono, resulta un algoritmo casi imbatible, con sólidos números en todo tipo de datasets y máximos en 6 datasets. #gbt vuelve a brillar en datasets con mucho ruido y siguen figurando como competitivos un amplio abanico de estimadores: hasta #fkdc retiene su título en 1 dataset, `espirales_lo`.
 
-#let data = csv("data/mejor-clf-por-dataset-segun-accuracy-mediano.csv")
-#let headers = data.at(0)
-#let rows = data.slice(1, count: data.len() - 1)
-#figure(
-  table(columns: headers.len(), table.header(..headers), ..rows.flatten()),
-  caption: flex-caption(
-    [TODO: copete largo tabla mejor clf por exactitud],
-    [TODO: copete corto tabla mejor clf por exactitud],
-  ),
+#tabla_clf_destacados(
+  "data/mejor-clf-por-dataset-segun-accuracy-mediano.csv",
+  caption: [_Clasificadores con mayor exactitud mediana por dataset._ #svc lidera con 6 victorias, seguido por #gbt con 4; los métodos basados en densidad ceden terreno respecto del ranking por $R^2$.],
+  short-caption: [Mejor clasificador por dataset según exactitud mediana.],
 )
 
 
@@ -1691,14 +1618,13 @@ Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=
 #obs[Dado que la dimensión de la variedad subyacente ($d=1$) es menor que la del espacio ambiente ($D=2$), sin ruido las observaciones caerían exactamente sobre la curva y la tarea de clasificación resultaría casi trivialmente sencilla. Para acercarnos a un escenario más realista que simule la incertidumbre inherente en cualquier toma de muestras, las observaciones se generan dentro de un _tubo_ de radio $tau$ alrededor de #MM, es decir, en el conjunto $B(MM, tau) = {x in RR^D : min_(y in MM) norm(x - y)_2 <= tau}$, tal como @mckenziePowerWeightedShortest2019 mencionan como posible extensión a su trabajo.]
 
 #let plotting_seed = 1075
-#figure(
-  columns(3)[
-    #image("img/lunas_lo-scatter.svg")
-    #colbreak()
-    #image("img/circulos_lo-scatter.svg")
-    #colbreak()
-    #image("img/espirales_lo-scatter.svg")
-  ],
+#wide_figure(
+  grid(
+    columns: 3, gutter: 4pt,
+    image("img/lunas_lo-scatter.svg"),
+    image("img/circulos_lo-scatter.svg"),
+    image("img/espirales_lo-scatter.svg"),
+  ),
   caption: flex-caption["Lunas", "Círculos" y "Espirales", con $d_x = 2, d_(MM) = 1$ y $s=#plotting_seed$][ "Lunas", "Círculos" y "Espirales" ],
 ) <fig-2>
 
@@ -1771,11 +1697,6 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
   )
 }
 
-#let wide_figure(width: 140%, body, ..args) = figure(
-  box(width: width, body),
-  ..args,
-)
-
 #let highlights_figure(dataset, height: 8em, width: 140%) = {
   let highlights = json("data/" + dataset + "-r2-highlights.json")
   let tabla_resumen = highlights_table(highlights)
@@ -1783,11 +1704,14 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
   wide_figure(
     width: width,
     table(
-      columns: 4,
-      rows: 1,
+      columns: 2,
       stroke: 0pt,
-      image("img/" + dataset + "-scatter.svg"), text(size: 8pt)[#tabla_resumen],
-      image("img/" + dataset + "-r2-boxplot.svg"), image("img/" + dataset + "-accuracy-boxplot.svg"),
+      align: center + horizon,
+      inset: (x: 0.5em, y: 0.25em),
+      image("img/" + dataset + "-scatter.svg", height: height),
+      text(size: 9pt)[#tabla_resumen],
+      image("img/" + dataset + "-r2-boxplot.svg", height: height),
+      image("img/" + dataset + "-accuracy-boxplot.svg", height: height),
     ),
     caption: flex-caption[_Scatterplot_, tabla resumen y _boxplots_ de $R^2$ y _accuracy_ en el _dataset_ #raw(dataset)][Resumen de resultados para #raw(dataset)],
   )
@@ -2089,21 +2013,29 @@ Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la m
 #obs[El rendimiento de #logr es mala únicamente porque se aplicó ciegamente a los datos. La primer tarea cuando se busca inferir la geometría de unos datos es graficarlos, y al observar la hélice uno puede parametrizarla de manera natural como $f(x, y, z) = ("ángulo, velocidad radial, velocidad vertical") ,$ entrenar sobre esta _representación_ y obtener un $R^2 approx 1$.
   Al final, "todo algoritmo funciona cuando los datos son buenos" --- la ventaja de algunos es que no hace falta ponerle demasiada cabeza a "masajearlos" hasta que "son buenos". Que a #gnb le resulte complejo no es sorprendente, ya que las distribuciones marginales son prácticamente idénticas.
   #figure(
-    image("img/helices-pairplot.svg", width: 16em),
-    caption: flex-caption([TODO: copete largo hélices pairplot], [TODO: copete corto hélices pairplot]),
+    image("img/helices-pairplot.svg", width: 80%),
+    caption: flex-caption(
+      [_Pairplot_ del dataset `helices_0`. Las distribuciones marginales por dimensión son prácticamente idénticas para ambas clases, lo que explica el rendimiento trivial de #gnb.],
+      [_Pairplot_ de `helices_0`.],
+    ),
   )
 ]
 La clasificación dura con estimación de densidad por núcleos --- con distancia de Fermat o sin ella --- resulta ser superior a todas las alternativas en términos de exactitud --- ligeramente --- y $R^2$ --- por mucho. Encima de ello, #fkdc es todavía significativamente mejor en $R^2$ que #kdc por casi 5 puntos porcentualessalvo y consistentemente entoda las semillas salvo una particularmente negativa:
 
 #figure(
   image("img/helices_0-r2-fkdc-vs-kdc.svg", height: 16em),
-  caption: flex-caption([TODO: copete largo hélices R² fkdc vs kdc], [TODO: copete corto hélices R² fkdc vs kdc]),
+  caption: flex-caption(
+    [$R^2$ apareado por semilla en `helices_0`: cada punto compara una corrida de #fkdc con la de #kdc para la misma semilla. #fkdc supera a #kdc en casi todas las semillas, con una ventaja mediana cercana a cinco puntos porcentuales.],
+    [$R^2$ de #fkdc vs. #kdc por semilla en `helices_0`.],
+  ),
 )
 
 En prácticamente todas las semillas el $R^2$ de #fkdc es estrictamente mejor al "control" de #kdc. ¿Con qué parámetros sucede?
 
-#tabla_csv(
+#tabla_params(
   "data/helices_0-parametros_comparados-kdc.csv",
+  ($s$, $Delta_(R^2)$, $alpha_#fkdc$, $h_#fkdc$, $R^2_#fkdc$, $h_#kdc$, $R^2_#kdc$),
+  columns: (0, 1, 2, 3, 4, 5, 6),
   caption: [Parámetros comparados de #fkdc vs. #kdc en `helices_0`, ordenados por $Delta_(R^2)$.],
   short-caption: [Parámetros de #fkdc vs. #kdc en `helices_0`],
 )
@@ -2153,7 +2085,7 @@ La serie $k_n$ que minimiza el error cuadrático medio del estimador $k$-NN cuan
 #figure(
   image("img/helices_0-fkn_kn-mean_test_score.svg", height: 12em),
   caption: flex-caption(
-    [TODO: Log-verosimilitud máxima durante el entrenamiento de lso clasificadores de veciones más cercanos sobre `helices_0`],
+    [Máximo _score_ medio en validación cruzada por cantidad de vecinos $k$ en `helices_0`. Para cada $k$, se muestra el mejor desempeño hallado entre todas las parametrizaciones de cada clasificador; al ampliar el dominio con $alpha$, #fkn iguala o supera a #kn para casi todo $k$.],
     [$cal(l)$ en entrenamiento para #fkn y #kn en `helices_0`],
   ),
 )
@@ -2184,8 +2116,10 @@ La exactitud de la familia de estimadores basados en densidad por núcleos --- $
 
 En efecto, observando los parámetros comparados de #fkdc v. #kdc, se repite que la hiperparametrización $(alpha_"opt", h_"opt")$ que maximiza $R^2$ en entrenamientotiene tiene $alpha > 1$, pero existe otra  $(alpha_(1 sigma), h_(1_sigma))$ con $alpha_(1 sigma) =1$   y $h_(1_sigma)$ "significativamente distinto" a $h_"opt"$ que cumple la regla de parsimonia.  Las tres semillas en la que #fkdc saca más ventaja sobre #kdc tiene por óptimos
 // TODO: reemplazar tabla completa por únicamente las tres primeras columnas de la tabla: en cada columna que se repita tres veces el mismo valo, mostrarlo una sola vez en la fila del medio: delta_r^2, alhpa_fkdc, h_fkdc, h_kdc. no mostrarla columna de score_alpha_test
-#tabla_csv(
+#tabla_params(
   "data/hueveras_0-parametros_comparados-kdc.csv",
+  ($s$, $Delta_(R^2)$, $alpha_#fkdc$, $h_#fkdc$, $R^2_#fkdc$, $h_#kdc$, $R^2_#kdc$),
+  columns: (0, 1, 2, 3, 4, 5, 6),
   caption: [Parámetros comparados de #fkdc vs. #kdc en `hueveras_0`, ordenados por $Delta_(R^2)$.],
   short-caption: [Parámetros de #fkdc vs. #kdc en `hueveras_0`],
 )
@@ -2193,8 +2127,10 @@ En efecto, observando los parámetros comparados de #fkdc v. #kdc, se repite que
 En #fkn, la distancia de Fermat parece ofrecer una diferencia significativa en $R^2$ sobre #kn, con varias repeticiones del experimento donde aún con regla de parsimonia, #fkn y #kn eligen _la misma cantidad_ de vecinos pero $alpha_#fkn > 1$:
 
 // TODO: filtrar lista a únicamente los casos con k_fkn = k_kn, dejar delta_r2, k=k_fkn=k_kn, alpha_fkn.
-#tabla_csv(
+#tabla_params(
   "data/hueveras_0-parametros_comparados-kn.csv",
+  ($s$, $Delta_(R^2)$, $alpha_#fkn$, $k_#fkn$, $R^2_#fkn$, $k_#kn$, $R^2_#kn$),
+  columns: (0, 1, 2, 3, 4, 5, 6),
   caption: [Parámetros comparados de #fkn vs. #kn en `hueveras_0`, con idéntico $k = k_#fkn = k_#kn$. Nótese que $alpha_#fkn > 1$ y $Delta_(R^2) > 0$ en casi todas, indicando una ganancia neta de usar #sfd.],
   short-caption: [$Delta_R^2= R^2_#fkn - R^2_#kn$ en `hueveras_0` con $k_#fkn = k_#kn, alpha_#fkn > 1$],
 )
@@ -2208,7 +2144,7 @@ Presentamos aquí los resultados para diez datasets adicionales, agrupados en tr
 
 Los cuatro datasets tridimensionales del cuerpo principal (pionono, eslabones, hélices, hueveras) se ampliaron con 12 dimensiones de ruido gaussiano para evaluar la robustez de los clasificadores ante dimensiones irrelevantes.
 
-#figure(
+#wide_figure(
   image("img/anexo-15d-delta-r2.svg"),
   caption: flex-caption(
     [Caída de $R^2$ (mediana) al agregar 12 dimensiones de ruido a los datasets 3D. Valores negativos indican peor $R^2$ en 15D.],
