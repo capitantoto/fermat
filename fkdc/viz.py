@@ -870,7 +870,19 @@ if __name__ == "__main__":
     # =====================================================================
     parametros_comparados("helices_0", "kdc", infos=infos, bi=bi)
     hue_kdc = parametros_comparados("hueveras_0", "kdc", infos=infos, bi=bi)
-    parametros_comparados("hueveras_0", "kn", infos=infos, bi=bi)
+    hue_kn = parametros_comparados("hueveras_0", "kn", infos=infos, bi=bi)
+
+    # Filtro: solo casos con k_fkn = k_kn, columnas delta_r2, k, alpha_fkn
+    mismo_k = hue_kn[hue_kn[("fkn", "n_neighbors")] == hue_kn[("kn", "n_neighbors")]]
+    pd.DataFrame(
+        {
+            "delta_r2": mismo_k["delta_r2"].iloc[:, 0]
+            if mismo_k["delta_r2"].ndim > 1
+            else mismo_k["delta_r2"],
+            "k": mismo_k[("fkn", "n_neighbors")].astype(int),
+            "alpha_fkn": mismo_k[("fkn", "alpha")],
+        }
+    ).to_csv(dir_datos / "hueveras_0-parametros_comparados-kn-mismo_k.csv", index=False)
 
     # Versión compactada: top-3 semillas, valores constantes solo en fila del medio
     top3 = (

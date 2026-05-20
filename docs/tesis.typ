@@ -2121,13 +2121,12 @@ En efecto, observando los parámetros comparados de #fkdc v. #kdc, se repite que
 
 En #fkn, la distancia de Fermat parece ofrecer una diferencia significativa en $R^2$ sobre #kn, con varias repeticiones del experimento donde aún con regla de parsimonia, #fkn y #kn eligen _la misma cantidad_ de vecinos pero $alpha_#fkn > 1$:
 
-// TODO: filtrar lista a únicamente los casos con k_fkn = k_kn, dejar delta_r2, k=k_fkn=k_kn, alpha_fkn.
 #tabla_params(
-  "data/hueveras_0-parametros_comparados-kn.csv",
-  ($s$, $Delta_(R^2)$, $alpha_#fkn$, $k_#fkn$, $R^2_#fkn$, $k_#kn$, $R^2_#kn$),
-  columns: (0, 1, 2, 3, 4, 5, 6),
-  caption: [Parámetros comparados de #fkn vs. #kn en `hueveras_0`, con idéntico $k = k_#fkn = k_#kn$. Nótese que $alpha_#fkn > 1$ y $Delta_(R^2) > 0$ en casi todas, indicando una ganancia neta de usar #sfd.],
-  short-caption: [$Delta_R^2= R^2_#fkn - R^2_#kn$ en `hueveras_0` con $k_#fkn = k_#kn, alpha_#fkn > 1$],
+  "data/hueveras_0-parametros_comparados-kn-mismo_k.csv",
+  ($Delta_(R^2)$, $k$, $alpha_#fkn$),
+  skip-rows: 1,
+  caption: [Parámetros comparados de #fkn vs. #kn en `hueveras_0`, restringido a las repeticiones donde $k_#fkn = k_#kn$. Cuando $alpha_#fkn > 1$, $Delta_(R^2) > 0$ en casi todos los casos, indicando una ganancia neta de usar #sfd.],
+  short-caption: [$Delta_(R^2)$ en `hueveras_0` con $k_#fkn = k_#kn$],
 )
 
 
