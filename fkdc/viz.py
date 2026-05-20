@@ -869,8 +869,28 @@ if __name__ == "__main__":
     # CSVs de parámetros comparados
     # =====================================================================
     parametros_comparados("helices_0", "kdc", infos=infos, bi=bi)
-    parametros_comparados("hueveras_0", "kdc", infos=infos, bi=bi)
+    hue_kdc = parametros_comparados("hueveras_0", "kdc", infos=infos, bi=bi)
     parametros_comparados("hueveras_0", "kn", infos=infos, bi=bi)
+
+    # Versión compactada: top-3 semillas, valores constantes solo en fila del medio
+    top3 = (
+        hue_kdc.iloc[:3]
+        .drop(columns="max_score_alpha_test", errors="ignore")
+        .reset_index()
+    )
+    top3.columns = [
+        "_".join(map(str, c)).strip("_") if isinstance(c, tuple) else c
+        for c in top3.columns
+    ]
+    for col in top3.columns:
+        if col == "semilla":
+            continue
+        vals = top3[col].astype(str).tolist()
+        if len(set(vals)) == 1:
+            top3[col] = ["", vals[1], ""]
+    top3.to_csv(
+        dir_datos / "hueveras_0-parametros_comparados-kdc-top3.csv", index=False
+    )
 
     # =====================================================================
     # Seminario-modesto: score vs n_neighbors
