@@ -1913,9 +1913,9 @@ $ sigma_"lunas" = 0.5 quad sigma_"circulos" = 0.2 quad sigma_"espirales" = 0.2 q
 
 #wide_figure(
   grid(columns: 3, gutter: 4pt,
-    image("img/lunas_hi-scatter.svg"),
-    image("img/circulos_hi-scatter.svg"),
-    image("img/espirales_hi-scatter.svg"),
+    image("img/lunas_hi-scatter.svg", height: 9em),
+    image("img/circulos_hi-scatter.svg", height: 9em),
+    image("img/espirales_hi-scatter.svg", height: 9em),
   ),
   caption: flex-caption["Lunas", "Círculos" y "Espirales" con "alto ruido"][ "Lunas", "Círculos" y "Espirales", alto ruido ],
 ) <fig-22>
