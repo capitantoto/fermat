@@ -1583,10 +1583,9 @@ Nos dedicaremos a la  estimación de densidad basada en distancia de Fermat en u
 = Resultados <resultados>
 
 == In Totis
-// TODO: Repasar esta sección al terminar la edición de "= Resultados"
-En total, ejecutamos unas 4,500 tareas, producto de #reps repeticiones por dataset y clasificador, sobre un total de 20 datasets y 9 clasificadores diferentes. Recordemos que todos los estimadores se entrenaron con _score_ `neg_log_loss` (para optimizar por $R^2$), salvo #svc, que al ser un clasificador duro se entrenó con `accuracy`. Así, entre los clasificadores blandos la distancia de Fermat rindió frutos, con el máximo $R^2$ mediano en 10 de los 20 experimentos: 7 preseas fueron para #fkdc y 3 para #fkn.
+En total, ejecutamos unas 4,500 tareas, producto de #reps repeticiones por dataset y clasificador, sobre un total de 20 datasets y 9 clasificadores diferentes. Designaremos por $cal(K) = {#fkdc, #kdc, #fkn, #kn}$ a la familia de estimadores basados en densidad por núcleos, sobre la que se concentra el análisis comparativo del capítulo. Recordemos que todos los estimadores se entrenaron con _score_ `neg_log_loss` (para optimizar por $R^2$), salvo #svc, que al ser un clasificador duro se entrenó con `accuracy`. Así, entre los clasificadores blandos la distancia de Fermat rindió frutos, con el máximo $R^2$ mediano en 10 de los 20 experimentos: 7 preseas fueron para #fkdc y 3 para #fkn.
 
-#gbt "ganó" en 5 datasets, entre ellos en varios con mucho ruido (`_hi` y `_12`). #kdc resultó óptimo en 2 datasets, consolidando la técnica del @kde-variedad como competitiva de por sí. Por último, tanto #kn como #logr (en su versión escalada, #slr) resultaron medianamente mejores que todos los demás en ciertos datasets, y solo #gnb no consiguió ningún podio --- aunque resultó competitivo en casi todo el tablero.
+#gbt "ganó" en 5 datasets, entre ellos varios con mucho ruido (`_hi` y `_12`). #kdc resultó óptimo en 2 datasets, consolidando la técnica del @kde-variedad como competitiva de por sí. Por último, tanto #kn como #logr (en su versión escalada, #slr) resultaron mejores en mediana que todos los demás en ciertos datasets, y solo #gnb no consiguió ningún podio --- aunque resultó competitivo en casi todo el tablero.
 La amplia distribución de algoritmos óptimos según las condiciones del dataset pone de relieve la existencia de ventajas relativas en todos ellos.
 
 #tabla_clf_destacados(
@@ -1595,7 +1594,7 @@ La amplia distribución de algoritmos óptimos según las condiciones del datase
   short-caption: [Mejor clasificador por dataset según $R^2$ mediano.],
 )
 
-El mismo análisis con métrica de exactitud es, desde luego, menos favorable a nuestros métodos entrenados para otra cosa. #svc, entrenado a tono, resulta un algoritmo casi imbatible, con sólidos números en todo tipo de datasets y máximos en 6 datasets. #gbt vuelve a brillar en datasets con mucho ruido y siguen figurando como competitivos un amplio abanico de estimadores: hasta #fkdc retiene su título en 1 dataset, `espirales_lo`.
+El mismo análisis con métrica de exactitud es, desde luego, menos favorable a nuestros métodos entrenados para otro objetivo. #svc, entrenado en consecuencia, resulta un algoritmo casi imbatible, con rendimiento sólido en todo tipo de datasets y máximos en 6 de ellos. #gbt vuelve a brillar en aquellos con mucho ruido y siguen figurando como competitivos numerosos estimadores: hasta #fkdc retiene su título en 1 dataset, `espirales_lo`.
 
 #tabla_clf_destacados(
   "data/mejor-clf-por-dataset-segun-accuracy-mediano.csv",
@@ -1604,7 +1603,7 @@ El mismo análisis con métrica de exactitud es, desde luego, menos favorable a 
 )
 
 
-Solo considerar el rendimiento de #fkdc y #fkn en los 20 datasets daría unas 40 unidades de análisis, y en el espíritu de indagación curiosa que guía esta tesis, existen aún más tendencias y patrones interesantes en los 4,500 experimentos realizados. No es nuestra intención abrumar al lector, con lo cual a continuación haremos un paneo arbitrario por algunos de los resultados que (a) nos resultaron más llamativos o (b) se acercan lo suficiente a alguno de la literatura previa como para merecer un comentario aparte. Quien desee corroborar que no hicimos un uso injustificado de la discrecionalidad para elegir resultados, encontrará tablas y gráficos en abundancia en la sección de resultados por dataset.
+Considerar únicamente el rendimiento de #fkdc y #fkn en los 20 datasets ya daría unas 40 unidades de análisis; en el espíritu de indagación curiosa que guía esta tesis, existen aún más tendencias y patrones interesantes en los 4,500 experimentos realizados. No es nuestra intención abrumar al lector, así que a continuación haremos un paneo arbitrario por algunos de los resultados que (a) nos resultaron más llamativos o (b) se acercan lo suficiente a algún resultado de la literatura previa como para merecer un comentario aparte. Quien desee corroborar que no hicimos un uso injustificado de la discrecionalidad para elegir resultados encontrará tablas y gráficos en abundancia en la sección de resultados por dataset.
 == Lunas, círculos y espirales ($D=2, d=1, k=2$)
 
 Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=1, k=2$, y exploramos tres curvas sampleadas con un poco de "ruido blanco" añadido: dos "lunas" --- semicírculos no superpuestos con sus centros en un extremo del semicírculo opuesto ---, dos círculos concéntricos y dos espirales con el mismo origen y rotación en sentidos opuestos #footnote[No entraremos en demasiado detalle sobre cómo se generó o de dónde se tomó cada _dataset_ para mantener el foco en los resultados de la experimentación. En el paquete adjunto, las rutinas completas para generar cada conjunto de datos se puede leer en `fkdc/datasets.py`].
@@ -1871,11 +1870,10 @@ Hacemos entonces una comprobación fundamental: ¿qué parametrizaciones están 
 
 Durante el entrenamiento, a veces el mejor se obtiene con _otros_ valores de $alpha$, pero la mejora no es lo suficientemente grande para descartar alguna hiperparametrización con $alpha = 1$ bajo la regla de $1 sigma$  descrita en @r1sd.
 
-// TODO: Recortar a 4 decimales, simplificar a solo $alpha$
 #tabla_csv(
   "data/lunas_lo-best_test_params.csv",
-  caption: [Hiperparámetros minimizadores de pérdida en enrenamiento para #kdc y #fkdc en `lunas_lo`, por semilla.],
-  short-caption: [Hiperparámetros minimizadores de pérdida de #kdc y #fkdc en `lunas_lo`],
+  caption: [Distribución de $alpha$ minimizador de pérdida en entrenamiento para #fkdc en `lunas_lo`, sin aplicar regla de parsimonia.],
+  short-caption: [$alpha$ minimizador de pérdida en `lunas_lo` para #fkdc],
 )
 Resulta ser que
 - al entrenar #fkdc se está eligiendo $alpha=1$ para _todas_ las semillas, y
@@ -1991,7 +1989,6 @@ Consideraremos a continuación datasets sintéticos embebidos en 3 dimensiones (
 
 === Eslabones
 
-// TODO: poner scatter 3D en highlight por dataset para $D=3$
 #highlights_figure("eslabones_0")
 
 Toda la familia de estimadores de densidad por núcleos alcanza un $R^2 approx 1$, y aun Naive Bayes tiene un rendimiento aceptable: con este nivel de ruido blanco en el muestreo, el "margen de separación" entre ambos anillos es tan amplio que la tarea resulta trivial.
@@ -2081,7 +2078,6 @@ con $h' = h slash c$ y efectivamente los parámetros $(alpha, h)$ se solapan en 
 
 La serie $k_n$ que minimiza el error cuadrático medio del estimador $k$-NN cuando $n -> oo$ es $k prop n^(4/(d+4))$, que para nuestros tamaños muestrales de CV resulta en $320^(4/(3+4)) = 320^(4/7) approx 27$. Es decir que tomando #math.approx tres decenas de vecinos alcanzaría para entrenar un clasificador #kn decente --- #fkn podrá ser mejor con $k_#fkn >> 27$, pero no mejor que #kn con $k_#kn approx 27$. Pues bien, cuando miramos el mejor rendimiento en test por `n_neighbors` para #kn y #fkn, vemos que elegir un $alpha$ variable le permite a #fkn mantener un óptimo rendimiento en términos de log-verosimilitud #footnote[y por ende $R^2$ también] para _cualquier_ valor de $k$ #footnote[`n_neighbors` en la parametrización de `scikit-learn`.].
 
-// TODO: esto es realmene el _mean_ test score? podemos hacer el mismo gráfico con una linea por semilla y clf, todas con menor alpha, para ver si la rutas de fkn son siempre mejores que las de kn?
 #figure(
   image("img/helices_0-fkn_kn-mean_test_score.svg", height: 12em),
   caption: flex-caption(
@@ -2100,9 +2096,7 @@ Este dataset "clásico" para evaluar algoritmos de _clustering_ no-lineales fue 
 #quote[existe un amplio rango de $d$ #footnote[$alpha$ en nuestra notación] para los que la $d-$distancia se porta significativamente mejor que Isomap. [...] para la exactitud esta región está limitada a $1.7 <= d <= 2.2$
 ]
 
-Con un objetivo distinto --- _clasificación_ con DBDs --- no encontramos diferencia significativa entre #kdc y #fkdc, que a su vez rinden tan bien como el estado-del-arte en exactitud (#svc) y $R^2$ (#gbt).
-
-// TODO: solamente dan igual las performances de fkdc/kdc, o ademas fkdc tambien elige alpha = 1 casi siempre?
+Con un objetivo distinto --- _clasificación_ con DBDs --- no encontramos diferencia significativa entre #kdc y #fkdc, que a su vez rinden tan bien como el estado-del-arte en exactitud (#svc) y $R^2$ (#gbt). Esta paridad es consistente con la observación de que, en las #reps repeticiones analizadas, #fkdc seleccionó $alpha = 1$ bajo la regla de parsimonia en _todos_ los casos, colapsando efectivamente a una variante de #kdc con ancho de banda ligeramente menor.
 
 === Hueveras ($D=3, d=2, k=2$)
 
@@ -2110,29 +2104,26 @@ Este dataset sintético consiste de dos clases con idénticas distribuciones per
 
 #highlights_figure("hueveras_0")
 
-// TODO: Mencionar la familia cal(K) antes y acá simplemente decir $cal(K)$
-La exactitud de la familia de estimadores basados en densidad por núcleos --- $cal(K)={#fkdc, #kdc, #fkn, #kn}$ --- es competitiva contra la de #svc, que parece ser ligera y significativamente mejor. En términos de $R^2$, la familia $cal(K)$ es la única en alcanzar valores no-nulos, y #sfd parece resultar en mejoras significativas al menos para #fkn.
+La exactitud de la familia $cal(K)$ es competitiva contra la de #svc, que parece ser ligera y significativamente mejor. En términos de $R^2$, la familia $cal(K)$ es la única en alcanzar valores no-nulos, y #sfd parece resultar en mejoras significativas al menos para #fkn.
 
 
 En efecto, observando los parámetros comparados de #fkdc v. #kdc, se repite que la hiperparametrización $(alpha_"opt", h_"opt")$ que maximiza $R^2$ en entrenamientotiene tiene $alpha > 1$, pero existe otra  $(alpha_(1 sigma), h_(1_sigma))$ con $alpha_(1 sigma) =1$   y $h_(1_sigma)$ "significativamente distinto" a $h_"opt"$ que cumple la regla de parsimonia.  Las tres semillas en la que #fkdc saca más ventaja sobre #kdc tiene por óptimos
-// TODO: reemplazar tabla completa por únicamente las tres primeras columnas de la tabla: en cada columna que se repita tres veces el mismo valo, mostrarlo una sola vez en la fila del medio: delta_r^2, alhpa_fkdc, h_fkdc, h_kdc. no mostrarla columna de score_alpha_test
 #tabla_params(
-  "data/hueveras_0-parametros_comparados-kdc.csv",
+  "data/hueveras_0-parametros_comparados-kdc-top3.csv",
   ($s$, $Delta_(R^2)$, $alpha_#fkdc$, $h_#fkdc$, $R^2_#fkdc$, $h_#kdc$, $R^2_#kdc$),
-  columns: (0, 1, 2, 3, 4, 5, 6),
-  caption: [Parámetros comparados de #fkdc vs. #kdc en `hueveras_0`, ordenados por $Delta_(R^2)$.],
-  short-caption: [Parámetros de #fkdc vs. #kdc en `hueveras_0`],
+  skip-rows: 1,
+  caption: [Parámetros comparados de #fkdc vs. #kdc en `hueveras_0` para las tres semillas con mayor $Delta_(R^2)$. Los valores repetidos se muestran una sola vez en la fila del medio.],
+  short-caption: [Parámetros de #fkdc vs. #kdc en `hueveras_0` (top 3)],
 )
 
 En #fkn, la distancia de Fermat parece ofrecer una diferencia significativa en $R^2$ sobre #kn, con varias repeticiones del experimento donde aún con regla de parsimonia, #fkn y #kn eligen _la misma cantidad_ de vecinos pero $alpha_#fkn > 1$:
 
-// TODO: filtrar lista a únicamente los casos con k_fkn = k_kn, dejar delta_r2, k=k_fkn=k_kn, alpha_fkn.
 #tabla_params(
-  "data/hueveras_0-parametros_comparados-kn.csv",
-  ($s$, $Delta_(R^2)$, $alpha_#fkn$, $k_#fkn$, $R^2_#fkn$, $k_#kn$, $R^2_#kn$),
-  columns: (0, 1, 2, 3, 4, 5, 6),
-  caption: [Parámetros comparados de #fkn vs. #kn en `hueveras_0`, con idéntico $k = k_#fkn = k_#kn$. Nótese que $alpha_#fkn > 1$ y $Delta_(R^2) > 0$ en casi todas, indicando una ganancia neta de usar #sfd.],
-  short-caption: [$Delta_R^2= R^2_#fkn - R^2_#kn$ en `hueveras_0` con $k_#fkn = k_#kn, alpha_#fkn > 1$],
+  "data/hueveras_0-parametros_comparados-kn-mismo_k.csv",
+  ($Delta_(R^2)$, $k$, $alpha_#fkn$),
+  skip-rows: 1,
+  caption: [Parámetros comparados de #fkn vs. #kn en `hueveras_0`, restringido a las repeticiones donde $k_#fkn = k_#kn$. Cuando $alpha_#fkn > 1$, $Delta_(R^2) > 0$ en casi todos los casos, indicando una ganancia neta de usar #sfd.],
+  short-caption: [$Delta_(R^2)$ en `hueveras_0` con $k_#fkn = k_#kn$],
 )
 
 
