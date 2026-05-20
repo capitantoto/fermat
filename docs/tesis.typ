@@ -1583,10 +1583,9 @@ Nos dedicaremos a la  estimación de densidad basada en distancia de Fermat en u
 = Resultados <resultados>
 
 == In Totis
-// TODO: Repasar esta sección al terminar la edición de "= Resultados"
 En total, ejecutamos unas 4,500 tareas, producto de #reps repeticiones por dataset y clasificador, sobre un total de 20 datasets y 9 clasificadores diferentes. Designaremos por $cal(K) = {#fkdc, #kdc, #fkn, #kn}$ a la familia de estimadores basados en densidad por núcleos, sobre la que se concentra el análisis comparativo del capítulo. Recordemos que todos los estimadores se entrenaron con _score_ `neg_log_loss` (para optimizar por $R^2$), salvo #svc, que al ser un clasificador duro se entrenó con `accuracy`. Así, entre los clasificadores blandos la distancia de Fermat rindió frutos, con el máximo $R^2$ mediano en 10 de los 20 experimentos: 7 preseas fueron para #fkdc y 3 para #fkn.
 
-#gbt "ganó" en 5 datasets, entre ellos en varios con mucho ruido (`_hi` y `_12`). #kdc resultó óptimo en 2 datasets, consolidando la técnica del @kde-variedad como competitiva de por sí. Por último, tanto #kn como #logr (en su versión escalada, #slr) resultaron medianamente mejores que todos los demás en ciertos datasets, y solo #gnb no consiguió ningún podio --- aunque resultó competitivo en casi todo el tablero.
+#gbt "ganó" en 5 datasets, entre ellos varios con mucho ruido (`_hi` y `_12`). #kdc resultó óptimo en 2 datasets, consolidando la técnica del @kde-variedad como competitiva de por sí. Por último, tanto #kn como #logr (en su versión escalada, #slr) resultaron mejores en mediana que todos los demás en ciertos datasets, y solo #gnb no consiguió ningún podio --- aunque resultó competitivo en casi todo el tablero.
 La amplia distribución de algoritmos óptimos según las condiciones del dataset pone de relieve la existencia de ventajas relativas en todos ellos.
 
 #tabla_clf_destacados(
@@ -1595,7 +1594,7 @@ La amplia distribución de algoritmos óptimos según las condiciones del datase
   short-caption: [Mejor clasificador por dataset según $R^2$ mediano.],
 )
 
-El mismo análisis con métrica de exactitud es, desde luego, menos favorable a nuestros métodos entrenados para otra cosa. #svc, entrenado a tono, resulta un algoritmo casi imbatible, con sólidos números en todo tipo de datasets y máximos en 6 datasets. #gbt vuelve a brillar en datasets con mucho ruido y siguen figurando como competitivos un amplio abanico de estimadores: hasta #fkdc retiene su título en 1 dataset, `espirales_lo`.
+El mismo análisis con métrica de exactitud es, desde luego, menos favorable a nuestros métodos entrenados para otro objetivo. #svc, entrenado en consecuencia, resulta un algoritmo casi imbatible, con rendimiento sólido en todo tipo de datasets y máximos en 6 de ellos. #gbt vuelve a brillar en aquellos con mucho ruido y siguen figurando como competitivos numerosos estimadores: hasta #fkdc retiene su título en 1 dataset, `espirales_lo`.
 
 #tabla_clf_destacados(
   "data/mejor-clf-por-dataset-segun-accuracy-mediano.csv",
@@ -1604,7 +1603,7 @@ El mismo análisis con métrica de exactitud es, desde luego, menos favorable a 
 )
 
 
-Solo considerar el rendimiento de #fkdc y #fkn en los 20 datasets daría unas 40 unidades de análisis, y en el espíritu de indagación curiosa que guía esta tesis, existen aún más tendencias y patrones interesantes en los 4,500 experimentos realizados. No es nuestra intención abrumar al lector, con lo cual a continuación haremos un paneo arbitrario por algunos de los resultados que (a) nos resultaron más llamativos o (b) se acercan lo suficiente a alguno de la literatura previa como para merecer un comentario aparte. Quien desee corroborar que no hicimos un uso injustificado de la discrecionalidad para elegir resultados, encontrará tablas y gráficos en abundancia en la sección de resultados por dataset.
+Considerar únicamente el rendimiento de #fkdc y #fkn en los 20 datasets ya daría unas 40 unidades de análisis; en el espíritu de indagación curiosa que guía esta tesis, existen aún más tendencias y patrones interesantes en los 4,500 experimentos realizados. No es nuestra intención abrumar al lector, así que a continuación haremos un paneo arbitrario por algunos de los resultados que (a) nos resultaron más llamativos o (b) se acercan lo suficiente a algún resultado de la literatura previa como para merecer un comentario aparte. Quien desee corroborar que no hicimos un uso injustificado de la discrecionalidad para elegir resultados encontrará tablas y gráficos en abundancia en la sección de resultados por dataset.
 == Lunas, círculos y espirales ($D=2, d=1, k=2$)
 
 Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=1, k=2$, y exploramos tres curvas sampleadas con un poco de "ruido blanco" añadido: dos "lunas" --- semicírculos no superpuestos con sus centros en un extremo del semicírculo opuesto ---, dos círculos concéntricos y dos espirales con el mismo origen y rotación en sentidos opuestos #footnote[No entraremos en demasiado detalle sobre cómo se generó o de dónde se tomó cada _dataset_ para mantener el foco en los resultados de la experimentación. En el paquete adjunto, las rutinas completas para generar cada conjunto de datos se puede leer en `fkdc/datasets.py`].
