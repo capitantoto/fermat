@@ -1991,7 +1991,6 @@ Consideraremos a continuación datasets sintéticos embebidos en 3 dimensiones (
 
 === Eslabones
 
-// TODO: poner scatter 3D en highlight por dataset para $D=3$
 #highlights_figure("eslabones_0")
 
 Toda la familia de estimadores de densidad por núcleos alcanza un $R^2 approx 1$, y aun Naive Bayes tiene un rendimiento aceptable: con este nivel de ruido blanco en el muestreo, el "margen de separación" entre ambos anillos es tan amplio que la tarea resulta trivial.
