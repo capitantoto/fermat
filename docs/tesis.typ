@@ -2080,7 +2080,6 @@ con $h' = h slash c$ y efectivamente los parámetros $(alpha, h)$ se solapan en 
 
 La serie $k_n$ que minimiza el error cuadrático medio del estimador $k$-NN cuando $n -> oo$ es $k prop n^(4/(d+4))$, que para nuestros tamaños muestrales de CV resulta en $320^(4/(3+4)) = 320^(4/7) approx 27$. Es decir que tomando #math.approx tres decenas de vecinos alcanzaría para entrenar un clasificador #kn decente --- #fkn podrá ser mejor con $k_#fkn >> 27$, pero no mejor que #kn con $k_#kn approx 27$. Pues bien, cuando miramos el mejor rendimiento en test por `n_neighbors` para #kn y #fkn, vemos que elegir un $alpha$ variable le permite a #fkn mantener un óptimo rendimiento en términos de log-verosimilitud #footnote[y por ende $R^2$ también] para _cualquier_ valor de $k$ #footnote[`n_neighbors` en la parametrización de `scikit-learn`.].
 
-// TODO: esto es realmene el _mean_ test score? podemos hacer el mismo gráfico con una linea por semilla y clf, todas con menor alpha, para ver si la rutas de fkn son siempre mejores que las de kn?
 #figure(
   image("img/helices_0-fkn_kn-mean_test_score.svg", height: 12em),
   caption: flex-caption(
