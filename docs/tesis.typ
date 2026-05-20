@@ -1584,7 +1584,7 @@ Nos dedicaremos a la  estimación de densidad basada en distancia de Fermat en u
 
 == In Totis
 // TODO: Repasar esta sección al terminar la edición de "= Resultados"
-En total, ejecutamos unas 4,500 tareas, producto de #reps repeticiones por dataset y clasificador, sobre un total de 20 datasets y 9 clasificadores diferentes. Recordemos que todos los estimadores se entrenaron con _score_ `neg_log_loss` (para optimizar por $R^2$), salvo #svc, que al ser un clasificador duro se entrenó con `accuracy`. Así, entre los clasificadores blandos la distancia de Fermat rindió frutos, con el máximo $R^2$ mediano en 10 de los 20 experimentos: 7 preseas fueron para #fkdc y 3 para #fkn.
+En total, ejecutamos unas 4,500 tareas, producto de #reps repeticiones por dataset y clasificador, sobre un total de 20 datasets y 9 clasificadores diferentes. Designaremos por $cal(K) = {#fkdc, #kdc, #fkn, #kn}$ a la familia de estimadores basados en densidad por núcleos, sobre la que se concentra el análisis comparativo del capítulo. Recordemos que todos los estimadores se entrenaron con _score_ `neg_log_loss` (para optimizar por $R^2$), salvo #svc, que al ser un clasificador duro se entrenó con `accuracy`. Así, entre los clasificadores blandos la distancia de Fermat rindió frutos, con el máximo $R^2$ mediano en 10 de los 20 experimentos: 7 preseas fueron para #fkdc y 3 para #fkn.
 
 #gbt "ganó" en 5 datasets, entre ellos en varios con mucho ruido (`_hi` y `_12`). #kdc resultó óptimo en 2 datasets, consolidando la técnica del @kde-variedad como competitiva de por sí. Por último, tanto #kn como #logr (en su versión escalada, #slr) resultaron medianamente mejores que todos los demás en ciertos datasets, y solo #gnb no consiguió ningún podio --- aunque resultó competitivo en casi todo el tablero.
 La amplia distribución de algoritmos óptimos según las condiciones del dataset pone de relieve la existencia de ventajas relativas en todos ellos.
@@ -2108,8 +2108,7 @@ Este dataset sintético consiste de dos clases con idénticas distribuciones per
 
 #highlights_figure("hueveras_0")
 
-// TODO: Mencionar la familia cal(K) antes y acá simplemente decir $cal(K)$
-La exactitud de la familia de estimadores basados en densidad por núcleos --- $cal(K)={#fkdc, #kdc, #fkn, #kn}$ --- es competitiva contra la de #svc, que parece ser ligera y significativamente mejor. En términos de $R^2$, la familia $cal(K)$ es la única en alcanzar valores no-nulos, y #sfd parece resultar en mejoras significativas al menos para #fkn.
+La exactitud de la familia $cal(K)$ es competitiva contra la de #svc, que parece ser ligera y significativamente mejor. En términos de $R^2$, la familia $cal(K)$ es la única en alcanzar valores no-nulos, y #sfd parece resultar en mejoras significativas al menos para #fkn.
 
 
 En efecto, observando los parámetros comparados de #fkdc v. #kdc, se repite que la hiperparametrización $(alpha_"opt", h_"opt")$ que maximiza $R^2$ en entrenamientotiene tiene $alpha > 1$, pero existe otra  $(alpha_(1 sigma), h_(1_sigma))$ con $alpha_(1 sigma) =1$   y $h_(1_sigma)$ "significativamente distinto" a $h_"opt"$ que cumple la regla de parsimonia.  Las tres semillas en la que #fkdc saca más ventaja sobre #kdc tiene por óptimos
