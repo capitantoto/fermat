@@ -759,7 +759,7 @@ if __name__ == "__main__":
         names=("dataset", "seed", "clf", "main_seed", "scoring", "run"),
     )
     df_lunas.xs("fkdc", level="clf").query("rank_test_score == 1")[
-        ["param_alpha", "param_bandwidth"]
+        ["param_alpha"]
     ].round(4).value_counts().sort_index().reset_index().rename(
         columns=lambda s: s.replace("param_", "")
     ).to_csv(dir_datos / f"{dataset}-best_test_params.csv", index=False)

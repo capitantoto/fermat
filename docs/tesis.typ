@@ -1871,11 +1871,10 @@ Hacemos entonces una comprobación fundamental: ¿qué parametrizaciones están 
 
 Durante el entrenamiento, a veces el mejor se obtiene con _otros_ valores de $alpha$, pero la mejora no es lo suficientemente grande para descartar alguna hiperparametrización con $alpha = 1$ bajo la regla de $1 sigma$  descrita en @r1sd.
 
-// TODO: Recortar a 4 decimales, simplificar a solo $alpha$
 #tabla_csv(
   "data/lunas_lo-best_test_params.csv",
-  caption: [Hiperparámetros minimizadores de pérdida en enrenamiento para #kdc y #fkdc en `lunas_lo`, por semilla.],
-  short-caption: [Hiperparámetros minimizadores de pérdida de #kdc y #fkdc en `lunas_lo`],
+  caption: [Distribución de $alpha$ minimizador de pérdida en entrenamiento para #fkdc en `lunas_lo`, sin aplicar regla de parsimonia.],
+  short-caption: [$alpha$ minimizador de pérdida en `lunas_lo` para #fkdc],
 )
 Resulta ser que
 - al entrenar #fkdc se está eligiendo $alpha=1$ para _todas_ las semillas, y
