@@ -869,6 +869,7 @@ if __name__ == "__main__":
     # CSVs de parámetros comparados
     # =====================================================================
     parametros_comparados("helices_0", "kdc", infos=infos, bi=bi)
+    parametros_comparados("pionono_0", "kdc", infos=infos, bi=bi)
     hue_kdc = parametros_comparados("hueveras_0", "kdc", infos=infos, bi=bi)
     hue_kn = parametros_comparados("hueveras_0", "kn", infos=infos, bi=bi)
 
