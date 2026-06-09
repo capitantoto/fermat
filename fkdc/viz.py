@@ -874,21 +874,23 @@ if __name__ == "__main__":
     hue_kn = parametros_comparados("hueveras_0", "kn", infos=infos, bi=bi)
 
     # Filtro: solo casos con k_fkn = k_kn, columnas delta_r2, k, alpha_fkn
+    # delta_r2 vive en MultiIndex como ('', 'delta_r2'); xs lo extrae por second-level.
     mismo_k = hue_kn[hue_kn[("fkn", "n_neighbors")] == hue_kn[("kn", "n_neighbors")]]
     pd.DataFrame(
         {
-            "delta_r2": mismo_k["delta_r2"].iloc[:, 0]
-            if mismo_k["delta_r2"].ndim > 1
-            else mismo_k["delta_r2"],
+            "delta_r2": mismo_k.xs("delta_r2", level=1, axis=1).iloc[:, 0],
             "k": mismo_k[("fkn", "n_neighbors")].astype(int),
             "alpha_fkn": mismo_k[("fkn", "alpha")],
         }
-    ).to_csv(dir_datos / "hueveras_0-parametros_comparados-kn-mismo_k.csv", index=False)
+    ).round(3).to_csv(
+        dir_datos / "hueveras_0-parametros_comparados-kn-mismo_k.csv", index=False
+    )
 
     # Versión compactada: top-3 semillas, valores constantes solo en fila del medio
     top3 = (
         hue_kdc.iloc[:3]
         .drop(columns="max_score_alpha_test", errors="ignore")
+        .round(3)
         .reset_index()
     )
     top3.columns = [

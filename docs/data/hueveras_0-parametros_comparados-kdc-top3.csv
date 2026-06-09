@@ -1,4 +1,4 @@
-semilla,delta_r2,alpha_fkdc,h_fkdc,r2_fkdc,h_kdc,r2_kdc
+semilla,delta_r2,fkdc_alpha,fkdc_bandwidth,fkdc_r2,kdc_bandwidth,kdc_r2
 1434,0.109,,,0.281,,0.171
 8443,0.102,1.0,0.562,0.268,0.774,0.166
 8578,0.101,,,0.246,,0.144
