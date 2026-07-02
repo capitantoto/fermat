@@ -759,7 +759,7 @@ if __name__ == "__main__":
         names=("dataset", "seed", "clf", "main_seed", "scoring", "run"),
     )
     df_lunas.xs("fkdc", level="clf").query("rank_test_score == 1")[
-        ["param_alpha", "param_bandwidth"]
+        ["param_alpha"]
     ].round(4).value_counts().sort_index().reset_index().rename(
         columns=lambda s: s.replace("param_", "")
     ).to_csv(dir_datos / f"{dataset}-best_test_params.csv", index=False)
@@ -869,8 +869,43 @@ if __name__ == "__main__":
     # CSVs de parámetros comparados
     # =====================================================================
     parametros_comparados("helices_0", "kdc", infos=infos, bi=bi)
-    parametros_comparados("hueveras_0", "kdc", infos=infos, bi=bi)
-    parametros_comparados("hueveras_0", "kn", infos=infos, bi=bi)
+    parametros_comparados("pionono_0", "kdc", infos=infos, bi=bi)
+    hue_kdc = parametros_comparados("hueveras_0", "kdc", infos=infos, bi=bi)
+    hue_kn = parametros_comparados("hueveras_0", "kn", infos=infos, bi=bi)
+
+    # Filtro: solo casos con k_fkn = k_kn, columnas delta_r2, k, alpha_fkn
+    # delta_r2 vive en MultiIndex como ('', 'delta_r2'); xs lo extrae por second-level.
+    mismo_k = hue_kn[hue_kn[("fkn", "n_neighbors")] == hue_kn[("kn", "n_neighbors")]]
+    pd.DataFrame(
+        {
+            "delta_r2": mismo_k.xs("delta_r2", level=1, axis=1).iloc[:, 0],
+            "k": mismo_k[("fkn", "n_neighbors")].astype(int),
+            "alpha_fkn": mismo_k[("fkn", "alpha")],
+        }
+    ).round(3).to_csv(
+        dir_datos / "hueveras_0-parametros_comparados-kn-mismo_k.csv", index=False
+    )
+
+    # Versión compactada: top-3 semillas, valores constantes solo en fila del medio
+    top3 = (
+        hue_kdc.iloc[:3]
+        .drop(columns="max_score_alpha_test", errors="ignore")
+        .round(3)
+        .reset_index()
+    )
+    top3.columns = [
+        "_".join(map(str, c)).strip("_") if isinstance(c, tuple) else c
+        for c in top3.columns
+    ]
+    for col in top3.columns:
+        if col == "semilla":
+            continue
+        vals = top3[col].astype(str).tolist()
+        if len(set(vals)) == 1:
+            top3[col] = ["", vals[1], ""]
+    top3.to_csv(
+        dir_datos / "hueveras_0-parametros_comparados-kdc-top3.csv", index=False
+    )
 
     # =====================================================================
     # Seminario-modesto: score vs n_neighbors
