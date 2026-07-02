@@ -31,6 +31,14 @@
 #let clf = $op(hat(G))$
 #let reps = 25
 
+// Toggle del Anexo "Disquisiciones con IA". Poner en `false` (o compilar con
+// `typst compile --input anexo-ia=false docs/tesis.typ`) para excluirlo del
+// cuerpo entregado sin tocar el resto del documento.
+#let anexo-ia = {
+  let flag = sys.inputs.at("anexo-ia", default: "true")
+  flag != "false"
+}
+
 // Copetes flexibles para outline y texto, adaptado para 0.12 de
 // https://github.com/typst/typst/issues/1295#issuecomment-1853762154
 #let in-outline = state("in-outline", false)
@@ -2301,6 +2309,32 @@ Sería interesante entonces investigar si existen condiciones reales en las que 
 
 Asimismo, la grilla de $alpha in [1, 4]$ utilizada en nuestros experimentos podría ampliarse ---@bijralSemisupervisedLearningDensity2011 reportan buenos resultados con $alpha = 8$--- para explorar si valores más extremos del parámetro ofrecen ventajas adicionales en datasets con geometrías particularmente complejas.
 
+
+#if anexo-ia [
+  #pagebreak()
+
+  #heading(numbering: none, level: 1)[Anexo: Disquisiciones con IA]
+
+  Este anexo cataloga, con fines de transparencia y trazabilidad, el trabajo asistido por sistemas de inteligencia artificial (IA) realizado alrededor de esta tesis. Se incluye por dos motivos: registrar el flujo de trabajo declarado en `CLAUDE.md` --- según el cual la IA asistió en tareas de forma pero no de fondo --- y catalogar exploraciones tangenciales generadas por IA que exceden el alcance del cuerpo de esta monografía pero que quedan como pistas para investigación futura. Nada de lo consignado en este anexo debe interpretarse como contribución matemática original del autor, ni como conclusión validada de la tesis.
+
+  == Pases editoriales con Claude
+
+  Entre febrero y junio de 2026, se realizaron varios pases de corrección textual asistidos por _Claude_ (Anthropic), documentados en la historia de commits del repositorio bajo prefijos `errata:`, `estilo:`, `todo:`, `refactor:` y `bib:`. Los pases abordaron: revisión editorial general del texto (PR \#18), integración del anexo original de Resultados (PR \#17), recorte de `references.bib` a las entradas efectivamente citadas (PR \#21), resolución sistemática de nueve marcadores `TODO` pendientes en el cuerpo (PR \#23), balance de espacio en blanco mediante ajustes de altura de figuras (PR \#24), siete correcciones textuales de ortografía y concordancia identificadas por auditoría (PR \#25), y la presente redacción del anexo (PR \#26). El autor revisó y aprobó cada cambio antes de mergear; ningún commit modifica desarrollo matemático ni resultados experimentales.
+
+  == Sesión con "Fable 5": segunda versión mejorada
+
+  Con anterioridad a los pases con Claude referidos arriba, se ejecutó una sesión con otro sistema de IA --- referido internamente como _Fable 5_ --- bajo la consigna genérica de producir "una segunda versión mejorada" de la tesis. La sesión no llegó a integrarse al cuerpo por no ajustarse al criterio editorial declarado, pero produjo un volumen sustancial de material almacenado en `docs/sandbox/` (fuera del control de versiones). Durante la revisión final se auditó ese material y se identificaron tres tipos de aportes que merecen registro.
+
+  Como _pistas de investigación futura_ quedan: un catálogo de aproximadamente veinte datasets sintéticos con parámetros geométricos aislados individualmente (`new-datasets.md` --- esferas, toros con valle de diferentes profundidades, tori de Clifford, pseudoesfera, nudos, mezclas de dimensiones), diseñados para separar la contribución de la curvatura, la dimensión intrínseca y el desbalance de clases; un dataset "paralelas" (`paralelas-resultados.md` y CSVs asociados) que aísla la brecha ambiente $delta$ como único hiperparámetro y donde se observaron reducciones de error del orden de $times 34$ a $times 151$ en #fkn a $k$ fijo, cuyos números apuntan en la dirección predicha por el capítulo de Preliminares pero requieren replicación independiente; y una propuesta de protocolo experimental más riguroso (`harness-v6.md` y `hardening-report.md`) que incorpora grillas simétricas, refit ciego al hiperparámetro $alpha$, cien semillas por celda y corrección por multiplicidad (Benjamini-Hochberg y Holm) sobre la familia de 40 comparaciones de la sección de Resultados. Según ese protocolo endurecido, la única celda que sobrevive a la corrección de familia con robustez plena sería #fkn en `helices_0`.
+
+  Como _hallazgo de reproducibilidad, pendiente de validación independiente_, queda documentado (`erratum-v5-kdc.md`) un comportamiento inestable de `sklearn.KernelDensity` en configuraciones de alta dimensión con clases desbalanceadas, con implementaciones alternativas de KDE euclídeo que arrojan valores sistemáticamente distintos. Los CSVs de reproducción sugieren que los números específicos reportados en la §5.1 para el par (#fkdc, #kdc) sobre `helices_0` (ventaja mediana cercana a cinco puntos porcentuales en $R^2$) podrían ser sensibles a la implementación de KDE utilizada, y que con un KDE euclídeo alternativo la ventaja mediana caería considerablemente. La _conclusión central_ de la tesis --- que la distancia de Fermat como hiperparámetro adicional produce paridad-o-mejora sobre el clasificador euclídeo correspondiente, con simbiosis vía la regla de un desvío estándar --- no depende de este caso particular. Sí queda como pendiente, antes de una eventual publicación en revista, validar independientemente la implementación de KDE en el caso específico de `helices_0`.
+
+  Como _especulaciones teóricas no verificadas_ quedan una serie de documentos que exceden el fondo de esta monografía y contradicen la política declarada de no incluir contenido matemático generado por IA: `fermat-classifier-theory.md` propone una noción de _bandwidth efectiva_ compatible con la distancia de Fermat que no sigue la corrección de Abramson; `o2-risk-theorem.md` enuncia un "Teorema de separación" para brechas ambientes. Se registra su existencia por completitud, sin adoptar ninguna de sus afirmaciones.
+
+  == Descargo
+
+  Todos los contenidos matemáticos originales, definiciones, demostraciones, elecciones de diseño experimental y análisis de resultados presentados en el cuerpo principal de esta tesis son propios del autor. El trabajo de la IA se limitó a asistencia en tareas de forma --- corrección ortográfica, sugerencias de estilo, formato Typst y resolución de tareas mecánicas --- verificadas caso por caso. Los materiales de sandbox referidos en este anexo se listan a título informativo; ninguna afirmación teórica ni resultado experimental de terceros generado por IA se endosa como propio.
+]
 
 // Firmas posteriores al cuerpo del trabajo y antes de la bibliografía,
 // según Anexo II de la Res. 2265/18. Flotan al pie de la próxima página
