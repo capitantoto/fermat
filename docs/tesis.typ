@@ -1696,7 +1696,7 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
   )
 }
 
-#let highlights_figure(dataset, height: 8em, width: 140%) = {
+#let highlights_figure(dataset, height: 6em, width: 140%) = {
   let highlights = json("data/" + dataset + "-r2-highlights.json")
   let tabla_resumen = highlights_table(highlights)
 
@@ -1748,8 +1748,6 @@ Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) apren
 === `circulos_lo` y `espirales_lo`
 
 #highlights_figure("circulos_lo")
-
-
 #highlights_figure("espirales_lo")
 
 Una inspección ocular a las fronteras de decisión revela las limitaciones de distintos algoritmos, siendo el caso de las espirales el más vistoso y pedagógico. #logr y #slr solo pueden dibujar fronteras "lineales", y como ninguna frontera lineal que corte la muestra logra dividirla en dos regiones con densidades de clase realmente diferentes, el algoritmo falla. #gnb falla de manera análoga, aunque su problema es otro - no lidia bien con distribuciones con densidades marginales muy similares.
@@ -1915,9 +1913,9 @@ $ sigma_"lunas" = 0.5 quad sigma_"circulos" = 0.2 quad sigma_"espirales" = 0.2 q
 
 #wide_figure(
   grid(columns: 3, gutter: 4pt,
-    image("img/lunas_hi-scatter.svg"),
-    image("img/circulos_hi-scatter.svg"),
-    image("img/espirales_hi-scatter.svg"),
+    image("img/lunas_hi-scatter.svg", height: 9em),
+    image("img/circulos_hi-scatter.svg", height: 9em),
+    image("img/espirales_hi-scatter.svg", height: 9em),
   ),
   caption: flex-caption["Lunas", "Círculos" y "Espirales" con "alto ruido"][ "Lunas", "Círculos" y "Espirales", alto ruido ],
 ) <fig-22>
@@ -1931,13 +1929,13 @@ En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" 
 
 ==== `lunas_hi`
 
-#highlights_figure("lunas_hi")
+#highlights_figure("lunas_hi", height: 5em)
 
 ==== `circulos_hi`
-#highlights_figure("circulos_hi")
+#highlights_figure("circulos_hi", height: 5em)
 
 ==== `espirales_hi`
-#highlights_figure("espirales_hi")
+#highlights_figure("espirales_hi", height: 5em)
 
 
 
@@ -2020,7 +2018,7 @@ Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la m
 La clasificación dura con estimación de densidad por núcleos --- con distancia de Fermat o sin ella --- resulta ser superior a todas las alternativas en términos de exactitud --- ligeramente --- y $R^2$ --- por mucho. Encima de ello, #fkdc es todavía significativamente mejor en $R^2$ que #kdc por casi 5 puntos porcentualessalvo y consistentemente entoda las semillas salvo una particularmente negativa:
 
 #figure(
-  image("img/helices_0-r2-fkdc-vs-kdc.svg", height: 16em),
+  image("img/helices_0-r2-fkdc-vs-kdc.svg", height: 11em),
   caption: flex-caption(
     [$R^2$ apareado por semilla en `helices_0`: cada punto compara una corrida de #fkdc con la de #kdc para la misma semilla. #fkdc supera a #kdc en casi todas las semillas, con una ventaja mediana cercana a cinco puntos porcentuales.],
     [$R^2$ de #fkdc vs. #kdc por semilla en `helices_0`.],
@@ -2157,11 +2155,11 @@ Nuevamente #gbt es el mejor clasificador ($R^2 approx 0.92$), seguido por #gnb (
 
 === `helices_12`
 
-#highlights_figure("helices_12")
+#highlights_figure("helices_12", height: 5em)
 
 === `hueveras_12`
 
-#highlights_figure("hueveras_12")
+#highlights_figure("hueveras_12", height: 5em)
 
 Estos dos son de los datasets más difíciles del conjunto: la exactitud máxima de _cualquier_ clasificador apenas supera el 50%, valores muy cercanos al azar. Los clasificadores de densidad (#fkdc, #kdc) obtienen $R^2$ negativo, lo que indica un desempeño peor que el de un clasificador trivial. Estas geometrías, ya de por sí adversas aun sin ruido añadido, se vuelven intratables con este nivel de ruido en alta dimensión.
 
@@ -2230,6 +2228,7 @@ Dataset sintético bidimensional con tres clases en forma de anteojos ($k = 3$, 
   wide_figure(width: 160%,
     grid(columns: 3, gutter: 4pt, ..clfs.map(clf => image(
       "img/anteojos-" + clf + "-decision_boundary.svg",
+      height: 8em,
     ))),
     caption: flex-caption(
       [Fronteras de decisión de los nueve algoritmos evaluados sobre `anteojos` con semilla $s=#plotting_seed$. Se observa que #logr y #slr no logran separar las tres clases, mientras que los demás algoritmos alcanzan fronteras muy similares entre sí.],
