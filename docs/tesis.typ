@@ -575,7 +575,7 @@ $
   f_j (X) = product_(k = 1)^p f_(j k) (X_k)
 $ <naive-bayes>
 
-A este procedimiento se lo conoce como "Naive Bayes" @hastieElementsStatisticalLearning2009[§6.6.3], y a pesar de su aparente ingenuidad es competitivo contra algoritmos mucho más sofisticados en un amplio rango de tareas. En términos de cómputo, permite resolver la estimación con $K times p$ KDE univariados. Además, permite que en $X$ se combinen variables cuantitativas y cualitativas: basta con reemplazar la estimación de densidad para las componenets $X_k$ cualitativos por su correspondiente histograma.
+A este procedimiento se lo conoce como "Naive Bayes" @hastieElementsStatisticalLearning2009[§6.6.3], y a pesar de su aparente ingenuidad es competitivo contra algoritmos mucho más sofisticados en un amplio rango de tareas. En términos de cómputo, permite resolver la estimación con $K times p$ KDE univariados. Además, permite que en $X$ se combinen variables cuantitativas y cualitativas: basta con reemplazar la estimación de densidad para las componentes $X_k$ cualitativas por su correspondiente histograma.
 
 === KDE multivariado
 Consideremos un _dataset_ compuesto por observaciones muestradas de dos círculos concéntricos con algo de ruido:
@@ -676,7 +676,7 @@ La hipótesis de la variedad no es exactamente una hipótesis contrastable en el
 
   Uno es @galleseRootsEmpathyShared2003, _Las Raíces de la Empatía: La Hipótesis de la Variedad Compartida y las Bases Neuronales de la Intersubjetividad_: la hipótesis sostiene que existe un espacio intersubjetivo que compartimos con los demás. No somos mentes aisladas intentando descifrar a otras mentes aisladas; más bien, habitamos un espacio común de acción y emoción. Este "nosotros" (_we-centric space_) es la condición de posibilidad para la empatía. Reconocemos al otro no como un objeto, sino como otro "yo", porque cohabitamos la misma variedad corporal y neuronal.
 
-  El otro es  @bengioConsciousnessPrior2019, _El Prior de la Conciencia_, en el que se postula que ante un espacio infinito de estímulos, la conciencia tiene una función evolutiva y computacional específica: actuar como un cuello de botella de información para facilitar el razonamiento y la generalización. La conciencia produce una representación rala y de baja dimensionalidad compuesta por los factores salientes de entre los estímulos recibidos y sus interconexiones - es decir, una cierta variedad de baja dimensión intrínsica.
+  El otro es  @bengioConsciousnessPrior2019, _El Prior de la Conciencia_, en el que se postula que ante un espacio infinito de estímulos, la conciencia tiene una función evolutiva y computacional específica: actuar como un cuello de botella de información para facilitar el razonamiento y la generalización. La conciencia produce una representación rala y de baja dimensionalidad compuesta por los factores salientes de entre los estímulos recibidos y sus interconexiones - es decir, una cierta variedad de baja dimensión intrínseca.
 ]
 
 #figure(caption: flex-caption(
@@ -1158,7 +1158,7 @@ El procedimiento para estimar $d_MM$ es ingenioso, pero costoso. Sean $XX = (x_1
   ))),
 )
 
-Estimada $d_MM$, los pasos siguientes no son menos complejos. Por un lado, se plantea un sistema ecuaciones para obtener _al mismo tiempo_ todos los entornos coordenados centrados en cada observación minimizando la _divergencia_ entre $SS_j$ vecinos
+Estimada $d_MM$, los pasos siguientes no son menos complejos. Por un lado, se plantea un sistema de ecuaciones para obtener _al mismo tiempo_ todos los entornos coordenados centrados en cada observación minimizando la _divergencia_ entre $SS_j$ vecinos
 #footnote[
   A tal fin, modela la muestra como una "mezcla de $N$ Gaussianas"  --- _gaussian mixture modelling_, GMM por sus siglas en inglés --, con $mu_i = x_i forall i in [N]$, y resuelve simultáneamente $SS_i forall i in [N]$. Aquí "divergencia" tiene un significado preciso que obviamos, pero intuitivamente, representa el "costo" --- la variación --- que uno encuentra cuando quiere representar un punto $a$ del vecindario $U$ de $x_i$, en las coordenadas correspondientes a un vecindario $V$ de $x_j$. Se puede mostrar que el cociente entre las densidad de $a$ en ambos sistemas coordenados --- la #link("https://en.wikipedia.org/wiki/Cross-entropy")[entropía cruzada] entre $cal(N)(x_i, SS_i)$ y $cal(N)(x_j, SS_j)$ --- es la divergencia que se busca minizar.]. Finalmente, han de encontrar una _conexión_ entre los entornos coordenados de cada observación, de manera que se puedan definir coordenadas para _cualquier_ punto de la variedad y con ellas formar un atlas diferenciable.
 
@@ -1182,7 +1182,7 @@ Desarrollado a fines del siglo XX por Joshua Tenenbaum et al.  @tenenbaumMapping
   + Construir el grafo pesado de vecinos más cercanos $bu(N N) = (XX, E, W)$, donde cada observación $x_i$ es un vértice y la arista #footnote[_edge_ en inglés] $e_i = a ~ b$ que une $a$ con $b$ está presente con peso $w_i = norm(a - b)$ sí y solo si
     - ($epsilon-$Isomap): la distancia euclídea entre $a, b$ en el espacio ambiente es menor o igual a épsilon, $norm(a - b) <= epsilon$.
     - ($k-$Isomap): $b$ es uno de los $k$ vecinos más cercanos de $a$ #footnote[o viceversa, pues en un grafo no-dirigido la relación de vecinos más cercanos es mutua]
-  + Computar la distancia geodésica en el grafo $bu(N N)$ --- el "costo" de los caminos mínimos --- entre todo par de observaciones, $d_bu(N N)(a, b) forall a, b in XX$ #footnote[A tal fin, se puede utilizar segón convenga el algoritmo de #link("https://es.wikipedia.org/wiki/Algoritmo_de_Floyd-Warshall")[Floyd-Warshall] o #link("https://es.wikipedia.org/wiki/Algoritmo_de_Dijkstra")[Dijkstra]].
+  + Computar la distancia geodésica en el grafo $bu(N N)$ --- el "costo" de los caminos mínimos --- entre todo par de observaciones, $d_bu(N N)(a, b) forall a, b in XX$ #footnote[A tal fin, se puede utilizar según convenga el algoritmo de #link("https://es.wikipedia.org/wiki/Algoritmo_de_Floyd-Warshall")[Floyd-Warshall] o #link("https://es.wikipedia.org/wiki/Algoritmo_de_Dijkstra")[Dijkstra]].
   + Construir la representación - $d-$dimensional utilizando MDS #footnote["Multi Dimensional Scaling", o #link("https://es.wikipedia.org/wiki/Escalamiento_multidimensional")[_escalamiento multidimensional_], un algoritmo de reducción de dimensionalidad] en el espacio euclídeo $RR^d$ que minimice una métrica de discrepancia denominada "estrés", entre las distancias $d_bu(N N)$ de (2) y la norma euclídea en la representación. Para elegir el valor óptimo de $d$ #footnote[que debería coincidir con la dimensión intrínseca de los datos], búsquese el "codo" en el gráfico de estrés en función de la dimensión de MDS.
 ]
 #figure(
@@ -1387,7 +1387,7 @@ $
 
 y no se limitan a sugerir que la distancia en el espacio ambiente se puede aproximar a través de la distancia basada en el grafo completo con aristas pesadas como en Bijral et al , sino que precisan en qué sentido la una converge a la otra, y a qué tasa.#footnote[Con respecto a fijar $p=2$, en la "Observación 2.6" los autores mencionan que es posible y hasta sería interesante reemplazar la norma euclídea --- $2-$norma --- por otra distancia --- otra $p-$norma, por ejemplo --, reemplazando las integrales con respecto a la longitud de arco, por integrales con respecto a la distancia involucrada. Entendemos de ello que no es una condición _necesaria_ para el desarrolo del trabajo, sino solo _conveniente_. Omitiremos el subíndice en la $2-$norma de aquí en más.]
 
-#defn([Distancia "macroscrópica" de Fermat @groismanNonhomogeneousEuclideanFirstpassage2022[Definición 2.2]])[
+#defn([Distancia "macroscópica" de Fermat @groismanNonhomogeneousEuclideanFirstpassage2022[Definición 2.2]])[
 
   Sea $f$ una función continua y positiva, $beta >=0$
   y $x, y in S subset.eq RR^D$. Definimos la _Distancia de Fermat_ $cal(D)_(f, beta)(x, y)$ como:
@@ -1441,7 +1441,7 @@ Antes de presentar en qué sentido  #sfd converge a $cal(D)_(f, beta)$, una defi
 
 La distancia muestral de Fermat $D_(Q, alpha)$ se puede aproximar a partir de una muestra "lo suficientemente grande _sin conocer ni la variedad #MM ni su dimensión intrínseca_. Además, tiene garantías de convergencia a una distancia basada en densidad (DBD) --- la distancia de Fermat "macroscópica" $cal(D)_(f, beta)$ --- para todo $beta,$. ¡Hemos encontrado la pieza faltante para nuestro clasificador en variedades _desconocidas_! Estamos finalmente en condiciones de proponer un algoritmo de clasificación que reúna todos los cabos del tejido teórico hasta aquí desplegado.
 
-Los trabajos de @littleBalancingGeometryDensity2022 @mckenziePowerWeightedShortest2019 --- contemporáneos a Groisman et al --- consideran lo que ellos llaman "distancias de caminos mínimos pesadas por potencias" #footnote["power-weighted shortest-path distances" o PWSPDs por sus siglas en inglés], aplicándoles no a problemas de clasificación, sino de _clustering_ #footnote[i.e., de identificación de grupos en datos no etiquetados]. Las definiciones de ambos grupos son muy similares en espíritu, con una diferencia menor: la distancia microscópica que plantean Little et al no es la suma de las aristas pesadas por $q=alpha$ como en Bijral et al y Groisman et al, sino la raíz $alpha$-ésima de tal suma, en una especia de reversión de la distancia de Minkowski. Siendo la sustancia de ambos trabajos en esencia la misma, pasaremos directamente a la próxima sección --- nuestra propuesta original.
+Los trabajos de @littleBalancingGeometryDensity2022 @mckenziePowerWeightedShortest2019 --- contemporáneos a Groisman et al --- consideran lo que ellos llaman "distancias de caminos mínimos pesadas por potencias" #footnote["power-weighted shortest-path distances" o PWSPDs por sus siglas en inglés], aplicándoles no a problemas de clasificación, sino de _clustering_ #footnote[i.e., de identificación de grupos en datos no etiquetados]. Las definiciones de ambos grupos son muy similares en espíritu, con una diferencia menor: la distancia microscópica que plantean Little et al no es la suma de las aristas pesadas por $q=alpha$ como en Bijral et al y Groisman et al, sino la raíz $alpha$-ésima de tal suma, en una especie de reversión de la distancia de Minkowski. Siendo la sustancia de ambos trabajos en esencia la misma, pasaremos directamente a la próxima sección --- nuestra propuesta original.
 
 = Propuesta Original
 
@@ -2015,7 +2015,7 @@ Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la m
     ),
   )
 ]
-La clasificación dura con estimación de densidad por núcleos --- con distancia de Fermat o sin ella --- resulta ser superior a todas las alternativas en términos de exactitud --- ligeramente --- y $R^2$ --- por mucho. Encima de ello, #fkdc es todavía significativamente mejor en $R^2$ que #kdc por casi 5 puntos porcentualessalvo y consistentemente entoda las semillas salvo una particularmente negativa:
+La clasificación dura con estimación de densidad por núcleos --- con distancia de Fermat o sin ella --- resulta ser superior a todas las alternativas en términos de exactitud --- ligeramente --- y $R^2$ --- por mucho. Encima de ello, #fkdc es todavía significativamente mejor en $R^2$ que #kdc por casi 5 puntos porcentuales y consistentemente en todas las semillas, salvo una particularmente negativa:
 
 #figure(
   image("img/helices_0-r2-fkdc-vs-kdc.svg", height: 11em),
