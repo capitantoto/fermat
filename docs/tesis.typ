@@ -2315,11 +2315,11 @@ Asimismo, la grilla de $alpha in [1, 4]$ utilizada en nuestros experimentos podr
 
   Este anexo cataloga, con fines de transparencia y trazabilidad, el trabajo asistido por sistemas de inteligencia artificial (IA) realizado alrededor de esta tesis. Se incluye por dos motivos: registrar el flujo de trabajo declarado en `CLAUDE.md` --- según el cual la IA asistió en tareas de forma pero no de fondo --- y catalogar exploraciones tangenciales generadas por IA que exceden el alcance del cuerpo de esta monografía pero que quedan como pistas para investigación futura. Nada de lo consignado en este anexo debe interpretarse como contribución matemática original del autor, ni como conclusión validada de la tesis.
 
-  == Pases editoriales con Claude
+  #heading(numbering: none, level: 2)[Pases editoriales con Claude]
 
   Entre febrero y junio de 2026, se realizaron varios pases de corrección textual asistidos por _Claude_ (Anthropic), documentados en la historia de commits del repositorio bajo prefijos `errata:`, `estilo:`, `todo:`, `refactor:` y `bib:`. Los pases abordaron: revisión editorial general del texto (PR \#18), integración del anexo original de Resultados (PR \#17), recorte de `references.bib` a las entradas efectivamente citadas (PR \#21), resolución sistemática de nueve marcadores `TODO` pendientes en el cuerpo (PR \#23), balance de espacio en blanco mediante ajustes de altura de figuras (PR \#24), siete correcciones textuales de ortografía y concordancia identificadas por auditoría (PR \#25), y la presente redacción del anexo (PR \#26). El autor revisó y aprobó cada cambio antes de mergear; ningún commit modifica desarrollo matemático ni resultados experimentales.
 
-  == Sesión con "Fable 5": segunda versión mejorada
+  #heading(numbering: none, level: 2)[Sesión con "Fable 5": segunda versión mejorada]
 
   Con anterioridad a los pases con Claude referidos arriba, se ejecutó una sesión con otro sistema de IA --- referido internamente como _Fable 5_ --- bajo la consigna genérica de producir "una segunda versión mejorada" de la tesis. La sesión no llegó a integrarse al cuerpo por no ajustarse al criterio editorial declarado, pero produjo un volumen sustancial de material almacenado en `docs/sandbox/` (fuera del control de versiones). Durante la revisión final se auditó ese material y se identificaron tres tipos de aportes que merecen registro.
 
@@ -2329,7 +2329,7 @@ Asimismo, la grilla de $alpha in [1, 4]$ utilizada en nuestros experimentos podr
 
   Como _especulaciones teóricas no verificadas_ quedan una serie de documentos que exceden el fondo de esta monografía y contradicen la política declarada de no incluir contenido matemático generado por IA: `fermat-classifier-theory.md` propone una noción de _bandwidth efectiva_ compatible con la distancia de Fermat que no sigue la corrección de Abramson; `o2-risk-theorem.md` enuncia un "Teorema de separación" para brechas ambientes. Se registra su existencia por completitud, sin adoptar ninguna de sus afirmaciones.
 
-  == Descargo
+  #heading(numbering: none, level: 2)[Descargo]
 
   Todos los contenidos matemáticos originales, definiciones, demostraciones, elecciones de diseño experimental y análisis de resultados presentados en el cuerpo principal de esta tesis son propios del autor. El trabajo de la IA se limitó a asistencia en tareas de forma --- corrección ortográfica, sugerencias de estilo, formato Typst y resolución de tareas mecánicas --- verificadas caso por caso. Los materiales de sandbox referidos en este anexo se listan a título informativo; ninguna afirmación teórica ni resultado experimental de terceros generado por IA se endosa como propio.
 ]
