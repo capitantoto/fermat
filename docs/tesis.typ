@@ -2247,7 +2247,7 @@ Dataset sintético bidimensional con tres clases en forma de anteojos ($k = 3$, 
 
 === Datasets de alta dimensionalidad
 
-#figure(
+#wide_figure(width: 130%,
   image("img/anexo-hd-fkdc-vs-kdc.svg"),
   caption: flex-caption(
     [$R^2$ por semilla de #fkdc vs. #kdc en `digitos` ($D = 64$) y `mnist` ($D = 784$).],
@@ -2311,8 +2311,6 @@ Asimismo, la grilla de $alpha in [1, 4]$ utilizada en nuestros experimentos podr
 
 
 #if anexo-ia [
-  #pagebreak()
-
   #heading(numbering: none, level: 1)[Anexo: Disquisiciones con IA]
 
   Este anexo cataloga, con fines de transparencia y trazabilidad, el trabajo asistido por sistemas de inteligencia artificial (IA) realizado alrededor de esta tesis. Se incluye por dos motivos: registrar el flujo de trabajo declarado en `CLAUDE.md` --- según el cual la IA asistió en tareas de forma pero no de fondo --- y catalogar exploraciones tangenciales generadas por IA que exceden el alcance del cuerpo de esta monografía pero que quedan como pistas para investigación futura. Nada de lo consignado en este anexo debe interpretarse como contribución matemática original del autor, ni como conclusión validada de la tesis.
