@@ -2247,7 +2247,7 @@ Dataset sintético bidimensional con tres clases en forma de anteojos ($k = 3$, 
 
 === Datasets de alta dimensionalidad
 
-#figure(
+#wide_figure(width: 130%,
   image("img/anexo-hd-fkdc-vs-kdc.svg"),
   caption: flex-caption(
     [$R^2$ por semilla de #fkdc vs. #kdc en `digitos` ($D = 64$) y `mnist` ($D = 784$).],
