@@ -227,12 +227,12 @@
   #v(4em)
 
   #text(size: 17pt, weight: "bold")[
-    Distancia de Fermat en Clasificadores de Densidad por Núcleos
+    Distancia de Fermat en clasificadores de densidad por núcleos
   ]
 
   #v(3.5em)
 
-  Tesis presentada para optar al título de Magíster de la Universidad de Buenos Aires
+  Tesis presentada para optar al título de magíster de la Universidad de Buenos Aires
   en Estadística Matemática
 
   #v(2.5em)
@@ -246,14 +246,14 @@
 
 #v(0.3em)
 
-#text(weight: "bold")[Lugar de Trabajo:] Departamento de Matemática
-e Instituto de Cálculo, FCEN, UBA
+#text(weight: "bold")[Lugar de trabajo:] Departamento de Matemática
+e Instituto de Cálculo, Facultad de Ciencias Exactas y Naturales, UBA
 
 #v(0.6em)
 
-#text(weight: "bold")[Fecha de presentación del ejemplar:] 19 de Mayo de 2026
+#text(weight: "bold")[Fecha de presentación del ejemplar:] 19 de mayo de 2026
 
-#text(weight: "bold")[Fecha de Defensa:] #h(0.4em) #box(width: 5cm, stroke: (bottom: 0.5pt))
+#text(weight: "bold")[Fecha de defensa:] #h(0.4em) #box(width: 5cm, stroke: (bottom: 0.5pt))
 
 #v(3em)
 
