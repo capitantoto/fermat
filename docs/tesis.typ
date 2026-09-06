@@ -280,34 +280,9 @@ e Instituto de Cálculo, FCEN, UBA
 #align(center)[#text(size: 14pt, weight: "bold")[Resumen]]
 #v(0.5em)
 
-Los clasificadores basados en densidad son herramientas no paramétricas
-cuyo desempeño está dominado por la elección de la distancia ---y la
-euclídea, opción canónica, pierde poder discriminativo en alta dimensión.
-Sobre variedades de baja dimensión intrínseca embebidas en espacios
-ambientes de alta dimensión la distancia geodésica recobra significado,
-pero los métodos clásicos @pelletierKernelDensityEstimation2005
-@loubesKernelbasedClassifierRiemannian2008 exigen que la variedad sea
-conocida. Adoptamos la _distancia muestral de Fermat_
-@groismanNonhomogeneousEuclideanFirstpassage2022 ---un estimador de la
-geodésica basado en densidad que no requiere conocer la variedad ni su
-dimensión intrínseca--- y la usamos para extender el clasificador de
-densidad por núcleos (#kdc) y $k$-vecinos más cercanos a #fkdc y #fkn,
-publicados como biblioteca de código abierto compatible con `scikit-learn`
-(#link("https://github.com/capitantoto/fermat")). Evaluados
-sistemáticamente en 20 _datasets_, #fkdc obtiene el mejor $R^2$ mediano
-en 7 _datasets_ y #fkn en otros 3, con las mayores ganancias concentradas
-en regímenes de alta curvatura y muestreo ralo ---justamente aquellos
-donde el supuesto de ancho de banda de Pelletier deja de cumplirse. En
-regímenes bien muestreados el parámetro adicional de Fermat se vuelve
-funcionalmente intercambiable con el ancho de banda y las dos distancias
-arrojan resultados equivalentes, haciendo de la de Fermat una alternativa
-útil pero no universal a la euclídea.
-
 #v(1em)
 
-*Palabras clave:* clasificación supervisada, estimación de densidad por
-núcleos, variedades de Riemann, distancia de Fermat, distancias basadas en
-densidad, aprendizaje no paramétrico.
+*Palabras clave:* clasificación supervisada, estimación de densidad por núcleos, variedades de Riemann, distancia de Fermat, distancias basadas en densidad, aprendizaje de representaciones, aprendizaje no paramétrico.
 
 #v(1fr)
 
@@ -320,34 +295,9 @@ densidad, aprendizaje no paramétrico.
 #align(center)[#text(size: 14pt, weight: "bold")[Abstract]]
 #v(0.5em)
 
-Density-based classifiers are nonparametric tools whose performance is
-dominated by the choice of distance ---and the Euclidean distance, the
-canonical default, loses discriminative power in high dimensions. On
-low-dimensional manifolds embedded in high-dimensional space the
-geodesic distance is informative, but classical methods
-@pelletierKernelDensityEstimation2005
-@loubesKernelbasedClassifierRiemannian2008 require the manifold to be
-known. We adopt the sample Fermat distance
-@groismanNonhomogeneousEuclideanFirstpassage2022 ---a density-based
-estimator of the geodesic that requires neither the manifold nor its
-intrinsic dimension--- and use it to extend the kernel density
-classifier (#kdc) and $k$-nearest neighbours to #fkdc and #fkn,
-released as an open-source library compatible with the `scikit-learn`
-interface (#link("https://github.com/capitantoto/fermat")). Evaluated
-systematically on 20 datasets, #fkdc achieves the highest median $R^2$
-on 7 datasets and #fkn on 3 more, with the largest gains concentrated
-in high-curvature, sparsely-sampled regimes ---precisely those where
-Pelletier's bandwidth assumption breaks down. In well-sampled regimes
-the additional Fermat hyperparameter becomes functionally
-interchangeable with the bandwidth and the two distances yield
-equivalent results, making the Fermat distance a useful but not
-universal alternative to the Euclidean.
-
 #v(1em)
 
-*Keywords:* supervised classification, kernel density estimation, Riemannian
-manifolds, Fermat distance, density-based distances, non-parametric
-learning.
+*Keywords:* supervised classification, kernel density estimation, Riemannian manifolds, Fermat distance, density-based distances, representation learning, non-parametric learning.
 
 #v(1fr)
 
