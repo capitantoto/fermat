@@ -1577,10 +1577,9 @@ Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=
 #let plotting_seed = 1075
 #wide_figure(
   grid(
-    columns: 3, gutter: 4pt,
-    image("img/lunas_lo-scatter.svg"),
-    image("img/circulos_lo-scatter.svg"),
-    image("img/espirales_lo-scatter.svg"),
+    columns: 3,
+    gutter: 4pt,
+    image("img/lunas_lo-scatter.svg"), image("img/circulos_lo-scatter.svg"), image("img/espirales_lo-scatter.svg"),
   ),
   caption: flex-caption["Lunas", "Círculos" y "Espirales", con $d_x = 2, d_(MM) = 1$ y $s=#plotting_seed$][ "Lunas", "Círculos" y "Espirales" ],
 ) <fig-2>
@@ -1665,8 +1664,7 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
       stroke: 0pt,
       align: center + horizon,
       inset: (x: 0.5em, y: 0.25em),
-      image("img/" + dataset + "-scatter.svg", height: height),
-      text(size: 9pt)[#tabla_resumen],
+      image("img/" + dataset + "-scatter.svg", height: height), text(size: 9pt)[#tabla_resumen],
       image("img/" + dataset + "-r2-boxplot.svg", height: height),
       image("img/" + dataset + "-accuracy-boxplot.svg", height: height),
     ),
@@ -1711,10 +1709,11 @@ Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) apren
 Una inspección ocular a las fronteras de decisión revela las limitaciones de distintos algoritmos, siendo el caso de las espirales el más vistoso y pedagógico. #logr y #slr solo pueden dibujar fronteras "lineales", y como ninguna frontera lineal que corte la muestra logra dividirla en dos regiones con densidades de clase realmente diferentes, el algoritmo falla. #gnb falla de manera análoga, aunque su problema es otro - no lidia bien con distribuciones con densidades marginales muy similares.
 
 #let clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb")
-#wide_figure(width: 160%,
+#wide_figure(
+  width: 160%,
   grid(columns: 3, gutter: 4pt, ..clfs.map(clf => image(
-    "img/espirales_lo-" + clf + "-decision_boundary.svg",
-  ))),
+      "img/espirales_lo-" + clf + "-decision_boundary.svg",
+    ))),
   caption: flex-caption(
     [Fronteras de decisión de los nueve algoritmos evaluados sobre `espirales_lo` con semilla $s=#plotting_seed$. Nótese la incapacidad de #logr, #slr y #gnb para separar las clases, la aproximación rectangular de #gbt, y la nitidez de las fronteras de #fkdc y #svc.],
     [Fronteras de decisión en `espirales_lo`],
@@ -1752,11 +1751,13 @@ Según la #link("https://dle.rae.es/ablaci%C3%B3n")[RAE], "Del lat. tardío abla
     // column headers
     [], align(center)[*#kdc vs. #fkdc*], align(center)[*#kn vs. #fkn*],
     // rows: one per curve
-    ..curvas.map(c => (
-      rotate(-90deg)[#raw(c + "_lo")],
-      image("img/" + c + "_lo-kdc-fkdc-r2-scatter.svg"),
-      image("img/" + c + "_lo-kn-fkn-r2-scatter.svg"),
-    )).sum(),
+    ..curvas
+      .map(c => (
+        rotate(-90deg)[#raw(c + "_lo")],
+        image("img/" + c + "_lo-kdc-fkdc-r2-scatter.svg"),
+        image("img/" + c + "_lo-kn-fkn-r2-scatter.svg"),
+      ))
+      .sum(),
   ),
   caption: flex-caption(
     [Gráficos de dispersión de $R^2$ para #kdc (izq.) y #kn (der.) con (eje $y$) y sin (eje $x$) distancia de Fermat.],
@@ -1789,7 +1790,8 @@ Ahora bien, esto es solo en _un_ dataset, con _una_ semilla específica. ¿Se re
 
 #let semillas = (7354, 8527, 1188)
 
-#wide_figure(width: 150%,
+#wide_figure(
+  width: 150%,
   grid(
     columns: (auto, 1fr, 1fr, 1fr),
     gutter: 4pt,
@@ -1797,12 +1799,12 @@ Ahora bien, esto es solo en _un_ dataset, con _una_ semilla específica. ¿Se re
     // column headers (seeds)
     [], ..semillas.map(s => align(center)[*s=#s*]),
     // rows: one per curve
-    ..curvas.map(c => (
-      rotate(-90deg)[#raw(c + "_lo")],
-      ..semillas.map(s =>
-        image("img/" + c + "_lo-" + str(s) + "-fkdc-bandwidth-alpha-loss_contour.svg")
-      ),
-    )).sum(),
+    ..curvas
+      .map(c => (
+        rotate(-90deg)[#raw(c + "_lo")],
+        ..semillas.map(s => image("img/" + c + "_lo-" + str(s) + "-fkdc-bandwidth-alpha-loss_contour.svg")),
+      ))
+      .sum(),
   ),
   caption: flex-caption(
     [Superficies de pérdida para tres semillas $s in #semillas$ y cada uno de los tres datasets. El patrón log-lineal previamente observado se replica casi perfectamente en todos los casos.],
@@ -1870,7 +1872,9 @@ Consideremos ahora los mismos datasets que hasta ahora, pero muestreando las obs
 $ sigma_"lunas" = 0.5 quad sigma_"circulos" = 0.2 quad sigma_"espirales" = 0.2 quad. $
 
 #wide_figure(
-  grid(columns: 3, gutter: 4pt,
+  grid(
+    columns: 3,
+    gutter: 4pt,
     image("img/lunas_hi-scatter.svg", height: 9em),
     image("img/circulos_hi-scatter.svg", height: 9em),
     image("img/espirales_hi-scatter.svg", height: 9em),
@@ -1901,10 +1905,9 @@ El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los 
 
 #wide_figure(
   grid(
-    columns: 3, gutter: 4pt,
-    image("img/lunas-caida_r2.svg"),
-    image("img/circulos-caida_r2.svg"),
-    image("img/espirales-caida_r2.svg"),
+    columns: 3,
+    gutter: 4pt,
+    image("img/lunas-caida_r2.svg"), image("img/circulos-caida_r2.svg"), image("img/espirales-caida_r2.svg"),
   ),
   caption: flex-caption(
     [$R^2$ mediano por clasificador y dataset, comparado entre la variante con bajo (`_lo`) y alto (`_hi`) ruido en el muestreo. Se excluyen clasificadores con $R^2 approx 0$ en ambas variantes.],
@@ -1917,18 +1920,19 @@ Por último, veamos las fronteras de decisión de  #fkdc y los más competitivos
 #{
   let hi_clfs = (("fkdc", fkdc), ("gbt", gbt), ("svc", svc))
   let hi_datasets = ("lunas_hi", "circulos_hi", "espirales_hi")
-  wide_figure(width: 160%,
+  wide_figure(
+    width: 160%,
     grid(
       columns: (auto, 1fr, 1fr, 1fr),
       gutter: 4pt,
       align: horizon,
       [], ..hi_datasets.map(d => align(center)[*#raw(d)*]),
-      ..hi_clfs.map(((key, label)) => (
-        rotate(-90deg)[#label],
-        ..hi_datasets.map(d =>
-          image("img/" + d + "-" + key + "-decision_boundary.svg")
-        ),
-      )).sum(),
+      ..hi_clfs
+        .map(((key, label)) => (
+          rotate(-90deg)[#label],
+          ..hi_datasets.map(d => image("img/" + d + "-" + key + "-decision_boundary.svg")),
+        ))
+        .sum(),
     ),
     caption: flex-caption(
       [Fronteras de decisión para #fkdc, #gbt, #svc en regímenes de alto ruido, $s = #plotting_seed$. El $R^2$ de algunos pares `clasificador, dataset` no se logra distinguir del cero.],
@@ -2183,11 +2187,12 @@ Dataset sintético bidimensional con tres clases en forma de anteojos ($k = 3$, 
 
 #{
   let clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb")
-  wide_figure(width: 160%,
+  wide_figure(
+    width: 160%,
     grid(columns: 3, gutter: 4pt, ..clfs.map(clf => image(
-      "img/anteojos-" + clf + "-decision_boundary.svg",
-      height: 8em,
-    ))),
+        "img/anteojos-" + clf + "-decision_boundary.svg",
+        height: 8em,
+      ))),
     caption: flex-caption(
       [Fronteras de decisión de los nueve algoritmos evaluados sobre `anteojos` con semilla $s=#plotting_seed$. Se observa que #logr y #slr no logran separar las tres clases, mientras que los demás algoritmos alcanzan fronteras muy similares entre sí.],
       [Fronteras de decisión en `anteojos`],
@@ -2197,13 +2202,10 @@ Dataset sintético bidimensional con tres clases en forma de anteojos ($k = 3$, 
 
 === Datasets de alta dimensionalidad
 
-#wide_figure(width: 130%,
-  image("img/anexo-hd-fkdc-vs-kdc.svg"),
-  caption: flex-caption(
-    [$R^2$ por semilla de #fkdc vs. #kdc en `digitos` ($D = 64$) y `mnist` ($D = 784$).],
-    [$R^2$ de #fkdc vs. #kdc en alta dimensión],
-  ),
-)
+#wide_figure(width: 130%, image("img/anexo-hd-fkdc-vs-kdc.svg"), caption: flex-caption(
+  [$R^2$ por semilla de #fkdc vs. #kdc en `digitos` ($D = 64$) y `mnist` ($D = 784$).],
+  [$R^2$ de #fkdc vs. #kdc en alta dimensión],
+))
 
 === `digitos` ($k=10, D=64$)
 
@@ -2219,7 +2221,7 @@ La versión grande del problema de `digitos`, al dataset de `mnist` ($N = 800$, 
 
 A priori, nuestras tres propuestas de estimación --- #kdc, #fkdc y #fkn --- obtuvieron resultados a la par de métodos de primera línea tanto paramétricos (#svc) como no paramétricos (#gbt). Al evaluarlos por "exactitud", a pesar de estar entrenados para maximizar la log-verosimilitud, los métodos resultaron competitivos aunque sin mejoras significativas. Al evaluarlos por $R^2$, sí se observaron excelentes rendimientos para toda la familia $cal(K)$: #fkdc obtuvo el máximo $R^2$ mediano en 7 de los 20 datasets evaluados, y #fkn en otros 3. #kdc resultó óptimo en 2 datasets adicionales, consolidando la técnica del clasificador de densidad por núcleos como competitiva por sí misma.
 
-Ya existía una implementación previa de la Distancia de Fermat #link("https://www.aristas.com.ar/fermat/fermat.html")[como librería de Python], pero dado el extenso número de _datasets_ sobre los que evaluamos los clasificadores, nos inclinamos por una reimplementación propia, 
+Ya existía una implementación previa de la Distancia de Fermat #link("https://www.aristas.com.ar/fermat/fermat.html")[como librería de Python], pero dado el extenso número de _datasets_ sobre los que evaluamos los clasificadores, nos inclinamos por una reimplementación propia,
 - con capacidad de estimación "out-of-sample",
 - métodos mínimamente eficientes basados en "primitivos" --- de `numpy` y `scipy` --- bien optimizados y
 - compatible con el marco de métricas aceptado por los clasificadores de `scikit-learn`, para extenderlos con Distancia de Fermat pero mantener la capacidad de evaluación sistemática comparada.
