@@ -972,9 +972,7 @@ donde los autores construyen un clasificador para un objetivo de dos clases $GG 
 $
   hat(G)(X) = cases(1 "si" hat(Pr)(G=1|X) > hat(Pr)(G=0|X), 0 "si no")
 $
-que está de acuerdo con el estimador del clasificador de Bayes basado en densidad por núcleos para $K$ clases propuesto @kdc-duro.
-
-Una notación simplificada surge de estudiar la expresión que el clasificador intenta maximizar. Para todo $k in [K]$,
+que está de acuerdo con el estimador del clasificador de Bayes basado en densidad por núcleos para $K$ clases propuesto en @kdc-duro cuando $K=2$. En el caso más general con $K > 2$ clases,
 $
   hat(Pr)(G=k|X) &= (hat(f)_k (x) times hat(pi)_k) / underbrace((sum_(k in [K]) hat(f)_k (x) times hat(pi)_k), =c) = c^(-1) times hat(f)_k (x) times hat(pi)_k
 $
@@ -993,15 +991,12 @@ $
   hat(G)(p) = arg max_(k in [K]) sum_(i=1)^N ind(G_i = k) K_h (p,X_i)
 $ <clf-kde-variedad>
 para todo $p in MM$ con $K_h_n$ un núcleo isotrópico con sucesión de ventanas $h_n$ @loubesKernelbasedClassifierRiemannian2008[Ecuación 3.1].
-
-La belleza de esta regla es que combina "sin costuras" el peso de los _priors_ $hat(pi)_i$ --- a través de los elementos no nulos de la suma cuando $ind(G_i = k) = 1$) --- con el peso de la "evidencia" --- vía su cercanía "suavizada" al punto de interés $K_h (p, X_i)$.
-
 Los autores toman de @devroyeProbabilisticTheoryPattern1996 la siguiente definición de _consistencia_:
 
 #defn([consistencia de un clasificador @devroyeProbabilisticTheoryPattern1996[§6.1]])[
-  Sea $hat(G)_1, dots, hat(G)_n$ una secuencia de clasificadores #footnote[A veces también llamada una _regla_ de clasificación] de modo que el $n-$ésimo clasificador está construido con las primeras $n$ observaciones de la muestra $XX, bu(g)$. Sea $L_n$ la pérdida $0-1$ que alcanza $hat(G)_n$, y $L^*$ la pérdida que alcanza el clasificador de Bayes de @clf-bayes.
+  Sea ${hat(G)_n : n in NN}$ una secuencia de clasificadores #footnote[A veces también llamada una _regla_ de clasificación] de modo que el $n-$ésimo clasificador está construido con las primeras $n$ observaciones de la muestra $XX, bu(g)$. Sea $L_n = ind(hat(G)_n != G_n)$ la pérdida $0-1$ para $hat(G)_n$, y $L^*$ la pérdida que alcanza el clasificador de Bayes de @clf-bayes.
 
-  Diremos que la regla ${hat(G)_i}_(i=1)^n$ es (débilmente) consistente --- o asintóticamente eficiente en el sentido del riesgo de Bayes --- para cierta distribución $(X, G)$ si cuando $n-> oo$
+  Diremos que la regla ${hat(G)_n}$ es (débilmente) consistente --- o asintóticamente eficiente en el sentido del riesgo de Bayes --- para cierta distribución $(X, G)$ si cuando $n-> oo$
   $
     EE L_n = Pr(hat(G)_n (X) != G) -> L^*
   $
@@ -1015,16 +1010,17 @@ En el trabajo, se prueba que el clasificador de @clf-kde-variedad es fuertemente
 
 == Aprendizaje de distancias
 
-La hipótesis de la variedad nos ofrece un marco teórico en el que abordar la clasificación en alta dimensión, y encontramos en la literatura que la estimación de densidad por núcleos en variedades de Riemann compactas sin frontera está estudiada y tiene buenas garantías de convergencia. Por alentador que resulte, nos resta un problema fundamental: _no suele ser conocida la variedad que soporta las $X$_. Salvo que los datasets estén generados sintéticamente o el objeto de estudio cuente con un dominio bien entendido y formalizable, tendremos problemas tanto para definir adecuadamente la dimensión intrínseca $d_MM$ y la distancia $d_g$ en #MM.
+La hipótesis de la variedad nos ofrece un marco teórico en el que abordar la clasificación en alta dimensión, y encontramos en la literatura que la estimación de densidad por núcleos en variedades de Riemann compactas sin frontera está estudiada y tiene buenas garantías de convergencia. Por alentador que resulte, ya notamos una primera dificultad --- el cómputo de $theta_p (q)$ --- y nos resta una segunda: _la variedad que soporta las $X$ no suele ser conocida_. Salvo que los datasets estén generados sintéticamente o el objeto de estudio cuente con un dominio bien entendido y ya formalizado, tendremos problemas tanto para definir adecuadamente la dimensión intrínseca $d_MM$ como la distancia $d_g$ en #MM.
 
 #figure(caption: flex-caption(
-  [Data espacial con dimensiones bien definidas. (izq.) Los datos geoespaciales están sobre la corteza terrestre, que es aproximadamente la $2-$esfera $S^2 in RR^3$ que representa la frontera de nuestra "canica azul" , una $3-$bola. (der.) La clasificación clásica de Hubble distingue literalmente _variedades_ "elípticas","espirales" e "irregulares" de galaxias .#footnote[La categoriación completa es más compleja, con _outliers_ cuando #link("https://astronomy.stackexchange.com/questions/32947/what-decides-the-shape-of-a-galaxy")[distintas galaxias interactúan entre sí], como las #link("https://es.wikipedia.org/wiki/Galaxias_Antennae")[Antennae]. La #link("https://en.wikipedia.org/wiki/Spacetime_topology")[topología del espacio-tiempo] es un tópico de estudio clave en la relatividad general.]],
+  [Data espacial en variedades bien definidas. (izq.) Los datos geoespaciales están sobre la corteza terrestre, que es aproximadamente la $2-$esfera $S^2 in RR^3$ que representa la frontera de nuestra "canica azul" , una $3-$bola. (der.) La clasificación clásica de Hubble distingue literalmente _variedades_ "elípticas","espirales" e "irregulares" de galaxias de acuerdo a cómo se orientan sus estrellas. #footnote[La categoriación completa es más compleja, con _outliers_ cuando #link("https://astronomy.stackexchange.com/questions/32947/what-decides-the-shape-of-a-galaxy")[distintas galaxias interactúan entre sí], como las #link("https://es.wikipedia.org/wiki/Galaxias_Antennae")[Antennae]. La #link("https://en.wikipedia.org/wiki/Spacetime_topology")[topología del espacio-tiempo] es un tópico de estudio clave en la relatividad general.]],
   "Data espacial con dimensiones bien definidas.",
 ))[
   #grid(
     columns: (auto, auto),
     column-gutter: 1em,
-    image("img/blue-marble.jpg", height: 20%), image("img/tipos-de-galaxia-secuencia-hubble.png"),
+    box(radius: 0.5em, clip: true, image("img/blue-marble.jpg", height: 20%)),
+    box(radius: 0.5em, clip: true, image("img/tipos-de-galaxia-secuencia-hubble.png")),
   )
 ]
 
@@ -1032,23 +1028,23 @@ La hipótesis de la variedad nos ofrece un marco teórico en el que abordar la c
 #let greendot = math.class("normal", circle(radius: 2.5pt, fill: green.lighten(60%), stroke: 1pt + green))
 #let yellowdot = math.class("normal", circle(radius: 2.5pt, fill: yellow.lighten(60%), stroke: 1pt + yellow))
 
-Considere, por caso, el diagrama de @variedad-u, la curva $cal(U) subset RR^2, d_cal(U) =1$.
+Considere, por caso, el diagrama de @variedad-u, la curva $cal(U) subset RR^2$.
 
 #figure(
-  caption: flex-caption[La curva $cal(U), thin d_(cal(U)) = 1$ embebida en $RR^2$. En el espacio ambiente, $d(greendot, reddot thin |RR^2) < d(greendot, yellowdot thin | RR^2)$. Trasladándose _sobre_ $cal(U)$, #box[$thin d(greendot, reddot thin |cal(U)) > d(greendot, yellowdot thin | cal(U)) approx 1/2 d(greendot, reddot thin |cal(U))$] .][Variedad $cal(U)$ embebida en $RR^2$],
+  caption: flex-caption[La curva $cal(U)$ de dimensión $d_(cal(U)) = 1$ embebida en $RR^2$. En el espacio ambiente, $d(greendot, reddot thin |RR^2) < d(greendot, yellowdot thin | RR^2)$. Trasladándose _sobre_ $cal(U)$, #box[$thin d(greendot, reddot thin |cal(U)) > d(greendot, yellowdot thin | cal(U)) approx 1/2 d(greendot, reddot thin |cal(U))$] .][Variedad $cal(U)$ embebida en $RR^2$],
 )[#image("img/variedad-u.svg", height: 18em)] <variedad-u>
 
-A los fines de estimar la densidad de $X$ soportada en cierta variedad #MM, resulta clave es contar con una noción de _distancia_ apropiada en #MM, que raramente coincidirá con  la propia del espacio ambiente.
+A los fines de estimar la densidad de $X$ soportada en cierta variedad #MM, hace falta una noción de _distancia_ apropiada en #MM, pues como ya dijimos, raramente bastará con la propia del espacio ambiente.
 
-La distancia entre dos puntos $p$ y $q$ de #MM es la longitud de la curva geodésica que los une; la longitud de una curva se obtiene integrándola en toda su extensión; integrarla implica conocer el espacio tangente y la métrica $g$ en toda su extensión. Por ende, "conocer la variedad" $(MM, g) = sop X$ y "computar la distancia $dg$ inducida por su métrica $g$" son esencialmente la misma tarea.
 
-En el ejemplo de @variedad-u, con  tan solo $n=3$ observaciones es imposible distinguir $cal(U)$, pero con una muestra #XX "suficientemente grande", es de esperar que los propios datos revelen la forma de la variedad; encima de esta observación es que se edifica la teoría de "aprendizaje de distancias" a partir de la propia muestra.
+En el ejemplo de @variedad-u, con  tan solo $n=3$ observaciones es imposible distinguir $cal(U)$, pero con una muestra #XX "suficientemente grande", es de esperar que los propios datos revelen la forma de la variedad. Sobre esta idea se edifica la teoría de "aprendizaje de distancias".
 
-La distancia nos da entonces una _representación_ útil de cuán similares son dos puntos: a menor distancia, mayor similitud. Por ello, la estimación de variedades es fundamental al _aprendizaje de representaciones_. En una extensa reseña de dicho campo, @bengioRepresentationLearningReview2013 así lo explican:
+
+La distancia entre dos puntos es una _representación_ útil de cuán similares son: a menor distancia, mayor similitud. Por ello, la estimación de variedades es fundamental al _aprendizaje de representaciones_. En una extensa reseña de dicho campo, @bengioRepresentationLearningReview2013 así lo explican:
 
 
 #quote(attribution: [ @bengioRepresentationLearningReview2013[§8]])[
-  (...) [L]a principal tarea del aprendizaje no-supervisado se considera entonces como el modelado de la estructura de la variedad que sustenta los datos. La representación asociada que se aprende puede asociarse con un sistema de coordenadas intrínseco en la variedad embebida.
+  $[dots]$ La principal tarea del aprendizaje no-supervisado se considera entonces como el modelado de la estructura de la variedad que sustenta los datos. La representación asociada que se aprende puede asociarse con un sistema de coordenadas intrínseco en la variedad embebida.
 ]
 
 
@@ -1067,18 +1063,20 @@ nos devuelve la "mejor" #footnote[cuya definición precisa obviamos.] representa
   ),
 )
 
-Ya se dijo que las variedades que soporten muestras #XX "silvestres" seguramente sean fuertemente no-lineales. Sin embargo, todavía hay lugar para PCA en esta aventura: cuando el dataset tiene dimensión verdaderamente muy alta, un proceso razonable consistirá en primero disminuir la dimensión a un subespacio lineal en que las distancias relativas sean casi idénticas a las del espacio original usando PCA, y recién en este subespacio aplicar técnicas más complejas de aprendizaje de distancias
+Ya se dijo que las variedades que soportan variables aleatorias "silvestres" #footnote[i.e. medidas "en el campo", por contraposición a aquellas definidas y generadas digitalmente según leyes conocidas] seguramente sean fuertemente no-lineales. Sin embargo, todavía hay lugar para PCA en esta aventura: cuando el dataset tiene dimensión verdaderamente muy alta, un proceso razonable consistirá en primero disminuir la dimensión a un subespacio lineal en que las distancias relativas sean casi idénticas a las del espacio original usando PCA, y recién en este subespacio aplicar técnicas más complejas de aprendizaje de distancias.
 
-Aprovechando que al menos las observaciones de entrenamiento son puntos conocidos de la variedad #footnote[_módulo_ el error de medición y/o el efecto de covariables no medidas], y que en la variedad el espacio es _localmente euclídeo_, los autores de @vincentManifoldParzenWindows2002 parten del estimador de densidad por núcleos multivariado de @kde-mv pero en lugar de utilizar un núcleo $KH$ fijo en cada observación $x_i$, se proponen primero hacer análisis de componentes principales de la matriz de covarianza _pesada_ estimada en cada punto,
+=== Aprendizaje del espacio tangente
+
+Aprovechando que al menos las observaciones de entrenamiento son puntos conocidos de la variedad  #footnote["módulo" el error de medición, claro está], y que en la variedad el espacio es _localmente euclídeo_, #cite(<vincentManifoldParzenWindows2002>, form: "prose") parten del estimador de densidad por núcleos multivariado de @kde-mv pero en lugar de utilizar un núcleo $KH$ fijo en cada observación $x_i$, se proponen hacer análisis de componentes principales en un vecindario de cada observación $x_i$. En lugar de definir un vecindario "duro" (de $k$ observaciones o radio $epsilon$), definen un "vecindario suave" según $cal(K)$, una medida de cercanía en el espacio ambiente tal como la densidad normal multivariada $Phi$:
 $
   hat(SS)_cal(K)_i = hat(SS)_cal(K)(x_i) = (sum_(j in [N] - i) cal(K)(x_i, x_j) (x_j - x_i) (x_j - x_i)^T )/(sum_(j in [N] - i) cal(K)(x_i, x_j))
 $
-donde $cal(K)$ es alguna medida de cercanía en el espacio ambiente (e.g. la densidad normal multivariada $Phi$ ya mencionada), con lo cual la estimación de densidad resulta:
+. La estimación de densidad asociada resulta:
 $
   hat(f) (x) & = N^(-1) sum_(i=1)^N K_( hat(SS)_cal(K)_i) (x, x_i) \
              & = N^(-1) sum_(i=1)^N abs(det hat(SS)_cal(K)_i)^(-1/2) K( hat(SS)_(cal(K)_i)^(-1/2) (x - x_i))
 $
-Ahora bien, computar una $hat(SS)_cal(K)_i$  para cada una de las $N$ observaciones, más su inversa y la "raíz cuadrada" de esta última es computacionalemnte muy costoso, por lo que los autores agregan un refinamiento: si la variedad en cuestión es $d-$dimensional, es de esperar que las direcciones principales a partir de la $d+1$ --- ésima sean "negligibles" #footnote[la sugerente metáfora que usan en el trabajo, es que en lugar de ubicar una "bola" de densidad alrededor de cada observación $x_i$, quieren ubicar un "panqueque" tangente a la variedad] en lugar computar las componentes principales de $hat(SS)_cal(K)_i$, simplemente:
+Ahora bien, computar una $hat(SS)_cal(K)_i$  para cada una de las $N$ observaciones, más su inversa y la "raíz cuadrada" de esta última es muy costoso, por lo que los autores agregan un refinamiento: si la variedad en cuestión es $d-$dimensional, es de esperar que las direcciones principales a partir de la $d+1$ --- ésima sean "negligibles" #footnote[la sugerente metáfora que usan en el trabajo, es que en lugar de ubicar una "bola" de densidad alrededor de cada observación $x_i$, quieren ubicar un "panqueque" tangente a la variedad]. En lugar de computar las componentes principales de $hat(SS)_cal(K)_i$,
 + fijan de antemano la dimensión $d$ esperada para la variedad,
 + se quedan con las $d$ direcciones principales #footnote[en la práctica, las obtienen usando SVD --- descomposición en valores singulares @hastieElementsStatisticalLearning2009[§3, Eq. 45, p. 64]],
 + "ponen en cero" el resto y
@@ -1087,9 +1085,9 @@ Ahora bien, computar una $hat(SS)_cal(K)_i$  para cada una de las $N$ observacio
 #v(1em)
 
 La aproximación resultante #box[$hat(SS)_i = f(hat(SS)_cal(K)_i) + sigma^2 bu(I)$] es mucho menos costosa de invertir, y tiene una interpretación geométrica bastante intuitiva en cada punto.
-Usando el mismo clasificador basado en la regla de Bayes de @clf-bayes que ya mencionamos, obtienen así resultados superadores a los de @kde-mv con $HH = h^2 bu(I)$. Hemos de notar, sin embargo, dos dificultades:
-- no es obvio cuál debería ser la dimensión intrínseca $d$ cuando la variedad es desconocida, y
-- no es suficiente para computar KDE en variedades según @kde-variedad, pues $hat(SS)_i$ solo aproxima el tensor métrico $g$ en cada $x_i$, y para computar $theta_p (q)$ necesitamos conocer $g$ _en todo punto_. #footnote[El grupo de investigación de Bengio, Vincent, Rifai et ales continuó trabajando estos estimadores, con especial énfasis en la necesidad de aprender una geometría _global_ de la variedad para evitar el crecimiento exponencial de tamaño muestral que exigen los métodos locales como KDE en alta dimensión o variedades muy "rugosas", pero a partir de aquí su camino se desvía del de esta monografía. Una brevísima reseña de lo que _no_ cubriremos: en @bengioNonLocalManifoldParzen2005 se agregan restricciones globales a la estimación de los núcleos punto a punto y los computan simultáneamente usando redes neuronales; en @rifaiManifoldTangentClassifier2011 se aprende explícitamente un atlas que luego usan para clasificación con TangentProp @simardTangentPropFormalism1991. Este último propone una modificación del algoritmo de _backpropagation_ típico de redes neuronales, para aprender una representación que conserve las "direcciones tangentes" a las observaciones de #XX.]
+Usando el mismo clasificador basado en la regla de Bayes de @clf-bayes que ya mencionamos, obtienen así resultados superadores a los de @kde-mv con $HH = h^2 bu(I)$. EL método es intuitivo e ingenioso, pero todavía consta de dos dificultades:
+- no es obvio cuál debería ser la dimensión intrínseca $d$ del paso (1) cuando la variedad es desconocida
+- el subespacio generado por los primeros $d$ autovectores de la matriz de covarianza local a $x_i$ aproximan el espacio tangente $T_(x_i)MM$, pero no dicen nada de cómo es $T_p MM$ en otros puntos. #footnote[El grupo de investigación de Bengio, Vincent, Rifai et ales continuó trabajando estos estimadores, con especial énfasis en la necesidad de aprender una geometría _global_ de la variedad para evitar el crecimiento exponencial de tamaño muestral que exigen los métodos locales como KDE en alta dimensión o variedades muy "rugosas", pero a partir de aquí su camino se desvía del de esta monografía. Una brevísima reseña de lo que _no_ cubriremos: en #cite(<bengioNonLocalManifoldParzen2005>, form: "prose") se agregan restricciones globales a la estimación de los núcleos punto a punto y los computan simultáneamente usando redes neuronales; en #cite(<rifaiManifoldTangentClassifier2011>, form: "prose") se aprende explícitamente un atlas que luego usan para clasificación con TangentProp @simardTangentPropFormalism1991. Este último propone una modificación del algoritmo de _backpropagation_ típico de redes neuronales, para aprender una representación que conserve las "direcciones tangentes" a las observaciones de #XX.]
 
 En un trabajo contemporáneo a @vincentManifoldParzenWindows2002, "Charting a Manifold" @brandChartingManifold2002, el autor encara frontalmente las limitaciones recién mencionadas, en tres etapas:
 + estimar la dimensión intrínseca de la variedad $d_MM$; luego
@@ -1098,7 +1096,7 @@ En un trabajo contemporáneo a @vincentManifoldParzenWindows2002, "Charting a Ma
 
 #v(1em)
 
-El procedimiento para estimar $d_MM$ es ingenioso, pero costoso. Sean $XX = (x_1^T, dots, x_N^T)$ $N$ observaciones $p-$dimensionales muestreadas de una distribución en $(MM, g), d_MM < p$ con algo de ruido _isotrópico_ #footnote[Del griego _iso-_, "igual" y _-tropos_, "dirección"; "igual en todas las direcciones"] $p-$dimensional. Dada una bola $B_r (q)$ centrada en un punto cualquiera $q in #MM$, consideremos la tasa $t(r)$ a la que incorpora observaciones vecinas en a medida que crece $r$. Cuando $r$ está en la escala del ruido isotrópico, la bola incorpora puntos rápidamente, pues los hay en todas las direcciones. A medida que $r$ alcanza la escala en la que el espacio es localmente análogo a $RR^p$, la incorporación de nuevos puntos disminuye, pues solo habrá nuevas observaciones en las $d_MM$ direcciones tangentes a $q$. Si $r$ sigue creciendo la bola $B_r (q)$ eventualmente alcanzará la escala de la _curvatura_ de la variedad, momento en el que comenzará a acelerarse nuevamente la incorporación de puntos. Analizando $arg min_r t(r)$ podemos identificar la dimensión intrínseca de la variedad. #footnote[Más precisamente, el autor utiliza otra función de $r$, $c(r)$ que se _maximiza_ cuando $r approx 1/d$, y evalúa las bondades y dificultades de estimar $d_MM$ tanto punto a punto como globalmente en toda la variedad.]
+El procedimiento para estimar $d_MM$ es tanto ingenioso como costoso de computar. Sean $XX = (x_1^T, dots, x_N^T)$ $N$ observaciones $p-$dimensionales muestreadas de una distribución en $(MM, g)$ con $d_MM < p$ con algo de ruido _isotrópico_ #footnote[Del griego _iso-_, "igual" y _-tropos_, "dirección"; "igual en todas las direcciones"] $p-$dimensional. Dada una bola $B_r (q)$ centrada en un punto cualquiera $q in #MM$, consideremos la tasa $t(r)$ a la que incorpora observaciones vecinas en a medida que crece $r$. Cuando $r$ está en la escala del ruido isotrópico, la bola incorpora puntos rápidamente, pues los hay en todas las direcciones. A medida que $r$ alcanza la escala en la que el espacio es localmente análogo a $RR^p$, la incorporación de nuevos puntos disminuye, pues solo habrá nuevas observaciones en las $d_MM$ direcciones tangentes a $q$. Si $r$ sigue creciendo la bola $B_r (q)$ eventualmente alcanzará la escala de la _curvatura_ de la variedad, momento en el que comenzará a acelerarse nuevamente la incorporación de puntos. Analizando $arg min_r t(r)$ podemos identificar la dimensión intrínseca de la variedad. #footnote[Más precisamente, el autor utiliza otra función de $r$, $c(r)$ que se _maximiza_ cuando $r approx 1/d$. Además, evalúa las bondades y dificultades de estimar $d_MM$ tanto punto a punto como globalmente en toda la variedad.]
 
 #v(1em)
 
@@ -1118,11 +1116,11 @@ El procedimiento para estimar $d_MM$ es ingenioso, pero costoso. Sean $XX = (x_1
   ))),
 )
 
-Estimada $d_MM$, los pasos siguientes no son menos complejos. Por un lado, se plantea un sistema de ecuaciones para obtener _al mismo tiempo_ todos los entornos coordenados centrados en cada observación minimizando la _divergencia_ entre $SS_j$ vecinos
+Estimada $d_MM$, los pasos siguientes no son menos complejos. Por un lado, se plantea un sistema de ecuaciones para obtener _simultáneamente_ todos los entornos coordenados centrados en cada observación minimizando una medida de _divergencia_ entre $SS_j$ vecinos
 #footnote[
-  A tal fin, modela la muestra como una "mezcla de $N$ Gaussianas"  --- _gaussian mixture modelling_, GMM por sus siglas en inglés --, con $mu_i = x_i forall i in [N]$, y resuelve simultáneamente $SS_i forall i in [N]$. Aquí "divergencia" tiene un significado preciso que obviamos, pero intuitivamente, representa el "costo" --- la variación --- que uno encuentra cuando quiere representar un punto $a$ del vecindario $U$ de $x_i$, en las coordenadas correspondientes a un vecindario $V$ de $x_j$. Se puede mostrar que el cociente entre las densidades de $a$ en ambos sistemas coordenados --- la #link("https://en.wikipedia.org/wiki/Cross-entropy")[entropía cruzada] entre $cal(N)(x_i, SS_i)$ y $cal(N)(x_j, SS_j)$ --- es la divergencia que se busca minimizar.]. Finalmente, han de encontrar una _conexión_ entre los entornos coordenados de cada observación, de manera que se puedan definir coordenadas para _cualquier_ punto de la variedad y con ellas formar un atlas diferenciable.
+  A tal fin, modela la muestra como una "mezcla de $N$ Gaussianas"  --- _gaussian mixture modelling_ o "GMM" por sus siglas en inglés ---, con $mu_i = x_i forall i in [N]$, y resuelve simultáneamente $SS_i forall i in [N]$. El término "divergencia" tiene aquí un significado preciso que obviamos, pero intuitivamente representa el "costo" o "error" que resulta de querer representar un punto $a$ del vecindario $U$ de $x_i$, en las coordenadas correspondientes a un vecindario $V$ de $x_j$.]. Finalmente, han de encontrar una _conexión_ entre los entornos coordenados de cada observación, de manera que se puedan definir coordenadas para _cualquier_ punto de la variedad y con ellas formar un atlas diferenciable.
 
-Una _conexión_ @docarmoRiemannianGeometry1992 es otro término de significado muy preciso en geometría riemanniana que aquí usamos coloquialmente. Es un _objeto geométrico_ que _conecta_ espacios tangentes cercanos, describiendo precisamente cómo estos varían a medida que uno se desplaza sobre la variedad, y permite entonces _diferenciarlos_ para computar $g_p$ y la métrica inducida en cualquier punto $p in MM$. Desde ya que con tal estructura es posible calcular $theta_p (q) forall p, q in MM$, pero a esta altura, hemos reemplazado el de-por-sí difícil problema original --- encontrar una buena representación de baja dimensión #MM --- por uno _muy difícil_: encontrar la dimensión intrínseca, un atlas diferenciable y su conexión global para una variedad desconocida. El proceso es sumamente interesante, pero complejiza en lugar de simplificar nuestro desafío inicial.
+Una _conexión_ @docarmoRiemannianGeometry1992 es otro término de significado muy preciso en geometría riemanniana que aquí usamos coloquialmente. Es un _objeto geométrico_ que _conecta_ espacios tangentes cercanos, describiendo precisamente cómo estos varían a medida que uno se desplaza sobre la variedad, y permite entonces _diferenciarlos_ para computar $g_p$ y la métrica inducida en cualquier punto $p in MM$. Con tal estructura es posible calcular $theta_p (q) forall p in MM$, pero a esta altura, hemos reemplazado el de-por-sí difícil problema original --- encontrar una buena representación de baja dimensión #MM --- por uno tal vez aún más  _muy difícil_: encontrar la dimensión intrínseca, un atlas diferenciable y su conexión global para una variedad desconocida. El proceso es sumamente interesante, pero complejiza en lugar de simplificar nuestro desafío inicial.
 
 === Isomap
 
