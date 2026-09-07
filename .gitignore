@@ -25,6 +25,8 @@ configs
 infos
 runs
 **/sandbox/*
+admin
+jurado
 # Bulk output from fkdc/viz.py (root-level scratch folders)
 /img/
 /data/
