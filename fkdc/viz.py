@@ -508,6 +508,8 @@ if __name__ == "__main__":
     )
     fig, ax = plt.subplots(figsize=(12, 4), layout="tight")
     df_maldicion.set_index(["d", "h"]).unstack()["h**d"].plot(ax=ax)
+    ax.set_xlabel("dimensión $d$")
+    ax.set_ylabel("proporción esperada")
     guardar_fig(fig, dir_imagenes / "curse-dim.svg")
 
     # comparación de kernels (gaussiano vs tophat) para seminario-modesto
