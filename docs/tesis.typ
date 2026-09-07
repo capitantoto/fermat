@@ -586,31 +586,31 @@ Uno estaría perdonado por suponer que el problema de estimar densidades en alta
   Sean $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d), thick i in [N]$, y consideremos la estimación de la densidad en el origen, $hat(f)(bu(0))$. Suponga que el núcleo $K_(HH)$ es un "núcleo producto" basado en la distribución univariada $"Uniforme"(-1, 1)$, y $HH = h^2 bu(I)$. Derive una expresión para la proporción esperada de puntos incluidos dentro del soporte del núcleo $KH$ para $(h, d)$ arbitrarios.
 ]
 
-El "núcleo producto" multivariado basado en la ley $"Uniforme"(-1, 1)$ evaluado alrededor del origen es:
+El "núcleo producto" $d-$variado basado en cierta ley univariada, no es más que el producto de $d$ densidades univariadas como aquell. Para la  $"Uniforme"(-1, 1)$ el núcleo evaluado en el origen $x_0 = 0$ es:
 $
-  K(x - 0)= K(x) = product_(i = 1)^d ind(-1 <= x_i <= 1) = ind(inter.big_(i=1)^d thick abs(x_i) <= 1) \
+  K(x - x_0) & = K(x) = product_(i = 1)^d 1/2 ind(-1 <= x_i <= 1) \
+             & = 2^(-d) ind(inter.big_(i=1)^d thick abs(x_i) <= 1) \
 $
 De la @kde-mv y el hecho de que $det HH = h^(2d); thick HH^(-1/2) = h^(-1) bu(I)$, se sigue que
 $
   KH(x) & = abs(h^(2d))^(-1/2) K(h^(-1)bu(I) x) = h^(-d) K(x/h) \
-        & = h^(-d) ind(inter.big_(i=1)^d thick abs(x_i / h) <= 1) = h^(-d) ind(inter_(i=1)^d thick abs(x_i) <= h) \
-        & = h^(-d) ind(x in [-h, h]^d)
+        & = (2h)^(-d) ind(inter.big_(i=1)^d thick abs(x_i / h) <= 1) = (2h)^(-d) ind(inter_(i=1)^d thick abs(x_i) <= h) \
+        & = (2h)^(-d) ind(x in [-h, h]^d)
 $
-De modo que $sop KH = [-h, h]^d$, y ahora nos resta encontrar la esperanza. Como las componentes de una ley uniforme multivariada son independientes entre sí,
+De modo que $sop KH = [-h, h]^d$. Como la distribución de las $X_i$ es _uniforme_ en su dominio, su densidad es constante y la proporción esperada de puntos es una simple proporción:
 $
-  Pr(X in [-h, h]^d) & = product_(i=1)^d Pr(X_i in [-h, h]) \
-                     & = Pr(-h <= X_1 <= h)^d \
-                     & = [(h - (-h))/(1-(-1))]^d = h^d quad square
+  Pr(X in [-h, h]^d) & = "Vol"(sop K_HH) / "Vol"([-1,1]^d) \
+                     & = (h - (-h))^d/(1-(-1))^d = h^d quad square
 $
 
 #let h = 0.5
 #let d = 20
 
-Para $h =#h, d=#d, thick Pr(X in [-#h,#h]^#d) = #h^(-#d) approx #calc.round(calc.pow(h, d), digits: 8)$, ¡menos de uno en un millón! En general, la caída es muy rápida, aún para valores altos de $h$. Si $X$ representa un segundo de audio muestreado respetando el estándar _mínimo_ para llamadas telefónicas  #footnote[De Wikipedia: La tasa #link("https://en.wikipedia.org/wiki/Digital_Signal_0")[DS0], o _Digital Signal 0_, fue introducida para transportar una sola llamada de voz "digitizada". La típica llamada de audio se digitiza a $8 "kHz"$, o a razón de 8.000 veces por segundo.], tiene $d=8000$. En tal espacio ambiente, aún con $h=0.999$, $Pr(dot) approx #calc.round(calc.pow(0.999, 8000), digits: 6)$, o 1:3.000.
+Para $h =#h, d=#d, thick Pr(X in [-#h,#h]^#d) = #h^(#d) approx #calc.round(calc.pow(h, d), digits: 8)$, ¡menos de uno en un millón! Dicho de otra forma: en 20 dimensiones, una "cajita" con la mitad del ancho de otra, contiene menos de una millonésima de su volumen. Aún para $h approx 1$, en verdaderamente altas dimensiones el fenómeno es dramático. Sea $X$ representa un segundo de audio muestreado respetando el estándar _mínimo_ para llamadas telefónicas  #footnote[De Wikipedia: La tasa #link("https://en.wikipedia.org/wiki/Digital_Signal_0")[DS0], o _Digital Signal 0_, fue introducida para transportar una sola llamada de voz "digitizada". La típica llamada de audio se digitiza a $8 "kHz"$, o a razón de 8.000 veces por segundo.], tal que $d=8000$. En tal espacio ambiente, aún con $h=0.999$, $Pr(dot) approx #calc.round(calc.pow(0.999, 8000), digits: 6)$, o 1:3.000.
 
 #figure(
   caption: flex-caption(
-    [Proporción de $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d)$ dentro de un $d$-cubo de lado $h$ para valore seleccionados de $h$.],
+    [Proporción de $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d)$ dentro de un $d$-cubo de lado $h$ para valores seleccionados de $h$.],
     [Proporción de $X$ dentro de un $d$-cubo de lado $h$],
   ),
   image("img/curse-dim.svg"),
@@ -619,17 +619,17 @@ Para $h =#h, d=#d, thick Pr(X in [-#h,#h]^#d) = #h^(-#d) approx #calc.round(calc
 
 Ahora, si el espacio está _tan_, pero _tan_ vacío en alta dimensión, ¿cómo es que el aprendizaje supervisado _sirve de algo_? La reciente explosión en capacidades y herramientas de procesamiento (¡y generación!) de formatos de altísima dimensión #footnote[audio, video, texto y data genómica, por citar solo algunos] pareciera ser prueba fehaciente de que la tan mentada _maldición de la dimensionalidad_ no es más que una fábula para asustar estudiantes de estadística.
 
-Pues bien, el ejemplo de un segundo segundo de audio antedicho _es_ sesgado: no es cierto que si $X$ representa un segundo de voz humana digitizada, su ley sea uniforme en 8000 dimensiones #footnote[El audio se digitiza usando 8 bits para cada muestra, así que más precisamente, si $B = [2^8] = {1, dots, 256}, sop X = B^8000$ o $64 "kbps"$, kilobits-por-segundo.]. Un segundo de audio generado siguiendo cualquier distribución en la que muestras consecutivas no tengan ninguna correlación, obtiene #link("https://es.wikipedia.org/wiki/Ruido_blanco")[_ruido blanco_]. La voz humana, por su parte, tiene _estructura_, y por ende correlación instante a instante. Cada voz tiene un _timbre_ característico, y las palabras enuncidas posibles están ceñidas por la _estructura fonológica_ de la lengua locutada.
+Pues bien, el ejemplo de un segundo de audio antedicho _es_ sesgado: no es cierto que si $X$ representa un segundo de voz humana digitizada, su ley sea uniforme en 8000 dimensiones #footnote[El audio se digitiza usando 8 bits para cada muestra, así que más precisamente, si $B = [2^8] = {1, dots, 256}, sop X = B^8000 = 2^64000$ o $64 "kbps"$, kilobits-por-segundo.]. Un segundo de audio generado siguiendo cualquier distribución en la que muestras consecutivas no tengan ninguna correlación da por resultado #link("https://es.wikipedia.org/wiki/Ruido_blanco")[_ruido blanco_]. La voz humana tiene _estructura_, y por ende correlación instante a instante. Cada voz tiene un _timbre_ característico, y las posibles palabras a enunciar están ceñidas por la _estructura fonológica_ de la lengua locutada.
 
-Sin precisar detalles, podríamos postular que las realizaciones de la variable de interés $X$ (el habla), que registramos en un soporte $cal(S) subset.eq RR^d$ de alta dimensión, en realidad se concentran en cierta _variedad_ #footnote[Término que ya precisaremos. Por ahora, #MM es el _subespacio de realizaciones posibles_ de $X$] $MM subset.eq cal(S)$ potencialmente de mucha menor dimensión $dim MM = d_MM << d = dim cal(S)$, en la que noción de distancia entre observaciones aún conserva significado. A tal postulado se lo conoce como "la hipótesis de la variedad", o _manifold hypothesis_. <hipotesis-variedad>
+Sin precisar detalles, podríamos postular que las realizaciones de la variable de interés $X$ (el habla), que registramos en un soporte $cal(S) subset.eq RR^d$ de alta dimensión, en realidad se concentran en cierta _variedad_ #footnote[Término que ya precisaremos. Por ahora, #MM es el _subespacio de realizaciones posibles_ de $X$] $MM subset.eq cal(S)$ de potencialmente mucha menor dimensión $dim MM = d_MM << d$, con una noción de distancia más "útil" que la de $cal(S)$. A tal postulado se lo conoce como "la hipótesis de la variedad", o _manifold hypothesis_. <hipotesis-variedad>
 #footnote[
   Para el lector curioso: @rifaiManifoldTangentClassifier2011 ofrece un desglose de la hipótesis de la variedad en tres aspectos complementarios, de los cuales el aquí presentado sería el segundo, la "hipótesis de la variedad no-supervisada". El tercero, "la hipótesis de la variedad para clasificación", dice que "puntos de distintas clases se concentrarán sobre variedades disjuntas separadas por regiones de muy baja densidad", y lo asumimos implícitamente a la hora de construir un clasificador.
 ]
 
 
-La hipótesis de la variedad no es exactamente una hipótesis contrastable en el sentido tradicional del método científico; de hecho, ni siquiera resulta obvio que de existir, sean bien definibles las variedades en las que existen los elementos del mundo real: un dígito manuscrito, el canto de un pájaro, o una flor. Y de existir, es de esperar que sean altamente #box[no-lineales]. Más bien, corresponde entenderla como un modelo mental, que nos permite aventurar ciertas líneas prácticas de trabajo en alta dimensión.
+La hipótesis de la variedad no es exactamente una hipótesis contrastable en el sentido tradicional del método científico; de hecho, ni siquiera resulta obvio que de existir, sean susceptibles de definición las variedades en las que existen los elementos del mundo real: un dígito manuscrito, el canto de un pájaro, o una flor. Y de existir, es de esperar que sean altamente no-lineales. Más bien, corresponde entender esta hipótesis como un modelo mental, que nos permite aventurar ciertas líneas prácticas de trabajo en alta dimensión.
 #footnote[
-  El concepto de "variedad" para denotar más o menos formalmente un espacio no-euclídeo con ciertas características intuitivas está extendido en literatura no estrictamente matemática. Para el lector ávido, mencionamos dos _papers_ interesantes al respecto de potenciales modelos "varietales" de fenómenos como la empatía y la conciencia.
+  El uso de la palabra "variedad" para denotar semi-formalmente un espacio no-euclídeo con una noción de "distancia" va más allá de la literatura matemática. Para el lector ávido, mencionamos dos _papers_ interesantes sobre modelos "varietales" de fenómenos como la empatía y la conciencia.
 
   Uno es @galleseRootsEmpathyShared2003, _Las Raíces de la Empatía: La Hipótesis de la Variedad Compartida y las Bases Neuronales de la Intersubjetividad_: la hipótesis sostiene que existe un espacio intersubjetivo que compartimos con los demás. No somos mentes aisladas intentando descifrar a otras mentes aisladas; más bien, habitamos un espacio común de acción y emoción. Este "nosotros" (_we-centric space_) es la condición de posibilidad para la empatía. Reconocemos al otro no como un objeto, sino como otro "yo", porque cohabitamos la misma variedad corporal y neuronal.
 
@@ -637,28 +637,29 @@ La hipótesis de la variedad no es exactamente una hipótesis contrastable en el
 ]
 
 #figure(caption: flex-caption(
-  [Ejemplos de variedades en el mundo físico: una bandera flameando al viento, el pétalo de una flor. Ambas tienen dimensión $d_MM = 2$, están embedidas en $RR^3$, y no son lineales.],
+  [Ejemplos de variedades en el mundo físico: una bandera flameando al viento, el pétalo de una flor. Ambas tienen dimensión $d_MM = 2$ y están embedidas en $RR^3$. Ninguna es lineal.],
   "Ejemplos de variedades en el mundo físico",
 ))[
   #grid(
     columns: (1fr, 1fr),
+    box(radius: 0.5em, clip: true, image("img/bandera-argentina.png", height: 14em)),
     column-gutter: 1em,
-    image("img/hormiga-petalo.jpg", height: 14em), image("img/bandera-argentina.png", height: 14em),
+    box(radius: 0.5em, clip: true, image("img/hormiga-petalo.jpg", height: 14em)),
   )
 ]
 
 Antes de poder profundizar en esta línea, debemos plantearnos algunas preguntas básicas:
 #align(center)[
-  ¿Qué es, exactamente, una variedad? \ \
-  ¿Es posible construir un KDE con soporte en cierta variedad _conocida_? \ \
-  ¿Sirve de algo todo esto si _no conocemos_ la variedad en cuestión?
+  ¿Qué es _exactamente_ una variedad? \ \
+  ¿Se pueden construir KDEs con soporte en variedades? \ \
+  ¿Y si la variedad es _desconocida_?
 ]
 
 == Variedades de Riemann
 
-Adelantando la respuesta a la segunda pregunta, resulta ser que si el soporte de $X$ es una "variedad de Riemann", bajo ciertas condiciones razonables sí es posible estimar su densidad por núcleos en la variedad @pelletierKernelDensityEstimation2005.
+Adelantando la respuesta a la segunda pregunta, resulta ser que si el soporte de $X$ es una "variedad de Riemann" y se cumplen ciertas condiciones razonables, sí es posible estimar su densidad por núcleos  @pelletierKernelDensityEstimation2005.
 
-A continuación, damos un recorrido sumario e idiosincrático por ciertos conceptos básicos de topología y variedades que consideramos necesarios para motivar la definición de variedades Riemannianas, que de paso precisarán la respuesta a la primera pregunta - ¿qué es una variedad? - en el contexto que nos interesa. A tal fin, seguimos la exposición de la monografía _Estimación no paramétrica de la densidad en variedades Riemannianas_ @munozEstimacionNoParametrica2011, que a su vez sigue, entre otros, el clásico _Introduction to Riemannian Manifolds_ @leeIntroductionRiemannianManifolds2018.
+A continuación, haremos un recorrido sumario e idiosincrático por ciertos conceptos básicos de topología y variedades que consideramos necesarios para motivar la definición de variedades Riemannianas, que de paso precisarán la respuesta a la primera pregunta en el contexto que nos interesa. Seguiremos la exposición de la monografía _Estimación no paramétrica de la densidad en variedades Riemannianas_ @munozEstimacionNoParametrica2011, que a su vez sigue, entre otros, el clásico _Introduction to Riemannian Manifolds_ @leeIntroductionRiemannianManifolds2018.
 
 === Variedades Diferenciables
 
@@ -667,7 +668,7 @@ A continuación, damos un recorrido sumario e idiosincrático por ciertos concep
 #defn([espacio topológico @leeIntroductionRiemannianManifolds2018])[
 
   Formalmente, se llama *espacio topológico* al par ordenado $(X, T)$ formado por un conjunto $X$ y una _topología_ $T$ sobre $X$, es decir una colección de subconjuntos de $X$ que cumple las siguientes tres propiedades:
-  + El conjunto vacío y $X$ están en T: $emptyset in T, X in T$
+  + El conjunto vacío y $X$ están en T: $ emptyset in T,quad  X in T $
   + La intersección de cualquier subcolección _finita_ de $T$ está en $T$:
   $ X in T, Y in T => X inter Y in T $La unión de _cualquier_ subcolección de conjuntos de $T$
   está en $T$:
@@ -675,7 +676,7 @@ A continuación, damos un recorrido sumario e idiosincrático por ciertos concep
     forall S subset T, thick union.big_(O in S) O in T
   $
 ]
-A los conjuntos pertenecientes a la topología $T$ se les llama conjuntos abiertos o simplemente abiertos de $(X, T)$; y a sus complementos en $X$, conjuntos cerrados.
+A los conjuntos pertenecientes a la topología $T$ se les llama "conjuntos abiertos" o simplemente "abiertos" de $(X, T)$; a sus complementos en $X$, "conjuntos cerrados".
 
 #defn([entorno @leeIntroductionRiemannianManifolds2018])[
   Si $(X,Τ)$ es un espacio topológico y $p$ es un punto perteneciente a X, un _entorno_ #footnote[ También se los conoce como "vecindarios" --- por _neighborhoods_, su nombre en inglés.] del punto $p$ es un conjunto $V$ en el que está contenido un conjunto abierto $U$ que incluye al propio $p: p in U subset.eq V$.
