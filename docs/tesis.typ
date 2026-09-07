@@ -337,7 +337,6 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 
 / $RR$: los números reales; $RR_+$ denotará los reales estrictamente positivos.
 / $RR^p$: el espacio euclídeo de dimensión $p$
-/ $S^n$:  la $n-$esfera, o el conjunto de puntos en $RR^(n+1)$ a distancia unitaria del origen. $S^1$ es el círculo y $S^2$ es la superficie esférica
 / $[k]$: el conjunto de los enteros positivos del $1$ hasta $k$, ${1, 2, 3, dots, k}$
 / #MM: una variedad arbitraria #footnote[típicamente Riemanniana, compacta y sin frontera; oportunamente definiremos estos calificativos]
 / $T_p MM$: el espacio tangente a #MM en el punto $p in MM$
@@ -851,17 +850,17 @@ Probablemente la referencia más antigua a un elemento aleatorio en una variedad
 )
 Motivado también por un problema del mundo físico, Ronald Fisher escribe "Dispersiones en la esfera" @fisherDispersionSphere1957, donde desarrolla una teoría apropiada para mediciones de posición en una esfera #footnote[y como era de esperar del padre del test de hipótesis, también su correspondiente test de significancia, análogo al "t de Student".] y la ilustra a partir de mediciones de la dirección de la "magnetización termorremanenteremanente" de flujos de lava  en Islandia.
 #footnote[
-  Los datos que Fisher usa en la Sección 4 son mediciones de magnetismo remanente en muestras de roca de flujos de lava islandeses, recolectadas por J. Hospers en Pembroke College, Cambridge. Cuando la lava se enfría y solidifica, los minerales ferromagnéticos (como la magnetita) se alinean con el campo magnético terrestre del momento y quedan "congelados" en esa orientación. Esto se llama magnetización termorremanente. Siglos o milenios después, se puede tomar una muestra de esa roca y medir en qué dirección apunta su magnetización residual, hecho que Fisher utiliza para "testear" si entre "su presente" y el período Cuaternario el campo magnético terrestre se invirtió --- cosa que efectivamente sucedió.
+  Los datos que Fisher usa en la Sección 4 son mediciones de magnetismo remanenteen muestras de roca de flujos de lava islandeses, recolectadas por J. Hospers en Pembroke College, Cambridge. Cuando la lava se enfría y solidifica, los minerales ferromagnéticos (como la magnetita) se alinean con el campo magnético terrestre del momento y quedan "congelados" en esa orientación. Esto se llama magnetización termorremanente. Siglos o milenios después, se puede tomar una muestra de esa roca y medir en qué dirección apunta su magnetización residual, hecho que Fisher utiliza para "testear" si entre "su presente" y el período Cuaternario el campo magnético terrestre se invirtió --- cosa que efectivamente sucedió.
 ]
 
 
-Dos décadas más tarde, los casos particulares de von Mises ($S^1$) y Fisher ($S^2$) fueron integrados al caso más general $S^n$ en lo que se conocería como "estadística direccional" #footnote[la $n-$ esfera $S^n$ de radio $1$ con centro en $0$ contiene exactamente a todos los vectores unitarios --- i.e., todas las _direcciones_ posibles de un vector --- en su espacio ambiente $RR^(n+1)$]. En 1975 se habla ya de _teoría de la distribución_ para la distribución von Mises - Fisher @mardiaDistributionTheoryMisesFisher1975, la "más importante en el análisis de datos direccionales". A fines de los '80 Jupp y Mardia plantean "una visión unificada de la teoría de la estadística direccional" @juppUnifiedViewTheory1989, adaptando conceptos claves del "caso euclídeo" como las familias exponenciales y el teorema central del límite, entre otros.
+Dos décadas más tarde, los casos particulares de von Mises ($S^1$) y Fisher ($S^2$) fueron integrados al caso más general $S^n$ en lo que se conocería como "estadística direccional" #footnote[la $n-$ esfera $S^n$ de radio $1$ con centro en $0$ contiene exactamente a todos los vectores unitarios --- i.e., todas las _direcciones_ posibles de un vector --- en su espacio ambiente $RR^(n+1)$]. En 1975 se habla ya de _teoría de la distribución_ para la distribución von Mises -- Fisher @mardiaDistributionTheoryMisesFisher1975, la "más importante en el análisis de datos direccionales". A fines de los \'80 Jupp y Mardia plantean "una visión unificada de la teoría de la estadística direccional" @juppUnifiedViewTheory1989, adaptando conceptos claves del "caso euclídeo" como las familias exponenciales y el teorema central del límite, entre otros.
 
 Aunque el caso particular de la $n-$esfera sí fue bien desarrollado a lo largo del siglo XX, no se alcanzó un tratamiento más general de la estadística en variedades riemannianas conocidas pero arbitrarias.
 
 === KDE en variedades de Riemann
 
-Un trabajo sumamente interesante a principios del siglo XXI es el de Bruno Pelletier, que se propone una adaptación directa del estimador de densidad por núcleos de @kde-mv en variedades de Riemann compactas sin frontera @pelletierKernelDensityEstimation2005. Lo presentamos directamente y ampliamos los detalles a continuación
+Ya en el siglo XXI, Bruno Pelletier propone una adaptación directa del estimador de densidad por núcleos de @kde-mv en variedades de Riemann compactas sin frontera @pelletierKernelDensityEstimation2005. Lo presentamos primero y ampliamos los detalles a continuación
 
 
 #defn([KDE en variedades de Riemann @pelletierKernelDensityEstimation2005[Ecuación 1]])[
@@ -912,21 +911,22 @@ $
 #defn(
   [función de densidad de volumen @besseManifoldsAllWhose1978[§6.2]],
 )[
-  Sean $p, q in MM$; le llamaremos _función de densidad de volumen_ en #MM a $theta_p (q)$ definida como
+  Sean $p, q in MM$; le llamaremos _función de densidad de volumen_ en #MM a
   $
-    theta_p (q) : q |-> theta_p (q) = mu_(exp_p^*g) / mu_g_p (exp_p^(-1)(q))
+    theta_p : q |-> mu_(exp_p^* g) / mu_(g_p) (exp_p^(-1)(q))
   $
-  es decir, el cociente de la medida canónica de la métrica  Riemanniana $exp_p^*$ sobre $T_p MM$ (la métrica _pullback_ que resulta de transferir $g$ de $MM$ a $T_p MM$ a través del mapa exponencial $exp_p$), por la medida de Lebesgue de la estructura euclídea en $T_p MM$.
+  es decir, el cociente entre la medida canónica de la métrica Riemanniana $exp_p^* g$ sobre $T_p MM$ (la métrica _pullback_ que resulta de transferir $g$ de $MM$ a $T_p MM$ a través del mapa exponencial $exp_p$) y la medida de Lebesgue de la estructura euclídea que $g_p$ define en $T_p MM$.
 ] <vol-dens>
 
 #obs[
 
-  $theta_p (q)$ está bien definida "cerca" de $p$: por ejemplo, es idénticamente igual a $1$ en el entorno $U$ localmente "plano" de $p$ donde las geodésicas $gamma subset MM$ coinciden con sus representaciones en $T_p MM$. Ciertamente está definida para todo $q$ dentro del radio de inyectividad de $p$, $dg(p, q) < "iny"_p MM$ #footnote[ su definición global es compleja y escapa al tema de esta monografía. Besse y Pelletier consideran factible extenderla a todo #MM utilizando _campos de Jacobi_ @besseManifoldsAllWhose1978[§6.3] @pelletierKernelDensityEstimation2005[§2].]. Con $N$ "suficientemente grande", siempre podremos elegir $h_N < "iny"_p MM$  que mapee "suficientes" observaciones al soporte de K, $[0, 1]$  en las que el cálculo de $theta_p (q)$ sea factible, y las más lejanas queden por fuera, de modo que su cálculo _no sea necesario_.
+  $theta_p (q)$ está bien definida "cerca" de $p$: vale $theta_p (p) = 1$ y $theta_p (q) -> 1$ cuando $q -> p$. Ciertamente está definida para todo $q$ dentro del radio de inyectividad de $p$, $dg(p, q) < "iny"_p MM$ #footnote[Besse la define en todo $T_p MM$ como función del vector $v$, vía _campos de Jacobi_ @besseManifoldsAllWhose1978[§6.3] @pelletierKernelDensityEstimation2005[§2]; como función de $q$, solo está bien definida donde $exp_p$ es inyectiva. Su tratamiento global escapa al tema de esta monografía.].
 ]
 
 
-El mapa exponencial alrededor de $p, thick exp_p : T_p MM -> MM$ es un difeomorfismo en cierta bola normal alrededor de $p$, así que admite una inversa continua y biyectiva al menos en tal bola; lo llamaremos $exp_p^(-1) : MM -> T_p MM$. Así, $exp_p^(-1) (q) in T_p MM$ es la representación de $q$ en las coordenadas localmente euclídeas del espacio tangente a $p$ (o sencillamente "locales a $p$"). De esta cantidad $x = exp_p^(-1) (q)$, queremos conocer el cociente entre dos medidas:
-- la métrica _pullback_ de $g$:  la métrica inducida en $T_p MM$ por la métrica riemanniana $g$ en #MM
+El mapa exponencial alrededor de $p, thick exp_p : T_p MM -> MM$ es un difeomorfismo en cierta bola normal alrededor de $p$, así que admite una inversa continua y biyectiva al menos en tal bola $B_p$; lo notaremos $ exp_p^(-1) : B_p -> T_p MM $.
+Así, $exp_p^(-1) (q)$ es la representación de $q$ en las coordenadas localmente euclídeas del espacio tangente a $p$ (o sencillamente "locales a $p$"). De esta cantidad $x = exp_p^(-1) (q)$, queremos conocer el cociente entre dos medidas:
+- la medida canónica de la métrica _pullback_ de $g$:  la métrica inducida en $T_p MM$ por la métrica riemanniana $g$ en #MM
 - la medida de Lebesgue en la estructura euclídea de $T_p MM$.
 
 En otras palabras, $theta_p (q)$ representa cuánto se infla/encoge el espacio en la variedad #MM alrededor de $p$, relativo al volumen "natural" del espacio tangente. En general, su cómputo resulta sumamente complejo, salvo en casos particulares como las variedades "planas" o de curvatura constante.
@@ -939,7 +939,7 @@ En otras palabras, $theta_p (q)$ representa cuánto se infla/encoge el espacio e
 
 Una variedad plana tiene _curvatura_ #footnote[la _curvatura_ de un espacio es una de las propiedades fundamentales que estudia la geometría riemanniana; en este contexto, basta con la comprensión intuitiva de que una variedad no-plana tiene _cierta_ curvatura] nula en todo punto. De entre las variedades curvas, las $n-$ esferas son de las más sencillas, y tienen curvatura _positiva y constante_. Esta estructura vuelve posible el cómputo de $theta_p (q)$ en $S^n$.
 
-En _Kernel Density Estimation on Riemannian Manifolds: Asymptotic Results_ @henryKernelDensityEstimation2009, Guillermo Henry y Daniela Rodriguez estudian algunas propiedades asintóticas del estimador de @kde-variedad, y las ejemplifican con datos de sitios volcánicos en la superficie terrestre. Para ello, calculan $theta_p (q)$ en $S^2$ y llegan a que #footnote[Recordemos que la antípoda de $p, -p$ cae justo fuera de $"iny"_p S^d$]
+En _Kernel Density Estimation on Riemannian Manifolds: Asymptotic Results_ @henryKernelDensityEstimation2009, Guillermo Henry y Daniela Rodriguez estudian algunas propiedades asintóticas del estimador de @kde-variedad, y las ejemplifican con datos de sitios volcánicos en la superficie terrestre. Para ello, desarrollan $theta_p (q)$ en $S^2$ y llegan a que #footnote[Recordemos que la antípoda de $p, -p$ cae justo fuera de $"iny"_p S^d$]
 
 #v(1em)
 $
@@ -961,8 +961,7 @@ Para variedades de curvatura variable, el cálculo es mucho más complejo. En un
 #quote(
   attribution: [@berenfeldDensityEstimationUnknown2021[§1.2, "Resultados Principales"]],
 )[
-  Un problema restante a esta altura es el de entender cómo la _regularidad_ #footnote[En este contexto, se entiende que una variedad es más regular mientras menos varíe su densidad de volumen punto a punto.] de #MM afecta las tasas de convergencia de funciones suaves (...).
-  Luego, en el caso especial en que la dimensión de #MM es conocida e igual a $1$, podemos construir un estimador que alcanza la tasa [propuesta anteriormente]. Así, se establece que en dimensión $1$ al menos, la regularidad de la variedad #MM no afecta la tasa para estimar $f$ aún cuando #MM es desconocida. Sin embargo, la función de densidad de volumen $theta_p (q)$ _no_ es constante tan pronto como $d >= 2$ y obtener un panorama global en mayores dimensiones es todavía un problema abierto y presumiblemente muy desafiante.
+  Un problema restante a esta altura es el de entender cómo la _regularidad_ #footnote[En este contexto, se entiende que una variedad es más regular mientras menos varíe su densidad de volumen punto a punto.] de #MM afecta las tasas de convergencia de funciones suaves. $[dots]$ en dimensión $1$ al menos, la regularidad de la variedad #MM no afecta la tasa para estimar $f$ aún cuando #MM es desconocida. Sin embargo, la función de densidad de volumen $theta_p (q)$ _no_ es constante tan pronto como $d >= 2$ y obtener un panorama global en mayores dimensiones es todavía un problema abierto y presumiblemente muy desafiante.
 ]
 
 == Clasificación en variedades
