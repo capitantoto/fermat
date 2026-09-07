@@ -532,10 +532,10 @@ $
   f_j (X) = product_(k = 1)^p f_(j k) (X_k)
 $ <naive-bayes>
 
-A este procedimiento se lo conoce como "Naive Bayes" @hastieElementsStatisticalLearning2009[§6.6.3], y a pesar de su aparente ingenuidad es competitivo contra algoritmos mucho más sofisticados en un amplio rango de tareas. En términos de cómputo, permite resolver la estimación con $K times p$ KDE univariados. Además, permite que en $X$ se combinen variables cuantitativas y cualitativas: basta con reemplazar la estimación de densidad para las componentes $X_k$ cualitativas por su correspondiente histograma.
+donde $f_(j k)$ es la densidad de $X_k$ condicional a la clase $GG_j$. Este procedimiento se conoce como "Naive Bayes" @hastieElementsStatisticalLearning2009[§6.6.3], y a pesar de su aparente ingenuidad es competitivo contra algoritmos mucho más sofisticados en un amplio rango de tareas. En términos de cómputo, permite resolver la estimación con $K times p$ KDE univariados. Además, permite que en $X$ se combinen variables cuantitativas y cualitativas: basta con reemplazar la estimación de densidad para las componentes $X_k$ cualitativas por su correspondiente histograma.
 
 === KDE multivariado
-Consideremos un _dataset_ compuesto por observaciones muestradas de dos círculos concéntricos con algo de ruido:
+Consideremos un _dataset_ compuesto por observaciones _sampleadas_ de dos círculos concéntricos con algo de ruido:
 #figure(
   caption: flex-caption(
     "Dos círculos concéntricos y sus KDE marginales por clase: a pesar de que la frontera entre ambos grupos de puntos es muy clara, es casi imposible distinguirlas a partir de sus densidades marginales.",
@@ -576,7 +576,7 @@ Aún tomando una única $HH$ para _toda_ la muestra, la elección de $HH$ en $d$
 - $d$ parámetros si $HH in cal(D)$ y
 - un único parámetro $h$ si $HH = h^2 bu(I)$.
 
-La evaluación de la conveniencia relativa de cada parametrización se vuelve muy compleja, muy rápido. @wandComparisonSmoothingParameterizations1993 proveen un análisis detallado para el caso $d = 2$, y concluyen que aunque cada caso amerita su propio estudio, $HH in cal(D)$ suele un compromiso "adecuado" entre la complejidad de tomar $HH in cal(F)$ y la rigidez de $HH in cal(S)$. Sin embargo, este no es un gran consuelo para valores de $d$ verdaderamente altos, en cuyo caso existe aún un problema más fundamental.
+La evaluación de la conveniencia relativa de cada parametrización se vuelve muy compleja, muy rápido. #cite(<wandComparisonSmoothingParameterizations1993>, form: "prose") proveen un análisis detallado para el caso $d = 2$, y concluyen que aunque cada caso amerita su propio estudio, $HH in cal(D)$ suele ser un compromiso "adecuado" entre la complejidad de tomar $HH in cal(F)$ y la rigidez de $HH in cal(S)$. Sin embargo, este no es un gran consuelo para valores de $d$ verdaderamente altos, en cuyo caso existe aún un problema más fundamental.
 
 === La maldición de la dimensionalidad
 
@@ -1176,7 +1176,7 @@ Conocer la _densidad_ de los datos en la geometría es crucial para obtener una 
 ]
 Aprender una DBD nos permite saltearnos el problema ya harto descrito de aprender la variedad desconocida #MM, e ir directamente a lo único estrictamente necesario para tener un algoritmo de clasificación funcional: una noción de distancia adecuada.
 
-@vincentDensitySensitiveMetrics2003 proveen una de las primeras heurísticas para una DBD: al igual que Isomap, toma las distancias de caminos mínimos pesados en un grafo con vértices #XX, pero
+#cite(<vincentDensitySensitiveMetrics2003>, form: "prose") proveen una de las primeras heurísticas para una DBD: al igual que Isomap, toma las distancias de caminos mínimos pesados en un grafo con vértices #XX, pero
 - considera el grafo completo $bu(C)$ en lugar del de $k-$vecinos $bu(N N)_k$ y
 - pesa las aristas del grafo por la distancia euclídea en el espacio ambiente entre sus extremos _al cuadrado_.
 
@@ -1427,7 +1427,7 @@ y calculamos $D_(Q_i, alpha)$. No es difícil en principio este cómputo, pero r
 
 Al estimar densidades con distancia de Fermat en una variedad, la elección del ancho de banda se simplifica considerablemente: en lugar de una matriz completa $HH$ como en el KDE multivariado euclídeo, basta con dos escalares --- $h$ y $alpha$. Idealmente, convendría elegir un par $(h_i^*, alpha_i^*)$ óptimo para cada clase $GG_i$, ya que las densidades individuales pueden diferir sustancialmente.
 
-Sin embargo, @hallBandwidthChoiceNonparametric2005 muestran que el $h$ óptimo para la estimación de densidad no es necesariamente el óptimo para la _clasificación_: la tarea de clasificar no requiere estimar bien la densidad en todo el soporte, sino distinguir bien _en las fronteras_ entre clases. Teniendo esto en cuenta y para simplificar la configuración, parametrizamos #fkdc con un único $h$ y $alpha$ globales #footnote[y #kdc con un único $h$, elegido sobre una grilla mucho más fina que la de #fkdc]. La búsqueda de simplicidad en la configuración no es un deseo, es una necesidad: la elección de hiperparámetros óptimos por validación cruzada en una grilla requiere entrenar el mismo clasificador en una cantidad de configuraciones que crece exponencialmente con la cantidad de hiperparámetros, lo cual prohíbe configuraciones mucho más complejas que unos pocos parámetros.
+Sin embargo, #cite(<hallBandwidthChoiceNonparametric2005>, form: "prose") muestran que el $h$ óptimo para la estimación de densidad no es necesariamente el óptimo para la _clasificación_: la tarea de clasificar no requiere estimar bien la densidad en todo el soporte, sino distinguir bien _en las fronteras_ entre clases. Teniendo esto en cuenta y para simplificar la configuración, parametrizamos #fkdc con un único $h$ y $alpha$ globales #footnote[y #kdc con un único $h$, elegido sobre una grilla mucho más fina que la de #fkdc]. La búsqueda de simplicidad en la configuración no es un deseo, es una necesidad: la elección de hiperparámetros óptimos por validación cruzada en una grilla requiere entrenar el mismo clasificador en una cantidad de configuraciones que crece exponencialmente con la cantidad de hiperparámetros, lo cual prohíbe configuraciones mucho más complejas que unos pocos parámetros.
 
 == Metodología
 
