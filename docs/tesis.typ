@@ -55,9 +55,9 @@
     long
   }
 )
-#let defn = thmbox("definition", "Definición", inset: (x: 1.2em, top: 1em), base_level: 2)
+#let defn = thmbox("definition", "Definición", inset: (x: 1.2em, top: 0.5em), base_level: 2)
 #let obs = thmplain("observation", "Observación").with(numbering: none)
-#let thm = thmbox("theorem", "Teorema", inset: (x: 1.2em, top: 1em), base_level: 2)
+#let thm = thmbox("theorem", "Teorema", inset: (x: 1.2em, top: 0.5em), base_level: 2)
 
 // conveniencias
 #let hfrac(num, denom) = math.frac(num, denom, style: "horizontal")
