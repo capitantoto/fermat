@@ -1411,23 +1411,22 @@ A continuación, mencionamos algunos aspectos salientes sobre los desarrollos de
 
 Un proyecto de código pre-existente a esta monografía ya implementa el cálculo de la distancia de Fermat microscópica o muestral para un conjunto de observaciones dado: #link("https://pypi.org/project/fermat/")[fermat], de Facundo Sapienza. Este paquete fue desarrollado para soportar los experimentos de #cite(<sapienzaWeightedGeodesicDistance2018>, form: "prose") que exploran los efectos de esta noción de distancia en tareas de _clustering_. Al ser una tarea no-supervisada #footnote[Una tarea supervisada de aprendizaje es aquella en que se entrena el algoritmo con un conjunto de observaciones para el que _ya se sabe_ el valor correcto de resuesta. Una tarea "no supervisada" no cuenta con una "respuesta correcta" de antemano. _Clustering_ --- identificar grupos en la muestra --- es una tarea no supervisada; _clasificación_ --- asignar elementos a clases conocidas de antemano --- es una tarea supervisada.], se utilizan todas las observaciones disponibles y solo se requiere calcular la distancia entre dos elementos cualesquiera de la muestra #XX, pero nunca contra otros $p : p in MM, p in.not XX$.
 
-Entrenar un algoritmo _supervisado_ de clasificación requiere apartar una fracción de las observaciones disponibles #footnote[De no hacerlo y evaluar al clasificador sobre los mismos datos de entrenamiento, se corre el riesgo de sobreajustar el clasificador a los datos. De entrenar $k-$NN con tal criterio $k = 1$ acertará la clase correcta _siempre_, ya que cada observación es su propia vecina con distancia cero.] para evaluar la pérdida objetivo $L$. ¿Cómo calculamos entonces la distancia _muestral_ de una _nueva_ observación $x_0$ a los elementos de cada grupo $GG_i, i in [K]$?
+Entrenar un algoritmo _supervisado_ de clasificación requiere apartar una fracción de las observaciones disponibles #footnote[De no hacerlo y evaluar al clasificador sobre los mismos datos de entrenamiento, se corre el riesgo de sobreajustar el clasificador a los datos. De entrenar $k-$NN con toda la muestra, se puede tomar $k =1$ incondicionalmente. Durante el entrenamiento se acertará la clase correcta siempre, ya que cada observación es su propia vecina con distancia cero, pero el clasificador resultante generalizará muy mal a nuevas observaciones.] y conformar un conjunto de _test_ en el que evaluar la pérdida objetivo $L$. ¿Cómo calculamos entonces la distancia muestral de Fermat de una _nueva_ observación $x_0$ a los elementos de cada grupo $GG_i, i in [K]$, si no incluimos su nodo en el grafo completo de cada clase durante el entrenamiento?
 
-Para cada una de las $GG_i in GG$ clases, definimos el conjunto $ Q_i= {x_0} union {x_j : x_j in XX, GG_j = GG_i} $
-y calculamos $D_(Q_i, alpha)$. No es difícil en principio este cómputo, pero resultaría absurdamente costoso computacionalmente recomputar $D_(Q_i, alpha)$ para cada una de las $K$ clases por cada nueva observación. En su lugar, implementamos un sencillo algoritmo "incremental", que permite recomputar únicamente las geodésicas que cambian al agregar la nueva observación $x_0$ al grafo completo de la clase en cuestión.
+Sencillamene, para cada una de las $GG_i in GG$ clases, definimos el conjunto $ Q_i= {x_0} union {x_j : x_j in XX, GG_j = GG_i} $ resultante de unir la nueva observación $x_0$ al conjunto de entrenamiento cpte. a la clase $GG_i$, y recomputamos $D_(Q_i, alpha) (x_0, y) forall y in Q_i$. Aunque sencillo de describir, resultaría absurdamente costoso computacionalmente recomputar la matriz completa de distancias $D_(Q_i, alpha)$ para cada una de las $K$ clases por _cada_ nueva observación. En su lugar, implementamos un sencillo algoritmo "incremental", que permite recomputar únicamente las geodésicas que cambian al agregar la nueva observación $x_0$ al grafo completo de la clase en cuestión. #footnote[Para más detalles al respecto, léase el método `SampleFermatDistance._distancia` en el módulo `fkdc/fermat.py`.]
 
 == Elección del ancho de banda para clasificación
 
 Al estimar densidades con distancia de Fermat en una variedad, la elección del ancho de banda se simplifica considerablemente: en lugar de una matriz completa $HH$ como en el KDE multivariado euclídeo, basta con dos escalares --- $h$ y $alpha$. Idealmente, convendría elegir un par $(h_i^*, alpha_i^*)$ óptimo para cada clase $GG_i$, ya que las densidades individuales pueden diferir sustancialmente.
 
-Sin embargo, #cite(<hallBandwidthChoiceNonparametric2005>, form: "prose") muestran que el $h$ óptimo para la estimación de densidad no es necesariamente el óptimo para la _clasificación_: la tarea de clasificar no requiere estimar bien la densidad en todo el soporte, sino distinguir bien _en las fronteras_ entre clases. Teniendo esto en cuenta y para simplificar la configuración, parametrizamos #fkdc con un único $h$ y $alpha$ globales #footnote[y #kdc con un único $h$, elegido sobre una grilla mucho más fina que la de #fkdc]. La búsqueda de simplicidad en la configuración no es un deseo, es una necesidad: la elección de hiperparámetros óptimos por validación cruzada en una grilla requiere entrenar el mismo clasificador en una cantidad de configuraciones que crece exponencialmente con la cantidad de hiperparámetros, lo cual prohíbe configuraciones mucho más complejas que unos pocos parámetros.
+Sin embargo, #cite(<hallBandwidthChoiceNonparametric2005>, form: "prose") muestran que el $h$ óptimo para la estimación de densidad no es necesariamente el óptimo para clasificación: la tarea de clasificar no requiere estimar bien la densidad en todo el soporte, sino distinguir bien _en las fronteras_ entre clases. Teniendo esto en cuenta y para simplificar la configuración, parametrizamos #fkdc con un único $h$ y $alpha$ globales #footnote[y #kdc con un único $h$, elegido sobre una grilla mucho más fina que la de #fkdc]. La búsqueda de simplicidad en la configuración no es un deseo, es una necesidad: la elección de hiperparámetros óptimos por validación cruzada en una grilla requiere entrenar el mismo clasificador en una cantidad de configuraciones que crece exponencialmente con la cantidad de hiperparámetros, lo cual prohíbe configuraciones mucho más complejas que unos pocos parámetros.
 
 == Metodología
 
 La unidad de evaluación de los algoritmos a considerar es una `Tarea` #footnote[cf. el archivo `fkdc/tarea.py` en el repositorio adjunto para más detalles.], que se compone de:
 - un _dataset_ con el conjunto de $N$ observaciones en $D$ dimensiones repartidas en $K$ clases, $(XX, bu(g))$,
-- un _split de evaluación_ $r in (0, 1)$, que determina las proporción de los datos a incluir en la muestra de entrenamiento $XX_"train"$ ($1 - r$) y la de evaluación $XX_"test"$ ($r$),
-- una _semilla_ $s in [2^32]$ que alimenta el generador de números aleatorios y define determinísticamente cómo realizar la división antedicha y
+- un _split de evaluación_ $r in (0, 1)$, que determina la proporción de los datos a incluir en la muestra de entrenamiento $XX_"train"$ ($1 - r$) y la de evaluación $XX_"test"$ ($r$),
+- una _semilla_ $s in [2^32]$ que alimenta el generador de números aleatorios y determina cómo realizar la división antedicha y
 - una _métrica de evaluación_ #footnote[en muchos casos esta coincidirá con la función de pérdida $L$ a minimizar durante el entrenamiento, pero no necesariamente] que resume la "bondad" de las predicciones sobre $XX_"test"$ del clasificador entrenado en $XX_"train"$.
 
 === Métricas de evaluación
@@ -1444,17 +1443,16 @@ La exactitud está bien definida para cualquier clasificador que provea una regl
 
 #defn(
   "verosimilitud",
-)[Sean $XX, bu(g)$ como en @exactitud . Sea además $hat(bu(Y)) = clf(XX) in RR^(n times k)$ la matriz de probabilidades de clase resultado de una regla suave de clasificación #clf. La _verosimilitud_ ($"vero"$) de #clf en #bu("X") se define como la probabilidad conjunta que asigna #clf a las clases verdaderas #bu("y"):
+)[Sean $XX, bu(g)$ como en @exactitud . Sea además $hat(bu(Y)) = clf(XX) in RR^(n times k)$ la matriz de probabilidades de clase resultado de una regla suave de clasificación #clf. La _verosimilitud_ ($"vero"$) de #clf en #bu("X") se define como la probabilidad conjunta que asigna #clf a las clases verdaderas #bu("g"):
   $
-    op("vero")( clf | XX ) & = Pr(hat(bu(y)) = bu(y)) = product_(i=1)^n Pr(hat(y)_i =y_i) \
-    op("vero")( clf | XX ) & = product_(i=1)^n hat(bu(Y))_(i, y_i)
+    op("vero")( clf | XX ) = product_(i=1)^n Pr(hat(g)_i =g_i) = product_(i=1)^n hat(bu(Y))_(i, y_i)
   $
 
   Por conveniencia, se suele considerar la _log-verosimilitud promedio_,
   $ op(cal(l))(clf) = n^(-1) log(op("L")(clf)) = n^(-1)sum_(i=1)^n log(hat(bu(Y))_((i, y_i))) $
 ] <vero>
 
-La verosimilitud de una muestra varía en el rango $[0, 1]$ y su log-verosimilitud, en $(-oo, 0]$. Como métrica, esta se vuelve comprensible al expresarla _relativa a otros clasificadores_, por ejemplo, como propone @mcfaddenConditionalLogitAnalysis1974.
+La verosimilitud de una muestra varía en el rango $[0, 1]$ y su log-verosimilitud, en $(-oo, 0]$. Como métrica, esta se comprende mejor al expresarla _relativa a otros clasificadores_, por ejemplo, como propone #cite(<mcfaddenConditionalLogitAnalysis1974>, form: "prose").
 
 #defn(
   [$R^2$ de McFadden],
@@ -1462,14 +1460,14 @@ La verosimilitud de una muestra varía en el rango $[0, 1]$ y su log-verosimilit
   $ op(R^2)(clf | XX) = 1 - (op(cal(l))(clf)) / (op(cal(l))(clf_0)) $
 ] <R2-mcf>
 
-#obs[ $op(R^2)(clf_0) = 0$. Un clasificador perfecto --- un "oráculo" --- $clf^star$ que otorgue toda la masa de probabilidad a la clase correcta, tendrá $op(L)(clf^star) = 1$ y log-verosimilitud igual a 0, de manera que $op(R^2)(clf^star) = 1 - 0 = 1$. Un clasificador _peor_ que $clf_0$ en tanto asigne bajas probabilidades a las clases correctas, puede tener un $R^2$ infinitamente negativo.
+#obs[ $op(R^2)(clf_0) = 0$. Un clasificador perfecto --- un "oráculo" --- $clf^star$ que otorgue toda la masa de probabilidad a la clase correcta, tendrá $op("vero")(clf^star) = 1$ y log-verosimilitud igual a 0, de manera que $op(R^2)(clf^star) = 1 - 0 = 1$. Un clasificador _peor_ que $clf_0$ en tanto asigne bajas probabilidades a las clases correctas, puede tener un $R^2$ infinitamente negativo.
 ]
 
-Tanto #kdc, #fkdc y #fkn son clasificadores suaves, por lo que los evaluaremos principalmente según el $R^2$ de @R2-mcf. Sin embargo, mantendremos un ojo en la exactitud de @exactitud, para asegurarnos de que su rendimiento en esta métrica tan tradicional no sea significativamente peor que la de los algoritmos de referencia.
+Tanto #kdc, #fkdc y #fkn son clasificadores suaves, por lo que los evaluaremos principalmente según el $R^2$ de @R2-mcf. Sin embargo, mantendremos un ojo en la exactitud de @exactitud, para asegurarnos de que su rendimiento en esta métrica estándar no sea significativamente peor que la de los algoritmos de referencia.
 
 === Algoritmos de referencia
 
-Pírrica victoria sería mejorar con la distancia de Fermat el rendimiento de #kdc o #kn para encontrar que aún así, el algoritmo no es competitivo contra el estado del arte en la misma tarea. A modo de referencia consideramos también los siguientes algoritmos:
+Pírrica victoria sería mejorar con la distancia de Fermat el rendimiento de #kdc o #kn para encontrar que aún así, tales algoritmos no son competitivos contra el estado del arte en la misma tarea. A modo de referencia incluimos también los siguientes algoritmos en la comparación:
 - Naive Bayes Gaussiano (#gnb),
 - Regresión Logistica (#logr),
 - _Gradient Boosting Trees_ (#gbt) #footnote[Una traducción literal sería "árboles (de decisión) por potenciación del gradiente", pero este término casi nunca se traduce en la práctica.] y
@@ -1477,21 +1475,23 @@ Pírrica victoria sería mejorar con la distancia de Fermat el rendimiento de #k
 
 #v(1em)
 
-Esta elección no pretende ser exhaustiva, sino que responde a un "capricho informado" del investigador. Naive Bayes (@naive-bayes) una elección natural, ya que es la simplificación que surge de asumir independencia en las dimensiones de $X$ para KDE multivariado (@kde-mv), y se puede computar para grandes conjuntos de datos en muy poco tiempo.
+Esta elección no pretende ser exhaustiva, sino que responde a un "capricho informado" del investigador. Naive Bayes (presentado en @naive-bayes) es una alternativa natural, ya que es la simplificación que surge de asumir independencia en las dimensiones de $X$ para KDE multivariado (@kde-mv), y se puede computar para grandes conjuntos de datos en muy poco tiempo.
 
-La regresión logística es "el" método para clasificación binaria, y su extensión a múltiples clases no es particularmente compleja. Para resultar mínimamente valioso, un nuevo algoritmo necesita ser al menos tan bueno como #logr y sus ya más de 80 años en el campo #footnote[la referencia más temprana a la regresión logística data de @berksonApplicationLogisticFunction1944; la referencia clásica al marco formal moderno está en @coxRegressionAnalysisBinary1958. Un trabajo aún anterior sobre estimación de probabilidades pero usando la función _probit_ --- la distribución acumulada de la normal estándar --- en lugar de la función _logit_ o sigmoidea, es @blissCALCULATIONDOSAGEMORTALITYCURVE1935].
+La regresión logística es "el" método para clasificación binaria, y su extensión a múltiples clases no es particularmente compleja. Para resultar mínimamente valioso, un nuevo algoritmo necesita ser al menos tan bueno como #logr y sus ya más de 80 años en el campo #footnote[La referencia más temprana a la regresión logística que encontramos fue #cite(<berksonApplicationLogisticFunction1944>, form: "prose") ; la referencia clásica al marco formal moderno se debe a #cite(<coxRegressionAnalysisBinary1958>, form: "prose"). Un trabajo aún anterior sobre estimación de probabilidades pero usando la función _probit_ --- la distribución acumulada de la normal estándar --- en lugar de la función _logit_ o sigmoidea pertenece a #cite(<blissCALCULATIONDOSAGEMORTALITYCURVE1935>, form: "prose")].
 
-Por último, fue nuestro deseo incorporar algunos métodos más cercanos al estado del arte. A tal fin incorporamos un método de _boosting_ #footnote[ El _gradient boosting_ fue introducido por @friedmanGreedyFunctionApproximation2001, y desde entonces ha dado lugar a implementaciones altamente eficientes como XGBoost @chenXGBoostScalableTree2016 y LightGBM @keLightGBMHighlyEfficient2017.] y el antedicho clasificador de soporte vectorial. El clasificador de soporte vectorial @cortesSupportvectorNetworks1995, #svc, se evaluó en dos variantes: con núcleos (_kernels_) lineales y RBF #footnote[del inglés _radial basis functions_, "funciones de base radial"].
+Por último, fue nuestro deseo incorporar algunos métodos contemporáneos, más cercanos al estado del arte. A tal fin incluimos un método de _boosting_ #footnote[ El _gradient boosting_ fue introducido por #cite(<friedmanGreedyFunctionApproximation2001>, form: "prose"), y desde entonces ha dado lugar a implementaciones altamente eficientes como XGBoost @chenXGBoostScalableTree2016 y LightGBM @keLightGBMHighlyEfficient2017.] y el antedicho clasificador de soporte vectorial. El clasificador de soporte vectorial @cortesSupportvectorNetworks1995, #svc, se evaluó en dos variantes: con núcleos (_kernels_) lineales y RBF #footnote[del inglés _radial basis functions_, "funciones de base radial"].
 
 
-Por conocerlo en profundidad y en virtud de su sencillez de uso, la implementación se realizó utilizando `scikit-learn` @JMLR:v12:pedregosa11a, un poderoso y extensible paquete para tareas de aprendizaje automático en Python.
+Por conocerlo en profundidad y en virtud de su sencillez de uso, la implementación se realizó utilizando `scikit-learn` @JMLR:v12:pedregosa11a, un poderoso y extensible paquete para tareas de aprendizaje automático en Python. Más importante aún, desarrollar nuestros nuevos clasificadores en el _framework_ de `scikit-learn` 
+- simplifica enormemente la comparación de resultados, en tanto podemos utilizar exactamente los mismos métodos y _pipelines_ para los clasificadores bajo estudio y los de referencia,
+- nos permite, a nosotros mismos o a otros investigadores el día de mañana, integrar estos nuevos desarrollos al vasto universo de herramientas de estimación que toda la comunidad de aprendizaje automático construye alrededor de `scikit-learn`.
 
 
 === Pre-tratamiento de los datos
 
 Mantuvimos al mínimo el pre-tratamiento de los datos de entrada. Esta decisión fue deliberada: nos interesaba evaluar si la distancia de Fermat era capaz de capturar la estructura de la variedad subyacente sin asistencia adicional en la preparación de los datos, si bien reconocemos que este supuesto no es del todo razonable en aplicaciones del mundo real, donde el pre-procesamiento suele ser una etapa fundamental.
 
-La excepción fue la regresión logística, de la cual es bien sabido que su rendimiento se degrada considerablemente cuando las variables predictoras se encuentran en escalas muy distintas. Por este motivo incluimos tanto #logr --- regresión logística sobre los datos originales --- como #slr, una variante en la que los datos fueron previamente estandarizados.
+La excepción entre los estimadores fue la regresión logística, de la cual es bien sabido que su rendimiento se degrada considerablemente cuando las variables predictoras se encuentran en escalas muy distintas. Por este motivo incluimos tanto #logr --- regresión logística sobre los datos originales --- como #slr, una variante en la que los datos fueron previamente estandarizados.
 
 === Entrenamiento de los algoritmos
 La especificación completa de un clasificador requiere no solo elegir un algoritmo sino también especificar sus _hiperparámetros_, a fin de optimizar su rendimiento bajo ciertas condiciones de evaluación. Para ello, se definió de antemano para cada clasificador una _grilla_ de hiperparámetros: durante el proceso de entrenamiento, la elección de los "mejores" hiperparámetros se efectuó maximizando la log-verosimilitud @vero para los clasificadores suaves, y la exactitud @exactitud para los duros #footnote[Entre los mencionados, el único clasificador duro es #svc. Técnicamente es posible entrenar un clasificador suave a partir de uno duro con un _segundo_ estimador que toma como _input_ el resultado "crudo" del clasificador duro y da como _output_ una probabilidad calibrada (cf. #link("https://scikit-learn.org/stable/modules/calibration.html")[Calibración] en la documentación de `scikit-learn`  @buitinckAPIDesignMachine2013), pero es un proceso computacionalmente costoso.] con una búsqueda exhaustiva por validación cruzada de 5 pliegos #footnote[Conocida en inglés como #emph[Grid Search 5-fold Cross-Validation]] sobre la grilla entera.
