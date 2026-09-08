@@ -668,7 +668,7 @@ A continuación, haremos un recorrido sumario e idiosincrático por ciertos conc
 #defn([espacio topológico @leeIntroductionRiemannianManifolds2018])[
 
   Formalmente, se llama *espacio topológico* al par ordenado $(X, T)$ formado por un conjunto $X$ y una _topología_ $T$ sobre $X$, es decir una colección de subconjuntos de $X$ que cumple las siguientes tres propiedades:
-  + El conjunto vacío y $X$ están en T: $ emptyset in T,quad  X in T $
+  + El conjunto vacío y $X$ están en T: $ emptyset in T,quad X in T $
   + La intersección de cualquier subcolección _finita_ de $T$ está en $T$:
   $ X in T, Y in T => X inter Y in T $La unión de _cualquier_ subcolección de conjuntos de $T$
   está en $T$:
@@ -762,7 +762,7 @@ Con las definiciones previas podemos definir algunos conceptos fundamentales com
   $
     L(gamma) = integral_a^b norm(gamma'(t)) dif t = integral_a^b sqrt(op(g_(gamma(t)))(gamma'(t), gamma'(t))) dif t
   $] <longitud>
-  
+
 #defn("distancia en variedades de Riemann")[
   Sea $(MM, g)$ una variedad de Riemann, y $p, q in MM$ dos puntos. Definimos la distancia entre ellos inducida por la métrica $g$ como
   $
@@ -791,7 +791,7 @@ La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geod�
 
 #defn(
   [radio de inyectividad #footnote[
-    Basado en @munozEstimacionNoParametrica2011[Def. 3.3.16] Una definición a mi entender más esclarecedora se encuentra en @docarmoRiemannianGeometry1992[§13.2, _The cut locus_], que introducimos aquí informalmente. Se le dice "punto de corte" de una geodésica al punto en que esta deja de ser minimizadoras de distancia. El _cut locus_ o _ligne de partage_ $C_m (p)$ --- algo así como "línea de corte" --- de un punto $p$ es la variedad que resulta de la unión de los puntos de corte de todas las geodésicas que irradian de $p$. El ínfimo de la distancia entre $p$ y su _cut locus_ es el radio de inyectividad de #MM en $p$, de modo podemos escribir $ "iny" MM = inf_(p in MM) d(p, C_m (p)) $
+      Basado en @munozEstimacionNoParametrica2011[Def. 3.3.16] Una definición a mi entender más esclarecedora se encuentra en @docarmoRiemannianGeometry1992[§13.2, _The cut locus_], que introducimos aquí informalmente. Se le dice "punto de corte" de una geodésica al punto en que esta deja de ser minimizadoras de distancia. El _cut locus_ o _ligne de partage_ $C_m (p)$ --- algo así como "línea de corte" --- de un punto $p$ es la variedad que resulta de la unión de los puntos de corte de todas las geodésicas que irradian de $p$. El ínfimo de la distancia entre $p$ y su _cut locus_ es el radio de inyectividad de #MM en $p$, de modo podemos escribir $ "iny" MM = inf_(p in MM) d(p, C_m (p)) $
       donde la distancia de un punto a una variedad es el ínfimo de la distancia a todos los puntos de la variedad.]],
 )[
   Sea $(MM, g)$ una $d-$variedad Riemanniana. Llamamos "radio de inyectividad en $p$" a
@@ -1124,12 +1124,6 @@ Una _conexión_ @docarmoRiemannianGeometry1992 es otro término de significado m
 
 === Isomap
 
-Recordemos que toda esta aventura comenzó cuando identificamos que
-+ en alta dimensión, la distancia euclídea deja de proveer información útil sobre la similitud entre observaciones de #XX y
-+ de haber una estructura de menor dimensión que represente mejor las observaciones, esta casi seguro sea fuertemente no-lineal.
-
-#v(1em)
-
 En rigor, no es necesario conocer #MM para estimar densidades en ella; bastaría con conocer una aproximación a la distancia geodésica en #MM que sirva de sustituto a la distancia euclídea en el espacio ambiente. Probablemente el algoritmo más conocido a tal fin, sea Isomap --- por "mapeo isométrico de _features_".
 
 Desarrollado a fines del siglo XX por Joshua Tenenbaum et al.  @tenenbaumMappingManifoldPerceptual1997 @tenenbaumGlobalGeometricFramework2000, el algoritmo consta de tres pasos:
@@ -1138,10 +1132,10 @@ Desarrollado a fines del siglo XX por Joshua Tenenbaum et al.  @tenenbaumMapping
   Sean $XX = (x_1, dots, x_N), x_i in RR^p$ $N$ observaciones $p-$dimensionales.
   El mapeo isómetrico de _features_ es el resultado de:
   + Construir el grafo pesado de vecinos más cercanos $bu(N N) = (XX, E, W)$, donde cada observación $x_i$ es un vértice y la arista #footnote[_edge_ en inglés] $e_i = a ~ b$ que une $a$ con $b$ está presente con peso $w_i = norm(a - b)$ sí y solo si
-    - ($epsilon-$Isomap): la distancia euclídea entre $a, b$ en el espacio ambiente es menor o igual a épsilon, $norm(a - b) <= epsilon$.
+    - ($epsilon-$Isomap): la distancia euclídea entre $a$ y $b$ en el espacio ambiente es menor o igual a épsilon, $norm(a - b) <= epsilon$.
     - ($k-$Isomap): $b$ es uno de los $k$ vecinos más cercanos de $a$ #footnote[o viceversa, pues en un grafo no-dirigido la relación de vecinos más cercanos es mutua]
-  + Computar la distancia geodésica en el grafo $bu(N N)$ --- el "costo" de los caminos mínimos --- entre todo par de observaciones, $d_bu(N N)(a, b) forall a, b in XX$ #footnote[A tal fin, se puede utilizar según convenga el algoritmo de Floyd-Warshall @floydAlgorithm97Shortest1962 o el de Dijkstra @dijkstraNoteTwoProblems1959].
-  + Construir la representación - $d-$dimensional utilizando MDS #footnote["Multi Dimensional Scaling", o _escalamiento multidimensional_, un algoritmo de reducción de dimensionalidad @kruskalMultidimensionalScalingOptimizing1964] en el espacio euclídeo $RR^d$ que minimice una métrica de discrepancia denominada "estrés", entre las distancias $d_bu(N N)$ de (2) y la norma euclídea en la representación. Para elegir el valor óptimo de $d$ #footnote[que debería coincidir con la dimensión intrínseca de los datos], búsquese el "codo" en el gráfico de estrés en función de la dimensión de MDS.
+  + Computar la distancia geodésica en el grafo $bu(N N)$ --- el "costo" de los caminos mínimos --- entre todo par de observaciones, $d_bu(N N)(a, b) forall a in XX, b in XX$ #footnote[A tal fin, se puede utilizar según convenga el algoritmo de Floyd-Warshall @floydAlgorithm97Shortest1962 o el de Dijkstra @dijkstraNoteTwoProblems1959].
+  + Construir la representación $d-$dimensional utilizando MDS #footnote["Multi Dimensional Scaling", o _escalamiento multidimensional_, un algoritmo de reducción de dimensionalidad @kruskalMultidimensionalScalingOptimizing1964] en el espacio euclídeo $RR^d$ que minimice una métrica de discrepancia denominada "estrés", entre las distancias $d_bu(N N)$ de (2) y la norma euclídea en la representación. Para elegir el valor óptimo de $d$, búsquese el "codo" en el gráfico de estrés en función de la dimensión de MDS  #footnote[valor que debería coincidir con la dimensión intrínseca de los datos].
 ]
 #figure(
   image("img/isomap-2.png", height: 16em),
@@ -1151,14 +1145,14 @@ Desarrollado a fines del siglo XX por Joshua Tenenbaum et al.  @tenenbaumMapping
   ),
 )
 
-La pieza clave del algoritmo es la estimación de la distancia geodésica en #MM a través de la distancia en el grafo de vecinos más cercanos. Si la muestra disponible es "suficientemente grande", es razonable esperar que en el entorno de una observación $x_0$ las distancias euclídeas aproximen bien las distancias geodésicas, y por ende un "paseo" por el grafo $bu(N N)$ debería describir una curva prácticamente contenida en #MM. Isomap resultó ser un algoritmo sumamente efectivo que avivó el interés por el aprendizaje de distancias, pero todavía cuenta con un talón de Aquiles: la elección del parámetro de cercanía, $epsilon$ ó $k$:
-- valores demasiado pequeños pueden "partir" $bu(N N)$ en más de una componente conexa, otorgando distancia "infinita" a puntos en componentes disjuntas, mientras que
+La pieza clave del algoritmo es la estimación de la distancia geodésica en #MM a través de su aproximación por la distancia en el grafo de vecinos más cercanos. Si la muestra disponible es "suficientemente grande" y el espacio está "densamente muestreado", es razonable esperar que en el entorno de una observación $x_0$ las distancias euclídeas aproximen bien las distancias geodésicas, y por ende un "paseo" por el grafo $bu(N N)$ debería describir una curva prácticamente contenida en #MM. Isomap fue --- y aún es --- un algoritmo sumamente efectivo que avivó el interés por el aprendizaje de distancias, pero cuenta con un talón de Aquiles: la elección del parámetro de cercanía, $epsilon$ ó $k$:
+- valores demasiado pequeños pueden "partir" $bu(N N)$ en más de una componente conexa, otorgando "distancia infinita" a puntos en componentes disjuntas, mientras que
 - valores demasiado grandes pueden "cortocircuitar" la representación --- en particular en variedades con muchos pliegues ---, uniendo secciones de la variedad subyacente a través del espacio ambiente.
 
 === Distancias basadas en densidad
 
 Algoritmos como Isomap aprenden la _geometría_ de los datos, reemplazando la distancia euclídea ambiente por la distancia geodésica en el grafo pesado $bu(N N)_k$ #footnote[donde el subíndice representa la cantidad de vecinos considerados - o el diámetro $epsilon$ de la vecindad, de corresponder.], que con $n -> oo$ converge a la distancia $dg$ en $MM$. En estadística, conocer la geometría del soporte no es suficiente para tener un panorama completo. Por caso: sean $X'$ y $X^*$ dos distribuciones aleatorias soportadas en la esfera $S^2$:
-- $X'$ surgida de muestrear uniformemente "coordenadas polares" en el rectángulo $[0, pi] times [0, 2 pi]$, y
+- $X'$ surgida de muestrear uniformemente "coordenadas polares" en el rectángulo $[0, pi] times [0, 2 pi]$ y proyectarlas a $S^2$, y
 - $X^*$ surgida de muestrear uniformemente directamente en $S^2$.
 Ambas distribuciones tienen la misma geometría, pero distintas densidades: $X'$ se concentra en los polos y es mínimamente densa en el ecuador; $X^*$ es efectivamente igual de densa en todo $S^2$.
 
@@ -1169,31 +1163,31 @@ $
 $
 Es cierto que $sop(X) = RR^2$, pero resulta patente que la tasa de variación en ambas dimensiones _no es_ la misma: una decena de años es una diferencia de edad significativa, mientras que una decena de cabellos faltantes es invisible a cualquiera #footnote[salvo, seguramente, a quien los haya perdido].
 
-Conocer la _densidad_ de los datos en la geometría es crucial para obtener una noción de distancia verdaderamente útil: de esta necesidad surge el estudio de las _distancias basadas en densidad_ #footnote[o "DBD", por sus siglas en inglés: _density-based distance (metric)_]: su premisa básica es computar la longitud de una curva $gamma$ integrando una función de costo inversamente proporcional a la densidad $f_X$ en #MM --- más "costosa" en regiones menos densas. Esta área del aprendizaje de distancias vio considerables avances durante el siglo XXI --- luego del éxito empírico de Isomap --, y pavimentó el camino para técnicas de reducción de dimensionalidad basales en el "aprendizaje profundo" #footnote[  O "deep learning" en inglés. Llamamos genéricamente de tal modo a la plétora de arquitecturas de redes neuronales con múltiples capas que dominan hoy el procesamiento de información de alta dimensión @lecunDeepLearning2015] como los "autocodificadores" #footnote[#emph[autoencoders] en inglés, algoritmo que dada #XX, aprende un codificador $c(x): RR^D -> RR^d, d << D$ y un decodificador $d(x) : RR^d -> RR^D$ tal que $d(c(x)) approx x$.
+Conocer la _densidad_ de los datos en la geometría es crucial para obtener una noción de distancia verdaderamente útil: de esta necesidad surge el estudio de las (métricas de) _distancia basadas en densidad_ o "DBDs" #footnote[en inglés en el original, _density-based distance metrics_]: su premisa básica es computar la longitud de una curva $gamma$ integrando una función de costo inversamente proporcional a la densidad $f_X$ en #MM --- más "costosa" en regiones menos densas. Esta área del aprendizaje de distancias vio considerables avances durante el siglo XXI --- luego del éxito empírico de Isomap --, y pavimentó el camino para técnicas de reducción de dimensionalidad basales en el "aprendizaje profundo" #footnote[  O "deep learning" en inglés. Llamamos genéricamente de tal modo a la plétora de arquitecturas de redes neuronales con múltiples capas que dominan hoy el procesamiento de información de alta dimensión @lecunDeepLearning2015] como los "autocodificadores" #footnote[#emph[autoencoders] en inglés, algoritmo que dada #XX, aprende un codificador $c(x): RR^D -> RR^d, d << D$ y un decodificador $d(x) : RR^d -> RR^D$ tal que $d(c(x)) approx x$.
 ]. Yoshua Bengio --- uno de los "padres de la IA" cuyo trabajo ya mencionamos en esta monografía --, menciona #link("https://www.reddit.com/r/MachineLearning/comments/mzjshl/d_who_first_advanced_the_manifold_hypothesis_to/", "en Reddit") cómo su grupo de investigación en la Universidad de Montréal trabajando en estas ideas: aprendizaje de variedades primero, y autocodificadores posteriormente.
 
 #quote(attribution: "Y. Bengio")[
-  El término hipótesis de la variedad es en efecto más antiguo que la revolución del aprendizaje profundo, aunque el concepto ya estaba presente en los primeros días de los autoencoders en los primeros años de los 90 (no bajo ese nombre, pero la misma idea) y los mapas autoorganizados en los 80, por no mencionar PCA aún antes (aunque eso estaba limitado a variedades lineales). Y el grupo a mi alrededor en la U. de Montreal en la década del 2000 y principios de la del 2010 trabajó bastante sobre el concepto, en el contexto de modelar distribuciones que se concentran cerca de un conjunto de menor dimensión (es decir, una variedad), por ejemplo, con denoising auto-encoders (trabajo liderado por Pascal Vincent) y contractive auto-encoders (liderado por Salah Rifai). También trabajamos en cómo la hipótesis de la variedad impactaba los modelos generativos y la dificultad de muestrear (y cómo muestrear) cuando hay múltiples variedades alejadas entre sí (el problema de mezcla en MCMC).
+  El término hipótesis de la variedad es en efecto más antiguo que la revolución del aprendizaje profundo, aunque el concepto ya estaba presente en los primeros días de los autoencoders en los primeros años de los 90 (no bajo ese nombre, pero la misma idea) y los mapas autoorganizados en los 80, por no mencionar PCA aún antes (aunque eso estaba limitado a variedades lineales). Y el grupo a mi alrededor en la U. de Montreal en la década del 2000 y principios de la del 2010 trabajó bastante sobre el concepto, en el contexto de modelar distribuciones que se concentran cerca de un conjunto de menor dimensión (es decir, una variedad), por ejemplo, con _denoising auto-encoders_ (trabajo liderado por Pascal Vincent) y _contractive auto-encoders_ (liderado por Salah Rifai). También trabajamos en cómo la hipótesis de la variedad impactaba los modelos generativos y la dificultad de muestrear (y cómo muestrear) cuando hay múltiples variedades alejadas entre sí (el "problema de mezclado" en MCMC #footnote["Métodos de Montecarlo basados en cadenas de Markov", por sus siglas en inglés.]).
 ]
 Aprender una DBD nos permite saltearnos el problema ya harto descrito de aprender la variedad desconocida #MM, e ir directamente a lo único estrictamente necesario para tener un algoritmo de clasificación funcional: una noción de distancia adecuada.
 
 #cite(<vincentDensitySensitiveMetrics2003>, form: "prose") proveen una de las primeras heurísticas para una DBD: al igual que Isomap, toma las distancias de caminos mínimos pesados en un grafo con vértices #XX, pero
-- considera el grafo completo $bu(C)$ en lugar del de $k-$vecinos $bu(N N)_k$ y
-- pesa las aristas del grafo por la distancia euclídea en el espacio ambiente entre sus extremos _al cuadrado_.
+- consideran el grafo completo $bu(C)$ en lugar del de $k-$vecinos $bu(N N)_k$ y
+- pesan las aristas del grafo por la distancia euclídea en el espacio ambiente entre sus extremos _elevada al cuadrado_.
 
-Esta noción de "distancia de arista-al-cuadrado" #footnote["edge-squared distance" en inglés] tiene el efecto de desalentar grandes saltos entre observaciones lejanas, que es una manera  de "asignar un costo alto a trayectos por regiones de baja densidad", por lo cual ya califica como una DBD  rudimentaria.
+Esta noción de "distancia de arista-al-cuadrado" #footnote[_edge-squared distance_ en el origignal] tiene el efecto de desalentar grandes saltos entre observaciones lejanas, que es una manera  de "asignar un costo alto a trayectos por regiones de baja densidad", por lo cual ya califica como una DBD  rudimentaria.
 
 #figure(image("img/distancia-cuadrada.svg", height: 16em), caption: flex-caption(
-  [En este grafo completo de 3 vértices "isósceles", hay solo dos caminos entre $a$ y $c$: $zeta = a -> b -> c$, y $gamma = a -> c$],
-  [Grafo completo de 3 vértices en disposición "isósceles"],
+  [En este grafo geométrico representando un triángulo isósceles, hay solo dos caminos entre $a$ y $c$: $zeta = a -> b -> c$, y $gamma = a -> c$],
+  [Grafo geométrico de triángulo isósceles.],
 )) <grafo-completo-3-vertices>
 
-Consideremos el grafo _planar_ de @grafo-completo-3-vertices. Bajo la con la norma euclídea, $L(gamma) = 3 < 4 = 2 + 2 = L(zeta)$ de modo que $d(a, c) = 3$ con geodésica $gamma$. Con la distancia de arista-al-cuadrado, $L(zeta) = 2^2 + 2^2 = 8 < 3^2 = L(gamma)$, y por lo tanto $d(a, c) = 8$ con geodésica $zeta$. La distancia de arista-al-cuadrado cambia las geodésicas, y también cambia la escala en que se miden las distancias.
+Consideremos el grafo geométrico de @grafo-completo-3-vertices. Bajo la con la norma euclídea, las longitudes definida en @longitud son $ L(gamma) = 3 < 4 = 2 + 2 = L(zeta) $ de modo que $d(a, c) = 3$ con geodésica $gamma$. Con la distancia de arista-al-cuadrado, $ L(zeta) = 2^2 + 2^2 = 8 < 3^2 = L(gamma) $, y por lo tanto $d(a, c) = 8$ con geodésica $zeta$. La distancia de arista-al-cuadrado cambia las geodésicas como también la escala en que se miden las distancias.
 
 
-En las dos últimas décadas han surgido numerosos algoritmos para calcular DBDs y hasta algunos _surveys_ comparando las bondades relativas de cada una, nos detendremos arbitrariamente en algunos. En @caytonAlgorithmsManifoldLearning2005 el autor provee un resumen de los algoritmos de aprendizaje de variedades más relevantes (hasta entonces). En sus reflexiones finales #footnote[cf. @caytonAlgorithmsManifoldLearning2005[§5, "¿Qué queda por hacer?"], la lectura de cuyas conclusiones al menos --- si no el trabajo entero --- recomendamos. ], el autor considera que es tan amplio el espectro de variedades subyacentes y de representaciones "útiles" que se pueden concebir, que (a) en el plano teórico resulta muy difícil de obtener garantías de eficiencia y rendimiento#footnote[adoptamos "rendimiento" como traducción del inglés _performance_, anglicismo extendido en uso aun entre practicantes del habla hispana.], y (b) en el plano experimental, quedamos reducidos a elegir un conjunto representativo de variedades y observar si los resultados obtenidos son "intuitivamente agradables". Más aún, las evaluaciones experimentales requieren _conocer_ la variedad subyacente para luego evaluar si el algoritmo de aprendizaje preserva información útil. Determinar si un dataset del mundo real efectivamente yace sobre cierta variedad es tan difícil como aprender la variedad; usar datos artificiales puede no rendir resultados realistas. Veintiún años más tarde, en esta monografía nos topamos con las mismas dificultades de antaño.
+En las dos últimas décadas han surgido numerosos algoritmos para calcular DBDs y hasta algunos _surveys_ comparando las bondades relativas de cada una. #cite(<caytonAlgorithmsManifoldLearning2005>, form: "prose") provee un resumen de los algoritmos de aprendizaje de variedades más relevantes hasta entonces. En sus reflexiones finales #footnote[ #cite(<caytonAlgorithmsManifoldLearning2005>, form: "prose"), §5 "¿Qué queda por hacer?", cuya lectura recomendamos.], el autor considera que es tan amplio el espectro de variedades subyacentes y de representaciones "útiles" que se pueden concebir, que (a) en el plano teórico resulta muy difícil de obtener garantías de eficiencia y rendimiento#footnote[adoptamos "rendimiento" como traducción del inglés _performance_, anglicismo de uso extendido aún en el habla hispana.], y (b) en el plano experimental, quedamos reducidos a elegir un conjunto representativo de variedades y observar si los resultados obtenidos son "intuitivamente agradables". Más aún, las evaluaciones experimentales requieren _conocer_ la variedad subyacente para luego evaluar si el algoritmo de aprendizaje preserva información útil. Determinar si un dataset del mundo real efectivamente yace sobre cierta variedad es tan difícil como aprenderla; usar datos artificiales puede no rendir resultados realistas. Veintiún años más tarde, en esta monografía nos topamos con las mismas dificultades de antaño.
 
-A nuestro entender, @bijralSemisupervisedLearningDensity2011 ofrece una de las primeras formalizaciones de qué constituye una DBD. Para abordarla, revisaremos una definición previa. En @longitud definimos la longitud de una curva $gamma$ parametrizada y diferenciable sobre una variedad de Riemann compacta y sin frontera $(MM, g)$.
+A nuestro entender, #cite(<bijralSemisupervisedLearningDensity2011>, form: "prose") ofrecen una de las primeras formalizaciones de qué constituye una DBD. Para abordarla, revisaremos una definición previa. En @longitud definimos la longitud de una curva $gamma$ parametrizada y diferenciable sobre una variedad de Riemann compacta y sin frontera $(MM, g)$.
 
 #defn(
   "curva rectificable",
@@ -1216,7 +1210,7 @@ donde $dif s$ representa el elemento de longitud de arco.
 
 Si $gamma$ tiene longitud finita y $f$ es continua --- como en nuestro caso de uso --, el resultado de la integral *existe y es independiente de la parametrización*.
 
-Sea entonces $X ~ f, thick f : MM -> RR_+$ un elemento aleatorio distribuido según $f$ sobre una variedad de Riemann compacta y sin frontera --- potencialmente desconocida --- #MM. Sea además $g(t) : RR_+ -> RR$ una función _monótonicamente decreciente_ en su parámetro. Consideraremos el _costo_$J_f$  de un camino $gamma : [0, 1] -> MM, gamma(0)=p, gamma(1)=q$ entre $p, q$ como la integral de $g compose f$ a lo largo de $gamma$:
+Sea entonces $X ~ f, thick f : MM -> RR_+$ un elemento aleatorio distribuido según $f$ sobre una variedad de Riemann compacta y sin frontera --- potencialmente desconocida --- #MM. Sea además $g(t) : RR_+ -> RR$ una función _monótonicamente decreciente_ en su parámetro. Consideraremos el "costo" $J_f$  de un camino $gamma : [0, 1] -> MM, gamma(0)=p, gamma(1)=q$ entre $p, q$ como la integral de $g compose f$ a lo largo de $gamma$:
 
 $
   op(J_(g compose f))(gamma) = integral_0^1 op(g) lr(( f(gamma(t)) ), size: #140%) norm(gamma'(t))_p dif t
@@ -1227,7 +1221,7 @@ Y la distancia basada en la densidad $f$ pesada por $g$ entre dos puntos cualesq
 $
   D_(g compose f) (p, q) = inf_gamma op(J_(g compose f))(gamma),
 $
-donde la minimización es con respecto a todos los senderos rectificables con extremos en $p, q$, y $norm(dot)_p$ es la $p-$norma o distancia de Minkowski con parámetro $p$.
+donde el ínfimo se toma respecto al conjunto de todos los senderos rectificables con extremos en $p, q$, y $norm(dot)_p$ es la $p-$norma o distancia de Minkowski con parámetro $p$.
 
 
 #defn([norma $p$])[
@@ -1237,7 +1231,6 @@ donde la minimización es con respecto a todos los senderos rectificables con ex
     norm(x)_p = (sum_(i=1)^d abs(x_i)^p)^(1/p)
   $
 ]
-#obs[La longitud de @longitud es equivalente a tomar $g(t) = 1$ y $p=2$, salvo que $g(t) = 1$ no es monontónicamente decreciente, y por ende la definición previa es insensible a la densidad.]
 #obs[Cada $p-$norma induce su propia distancia $d_p$. Algunas son muy conocidas:
   - $p=1$ da la distancia "taxi" o "de Manhattan" #footnote[Llamada así porque representa la distancia que recorrería un taxi en una grilla urbana. Una traducción localizada razonable sería "distancia de San Telmo"]:
   $ d_1(x, y) = norm(x - y)_1 = sum_(i=1)^d abs(x_i - y_i) thin , $
@@ -1247,7 +1240,9 @@ donde la minimización es con respecto a todos los senderos rectificables con ex
   $ norm(x)_(p->oo) = max_(1 <= i <= d) |x_i - y_i| $
 ] <lp-metric>
 
-¿Es posible estimar $D_(g compose f)$ de manera consistente? Intuitivamente, consideremos dos puntos $a, b in U subset MM, thick dim MM = d$ #footnote[reemplazamos la notación habitual de $p, q in MM$ por $a, b in MM$ y $d_MM$ por $d$ como en @bijralSemisupervisedLearningDensity2011[§3], y así evitar confusiones con la $p-$norma.] en un vecindario $U$ de $a$ lo "suficientemente pequeño" como para que $f$ sea esencialmente uniforme en él, y en particular en el segmento $gamma_(a b) = overline(a b)$ y tomemos $g = 1 slash f^r$:
+#obs[Tomando $g(t) = 1$ y $p=2$ en $J_(g compose f)$ recuperamos la definición de longitud de @longitud. Como $g(t) = 1$ es constante, la longitud es insensible a la densidad.]
+
+¿Es posible estimar $D_(g compose f)$ de manera consistente? Intuitivamente, consideremos dos puntos $a, b in U subset MM, thick dim MM = d$ #footnote[reemplazamos la notación habitual de $p, q in MM$ por $a, b in MM$ y $d_MM$ por $d$ siguiendo a #cite(<bijralSemisupervisedLearningDensity2011>, form: "prose", supplement: [§3]), para evitar confusiones.] en un vecindario $U$ de $a$ lo "suficientemente pequeño" como para que $f$ sea esencialmente uniforme en él, y en particular en el segmento $gamma_(a b) = overline(a b)$ y tomemos $g = 1 slash f^r$:
 
 $J_(r)(gamma_(a b)) = D_r (a, b) & approx g lr((f("alrededor de " a " y " b)), size: #140%) norm(b - a)_p \
 & prop g(norm(b -a)_p^(-d)) norm(b-a)_p \
@@ -1263,38 +1258,34 @@ $
                                     & approx prop sum_(j=1)^k norm(x_(pi_(j)) - x_(pi_(j-1)))_p^q
 $
 
-Finalmente, si #XX es una muestra "duficientemente densa", podemos estimar las distancias geodésicas $D_r$ como los "caminos mínimos" en el grafo completo de $XX$ con aristas pesadas por $norm(b - a)_p^q), thick a, b^T in XX$.
+Si #XX es una muestra "suficientemente densa" los saltos entre nodos de índices consecutivos serán "cortos", podemos estimar las distancias geodésicas $D_r$ como los "caminos mínimos" en el grafo completo de $XX$ con aristas pesadas por $norm(b - a)_p^q), thick a, b in XX$.
 
-Esta estimación es particularmente atractiva, en tanto no depende para nada de la dimensión ambiente $D$, y solo depende de la dimensión intrínseca $d$ de #MM a través de $q=r d+1$. De hecho, los autores mencionan que "casi cualquier par de valores $(p, q)$ funciona", y en particular encuentran que en sus experimento, $p=2, q=8$ "anda bien en general" @bijralSemisupervisedLearningDensity2011[5.1] #footnote[tendremos más para decir al respecto en la @resultados, "Resultados"].
+Esta estimación es particularmente atractiva, en tanto no depende para nada de la dimensión ambiente $D$, y solo depende de la dimensión intrínseca $d$ de #MM a través de $q=r d+1$. De hecho, los autores mencionan que "casi cualquier par de valores $(p, q)$ funciona", y en particular encuentran que en sus experimento, $p=2, q=8$ "anda bien en general" @bijralSemisupervisedLearningDensity2011[§5.1] #footnote[tendremos más para decir al respecto en la @resultados, "Resultados"].
 
-#v(1em)
-#align(center)[$quad * quad * quad *$]
-#v(1em)
 
-Un resultado interesante por lo exacto, aparece en @chuExactComputationManifold2019. Dado un conjunto de puntos $P = {p_1, dots, p_N}, p_i in MM forall i in [N]$, Considérese la "métrica de vecino más cercano"
+Un resultado interesante por lo exacto aparece en #cite(<chuExactComputationManifold2019>, form: "prose"). Dado un conjunto de puntos $P = {p_i : p_i in MM, i in [N]}$, considérese la "métrica de vecino más cercano"
 
-$ r_P(q) = 4 min_(p in P) norm(q - p) thin , $
+$ r_P (q) = 4 min_(p in P) norm(q - p) thin , $
 
-donde $P subset MM$ es un _subconjunto_ de la variedad #footnote[a nuestros fines, $P = XX$, pero no tiene por qué serlo: el argumento de Chu et al admite cualquier conjunto _finito_ $P$, cuyos elementos pueden ser regiones enteras de $MM$, y ni siquiera deben ser convexas] que da lugar a la función de costo
+donde $P subset MM$ es un _subconjunto_ de la variedad #footnote[a nuestros fines, $P = XX$, pero no tiene por qué serlo: el argumento de Chu et al admite cualquier conjunto _finito_ $P$, cuyos elementos pueden ser regiones no-convexas de $MM$] que da lugar a la función de costo
 
 $ J_(r_P) (gamma) = integral_0^1 r_P (gamma(t)) norm(gamma'(t)) dif t thin , $
 
 que a su vez define la distancia
 
 $
-  D_(r_P) = inf_gamma J_(r_P) (gamma) thin ,
+  D_(r_P) (p, q) = inf_gamma J_(r_P) (gamma) thin ,
 $
 que los autores llaman "distancia de vecino más cercano", $d_bu(N) = D_(r_P)$.
 
-Considérese además la distancia de arista-al-cuadrado #footnote[cuando $P = XX$, esta es la misma que @vincentDensitySensitiveMetrics2003 propusieran dieciséis años antes]:
+Considérese además la distancia de arista-al-cuadrado #footnote[cuando $P = XX$, esta es la misma que #cite(<vincentDensitySensitiveMetrics2003>, form: "prose") propusieron dieciséis años antes]:
 $
   d_bu(2)(a, b) = inf_((p_0, dots, p_k)) sum_(i=1)^k norm(p_i - p_(i-1))^2
 $
-donde el ínfimo se toma sobre toda posible secuencia de puntos $p_0, dots, p_k in P, p_0 = a, p_k = b$. Resulta entonces que la distancia de vecino más cercano $d_bu(N)$ y la métrica de arista cuadrada $d_bu(2)$ son equivalentes para todo conjunto de puntos $P$ en dimensión arbitraria. @chuExactComputationManifold2019[Teorema 1.1] #footnote[De hecho, la prueba que ofrecen es un poco más general: los elementos de $P$ no tienen por qué ser puntos en #MM, sino que pueden ser conjuntos compactos, con costo cero al atravesarlos, cf. @chuExactComputationManifold2019[Figura 2]].
+donde el ínfimo se toma sobre toda posible secuencia de puntos $p_0, dots, p_k in P, p_0 = a, p_k = b$. Resulta entonces que la distancia de vecino más cercano $d_bu(N)$ y la métrica de arista cuadrada $d_bu(2)$ son equivalentes para todo conjunto de puntos $P$ en dimensión arbitraria @chuExactComputationManifold2019[Teorema 1.1] #footnote[La prueba que ofrecen es más general: los elementos de $P$ pueden ser conjuntos compactos con costo cero al atravesarlos y el resultado se sostiene @chuExactComputationManifold2019[Figura 2]].
 
 Probar la equivalencia para el caso trivial con $P = {a, b} subset RR^D$ se convierte en un ejercicio de análisis muy sencillo, que cementa la intuición y explica el factor de $4$ en $r_P$:
 
-#v(-3em)
 #figure(
   image("img/equivalencia-d2-dN.svg"),
   caption: flex-caption(
@@ -1303,20 +1294,21 @@ Probar la equivalencia para el caso trivial con $P = {a, b} subset RR^D$ se conv
   ),
 ) <equiv-d2-dn>
 
-Por la desigualdad triangular, cualquier camino entre $a$ y $b$ ha de ser al menos tan largo como $overline(a b)$. En la mitad del segmento $overline(a b)$ más cercana a $a$ (región azul), $d_bu(N)$ es $norm(z - a)^2$; análogamente, en la región naranja $d_bu(N) = norm(z - b)^2$. Parametricemos $overline(a b):$
+Con solo dos nodos, la geodésica de $a$ a $b$ es simplemente $a -> b$ --- cualquier otro camino repite nodos y se alarga innecesariamente ---, así que $d_bu(2)(a, b) = norm(b - a)^2$. Ahora, $d_bu(N)(a, b)$ requiere encontrar el mínimo entre todos los caminos posibles, aunque no viajen sobre las aristas del grafo. En la región azul, $r_{a,b} (q) = 4 norm(q - a)$ solo depende de la distancia a $a$, y todo camino desde $a$ hasta la mediatriz debe recorrer al menos $norm(b - a) slash 2$ de esa distancia: el más barato es el segmento recto hasta el punto medio. Análogamente en la región naranja $r_{a,b} (q) = 4 norm(q - b)$. Como todo camino de $a$ a $b$ cruza la mediatriz, el de menor costo es $overline(a b)$. Parametricémoslo:
 $
   gamma(t) & : [0, 1] -> RR^D, quad
-             gamma(t) & = a + (b - a) t, quad
-                        gamma'(t) & = b - a
+  gamma(t) = a + (b - a) t, quad
+  gamma'(t) = b - a
 $
 $
-  d_bu(N)(a, b) & = D_(r_P) = inf_gamma J_(r_P) (gamma) = J_(r_P) (overline(a b)) \= integral_0^1 r_{a, b} (gamma(t)) times norm(gamma'(t)) dif t \
-  & = integral_0^1 4 min_(p in {a, b}) norm((a + (b -a)t) - p) norm(b-a) dif t \
-  & = 4 norm(b-a) (integral_0^(1/2) norm(a + (b -a)t - a) dif t + integral_(1/2)^1 norm(a + (b -a)t - b) dif t )\
-  & = 4 norm(b-a) (integral_0^(1/2) norm((b -a)t) dif t + integral_(1/2)^1 norm((a-b)(1-t)) dif t )\
-  & = 4 norm(b-a)^2 (integral_0^(1/2) t dif t + integral_(1/2)^1 (1-t) dif t ) \
-  &= 4 norm(b-a)^2 [( t^2 |^(1 slash 2)_0) + (t - t^2 |^1_(1 slash 2))] \
-  &= 4 norm(b-a)^2 (1/2 - 1/4) \
+  d_bu(N)(a, b) & = D_(r_{a, b}) (a, b) = inf_gamma J_(r_{a, b}) (gamma) = J_(r_{a, b}) (overline(a b)) \
+  &= integral_0^1 r_{a, b} (gamma(t)) times norm(gamma'(t)) dif t \
+  &= integral_0^1 4 min_(p in {a, b}) norm((a + (b -a)t) - p) norm(b-a) dif t \
+  &= 4 norm(b-a) (integral_0^(1/2) norm(a + (b -a)t - a) dif t + integral_(1/2)^1 norm(a + (b -a)t - b) dif t )\
+  &= 4 norm(b-a) (integral_0^(1/2) norm((b -a)t) dif t + integral_(1/2)^1 norm((a-b)(1-t)) dif t )\
+  &= 4 norm(b-a)^2 (integral_0^(1/2) t dif t + integral_(1/2)^1 (1-t) dif t ) \
+  &= 4 norm(b-a)^2 [( t^2 slash 2 |^(1 slash 2)_0) + (t - t^2 slash 2 |^1_(1 slash 2))] \
+  &= 4 norm(b-a)^2 (1/8 + 1/8) \
   & = norm(b-a)^2 \
   & = d_bu(2)(a, b) quad square
 $
@@ -1330,13 +1322,13 @@ El grueso del trabajo de Chu et al consiste en una prueba general de esta iguald
   1.b. $d_bu(N) >= d_bu(2)$
 2. (1) también es válido para toda colección de compactos $P$ de $RR^D$.
 
-Una utilidad de este resultado es que permite calcular con precisión qué valores de $k$ estimar $d_bu(N)$ sobre el grafo pesado por aristas cuadradas $bu(N N)_k (XX)$  es un "suficientemente buen reemplazo" del cálculo equivalente --- pero mucho más costoso --- sobre $bu(C)(XX)$. En @chuExactComputationManifold2019[Theorema 1.3], observan que con tomar $k = O(2^d ln n)$ basta.
+Una utilidad de este resultado es que permite calcular con precisión para qué valores de $k$ estimar $d_bu(N)$ sobre el grafo pesado por aristas cuadradas $bu(N N)_k (XX)$  es un "suficientemente buen reemplazo" del cálculo equivalente --- pero mucho más costoso --- sobre el grafo completo  $bu(C)(XX)$. En su Teorema 1.3, los autores observan que con tomar $k = O(2^d ln n)$ basta.
 
-Lo que Chu et al llaman $d_bu(2)$ y figura en @chuExactComputationManifold2019 @vincentDensitySensitiveMetrics2003 como "distancia de arista-cuadrada", es la misma distancia $D_r$ que @bijralSemisupervisedLearningDensity2011 consideran con $p = 2$ (norma euclídea) y $r = 1/d$ --- de modo que $q=r d+1=2$.
+Lo que Chu et al llaman $d_bu(2)$ y ya introdujimos como "distancia de arista-al-cuadrado" @chuExactComputationManifold2019 @vincentDensitySensitiveMetrics2003, es la misma distancia $D_r$ que #cite(<bijralSemisupervisedLearningDensity2011>, form: "prose") consideran con $p = 2$ (norma euclídea) y $r = 1/d$ --- de modo que $q=r d+1=2$.
 
 === Distancia de Fermat
 
-No conocemos pruebas de equivalencia para valores arbitrarios de $p, q$, ni se deriva de la prueba mencionada que deban de existir. Sin embargo, sí existe en la literatura una familia de DBDs  para la cual se conocen tasas de convergencia asintótica de la aproximación muestral en el grafo completo a la distancia propiamente dicha, sobre una variedad Riemanniana compacta sin frontera --- la familia de _Distancia(s) de Fermat_.
+No conocemos pruebas de equivalencia para valores arbitrarios de $p, q$, ni se desprende de la prueba mencionada que deban de existir. Sin embargo, sí existe en la literatura una familia de DBDs  para la cual se conocen tasas de convergencia asintótica de la aproximación muestral en el grafo completo a la distancia propiamente dicha, sobre una variedad Riemanniana compacta sin frontera --- la familia de _Distancia(s) de Fermat_.
 
 El trabajo de @groismanNonhomogeneousEuclideanFirstpassage2022 considera la misma familia de distancias basadas en funciones monótonamente decrecientes de la densidad que @bijralSemisupervisedLearningDensity2011, $g = 1 / f^r$, salvo que en Groisman et al,
 $
