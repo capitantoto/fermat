@@ -2088,22 +2088,22 @@ Llegamos a la misma conclusión que antes por otra dirección: en los vecindario
 
 #highlights_figure("pionono_0")
 
-Este dataset "clásico" para evaluar algoritmos de _clustering_ no-lineales fue analizado ya con #sfd en @sapienzaWeightedGeodesicDistance2018, así que decidimos incluirlo en la serie experimental. El trabajo citado tiene otro objetivo ---  _clustering_ basado en el algoritmo $k-$medoides --- y provee un gráfico de exactitud que compara con la obtenida por Isomap. Los autores encuentran que
-#quote[existe un amplio rango de $d$ #footnote[$alpha$ en nuestra notación] para los que la $d-$distancia se porta significativamente mejor que Isomap. [...] para la exactitud esta región está limitada a $1.7 <= d <= 2.2$
+Este dataset "clásico" para evaluar algoritmos de _clustering_ no-lineales es analizado en #cite(<sapienzaWeightedGeodesicDistance2018>, form: "prose"), así que decidimos incluirlo en la serie experimental. El trabajo citado también es una aplicación empírica de la distancia muestral de Fermat, pero tiene otro objetivo ---  _clustering_ basado en el algoritmo $k-$medoides --- y provee un gráfico de exactitud comparada contra Isomap. Los autores encuentran que
+#quote[$[dots]$ existe un amplio rango de $alpha$ #footnote[En el trabajo, "nuestro" $alpha$ se denomina $d$.] para los que la $alpha-$distancia se porta significativamente mejor que Isomap. $[dots]$ para la exactitud esta región está limitada a $1.7 <= alpha <= 2.2$
 ]
 
-Con un objetivo distinto --- _clasificación_ con DBDs --- no encontramos diferencia significativa entre #kdc y #fkdc, que a su vez rinden tan bien como el estado-del-arte en exactitud (#svc) y $R^2$ (#gbt). Esta paridad es consistente con la observación de que, en las #reps repeticiones analizadas, #fkdc seleccionó $alpha = 1$ bajo la regla de parsimonia en _todos_ los casos, colapsando efectivamente a una variante de #kdc con ancho de banda ligeramente menor.
+Nuestro objetivo (clasificación, no _clustering_) como también los algoritmos empleados (#kdc y #kn en lugar de $k-$medoides) son distintos, y en este _setting_ no encontramos diferencia significativa entre #kdc y #fkdc --- o entre $alpha = 1$ y $alpha > 1$ ---, que a su vez rinden tan bien como el estado del arte en exactitud (#svc) y $R^2$ (#gbt). Esta paridad es consistente con la observación de que, en las #reps repeticiones analizadas, #fkdc seleccionó $alpha = 1$ bajo la regla de parsimonia en _todos_ los casos, colapsando efectivamente a una variante de #kdc con ancho de banda ligeramente menor.
 
 === Hueveras ($d=3, d_MM=2, K=2$)
 
-Este dataset sintético consiste de dos clases con idénticas distribuciones pero signo opuesto en la dirección de la coordenada vertical $ z = plus.minus(sin(x) times sin(y)) $ y se puede imaginar aproximadamente bien como cartones de maple de huevos, uno invertido respecto al otro, intentando ocupar el mismo lugar en el espacio.
+Este dataset sintético consiste de dos clases con idénticas distribuciones pero signo opuesto en la dirección de la coordenada vertical $ z = plus.minus(sin(x) times sin(y)) $ y se puede concebir bien como los dos cartones de un maple de huevos intentando ocupar el mismo espacio:
 
-#highlights_figure("hueveras_0")
 
 La exactitud de la familia $cal(K)$ es competitiva contra la de #svc, que parece ser ligera y significativamente mejor. En términos de $R^2$, la familia $cal(K)$ es la única en alcanzar valores no-nulos, y #sfd parece resultar en mejoras significativas al menos para #fkn.
 
 
 En efecto, observando los parámetros comparados de #fkdc v. #kdc, se repite que la hiperparametrización $(alpha_"opt", h_"opt")$ que maximiza $R^2$ en entrenamientotiene tiene $alpha > 1$, pero existe otra  $(alpha_(1 sigma), h_(1_sigma))$ con $alpha_(1 sigma) =1$   y $h_(1_sigma)$ "significativamente distinto" a $h_"opt"$ que cumple la regla de parsimonia.  Las tres semillas en la que #fkdc saca más ventaja sobre #kdc tiene por óptimos
+
 #tabla_params(
   "data/hueveras_0-parametros_comparados-kdc-top3.csv",
   ($s$, $Delta_(R^2)$, $alpha_#fkdc$, $h_#fkdc$, $R^2_#fkdc$, $h_#kdc$, $R^2_#kdc$),
@@ -2111,6 +2111,8 @@ En efecto, observando los parámetros comparados de #fkdc v. #kdc, se repite que
   caption: [Parámetros comparados de #fkdc vs. #kdc en `hueveras_0` para las tres semillas con mayor $Delta_(R^2)$. Los valores repetidos se muestran una sola vez en la fila del medio.],
   short-caption: [Parámetros de #fkdc vs. #kdc en `hueveras_0` (top 3)],
 )
+
+#highlights_figure("hueveras_0")
 
 En #fkn, la distancia de Fermat parece ofrecer una diferencia significativa en $R^2$ sobre #kn, con varias repeticiones del experimento donde aún con regla de parsimonia, #fkn y #kn eligen _la misma cantidad_ de vecinos pero $alpha_#fkn > 1$:
 
