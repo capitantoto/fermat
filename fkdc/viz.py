@@ -14,6 +14,7 @@ from matplotlib import colormaps
 from matplotlib.axes import Axes
 from matplotlib.colors import Colormap
 from matplotlib.figure import Figure
+from matplotlib.lines import Line2D
 from matplotlib.patches import PathPatch
 from sklearn.base import BaseEstimator
 from sklearn.datasets import make_circles
@@ -178,6 +179,7 @@ def boxplot(
         datos, hue="clf", y=metrica, gap=0.2, ax=ax, palette=paleta, saturation=1.0
     )
     aplicar_sombreado(ax)
+    ax.set_ylabel({"r2": "$R^2$", "accuracy": "exactitud"}.get(metrica, metrica))
     ax.axhline(
         datos.groupby("clf")[metrica].median().max(),
         linestyle="dotted",
@@ -517,7 +519,7 @@ if __name__ == "__main__":
     xs = np.sort(rng.standard_normal(200)).reshape(-1, 1)
     grilla = np.arange(-5, 5, 0.01).reshape(-1, 1)
     fig, axs = plt.subplots(1, 2, figsize=(16, 6), sharey=True, layout="tight")
-    for kernel, ax in zip(["gaussian", "tophat"], axs, strict=False):
+    for kernel, ax in zip(["gaussian", "tophat"], axs, strict=True):
         ax.plot(
             grilla,
             sp.stats.norm().pdf(grilla),
@@ -548,6 +550,7 @@ if __name__ == "__main__":
             # Datasets 2D: dispersión estándar
             fig, ax = plt.subplots(layout="tight")
             ds.scatter(ax=ax)
+        ax.set_title(dataset, family="monospace")
         guardar_fig(fig, dir_imagenes / f"{dataset}-scatter.svg")
 
     # hélices pairplot
@@ -556,6 +559,9 @@ if __name__ == "__main__":
     grafico = ds_helices.pairplot(
         dims=[2, 1, 0], height=2, plot_kws={"alpha": 0.5, "s": 5}, corner=True
     )
+    # Leyenda superpuesta en el triángulo superior vacío del pairplot (corner=True)
+    sns.move_legend(grafico, "upper right", bbox_to_anchor=(0.95, 0.95), title="Clase")
+    grafico.figure.tight_layout()
     guardar_fig(grafico.figure, dir_imagenes / "helices-pairplot.svg")
 
     # =====================================================================
@@ -790,25 +796,65 @@ if __name__ == "__main__":
     guardar_fig(fig, dir_imagenes / f"{dataset}-[f]kdc-delta_r2-vs-delta_h.svg")
 
     # =====================================================================
-    # Caída de R² (lo vs hi)
+    # Caída de R² (lo vs hi): dumbbell por clasificador, un panel por figura
     # =====================================================================
     bi2d = bi[bi.dataset.str.endswith(("_lo", "_hi"))].copy()
     bi2d[["figura", "ruido"]] = bi2d.dataset.str.split("_", expand=True)
     caidas = (
         bi2d.groupby(["figura", "ruido", "clf"])[["r2", "accuracy"]]
-        .mean()
+        .median()
         .unstack("ruido")
     )
-    # Excluir clasificadores que no se diferencian de cero en ningún nivel de ruido
-    for figura in bi2d.figura.unique():
+    fig, axs = plt.subplots(1, 3, figsize=(12, 4), layout="tight")
+    for ax, figura in zip(axs, ["lunas", "circulos", "espirales"], strict=True):
         caidas_fig = caidas.xs(figura)["r2"][["lo", "hi"]]
-        # Mantener solo clfs con R² significativo en al menos un nivel de ruido
-        lo_ok = caidas_fig["lo"].abs() > 0.05
-        hi_ok = caidas_fig["hi"].abs() > 0.05
-        significativos = caidas_fig[lo_ok | hi_ok]
-        fig, ax = plt.subplots(layout="tight")
-        significativos.sort_values("hi", ascending=False).plot(kind="bar", ax=ax)
-        guardar_fig(fig, dir_imagenes / f"{figura}-caida_r2.svg")
+        # Solo clfs con R² apreciable en al menos un nivel de ruido, mejor `_lo` arriba
+        signif = caidas_fig[
+            (caidas_fig["lo"].abs() > 0.05) | (caidas_fig["hi"].abs() > 0.05)
+        ]
+        signif = signif.sort_values("lo")
+        for yi, (clf, fila) in enumerate(signif.iterrows()):
+            color = paleta_predeterminada.get(clf, "gray")
+            # Segmento discontinuo para kdc, kn, s-lr (cf. boxplots sombreados)
+            ls = "dashed" if clf in _clfs_sombreados else "solid"
+            ax.plot(
+                [fila["hi"], fila["lo"]], [yi, yi], color=color, lw=2.5, ls=ls, zorder=1
+            )
+            ax.scatter(fila["lo"], yi, s=70, color=color, edgecolor="black", zorder=2)
+            ax.scatter(
+                fila["hi"], yi, s=70, color="white", edgecolor=color, lw=2, zorder=2
+            )
+        ax.set_yticks(range(len(signif)))
+        ax.set_yticklabels(signif.index)
+        ax.set_title(figura)
+        ax.set_xlabel("$R^2$ mediano")
+    fig.legend(
+        handles=[
+            Line2D(
+                [],
+                [],
+                marker="o",
+                color="gray",
+                markeredgecolor="black",
+                ls="",
+                label="bajo ruido (_lo)",
+            ),
+            Line2D(
+                [],
+                [],
+                marker="o",
+                color="white",
+                markeredgecolor="gray",
+                markeredgewidth=2,
+                ls="",
+                label="alto ruido (_hi)",
+            ),
+        ],
+        loc="lower center",
+        ncol=2,
+        bbox_to_anchor=(0.5, -0.04),
+    )
+    guardar_fig(fig, dir_imagenes / "caida_r2.svg")
 
     # =====================================================================
     # helices_0: diagrama de caja R² ampliado (solo clasificadores kernel)
