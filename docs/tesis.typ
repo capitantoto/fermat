@@ -1096,7 +1096,7 @@ En un trabajo contemporáneo a @vincentManifoldParzenWindows2002, "Charting a Ma
 
 #v(1em)
 
-El procedimiento para estimar $d_MM$ es tanto ingenioso como costoso de computar. Sean $XX = (x_1^T, dots, x_N^T)$ $N$ observaciones $D-$dimensionales muestreadas de una distribución en $(MM, g)$ con $d_MM < D$ con algo de ruido _isotrópico_ #footnote[Del griego _iso-_, "igual" y _-tropos_, "dirección"; "igual en todas las direcciones"] $D-$dimensional. Dada una bola $B_r (q)$ centrada en un punto cualquiera $q in #MM$, consideremos la tasa $t(r)$ a la que incorpora observaciones vecinas a medida que crece $r$. Cuando $r$ está en la escala del ruido isotrópico, la bola incorpora puntos rápidamente, pues los hay en todas las direcciones. A medida que $r$ alcanza la escala en la que la variedad es localmente análoga a $RR^(d_MM)$, la incorporación de nuevos puntos disminuye, pues solo habrá nuevas observaciones en las $d_MM$ direcciones tangentes a $q$. Si $r$ sigue creciendo la bola $B_r (q)$ eventualmente alcanzará la escala de la _curvatura_ de la variedad, momento en el que comenzará a acelerarse nuevamente la incorporación de puntos. El $r$ que minimiza $t(r)$ identifica la escala localmente lineal, y la tasa de crecimiento en esa escala, la dimensión intrínseca: allí la cantidad de puntos en la bola crece como $r^(d_MM)$. #footnote[Más precisamente, el autor sigue $c(r) = (d log r) / (d log n(r))$, con $n(r)$ la cantidad de puntos en la bola, que vale aproximadamente $1/D$ en la escala del ruido, es menor a $1/d_MM$ en la escala de la curvatura, y alcanza su máximo $1/d_MM$ en la escala localmente lineal. El máximo de $c(r)$ da así tanto la escala como la dimensión. Además, evalúa las bondades y dificultades de estimar $d_MM$ tanto punto a punto como globalmente en toda la variedad.]
+El procedimiento para estimar $d_MM$ es tanto ingenioso como costoso de computar. Sean $XX = (x_1^T, dots, x_N^T)$ $N$ observaciones $d-$dimensionales muestreadas de una distribución en $(MM, g)$ con $d_MM < d$ con algo de ruido _isotrópico_ #footnote[Del griego _iso-_, "igual" y _-tropos_, "dirección"; "igual en todas las direcciones"] $d-$dimensional. Dada una bola $B_r (q)$ centrada en un punto cualquiera $q in #MM$, consideremos la tasa $t(r)$ a la que incorpora observaciones vecinas a medida que crece $r$. Cuando $r$ está en la escala del ruido isotrópico, la bola incorpora puntos rápidamente, pues los hay en todas las direcciones. A medida que $r$ alcanza la escala en la que la variedad es localmente análoga a $RR^(d_MM)$, la incorporación de nuevos puntos disminuye, pues solo habrá nuevas observaciones en las $d_MM$ direcciones tangentes a $q$. Si $r$ sigue creciendo la bola $B_r (q)$ eventualmente alcanzará la escala de la _curvatura_ de la variedad, momento en el que comenzará a acelerarse nuevamente la incorporación de puntos. El $r$ que minimiza $t(r)$ identifica la escala localmente lineal, y la tasa de crecimiento en esa escala, la dimensión intrínseca: allí la cantidad de puntos en la bola crece como $r^(d_MM)$. #footnote[Más precisamente, el autor sigue $c(r) = (d log r) / (d log n(r))$, con $n(r)$ la cantidad de puntos en la bola, que vale aproximadamente $1/d$ en la escala del ruido, es menor a $1/d_MM$ en la escala de la curvatura, y alcanza su máximo $1/d_MM$ en la escala localmente lineal. El máximo de $c(r)$ da así tanto la escala como la dimensión. Además, evalúa las bondades y dificultades de estimar $d_MM$ tanto punto a punto como globalmente en toda la variedad.]
 
 #v(1em)
 
@@ -1340,7 +1340,7 @@ $
 #defn([Distancia "macroscópica" de Fermat @groismanNonhomogeneousEuclideanFirstpassage2022[Definición 2.2]])[
 
   Sea $f$ una función continua y positiva, $beta >=0$
-  y $x, y in S subset.eq RR^D$. Definimos la _Distancia de Fermat_ $cal(D)_(f, beta)(x, y)$ como:
+  y $x, y in S subset.eq RR^d$. Definimos la _Distancia de Fermat_ $cal(D)_(f, beta)(x, y)$ como:
 
   $
     cal(T)_(f, beta)(gamma) = integral_gamma f^(-beta) dif s, quad cal(D)_(f, beta)(x, y) = inf_gamma cal(T)_(f, beta)(gamma) thin ,
@@ -1357,7 +1357,7 @@ Este objeto "macroscópico" se puede aproximar a partir de una versión "microsc
 
 #defn([Distancia muestral o "microscópica" de Fermat])[
 
-  Sea $Q$ un conjunto no-vacío, _localmente finito_ #footnote[Es decir, que para todo compacto $U subset RR^D$, la cardinalidad de $Q inter U$ es finita, $abs(Q inter U) < oo$.] de $RR^D$. Para $alpha >=1$ y $x, y in RR^D$, la _Distancia Muestral de Fermat_ se define como
+  Sea $Q$ un conjunto no-vacío, _localmente finito_ #footnote[Es decir, que para todo compacto $U subset RR^d$, la cardinalidad de $Q inter U$ es finita, $abs(Q inter U) < oo$.] de $RR^d$. Para $alpha >=1$ y $x, y in RR^d$, la _Distancia Muestral de Fermat_ se define como
 
 
   $
@@ -1365,25 +1365,25 @@ Este objeto "macroscópico" se puede aproximar a partir de una versión "microsc
                        & "es un camino de "x" a "y, K>=1}
   $
 
-  donde los $q_j in Q thin forall j in [K]$. Nótese que #sfd satisface la desigualdad triangular, define una métrica sobre $Q$ y una pseudo-métrica #footnote[una métrica tal que la distancia puede ser nula entre puntos no-idénticos:  $ exists a != b : d(a, b) = 0 $] sobre $RR^D$.
+  donde los $q_j in Q thin forall j in [K]$. Nótese que #sfd satisface la desigualdad triangular, define una métrica sobre $Q$ y una pseudo-métrica #footnote[una métrica tal que la distancia puede ser nula entre puntos no-idénticos:  $ exists a != b : d(a, b) = 0 $] sobre $RR^d$.
 ] <sample-fermat-distance>
 
 Antes de presentar en qué sentido  #sfd converge a $cal(D)_(f, beta)$, una definición más:
 #defn([variedad isométrica])[
-  Diremos que #MM es una variedad $d-$dimensional $C^1$ _isométrica_ embebida en $RR^D$ si existe un conjunto abierto y conexo $S subset RR^D$ y $phi : S -> RR^D$ una transformación isométrica #footnote[Que preserva las métricas o distancias; del griego "isos" (igual) y "metron" (medida)] tal que $phi(overline(S)) = MM$. Como se mencionó con anterioridad, se espera que $d << D$, pero no es necesario.
+  Diremos que #MM es una variedad $d_MM-$dimensional $C^1$ _isométrica_ embebida en $RR^d$ si existe un conjunto abierto y conexo $S subset RR^d$ y $phi : S -> RR^d$ una transformación isométrica #footnote[Que preserva las métricas o distancias; del griego "isos" (igual) y "metron" (medida)] tal que $phi(overline(S)) = MM$. Como se mencionó con anterioridad, se espera que $d_MM << d$, pero no es necesario.
 ]
 
 #defn([Convergencia de $D_(Q, alpha)$, @groismanNonhomogeneousEuclideanFirstpassage2022[Teorema 2.7]])[
 
-  Asuma que #MM es una variedad $C^1$ $d$-dimensional isométrica embebida en $RR^D$ y $f: MM -> R_+$ es una función de densidad de probabilidad continua. Sea $Q_n = {q_1, ..., q_n}$ un conjunto de elementos aleatorios independientes con densidad común $f$. Entonces, para $alpha > 1$ y $x,y in M$ tenemos:
+  Asuma que #MM es una variedad $C^1$ $d_MM$-dimensional isométrica embebida en $RR^d$ y $f: MM -> R_+$ es una función de densidad de probabilidad continua. Sea $Q_n = {q_1, ..., q_n}$ un conjunto de elementos aleatorios independientes con densidad común $f$. Entonces, para $alpha > 1$ y $x,y in M$ tenemos:
 
   $ lim_(n->oo) n^beta D_(Q_n,alpha)(x,y) = mu cal(D)_(f,beta)(x,y) " casi seguramente." $
 
-  , donde  $mu$ es una constante que depende únicamente de $alpha$ y $d$.
+  , donde  $mu$ es una constante que depende únicamente de $alpha$ y $d_MM$.
 ] <convergencia-sfd>
 
 #obs[
-  El factor de escala $beta = (alpha-1)/d$ depende de la dimensión intrínseca $d$ de la variedad, y no de la dimensión $D$ del espacio ambiente.
+  El factor de escala $beta = (alpha-1) slash d_MM$ depende de la dimensión intrínseca $d_MM$ de la variedad, y no de la dimensión $d$ del espacio ambiente.
 ]
 
 La distancia muestral de Fermat $D_(Q, alpha)$ se puede aproximar a partir de una muestra "lo suficientemente grande" sin conocer ni la variedad #MM ni su dimensión intrínseca. Además, tiene garantías de convergencia a una distancia basada en densidad (DBD) --- la distancia de Fermat "macroscópica" $cal(D)_(f, beta)$ --- para todo $beta$. Hemos encontrado candidato para la pieza faltante de nuestro clasificador en variedades desconocidas, y estamos finalmente en condiciones de proponer un algoritmo de clasificación que reúna todos los cabos del tejido teórico hasta aquí desplegado.
@@ -1535,7 +1535,9 @@ Al no conocer _a priori_ demasiado con respecto a la teoría de la distribución
 = Resultados <resultados>
 
 == In Totis
-En total, ejecutamos unas 4,500 tareas, producto de #reps repeticiones por dataset y clasificador, sobre un total de 20 datasets y 9 clasificadores diferentes. Designaremos por $cal(K) = {#fkdc, #kdc, #fkn, #kn}$ a la familia de estimadores basados en densidad por núcleos, sobre la que se concentra el análisis comparativo del capítulo. Recordemos que todos los estimadores se entrenaron con _score_ `neg_log_loss` (para optimizar por $R^2$), salvo #svc, que al ser un clasificador duro se entrenó con `accuracy`. Así, entre los clasificadores blandos la distancia de Fermat rindió frutos, con el máximo $R^2$ mediano en 10 de los 20 experimentos: 7 preseas fueron para #fkdc y 3 para #fkn.
+En total, ejecutamos unas 4,500 tareas, producto de #reps repeticiones por dataset y clasificador, sobre un total de 20 datasets y 9 clasificadores diferentes. De los clasificadores ya se habló; los _datasets_ --- cuyos nombres se estilan en fuente `monoespacio` se presentarán cuando nos aboquemos al análisis de cada uno.
+
+Designaremos por $cal(K) = {#fkdc, #kdc, #fkn, #kn}$ a la familia de estimadores basados en densidad por núcleos, sobre la que se concentra el análisis comparativo del capítulo. Entre los clasificadores blandos, la distancia de Fermat rindió frutos, con el máximo $R^2$ mediano en 10 de los 20 experimentos: 7 preseas fueron para #fkdc y 3 para #fkn.
 
 #gbt "ganó" en 5 datasets, entre ellos varios con mucho ruido (`_hi` y `_12`). #kdc resultó óptimo en 2 datasets, consolidando la técnica del @kde-variedad como competitiva de por sí. Por último, tanto #kn como #logr (en su versión escalada, #slr) resultaron mejores en mediana que todos los demás en ciertos datasets, y solo #gnb no consiguió ningún podio --- aunque resultó competitivo en casi todo el tablero.
 La amplia distribución de algoritmos óptimos según las condiciones del dataset pone de relieve la existencia de ventajas relativas en todos ellos.
@@ -1546,7 +1548,7 @@ La amplia distribución de algoritmos óptimos según las condiciones del datase
   short-caption: [Mejor clasificador por dataset según $R^2$ mediano.],
 )
 
-El mismo análisis con métrica de exactitud es, desde luego, menos favorable a nuestros métodos entrenados para otro objetivo. #svc, entrenado en consecuencia, resulta un algoritmo casi imbatible, con rendimiento sólido en todo tipo de datasets y máximos en 6 de ellos. #gbt vuelve a brillar en aquellos con mucho ruido y siguen figurando como competitivos numerosos estimadores: hasta #fkdc retiene su título en 1 dataset, `espirales_lo`.
+El mismo análisis con métrica de exactitud es menos favorable a la familia $cal(K)$, que de ser óptimos en 14 de 20 datasets por $R^2$, pasan a serlo en sólo 8 de 20 por exactitud. #svc, entrenado en consecuencia, resulta un algoritmo casi imbatible en exactitud, con rendimiento sólido en todo tipo de datasets y máximo de entre la muestra en 6 de ellos. #gbt vuelve a brillar en aquellos con mucho ruido y siguen figurando como competitivos numerosos estimadores: hasta #fkdc retiene su título en 1 dataset, `espirales_lo`.
 
 #tabla_clf_destacados(
   "data/mejor-clf-por-dataset-segun-accuracy-mediano.csv",
@@ -1554,8 +1556,7 @@ El mismo análisis con métrica de exactitud es, desde luego, menos favorable a 
   short-caption: [Mejor clasificador por dataset según exactitud mediana.],
 )
 
-
-Considerar únicamente el rendimiento de #fkdc y #fkn en los 20 datasets ya daría unas 40 unidades de análisis; en el espíritu de indagación curiosa que guía esta tesis, existen aún más tendencias y patrones interesantes en los 4,500 experimentos realizados. No es nuestra intención abrumar al lector, así que a continuación haremos un paneo arbitrario por algunos de los resultados que (a) nos resultaron más llamativos o (b) se acercan lo suficiente a algún resultado de la literatura previa como para merecer un comentario aparte. Quien desee corroborar que no hicimos un uso injustificado de la discrecionalidad para elegir resultados encontrará tablas y gráficos en abundancia en la sección de resultados por dataset.
+No es nuestra intención abrumar al lector, así que a continuación haremos un paneo arbitrario por algunos de los resultados que nos resultaron más llamativos o se acercan lo suficiente a algún resultado de la literatura previa como para merecer un comentario aparte #footnote[Si used, querido lector, es un alma crítica e inquieta y decide clonar el repositorio, cambiar las semillas y reproducir los experimentos --- ¡o aún incorporar nuevos datasets y algoritmos! --- ppor favor, no deje de hacer un _pull request_ al repositorio original.].
 == Lunas, círculos y espirales ($D=2, d=1, k=2$)
 
 Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=1, k=2$, y exploramos tres curvas sampleadas con un poco de "ruido blanco" añadido: dos "lunas" --- semicírculos no superpuestos con sus centros en un extremo del semicírculo opuesto ---, dos círculos concéntricos y dos espirales con el mismo origen y rotación en sentidos opuestos #footnote[No entraremos en demasiado detalle sobre cómo se generó o de dónde se tomó cada _dataset_ para mantener el foco en los resultados de la experimentación. En el paquete adjunto, las rutinas completas para generar cada conjunto de datos se puede leer en `fkdc/datasets.py`].
