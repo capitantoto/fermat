@@ -429,6 +429,11 @@ def graficar_fkn_kn_score_vs_n_vecinos(dataset, semilla, ax, infos=None):
     ).rename("kn")
     pd.concat([puntaje_kn, puntaje_fkn], axis=1).plot(ax=ax)
     ax.set_xscale("log")
+    ticks = [1, 2, 5, 10, 20, 50, 100, 200, 500]
+    ax.set_xticks(ticks, labels=[str(t) for t in ticks], minor=False)
+    ax.set_xticks([], minor=True)
+    ax.set_xlabel("número de vecinos $k$")
+    ax.set_ylabel("mejor _score_ medio en CV".replace("_score_", "score"))
     return ax
 
 

@@ -1989,7 +1989,7 @@ Consideraremos a continuación datasets de variedades con dimensión intrínseca
 
 Toda la familia de estimadores de densidad por núcleos alcanza un $R^2 approx 1$, y aun Naive Bayes tiene un rendimiento aceptable: con este nivel de ruido blanco en el muestreo, el "margen de separación" entre ambos anillos es tan amplio que la tarea resulta trivial.
 
-Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ --- no así el de exactitud --- revela un fuerte _outlier_ de $R^2_#fkdc 0.65, thin R^2_#kdc = 0.9$ para la semilla $2411$.
+Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ --- no así el de exactitud --- revela un fuerte _outlier_ para la semilla $2411$:
 
 #tabla_csv(
   "data/eslabones_0-params-2411.csv",
@@ -1997,33 +1997,35 @@ Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ --- no así el de
   short-caption: [Parámetros de #fkdc en `eslabones_0`, $s=2411$],
 )
 
-La semilla resultó adversa para ambos #footnote[Aún $R^2_#kdc = 0.91$ es un mal _score_ relativo al IQR de rendimiento de #kdc en el dataset], pero particularmente para #fkdc. #gbt queda técnicamente a más de $1 sigma$ del $R^2$ medio de #fkn, pero en la práctica, ofrece un $R^2$  excelente _sin ningún outlier_.
+La semilla resultó adversa para ambos, pero particularmente para #fkdc. #gbt queda técnicamente a más de $1 sigma$ del $R^2$ medio de #fkn, pero en la práctica, ofrece un $R^2$  excelente _sin ningún outlier_.
 
 ==== Hélices
 
-Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la misma dirección, una de ellas empezando a "media altura" entre dos brazos consecutivos de la otra. El dataset es particularmente desafiante para Naive Bayes y regresión logística, que no logran diferenciarse en nada de un clasificador trivial que prediga siempre la misma clase.
 #highlights_figure("helices_0")
-#obs[El rendimiento de #logr es malo únicamente porque se aplicó ciegamente a los datos. La primera tarea cuando se busca inferir la geometría de unos datos es graficarlos, y al observar la hélice uno puede parametrizarla de manera natural como $f(x, y, z) = ("ángulo, velocidad radial, velocidad vertical") ,$ entrenar sobre esta _representación_ y obtener un $R^2 approx 1$.
-  Al final, "todo algoritmo funciona cuando los datos son buenos" --- la ventaja de algunos es que no hace falta ponerle demasiada cabeza a "masajearlos" hasta que "son buenos". Que a #gnb le resulte complejo no es sorprendente, ya que las distribuciones marginales son prácticamente idénticas.
-  #figure(
-    image("img/helices-pairplot.svg"),
-    caption: flex-caption(
-      [_Pairplot_ del dataset `helices_0`. Las distribuciones marginales por dimensión son prácticamente idénticas para ambas clases, lo que explica el rendimiento trivial de #gnb.],
-      [_Pairplot_ de `helices_0`.],
-    ),
-  )
-]
-La clasificación dura con estimación de densidad por núcleos --- con distancia de Fermat o sin ella --- resulta ser superior a todas las alternativas en términos de exactitud --- ligeramente --- y $R^2$ --- por mucho. Encima de ello, #fkdc es todavía significativamente mejor en $R^2$ que #kdc por casi 5 puntos porcentuales y consistentemente en todas las semillas, salvo una particularmente negativa:
 
+Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la misma dirección, una de ellas empezando a "media altura" entre dos brazos consecutivos de la otra. El dataset es particularmente desafiante para Naive Bayes y regresión logística, que no logran diferenciarse en nada de un clasificador trivial que prediga siempre la misma clase.
+#obs[El rendimiento de #logr es malo únicamente porque se aplicó ciegamente a los datos. La primera tarea cuando se busca inferir la geometría de unos datos es graficarlos, y al observar la hélice uno puede parametrizarla de manera natural como $f(x, y, z) = ("ángulo, velocidad radial, velocidad vertical") ,$ entrenar sobre esta _representación_ y obtener un $R^2 approx 1$.
+  Todo algoritmo funciona OK sobre una representación adecuada --- la ventaja de algunos es que no hace falta "ponerle demasiada cabeza" a "masajearlos". Que a #gnb le resulte complejo no es sorprendente, ya que las distribuciones marginales son prácticamente idénticas.
+]
+#figure(
+  image("img/helices-pairplot.svg"),
+  caption: flex-caption(
+    [_Pairplot_ del dataset `helices_0`. Las densidades marginales son prácticamente idénticas para ambas clases, el talón de Aquiles de #gnb.],
+    [_Pairplot_ de `helices_0`.],
+  ),
+)
+La clasificación dura con estimación de densidad por núcleos --- con distancia de Fermat o sin ella --- resulta ser ligeramente superior a todas las alternativas en términos de exactitud y muy superior en $R^2$. Encima de ello, #fkdc mejora en $R^2$ a #kdc por casi 5 puntos porcentuales y consistentemente en (casi) todas las semillas. ¿Con qué parámetros?
 #figure(
   image("img/helices_0-r2-fkdc-vs-kdc.svg"),
   caption: flex-caption(
-    [$R^2$ apareado por semilla en `helices_0`: cada punto compara una corrida de #fkdc con la de #kdc para la misma semilla. #fkdc supera a #kdc en casi todas las semillas, con una ventaja mediana cercana a cinco puntos porcentuales.],
+    [$R^2$ apareado por semilla en `helices_0`: cada punto compara una corrida de #fkdc con la de #kdc para la misma semilla. #fkdc supera a #kdc en casi todas las semillas, con una ventaja media de 5pp.],
     [$R^2$ de #fkdc vs. #kdc por semilla en `helices_0`.],
   ),
 )
 
-En prácticamente todas las semillas el $R^2$ de #fkdc es estrictamente mejor al "control" de #kdc. ¿Con qué parámetros sucede?
+La semilla con mayor $Delta_(R^2)$ favorable a #fkdc corresponde a una hiperparametrización no-reducible a #kdc $(alpha = 1.25, h = 0.006)$ y le otorgga 23.7pp de $R^2$ _en términos absolutos_#footnote[en criollo, "un montón".] más que #kdc con $h = 0.208$ --- una ventana $approx 35$ veces más ancha.
+
+Salta a la vista también que tales parametrizaciones "divergentes" tienen muy variado rendimiento por fuera del conjunto de entrenamiento #footnote[o _out-of-sample_, en inglés.] , pues para $s = 8096$ se eligió _la misma_ $mu$, contra $h_#kdc = 0.143 approx 25 h_#fkdc$ y se dio la segunda diferencia más amplia _en contra_ de #fkdc ($Delta_(R^2) = -0.098$).
 
 #tabla_params(
   "data/helices_0-parametros_comparados-kdc.csv",
@@ -2033,16 +2035,14 @@ En prácticamente todas las semillas el $R^2$ de #fkdc es estrictamente mejor al
   short-caption: [Parámetros de #fkdc vs. #kdc en `helices_0`],
 )
 
-Ordenados por $Delta_(R^2) = R^2_#fkdc - R^2_#kdc$, la semilla con mayor diferencia a favor del resultado con distancia de Fermat corresponde a $mu = (alpha = 1.25, h = 0.006)$ --- una hiperparametrización no-trivialmente reducible a #kdc --- que resulta en un $Delta_(R^2) = 0.237 (= 0.953 - 0.716)$ puntos _en términos absolutos_#footnote[I.e., "un montón".] por encima de #kdc con $h = 0.208$, usando una ventana unas 35 veces más ancha.
-Salta a la vista también que tales parametrizaciones tienen muy variado rendimiento por fuera del conjunto de entrenamiento #footnote[también OOS --- _out-of-sample_--- por sus siglas en inglés.] , pues para $s = 8096$ se eligió _la misma_ $mu$, contra $h_#kdc = 0.143 approx 25 h_#fkdc$ y se dio la segunda diferencia más amplia _en contra_ de #fkdc ($Delta_(R^2) = -0.098$).
 
-Se podría argumentar en contra de #fkdc que $alpha = 1.25 approx 1$, pero al revisar el comportamiento de la regla de parsimonia,  encontramos por ejemplo que para $s = 1188, thin Delta_(R^2) = 0.227$  la parametrización óptima fue con $nu = h = 10^(-3), alpha=3$ y todas las hiperparametrizaciones  a menos de $1 sigma$ de $nu$ tenían $alpha >= 2.5$, lejos de 1.
+Se podría argumentar en contra de #fkdc que $alpha = 1.25 approx 1$, pero al revisar el comportamiento de la regla de parsimonia,  encontramos por ejemplo que para $s = 1188, thin Delta_(R^2) = 0.227$  la parametrización maximizadora de $R^2$ en entrenamiento fue con $(h = 10^(-3), alpha=3)$ y todas las hiperparametrizaciones a menos de $1 sigma$ de esta tenían $alpha >= 2.5$, lejos de 1.
 
-Más aún, en unos cuantos casos --- $s in {1188, 1182, 2411}$ --- en que $alpha_#fkdc = alpha_#kdc = 1$, #fkdc todavía rinde un poco mejor que #kdc al elegir anchos de banda mucho más pequeños. Ya hemos visto que aún ligeras diferencias en la ventana $h$ podían llevar a mejoras en $R^2$ a favor de #fkdc por el detalle fino de la búsqueda en grilla que se definió. Por ejemplo,
+Más aún, en unos cuantos casos --- $s in {1188, 1182, 2411}$ --- en que $alpha_#fkdc = alpha_#kdc = 1$, #fkdc todavía rinde un poco mejor que #kdc al elegir anchos de banda mucho más pequeños. Ya hemos visto que aún ligeras diferencias en $h$ pueden redundar en un $R^2$ favorable a #fkdc por el "detalle fino" de la búsqueda de hiperparámetros. Sin embargo vemos casos como el de
 
 $ s = 1182, quad Delta_R^2=0.111, quad alpha_#fkdc = alpha_#kdc = 1, quad h_#fkdc / h_#kdc approx 14.3 $
 
-que cuesta explicar como una ligera discrepancia en la grilla de $h$.
+que cuesta explicar únicamente en base al mismo fenómeno.
 
 
 #wide_figure(
@@ -2060,29 +2060,29 @@ que cuesta explicar como una ligera discrepancia en la grilla de $h$.
 
 Nuestra hipótesis es que el dominio ampliado de hiperparámetros de #fkdc junto con la regla de parsimonia trabajan en tándem:
 
-Durante el entrenamiento, #kdc encuentra la solución $h_#kdc=0.143$ (cf. posición $(1)$ de @alpha-ne-1, der.) ceñido al perfil en que $alpha = 1$ --- el borde inferior de la superficie. Presumiblemente, la varianza del rendimiento en testeo para dicha solución fue tal que ningún punto en el entorno de $h_#fkdc=0.01$ (cf. pos. $(3)$) estaba a menos de $1 sigma$ del _score_ en $(1)$. Cuando entrenamos #fkdc y ampliamos el dominio de la parametrización a toda la superficie computada, el entrenamiento por CV alcanza un máximo en $alpha=3, h = 0,000562$ (cf. $(2)$). Esta nueva solución tiene más varianza en sus resultados a través de cada pliego de CV, por lo que $hat(s)(mu_#fkdc) > hat(s)(mu_#kdc)$ y, la cota inferior de la R1SD de @r1sd será más laxa. En ese rango ampliado de hiperparametrizaciones "suficientemente buenas" se encuentra $alpha=1, h=0.01$ --- la solución de $(3)$ que en entrenamiento #kdc vio pero ignoró.
+Durante el entrenamiento, #kdc encuentra la solución $h_#kdc=0.143$ (cf. posición $(1)$ de @alpha-ne-1, der.) con $alpha = 1$, sobre el borde inferior de la superficie. Presumiblemente, la varianza del rendimiento en testeo para dicha solución fue tal que ningún punto en el entorno de $h_#fkdc=0.01$ (cf. pos. $(3)$) estaba a menos de $1 sigma$ del _score_ en $(1)$. Cuando entrenamos #fkdc y ampliamos el dominio de la parametrización a toda la superficie computada, el entrenamiento por CV maximiza el _score_ en $(alpha=3, h = 0,000562)$ --- posición $(2)$. Con esta hiperparametrización, la varianza en los resultados de cada pliego de CV es mayor, por lo que la cota inferior de la R1SD será más laxa. En ese rango ampliado de hiperparametrizaciones "suficientemente buenas" se encuentra $(alpha=1, h=0.01)$, la solución de $(3)$ que en entrenamiento #kdc vio y no eligió.
 
 === Efecto de #sfd en las vecindades óptimas de #kn
 
-En el estimador de densidad en variedades de  @loubesKernelbasedClassifierRiemannian2008, al núcleo $K$ se lo evalúa sobre
-$frac(d(x_0, X_i), h, style: "horizontal")$, y nuestra implementación de #fkdc estima $hat(d) = D_(Q_i, alpha)(XX)$. Si resultase que $D_(Q_i, alpha) prop ||dot||$ --- la distancia de Fermat es proporcional a la euclídea) --- podemos escribir
+En el estimador de densidad en variedades de  #cite(<loubesKernelbasedClassifierRiemannian2008>, form: "prose"), al núcleo $K$ se lo evalúa sobre
+$frac(d(x_0, X_i), h, style: "horizontal")$, y nuestra implementación de #fkdc estima la distancia con $hat(d) = D_(Q_i, alpha)(XX)$. Si resultase que la distancia de Fermat es proporcional a la euclídea --- $D_(Q_i, alpha) prop ||dot||$ --- podríamos escribir
 
 $
   (op(D_(Q_i, alpha))(x_0, X_i))/ h approx (c norm(x_0 - X_i))/ h = norm(x_0 - X_i) / h'
 $
-con $h' = h slash c$ y efectivamente los parámetros $(alpha, h)$ se solapan en sus funciones. Lamentablemente, sabemos que localmente esto _es_ cierto: en un vecindario de $x_0$, la densidad $f$ de $X$ es #math.approx constante, así que la distancia "macroscópica" $cal(D)_(f,beta)$, y el costo de integrarla al respecto de un sendero será proporcional a la longitud --- euclídea --- del mismo. Nuestra aproximación #sfd de $cal(D)_(f,beta)$ heredará las mismas características.
+con $h' = h slash c$ y observaríamos que los parámetros $(alpha, h)$ se solapan en sus funciones. Localmente, cuando el espacio está "densamente" muestreado, los saltos de una observación a otra en su vecindario serán "pequeños", y el efecto "inflacionario" de $alpha$ menos importante.
 
-La serie $k_n$ que minimiza el error cuadrático medio del estimador $k$-NN cuando $n -> oo$ es $k prop n^(4/(d+4))$, que para nuestros tamaños muestrales de CV resulta en $320^(4/(3+4)) = 320^(4/7) approx 27$. Es decir que tomando #math.approx tres decenas de vecinos alcanzaría para entrenar un clasificador #kn decente --- #fkn podrá ser mejor con $k_#fkn >> 27$, pero no mejor que #kn con $k_#kn approx 27$. Pues bien, cuando miramos el mejor rendimiento en test por `n_neighbors` para #kn y #fkn, vemos que elegir un $alpha$ variable le permite a #fkn mantener un óptimo rendimiento en términos de log-verosimilitud #footnote[y por ende $R^2$ también] para _cualquier_ valor de $k$ #footnote[`n_neighbors` en la parametrización de `scikit-learn`.].
+Para $k = 1$, #fkn y #kn coinciden exactamente: todo camino que sale de $x_0$ en el grafo muestral comienza con una arista de longitud al menos $r_1 (x_0)$, la distancia a su vecino euclídeo más cercano, de modo que $D_(Q, alpha)(x_0, X_i) >= r_1 (x_0)^alpha$ para todo $i$, con igualdad para ese vecino. El vecino más cercano según la distancia de Fermat es también el euclídeo, cualquiera sea $alpha$, y por ello ambas curvas de la @fig-fkn-kn-k parten del mismo punto. A partir de $k = 2$ divergen por una razón "geométrica": en `helices_0`, el vecindario euclídeo de un punto pronto incorpora la otra hélice, que pasa "ahí nomás", y el mejor _score_ de #kn se desploma para $k gt.tilde 5$. Los vecindarios de Fermat, en cambio, crecen a lo largo de la hebra, y #fkn se mantiene a nada de su óptimo para _cualquier_ $k$:
 
 #figure(
   image("img/helices_0-fkn_kn-mean_test_score.svg"),
   caption: flex-caption(
-    [Máximo _score_ medio en validación cruzada por cantidad de vecinos $k$ en `helices_0`. Para cada $k$, se muestra el mejor desempeño hallado entre todas las parametrizaciones de cada clasificador; al ampliar el dominio con $alpha$, #fkn iguala o supera a #kn para casi todo $k$.],
+    [Máximo _score_ medio en validación cruzada por cantidad de vecinos $k$ en `helices_0`. Para cada $k$, se muestra el mejor desempeño hallado entre todas las parametrizaciones de cada clasificador; #fkn y su "dominio ampliado" vía $alpha$ iguala o supera a #kn para todo $k$.],
     [$cal(l)$ en entrenamiento para #fkn y #kn en `helices_0`],
   ),
-)
+) <fig-fkn-kn-k>
 
-Llegamos a la misma conclusión que antes por otra dirección: si el espacio están tan bien muestreado que el clasificador depende de vecindarios muy pequeños #footnote[vía $k$ en $k$-vecinos-más-cercanos, $h$ en KDE] para estimar densidades el efecto de reemplazar la distancia euclídea por la distancia de Fermat aprendida de los datos no será muy notorio.
+Llegamos a la misma conclusión que antes por otra dirección: en los vecindarios más pequeños #footnote[vía $k$ en $k$-vecinos-más-cercanos, $h$ en KDE], la distancia de Fermat no se distingue de la euclídea. Su aporte no está allí, sino en que permite agrandar el vecindario sin cruzar a la otra variedad, y por ende vuelve al clasificador robusto a la elección de $k$ (#fkn) o $h$ (#fkdc).
 
 === Pionono
 
