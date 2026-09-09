@@ -1557,9 +1557,9 @@ El mismo análisis con métrica de exactitud es menos favorable a la familia $ca
 )
 
 No es nuestra intención abrumar al lector, así que a continuación haremos un paneo arbitrario por algunos de los resultados que nos resultaron más llamativos o se acercan lo suficiente a algún resultado de la literatura previa como para merecer un comentario aparte #footnote[Si used, querido lector, es un alma crítica e inquieta y decide clonar el repositorio, cambiar las semillas y reproducir los experimentos --- ¡o aún incorporar nuevos datasets y algoritmos! --- ppor favor, no deje de hacer un _pull request_ al repositorio original.].
-== Lunas, círculos y espirales ($D=2, d=1, k=2$)
+== Lunas, círculos y espirales ($d=2, d_MM=1, K=2$)
 
-Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=1, k=2$, y exploramos tres curvas sampleadas con un poco de "ruido blanco" añadido: dos "lunas" --- semicírculos no superpuestos con sus centros en un extremo del semicírculo opuesto ---, dos círculos concéntricos y dos espirales con el mismo origen y rotación en sentidos opuestos #footnote[No entraremos en demasiado detalle sobre cómo se generó o de dónde se tomó cada _dataset_ para mantener el foco en los resultados de la experimentación. En el paquete adjunto, las rutinas completas para generar cada conjunto de datos se puede leer en `fkdc/datasets.py`].
+Para comenzar, consideramos el caso no trivial más sencillo con $d > d_MM$: $d=2, d_MM=1, K=2$, y exploramos tres curvas sampleadas con un poco de "ruido blanco" añadido: dos "lunas" --- semicírculos no superpuestos con sus centros en un extremo del semicírculo opuesto ---, dos círculos concéntricos y dos espirales con el mismo origen y sentido de rotación pero desfasadas medio giro #footnote[No entraremos en demasiado detalle sobre cómo se generó o de dónde se tomó cada _dataset_ para mantener el foco en los resultados experimentales. Las rutinas para generar cada conjunto de datos se puede leer en `fkdc/datasets.py`].
 
 #v(-1em)
 
@@ -1567,7 +1567,6 @@ Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=
   "ruido blanco",
 )[Sea $W = (W_1, dots, W_d) in RR^d$ una variable aleatoria tal que $"E"(W_i)=0, "Var"(W_i)=SS thick forall i in [d]$. Llamaremos "ruido blanco con escala $SS$" a $N$ realizaciones #iid de $W, thin bu(W) in RR^(N times d)$.] <ruido-blanco>
 
-#obs[Dado que la dimensión de la variedad subyacente ($d=1$) es menor que la del espacio ambiente ($D=2$), sin ruido las observaciones caerían exactamente sobre la curva y la tarea de clasificación resultaría casi trivialmente sencilla. Para acercarnos a un escenario más realista que simule la incertidumbre inherente en cualquier toma de muestras, las observaciones se generan dentro de un _tubo_ de radio $tau$ alrededor de #MM, es decir, en el conjunto $B(MM, tau) = {x in RR^D : min_(y in MM) norm(x - y)_2 <= tau}$, tal como @mckenziePowerWeightedShortest2019 mencionan como posible extensión a su trabajo.]
 
 #let plotting_seed = 1075
 #wide_figure(
@@ -1576,9 +1575,10 @@ Para comenzar, consideramos el caso no trivial más sencillo con $D>d$: $D=2, d=
     gutter: 4pt,
     image("img/lunas_lo-scatter.svg"), image("img/circulos_lo-scatter.svg"), image("img/espirales_lo-scatter.svg"),
   ),
-  caption: flex-caption["Lunas", "Círculos" y "Espirales", con $d_x = 2, d_(MM) = 1$ y $s=#plotting_seed$][ "Lunas", "Círculos" y "Espirales" ],
+  caption: flex-caption["Lunas", "Círculos" y "Espirales", con $d = 2, d_MM = 1$ y $s=#plotting_seed$ en régimen de "bajo ruido"][ "Lunas", "Círculos" y "Espirales" con bajo ruido],
 ) <fig-2>
 
+#obs[Dado que la dimensión de la variedad subyacente ($d_MM=1$) es menor que la del espacio ambiente ($d=2$), sin ruido las observaciones caerían exactamente sobre la curva y la tarea de clasificación resultaría casi trivialmente sencilla. Para acercarnos a un escenario más realista que simule la incertidumbre inherente en cualquier toma de muestras, las observaciones se generan dentro de un _tubo_ de radio $tau$ alrededor de #MM, es decir, en el conjunto $B(MM, tau) = {x in RR^d : min_(y in MM) norm(x - y)_2 <= tau}$, tal como #cite(<mckenziePowerWeightedShortest2019>, form: "prose") mencionan como posible extensión a su trabajo.]
 
 
 
@@ -1648,21 +1648,40 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
   )
 }
 
-#let highlights_figure(dataset, height: 6em, width: 140%) = {
+// Cuadrado de dos columnas: a la izquierda el scatterplot sobre la tabla resumen,
+// a la derecha los dos boxplots (verticales) uno debajo del otro.
+#let highlights_figure(dataset, width: 100%, spacing: 0.5em, gutter: 1em) = {
   let highlights = json("data/" + dataset + "-r2-highlights.json")
-  let tabla_resumen = highlights_table(highlights)
+  let tabla_resumen = text(size: 9pt)[#highlights_table(highlights)]
+  let scatter = image("img/" + dataset + "-scatter.svg")
+  let boxplots = ("r2", "accuracy").map(m => image("img/" + dataset + "-" + m + "-boxplot.svg"))
 
   wide_figure(
     width: width,
-    table(
-      columns: 2,
-      stroke: 0pt,
-      align: center + horizon,
-      inset: (x: 0.5em, y: 0.25em),
-      image("img/" + dataset + "-scatter.svg", height: height), text(size: 9pt)[#tabla_resumen],
-      image("img/" + dataset + "-r2-boxplot.svg", height: height),
-      image("img/" + dataset + "-accuracy-boxplot.svg", height: height),
-    ),
+    layout(size => {
+      let (spacing, gutter) = (spacing.to-absolute(), gutter.to-absolute())
+      // Resolvemos el ancho de columna izquierda `w` para que el conjunto sea un cuadrado
+      // de lado H: la columna izquierda (scatter de ancho `w` sobre la tabla) y la derecha
+      // (dos boxplots apilados) tienen la misma altura H, y H = ancho total.
+      let (a_s, a_b) = (scatter, boxplots.at(0)).map(im => { let m = measure(im); m.height / m.width })
+      let tabla = measure(tabla_resumen)
+      let T = tabla.height
+      let w = (spacing - gutter + T * (1 - 1 / (2 * a_b))) / (1 - a_s + a_s / (2 * a_b))
+      // La columna izquierda nunca es más angosta que la tabla (se pierde el cuadrado exacto,
+      // pero ambas columnas siguen teniendo la misma altura).
+      let w = calc.max(w, tabla.width)
+      let H = a_s * w + spacing + T
+      let r = (H - spacing) / (2 * a_b)
+      // Escalamos el conjunto para que ocupe exactamente el ancho disponible.
+      let factor = size.width / (w + gutter + r)
+      scale(factor * 100%, reflow: true, grid(
+        columns: (w, r),
+        column-gutter: gutter,
+        align: center + horizon,
+        stack(dir: ttb, spacing: spacing, box(width: w, scatter), tabla_resumen),
+        stack(dir: ttb, spacing: spacing, ..boxplots.map(im => box(width: r, im))),
+      ))
+    }),
     caption: flex-caption[_Scatterplot_, tabla resumen y _boxplots_ de $R^2$ y _accuracy_ en el _dataset_ #raw(dataset)][Resumen de resultados para #raw(dataset)],
   )
 }
@@ -1672,7 +1691,7 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 #let sfd = $D_(Q, alpha)$
 
 #obs("riesgos computacionales")[
-  Una dificultad de entrenar un clasificador _original_ es que hay que definir las rutinas numéricas "a mano" #footnote[Usando librerías estándares como `numpy` y `scipy` para las operaciones elementales, pero nada más.]. Además, _debugear_ errores en rutinas numéricas es particularmente difícil, puesto que las operaciones no producen errores obvios, sino que casi siempre retornan, salvo que retornan valores irrisorios #footnote[Hubo montones de estos, cuya resolución progresiva dio lugar al módulo `fkdc/fermat.py` y las clases `SampleFermatDistance, FermatKNeighborsClassifier, FermatKDE` y `KDClassifier`--- que acepta tanto la métrica euclídea como de Fermat --- en la pequeña librería que acompaña esta tesis. Creemos que no los hay, pero todo error de cálculo que pueda persistir en el producto final depende exclusivamente de mí.].
+  Una dificultad de entrenar un clasificador _original_ es que hay que definir las rutinas numéricas "a mano", usando librerías estándares como `numpy` y `scipy` para operaciones elementales y nada más. Además, _debugear_ errores en rutinas numéricas es particularmente difícil, puesto que las operaciones no producen errores obvios, sino que retornan valores irrisorios #footnote[Hubo montones de estos, cuya resolución progresiva dio lugar al módulo `fkdc/fermat.py` y las clases `SampleFermatDistance, FermatKNeighborsClassifier, FermatKDE` y `KDClassifier`--- que acepta tanto la métrica euclídea como de Fermat --- en la pequeña librería que acompaña esta tesis. Creemos que no los hay, pero todo error de cálculo que pueda persistir en el producto final depende exclusivamente de mí.].
 
   A ello se le suma que el cómputo de la distancia muestral de Fermat #sfd es realmente caro. Aun siguiendo "buenas prácticas computacionales" #footnote[Como sumar logaritmos en lugar de multiplicar valores "crudos" siempre que sea posible], implementaciones ingenuas pueden resultar impracticables hasta en datasets de baja cardinalidad y pocas dimensiones.
 
@@ -1683,25 +1702,33 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 
 === `lunas_lo`
 
+A contiunuación presentaremos el resumen de los resultados obtenidos para este dataset. Como tal gráfica de síntesis se repetirá por dataset, amerita una breve descripción. Consta de dos columnas: en la izquierda, un scatter plot 2D o 3D de algunas dimensiones del dataset y una tabla con la exactitud y el $R^2$ mediano por algoritmo. Para ayudar a la comprensión de un vistazo, los algoritmos se ordenan por $R^2$ descendiente, el mejor se resalta en verde, y atenuados en gris figuran aquellos cuya mediana de $R^2$ esté por debajo del primer cuartil del mejor --- salvo SVC  que no reporta $R^2$ #footnote[Una regla similar a la R1SD hubiese sido más consistente, pero al presentar los datos con boxplots esta demarcación nos resultó más natural.].
+
+En la columna derecha, los boxplots de ambas métricas, _excluyendo_ aquellos clasificadores cuyo $R^2$ mediano está por debajo del _peor_ $R^2$ del mejor clasificador. Las líneas punteadas horizontales marcan la mediana del mejor algoritmo en cada métrica.
+
 #highlights_figure("lunas_lo")
 
-#logr tiene un rendimiento decente en `lunas_lo`:
+#fkdc tiene el mejor rendimiento, pero no por mucho, y aún #logr _performa_ decentemente en `lunas_lo`:
 
 #figure(
-  image("img/lunas_lo-lr-decision_boundary.svg", height: 20em),
+  image("img/lunas_lo-lr-decision_boundary.svg", height: 17em),
   caption: flex-caption(
-    [Frontera de decisión para #slr en `lunas_lo`, $s = #plotting_seed$],
-    [Frontera de #slr en `lunas_lo`],
+    [Frontera de decisión para #logr en `lunas_lo`, $s = #plotting_seed$],
+    [Frontera de #logr en `lunas_lo`],
   ),
 )
-Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) aprendida por #logr separa _bastante_ bien la muestra: pasa por el punto del segmento que une el "centro" de cada luna, y de todas las direcciones con tal origen, elige la que mejor separa las clases. _Grosso modo_, en el tercio de la muestra más cercano a la frontera, alcanza una exactitud de $~50%$, pero en los tercios al interior de cada región está virtualmente en 100%, que da un promedio global de $1/3 50% + 2/3 100% = 86.7%$, casi exactamente la exactitud observada.
+Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) aprendida por #logr separa "bastante bien" la muestra: pasa por el punto medio del segmento que une el "centro" de cada luna, y de todas las direcciones con tal origen, elige la que mejor separa las clases. _Grosso modo_, en el tercio de la muestra más cercano a la frontera, alcanza una exactitud de $~50%$, pero en los tercios al interior de cada acierta virtualmente el 100%, para un promedio global de $1/3 50% + 2/3 100% approx 86.7%$, muy cercano a la exactitud observada.
 
 === `circulos_lo` y `espirales_lo`
 
 #highlights_figure("circulos_lo")
 #highlights_figure("espirales_lo")
 
-Una inspección ocular a las fronteras de decisión revela las limitaciones de distintos algoritmos, siendo el caso de las espirales el más vistoso y pedagógico. #logr y #slr solo pueden dibujar fronteras "lineales", y como ninguna frontera lineal que corte la muestra logra dividirla en dos regiones con densidades de clase realmente diferentes, el algoritmo falla. #gnb falla de manera análoga, aunque su problema es otro - no lidia bien con distribuciones con densidades marginales muy similares.
+Una inspección ocular a las fronteras de decisión revela las limitaciones de distintos algoritmos, siendo `espirales_lo` un caso vistoso y pedagógico: fijamos una semilla, y dibujamos las fronteras de decisión por clasificador. 
+
+#logr y #slr solo pueden dibujar fronteras "lineales", y como ninguna frontera lineal que corte la muestra logra dividirla en dos regiones con densidades de clase realmente diferentes, el algoritmo no es mejor que "lanzar una moneda". #gnb falla de manera análoga, aunque su problema es otro --- no lidia bien con distribuciones con densidades marginales muy similares.
+
+Entre #kn y #fkn casi no observamos diferencias, asunto que ahondaremos más adelante. Por lo pronto, sí se nota que se adaptan bastante bien a los datos, con algunas regiones de incertidumbre que resultan onerosas en términos de $R^2$: a primera vista los mapas de decisión recién expuestos se ven muy similares, pero las pequeñas diferencias de probabilidades resultaron en una diferencia de $0.19$ en $R^2$ _en contra_ del #fkn para esta semilla #footnote[La diferencia en la _mediana_ de $R^2$ para ambos es mucho menor, $approx 0.03$, lo cual resalta la sensibilidad de los resultados a la semilla aleatorizante y la importancia de realizar muchas repeticiones de cada experimento para evitar resultados espurios]. También resulta llamativa la "creatividad" de #gbt para aproximar las verdaderas fronteras --- espirales curvas --- con una serie de _splits_ binarios, que le permiten dibujar una especie "espiral rectangular".
 
 #let clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb")
 #wide_figure(
@@ -1715,11 +1742,10 @@ Una inspección ocular a las fronteras de decisión revela las limitaciones de d
   ),
 ) <fig-fronteras-espirales>
 
-Entre #kn y #fkn casi no observamos diferencias, asunto en el que ahondaremos más adelante. Por lo pronto, sí se nota que se adaptan bastante bien a los datos, con algunas regiones "claras" de incertidumbre que resultan onerosas en términos de $R^2$: a primera vista los mapas de decisión recién expuestos se ven muy similares, pero las pequeñas diferencias de probabilidades resultaron en una diferencia de $0.19$ en $R^2$ _en contra_ del modelo más complejo para esta semilla #footnote[La diferencia en la _mediana_ de $R^2$ para ambos es mucho menor, $approx 0.03$, lo cual resalta la sensibilidad de los resultados a la semilla aleatorizante y la importancia de realizar muchas repeticiones de cada experimento para evitar resultados espurios]. También resulta llamativa la "creatividad" de #gbt para aproximar las verdaderas fronteras --- espirales curvas --- con una serie de preguntas binarias, que le permiten dibujar una especie "espirales rectangulares".
+#kdc ofrece una frontera aún más regular que #kn, sin perder en $R^2$ y hasta mejorando la exactitud. Y por encima de este ya destacable rendimiento, el uso de la distancia de Fermat _incrementa_ la confianza en estas regiones --- nótese cómo se afinan las áreas grises de incertidumbre y aumenta la superficie de rojo/azul sólido, mejorando otro poco el $R^2$.
 
-#kdc ofrece una frontera aún más regular que #kn, sin perder en $R^2$ y hasta mejorando la exactitud. Y por encima de este ya destacable rendimiento, el uso de la distancia de Fermat _incrementa_ la confianza en estas regiones --- nótese cómo se afinan las áreas grises y aumenta la superficie de rojo/azul sólido, mejorando otro poco el $R^2$.
 
-#figure(
+#wide_figure(
   columns(2)[
     #image("img/espirales_lo-fkdc-decision_boundary.svg")
     #colbreak()
@@ -1731,11 +1757,11 @@ Entre #kn y #fkn casi no observamos diferencias, asunto en el que ahondaremos m�
   ),
 )
 
-Por último, observamos las fronteras de #svc, que no tienen gradiente de color sino solo una frontera lineal #footnote[Como aprendimos: la frontera de una variedad riemanniana de dimensión intrínseca $d$ es una variedad sin frontera de dimensión intrínseca $d-1$; la frontera de estas regiones en es una curva parametrizable en $RR^1$ embebida en $RR^2$] puesto que al ser un clasificador duro determina una frontera abrupta donde cambia la clase predicha. Es sorprendente la flexibilidad del algoritmo, que consigue dibujar una única frontera sumamente no-lineal que separa los datos con altísima exactitud. La ventaja que #fkdc pareciera tener sobre #svc es que la frontera que dibuja pasa "más lejos" de las observaciones de clase, mientras que la #svc parece estar muy pegada a los brazos de la espiral, particularmente en el giro más interno.
+Las fronteras de #svc, que no tienen gradiente de color sino solo una frontera lineal #footnote[Como aprendimos: la frontera de una variedad riemanniana de dimensión intrínseca $d_MM$ es una variedad sin frontera de dimensión intrínseca $d_MM - 1$; la frontera de estas regiones en es una curva parametrizable en $RR^1$ embebida en $RR^2$] puesto que al ser un clasificador duro determina una frontera abrupta donde cambia la clase predicha. Es sorprendente la flexibilidad del algoritmo, que consigue dibujar una única frontera sumamente no-lineal que separa los datos con altísima exactitud. La ventaja que #fkdc pareciera tener sobre #svc es que la frontera que dibuja pasa "más lejos" de las observaciones de clase, mientras que la #svc parece estar muy pegada a los brazos de la espiral, particularmente en el giro más interno.
 
 === Estudio de ablación: $R^2$ para #kdc/ #kn con y sin distancia de Fermat.
 
-Según la #link("https://dle.rae.es/ablaci%C3%B3n")[RAE], "Del lat. tardío ablatio, -ōnis 'acción de quitar'." --- ¿qué se pierde en términos de $R^2$ al _no_ usar #sfd en estos algoritmos? Sirvan para concentrar la atención en esta diferencia, los gráficos de dispersión del $R^2$ alcanzado en $XX_"test"$ para #kn y #kdc con y sin distancia de Fermat, en las #reps repeticiones de cada Tarea.
+Según la #link("https://dle.rae.es/ablaci%C3%B3n")[RAE], "ablación" proviene del latín tardío "ablatio, -ōnis", y significa 'acción de quitar'. ¿Qué se pierde en términos de $R^2$ al _no_ usar la distancia de Fermat muestral #sfd en estos algoritmos? Sirva para enfocar la atención, los gráficos de dispersión del $R^2$ alcanzado en $XX_"test"$ para #kn y #kdc con y sin distancia de Fermat, en las #reps repeticiones de cada Tarea.
 
 #let curvas = ("lunas", "circulos", "espirales")
 #wide_figure(
@@ -1764,21 +1790,21 @@ Para #kn y #fkn, los resultados son casi exactamente iguales para todas las semi
 
 Para #fkdc, pareciera evidenciarse alguna ventaja para varias semillas en `lunas_lo` y `espirales_lo`, menos así para `circulos_lo`.
 
-Veamos primero qué sucede durante el entrenamiento para `circulos_lo`: ¿es que no hay ninguna ventaja en usar #sfd? Consideremos la _superficie de pérdida_ que resulta de graficar en 2D la pérdida $L$ usada _durante el entrenamiento_ para cada hiperparametrización considerada:
+Veamos primero qué sucede durante el entrenamiento para `circulos_lo`: ¿es que no hay ninguna ventaja en usar #sfd? Consideremos la _superficie de pérdida_ que resulta de graficar en 2D el _score_ obtenido _durante el entrenamiento_ para cada hiperparametrización considerada:
 
 #obs(
   "unidades de la pérdida",
-)[Si bien consideramos como _score_ (a más, mejor) $R^2$, el entrenamiento se realizó con `neg_log_loss` #footnote[
-    N. del E.: A posteriori de la experimentación escubrimos que entre las numerosas funciones de puntaje --- _score_ --- que tolera `scikit-learn`, se incluye #link("https://scikit-learn.org/stable/modules/model_evaluation.html#d2-score-classification")[`d2_log_loss_score`], que es esencialmente el $R^2$ de McFadden que proponemos como métrica de evaluación. Sería ideal recomputar los experimentos entrenándolos con dicha función objetivo, pero no haby razones de peso apra suponer que el resultado sería demasiado distinto: al fin y al cabo, tanto la log-verosimilitud como el $R^2$ se maximizan en el mismo punto que la verosimilitud.], que aunque tiene la misma monotonicidad que $R^2$, está en otras unidades: entre $(-oo, 0]$.]
+)[Si bien buscamos maximizar el $R^2$, el entrenamiento se realizó maximizando la log-verosimilitud --- o _score_ `neg_log_loss` #footnote[
+    N. del E.: A posteriori de la experimentación descubrimos que entre las numerosas funciones de _score_ que tolera `scikit-learn`, se incluye #link("https://scikit-learn.org/stable/modules/model_evaluation.html#d2-score-classification")[`d2_log_loss_score`], que es esencialmente el $R^2$ de McFadden que proponemos como métrica de evaluación. Sería ideal recomputar los experimentos entrenándolos con dicha función objetivo, pero no hay razones de peso para suponer que el resultado sería distinto: al fin y al cabo, tanto la log-verosimilitud como el $R^2$ se maximizan en el mismo punto que la verosimilitud.] en `scikit-learn`  --- que toma valores en el intervalo $(-oo, 0]$. Como el _score_ es exactamente la pérdida cambiada de signo, mantenemos el nombre habitual de "superficie de pérdida" para estos gráficos, pero en ellos el óptimo es un _máximo_: las "islas" y "mesetas" son regiones de _score_ alto.]
 
 #figure(
   image("img/circulos_lo-8527-fkdc-bandwidth-alpha-loss_contour.svg"),
   caption: flex-caption(
-    [Superficie de _score_: para cada valor de $alpha$ considerado, una cruz roja marca el valor de $h$ que maximizó el _score_.],
-    [Superficie de _score_ en `circulos_lo`],
+    [Superficie de pérdida en `circulos_lo`: para cada valor de $alpha$ considerado, una cruz roja marca el valor de $h$ que maximizó el _score_.],
+    [Superficie de pérdida en `circulos_lo`],
   ),
 )
-Nótese que la región amarilla, que representa los máximos puntajes durante el entrenamiento, se extiende diagonalmente a través de todos los valores de $alpha$. Es decir, no hay _un_ par de hiperparámetros óptimos $(alpha^star, h^star)$, sino que fijando $alpha$, siempre pareciera existir un $tilde(h)(alpha)$ que alcanza (o aproxima) la máxima exactitud _posible_ con el método en el dataset. En este ejemplo en particular, hasta pareciera ser que una relación log-lineal captura bastante bien el fenómeno, $tilde(h) prop log(alpha)$. En particular, entonces, $"exac"(tilde(h)(alpha), alpha) approx "exac"(h^star), alpha^star) thin forall alpha$, y se entiende que el algoritmo #fkdc no mejore significativamente la exactitud por sobre #kdc. Este resultado es consistente con el ya mencionado comentario de @bijralSemisupervisedLearningDensity2011[§5.1], que encuentran que fijar $p=2$ para la norma "de base" y $q=alpha=8$ "representa una elección razonable para la mayoría de los datasets".
+Nótese que la región amarilla, que representa los máximos puntajes durante el entrenamiento, se extiende diagonalmente a través de (casi) todo el rango de $alpha$. Es decir, no hay _un_ par de hiperparámetros óptimos $(alpha^star, h^star)$, sino que fijando $alpha$, siempre pareciera existir un $tilde(h)(alpha)$ que alcanza (o aproxima) la máxima log-verosimilitud $cal(l)$ posible con #fkdc en el dataset. En este ejemplo en particular, hasta pareciera ser que una relación log-lineal captura bastante bien el fenómeno, $tilde(h) prop log(alpha)$. En particular, entonces, $cal(l)(tilde(h)(alpha), alpha) approx cal(l)(h^star, alpha^star) thin forall alpha$, y se entiende que #fkdc no mejore significativamente por sobre #kdc. Este resultado es consistente con el ya mencionado comentario de #cite(<bijralSemisupervisedLearningDensity2011>, form:"prose", supplement: [§5.1]), que encuentran que fijar $p=2$ para la norma y $q=alpha=8$ "representa una elección razonable para la mayoría de los datasets". 
 
 
 Ahora bien, esto es solo en _un_ dataset, con _una_ semilla específica. ¿Se replicará el fenómeno en los otros datasets?
@@ -1788,8 +1814,8 @@ Ahora bien, esto es solo en _un_ dataset, con _una_ semilla específica. ¿Se re
 #wide_figure(
   width: 150%,
   grid(
-    columns: (auto, 1fr, 1fr, 1fr),
-    gutter: 4pt,
+    columns: (.05fr, 1fr, 1fr, 1fr),
+    gutter: 1pt,
     align: horizon,
     // column headers (seeds)
     [], ..semillas.map(s => align(center)[*s=#s*]),
