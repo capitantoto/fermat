@@ -1297,8 +1297,8 @@ Probar la equivalencia para el caso trivial con $P = {a, b} subset RR^D$ se conv
 Con solo dos nodos, la geodésica de $a$ a $b$ es simplemente $a -> b$ --- cualquier otro camino repite nodos y se alarga innecesariamente ---, así que $d_bu(2)(a, b) = norm(b - a)^2$. Ahora, $d_bu(N)(a, b)$ requiere encontrar el mínimo entre todos los caminos posibles, aunque no viajen sobre las aristas del grafo. En la región azul, $r_{a,b} (q) = 4 norm(q - a)$ solo depende de la distancia a $a$, y todo camino desde $a$ hasta la mediatriz debe recorrer al menos $norm(b - a) slash 2$ de esa distancia: el más barato es el segmento recto hasta el punto medio. Análogamente en la región naranja $r_{a,b} (q) = 4 norm(q - b)$. Como todo camino de $a$ a $b$ cruza la mediatriz, el de menor costo es $overline(a b)$. Parametricémoslo:
 $
   gamma(t) & : [0, 1] -> RR^D, quad
-  gamma(t) = a + (b - a) t, quad
-  gamma'(t) = b - a
+             gamma(t) = a + (b - a) t, quad
+             gamma'(t) = b - a
 $
 $
   d_bu(N)(a, b) & = D_(r_{a, b}) (a, b) = inf_gamma J_(r_{a, b}) (gamma) = J_(r_{a, b}) (overline(a b)) \
@@ -1362,7 +1362,7 @@ Este objeto "macroscópico" se puede aproximar a partir de una versión "microsc
 
   $
     sfd (x, y) = inf { & sum_(j=1)^(K-1) ||q_(j+1) - q_j||^alpha : (q_1, dots, q_K) \
-                & "es un camino de "x" a "y, K>=1}
+                       & "es un camino de "x" a "y, K>=1}
   $
 
   donde los $q_j in Q thin forall j in [K]$. Nótese que #sfd satisface la desigualdad triangular, define una métrica sobre $Q$ y una pseudo-métrica #footnote[una métrica tal que la distancia puede ser nula entre puntos no-idénticos:  $ exists a != b : d(a, b) = 0 $] sobre $RR^D$.
@@ -1379,7 +1379,7 @@ Antes de presentar en qué sentido  #sfd converge a $cal(D)_(f, beta)$, una defi
 
   $ lim_(n->oo) n^beta D_(Q_n,alpha)(x,y) = mu cal(D)_(f,beta)(x,y) " casi seguramente." $
 
-, donde  $mu$ es una constante que depende únicamente de $alpha$ y $d$.
+  , donde  $mu$ es una constante que depende únicamente de $alpha$ y $d$.
 ] <convergencia-sfd>
 
 #obs[
@@ -1482,7 +1482,7 @@ La regresión logística es "el" método para clasificación binaria, y su exten
 Por último, fue nuestro deseo incorporar algunos métodos contemporáneos, más cercanos al estado del arte. A tal fin incluimos un método de _boosting_ #footnote[ El _gradient boosting_ fue introducido por #cite(<friedmanGreedyFunctionApproximation2001>, form: "prose"), y desde entonces ha dado lugar a implementaciones altamente eficientes como XGBoost @chenXGBoostScalableTree2016 y LightGBM @keLightGBMHighlyEfficient2017.] y el antedicho clasificador de soporte vectorial. El clasificador de soporte vectorial @cortesSupportvectorNetworks1995, #svc, se evaluó en dos variantes: con núcleos (_kernels_) lineales y RBF #footnote[del inglés _radial basis functions_, "funciones de base radial"].
 
 
-Por conocerlo en profundidad y en virtud de su sencillez de uso, la implementación se realizó utilizando `scikit-learn` @JMLR:v12:pedregosa11a, un poderoso y extensible paquete para tareas de aprendizaje automático en Python. Más importante aún, desarrollar nuestros nuevos clasificadores en el _framework_ de `scikit-learn` 
+Por conocerlo en profundidad y en virtud de su sencillez de uso, la implementación se realizó utilizando `scikit-learn` @JMLR:v12:pedregosa11a, un poderoso y extensible paquete para tareas de aprendizaje automático en Python. Más importante aún, desarrollar nuestros nuevos clasificadores en el _framework_ de `scikit-learn`
 - simplifica enormemente la comparación de resultados, en tanto podemos utilizar exactamente los mismos métodos y _pipelines_ para los clasificadores bajo estudio y los de referencia,
 - nos permite, a nosotros mismos o a otros investigadores el día de mañana, integrar estos nuevos desarrollos al vasto universo de herramientas de estimación que toda la comunidad de aprendizaje automático construye alrededor de `scikit-learn`.
 
@@ -1494,18 +1494,20 @@ Mantuvimos al mínimo el pre-tratamiento de los datos de entrada. Esta decisión
 La excepción entre los estimadores fue la regresión logística, de la cual es bien sabido que su rendimiento se degrada considerablemente cuando las variables predictoras se encuentran en escalas muy distintas. Por este motivo incluimos tanto #logr --- regresión logística sobre los datos originales --- como #slr, una variante en la que los datos fueron previamente estandarizados.
 
 === Entrenamiento de los algoritmos
-La especificación completa de un clasificador requiere no solo elegir un algoritmo sino también especificar sus _hiperparámetros_, a fin de optimizar su rendimiento bajo ciertas condiciones de evaluación. Para ello, se definió de antemano para cada clasificador una _grilla_ de hiperparámetros: durante el proceso de entrenamiento, la elección de los "mejores" hiperparámetros se efectuó maximizando la log-verosimilitud @vero para los clasificadores suaves, y la exactitud @exactitud para los duros #footnote[Entre los mencionados, el único clasificador duro es #svc. Técnicamente es posible entrenar un clasificador suave a partir de uno duro con un _segundo_ estimador que toma como _input_ el resultado "crudo" del clasificador duro y da como _output_ una probabilidad calibrada (cf. #link("https://scikit-learn.org/stable/modules/calibration.html")[Calibración] en la documentación de `scikit-learn`  @buitinckAPIDesignMachine2013), pero es un proceso computacionalmente costoso.] con una búsqueda exhaustiva por validación cruzada de 5 pliegos #footnote[Conocida en inglés como #emph[Grid Search 5-fold Cross-Validation]] sobre la grilla entera.
+La especificación completa de un clasificador incluye, además de un _dataset_ de entrenamiento, un algoritmo y también sus hiperparámetros. Para cada algoritmo y en cada dataset se seleccionaron hiperparámetros de una extensa grilla "cuadrada" #footnote["Cuadrada" en tanto para cada hiperparámetro se elige una secuencia de posibles valores, y se buscan soluciones en el espacio producto de tales secuencias.] maximizando la log-verosimilitud (cf. @vero) para los clasificadores suaves, y la exactitud (cf. @exactitud) para los duros #footnote[Entre los mencionados, el único clasificador duro es #svc. Técnicamente es posible entrenar un clasificador suave a partir de uno duro con un _segundo_ estimador que toma como _input_ el resultado "crudo" del clasificador duro y da como _output_ una probabilidad calibrada (cf. #link("https://scikit-learn.org/stable/modules/calibration.html")[Calibración] en la documentación de `scikit-learn`  @buitinckAPIDesignMachine2013), pero es un proceso computacionalmente costoso.] con una búsqueda exhaustiva por validación cruzada de 5 pliegos #footnote[Conocida en inglés como #emph[Grid Search 5-fold Cross-Validation]] sobre la grilla entera.
+
+En una ronda "exploratoria" de Tareas, se identificó en qué escala estaban aproximadamente los hiperparámetros óptimos para cada algoritmo y dataset. Para la corrida "principal" de los experimentos, se definió una única grilla por clasificador, para todos los datasets, cubriendo el rango descubierto para cada hiperparámetro y suficientes puntos como para ser significativa a lo largo. #footnote[De contar con más tiempo, hubiésemos preferido definir una grilla específica a cada dataset y estimador --- multiplicando el trabajo por 20 (datasets) ---, o usar una búsqueda bayesiana de hiperparámetros como la que ofrece #link("https://scikit-optimize.github.io/stable/auto_examples/sklearn-gridsearchcv-replacement.html")[`scikit-optimize`] --- complejizando el diseño experimental tal vez más de lo necesario.]
 
 === Estimación de la variabilidad en el rendimiento reportado
-En última instancia, cualquier métrica evaluada no es otra cosa que un _estadístico_ que representa la "calidad" del clasificador en la tarea a mano. A fines de conocer no solo su estimación puntual sino también darnos una idea de la variabilidad de su rendimiento, para cada dataset y colección de algoritmos, se entrenaron y evaluaron #reps tareas idénticas salvo por la semilla $s$, que luego se usaron para estimar estadísticos de locación (media, mediana, rango intercuartil) y dispersión (varianza y desvío estándar) en la exactitud (@exactitud) y el pseudo-$R^2$ (@R2-mcf).
+En última instancia, cualquier métrica evaluada no es otra cosa que un _estadístico_ que representa la "calidad" del clasificador en la tarea a mano. A fines de conocer no solo su estimación puntual sino también darnos una idea de la variabilidad de su rendimiento, para cada dataset y colección de algoritmos, se entrenaron y evaluaron #reps versiones idénticas de cada tarea salvo por la semilla $s$, que luego se usaron para estimar estadísticos de locación (media, mediana) y dispersión (varianza, desvío estándar, rango intercuartil) en la exactitud (@exactitud) y el $R^2$ (@R2-mcf) reportados.
 
-Cuando el conjunto de datos proviene del mundo real y por lo tanto _preexiste a nuestro trabajo_, las #reps semillas $s_1, dots, s_#reps$ fueron utilizadas para definir diferentes partticiones de entrenamiento/evaluación. Por el contrario, cuando el conjunto de datos fue generado sintéticamente, las semillas se utilizaron para generar #reps versiones distintas pero perfectamente replicables del dataset, y en todas se utilizó una misma semilla maestra $s^star$ para definir el _split_ de evaluación.
+En los conjuntos de datos generados sintéticamente, las semillas se utilizaron para generar #reps versiones distintas y perfectamente replicables del mismo dataset, y en todas se utilizó una misma semilla maestra $s^star$ para definir el _split_ de evaluación. Para los conjuntos de datos "silvestres", las #reps semillas $s_1, dots, s_#reps$ fueron utilizadas para definir diferentes particiones de entrenamiento/evaluación sobre el único dataset disponible.
 
 
 === Regla de Parsimonia
 
 La estrategia de validación cruzada intenta evitar que los algoritmos sobreajusten durante el entrenamiento, evaluando su comportamiento en $XX_"test"$, disjunto de $XX_"train"$.
-No todas las parametrizaciones son equivalentes: en general, para cada hiperparámetro se puede establecer una dirección en la que el modelo se complejiza, en tanto se ajusta más y más a los datos de entrenamiento #footnote[Por ejemplo, #kn se complejiza a medida que  _disminuye_ $k$, la cantidad de vecinos: las predicciones de $1-$NN sobre la variedad cambian más seguido que las de $100$-NN]. Esto nos recuerda un principio filosófico clásico:
+No todas las hiperparametrizaciones son equivalentes: en general, para cada hiperparámetro se puede establecer una dirección en la que el modelo se complejiza, en tanto adquiere mayor "flexibilidad" para adaptarse a los datos de entrenamiento #footnote[Por ejemplo, #kn se complejiza a medida que  _disminuye_ $k$, la cantidad de vecinos: las predicciones de $1-$NN sobre la variedad varían más seguido que las de $100$-NN]. Resolveremos este _tradeoff_ entre complejidad y poder predictivo recurriendo a un principio filosófico clásico:
 
 #obs(link("https://es.wikipedia.org/wiki/Navaja_de_Ockham")[Navaja de Occam])[
   Atribuida a William de Ockham (c. 1287--1347), también se conoce como "Principio de Parsimonia", y se suele citar --- en palabras que su autor nunca pronunció exactamente --- como _Entia non sunt multiplicanda praerter necessitatem_, "No se deben multiplicar las entidades sin necesidad". Popularmente, se suele parafrasear como "de entre dos teorías en disputa, es preferible la explicación más simple de un fenómeno".
@@ -1514,21 +1516,21 @@ Reformulando, diremos que sujeto a la implementación de _cierto_ algoritmo, cua
 
 La validación cruzada de $k$ pliegos nos provee naturalmente de $k$ realizaciones de la métrica a optimizar para cada hiperparametrización, que podemos utilizar para estimar el desvío estándar de la misa. Sobre esta base, implementamos la siguiente regla:
 #defn([regla de un desvío estándar o "R1SD"])[
-  Sea $mu^star$ la hiperparametrización que minimiza la pérdida de entrenamiento y $hat(s)(L(mu^star))$ el desvío estimado de dicha pérdida. De entre todas las hiperparametrizaciones casi tan satisfactorias como $mu^star$, elíjase _la más sencilla_:
+  Sea $mu^star$ la hiperparametrización que minimiza la pérdida de entrenamiento y $hat(s)_(L(mu^star))$ el desvío estimado de dicha pérdida. De entre todas las hiperparametrizaciones a menos de $hat(s)_(L(mu^star))$ de $mu^star$, elíjase _la más sencilla_:
   $         & mu^(1 sigma) = arg min_(mu in Mu) C(mu) \
-  "donde" & Mu = {mu : L(mu) <= L(mu^star) + hat(s)(L(mu^star))) } $.
+  "donde" & Mu = {mu : L(mu) <= L(mu^star) + hat(s)_(L(mu^star))) } $.
 ] <r1sd>
 
-Para definir $C$ en modelos con $dim(h) > 1$, definimos el orden de complejidad creciente _para cada clasificador_ jerárquicamente como una lista de pares ordenados de hiperparámetros y la dirección de complejidad creciente. Para #fkdc, por ejemplo,
-$ C_#fkdc (mu) = [(alpha, "ascendente"), (h, "descendente")]. $
-La decisión de ordenar así los parámetros, con $alpha$ primero y $C$ ascendente en $alpha$, hace que la evaluación "prefiera" naturalmente a #kdc por sobre #fkdc#footnote[$#kdc = op(#fkdc)(alpha = 1)$], ya que el mínimo $alpha = 1$ estudiado resulta siempre preferido. En consecuencia, solo se elegirá un $alpha^star > 1$ cuando el rendimiento de #fkdc sea significativamente mejor que la de KDC --- con $alpha equiv 1$.
+Para definir $C$ en modelos con más de un hiperparámetro sin entrar en consideraciones de "complejidad relativa" de cada uno, definimos un orden de complejidad creciente por clasificador como una lista de pares ordenados de hiperparámetros y la dirección de complejidad creciente. Para #fkdc, $C_#fkdc (mu)$  es creciente en $alpha$, y para cierto $alpha_0$ fijo, decreciente en $h$.
+
+La decisión de ordenar así los parámetros, con $alpha$ primero y $C$ ascendente, hace que en el entrenamiento de #fkdc, el algoritmo "prefiera" soluciones parsimoniosas en que #fkdc se reduce a #kdc --- cuando $alpha = 1$ --- o casi. En consecuencia, al entrenar #fkdc con R1SD solo se seleccionará un $alpha^star > 1$ cuando el rendimiento de #fkdc sea significativamente mejor que el de KDC.
 
 #obs([complejidad en $h$])[
-  La complejidad es _descendente_ en el tamaño de la ventana $h$: a mayor $h$, tanto más grande se vuelve el vecindario donde $K_h (d(x, x_i)) >> 0$ y por ende pesa en la asignación. Análogamente, $k-"NN"$ y su primo $epsilon- "NN"$ tienen complejidad _descendente_ en $k, epsilon$.
+  La complejidad es _descendente_ en el tamaño de la ventana $h$: a mayor $h$, tanto más grande se vuelve el vecindario donde $K_h (d(x, x_i)) >> 0$ y $x_i$ pesa en la predicción, hasta que eventualmente es tan grande que "todo está cerca de todo" y la predicción en cualquier punto es prácticamente la misma Análogamente, $k-"NN"$ y su primo $epsilon- "NN"$ tienen complejidad _descendente_ en $k, epsilon$.
 ]
 
 === Medidas de locación y dispersión no-paramétricas
-Nos dedicaremos a la  estimación de densidad basada en distancia de Fermat en una variedad de Riemann desconocida. Resulta imposible conocer _a priori_ la teoría de la distribución para estos estimadores, por lo que nos resulta razonable comparar el rendimiento con medidas de locación robustas. Por ello compararemos el rendimiento mediano (y no media) entre las #reps repeticiones con distintas semillas de cada clasificador, y las visualizaremos con un _boxplot_ en lugar de un intervalo de confianza.
+Al no conocer _a priori_ demasiado con respecto a la teoría de la distribución de los estimadores bajo análisis (especialmente #fkdc y #fkn), decidimos comparar el rendimiento con una medida de locación robusta como la mediana (y no la media) entre las #reps repeticiones con distintas semillas de cada clasificador, y las visualizaremos con un _boxplot_ en lugar de un intervalo de confianza.
 
 = Resultados <resultados>
 
