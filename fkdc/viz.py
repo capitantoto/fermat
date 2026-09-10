@@ -761,9 +761,11 @@ if __name__ == "__main__":
     # =====================================================================
     # CSVs "mejor-clf-por-dataset" (agregado sobre TODOS los datasets en bi)
     # =====================================================================
+    # Solo los 20 datasets del cuerpo: las variantes `_std` se analizan aparte
+    bi_tesis = bi[~bi.dataset.str.endswith("_std")]
     for metrica in ["r2", "accuracy"]:
         mejor = (
-            bi.dropna(subset=metrica)
+            bi_tesis.dropna(subset=metrica)
             .groupby(["dataset", "clf"])[metrica]
             .median()
             .sort_values()

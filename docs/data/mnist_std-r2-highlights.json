@@ -1,6 +1,6 @@
 {
     "dataset": "mnist_std",
-    "summary": "clf,accuracy,r2\ngbt,0.77,0.6638\nlr,0.7525,0.616\nslr,0.7525,0.616\ngnb,0.685,0.4788\nkdc,0.48,0.4186\nfkdc,0.5875,0.4025\nfkn,0.125,0.1063\nkn,0.12,0.0702\nsvc,0.795,\n",
+    "summary": "clf,accuracy,r2\ngbt,0.765,0.6598\nlr,0.75,0.6067\nslr,0.75,0.6067\ngnb,0.685,0.4788\nkdc,0.47,0.4019\nfkdc,0.5775,0.3588\nfkn,0.125,0.0964\nkn,0.1175,0.0702\nsvc,0.795,\n",
     "best": "gbt",
     "bad": [
         "lr",

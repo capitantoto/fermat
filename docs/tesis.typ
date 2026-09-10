@@ -302,7 +302,7 @@ e Instituto de Cálculo, FCEN, UBA
 
 #v(0.6em)
 
-#text(weight: "bold")[Fecha de presentación del ejemplar:] 19 de Mayo de 2026
+#text(weight: "bold")[Fecha de presentación del ejemplar:] 19 de mayo de 2026
 
 #text(weight: "bold")[Fecha de Defensa:] #h(0.4em) #box(width: 5cm, stroke: (bottom: 0.5pt))
 
@@ -566,7 +566,7 @@ $
   hat(G)_"C(onfiado)" (x_0) &: hat(Pr)(GG_i | X = x_0) = cases(1 - epsilon &" si " i = 1, hfrac(epsilon, (K - 1)) &" si " i != 1) \
   hat(G)_"D(udoso)" (x_0) &: hat(Pr)(GG_i | X = x_0) = cases(1/K + epsilon &" si " i = 1, 1 / K - hfrac(epsilon, (K - 1)) &" si " i != 1)
 $
-$hat(G)_C$ está "casi seguro" de que la clase correcta es $GG_1$, mientras que $hat(G)_D$ está otorga casi la misma probabilidades a todas las clases. Para el entrenamiento y análisis de clasificadores blandos como el de densidad por núcleos, será relevante encontrar funciones de pérdida que recompensen la confianza de un clasificador _cuando esta esté justificada_ #footnote[y lo penalicen cuando no --- es decir, cuando la confianza está puesta en la clase errada. Más al respecto, más adelante.].
+$hat(G)_C$ está "casi seguro" de que la clase correcta es $GG_1$, mientras que $hat(G)_D$ otorga casi las mismas probabilidades a todas las clases. Para el entrenamiento y análisis de clasificadores blandos como el de densidad por núcleos, será relevante encontrar funciones de pérdida que recompensen la confianza de un clasificador _cuando esta esté justificada_ #footnote[y lo penalicen cuando no --- es decir, cuando la confianza está puesta en la clase errada. Más al respecto, más adelante.].
 
 == Estimación de densidad multivariada
 === Naive Bayes
@@ -578,7 +578,7 @@ $ <naive-bayes>
 donde $f_(j k)$ es la densidad de $X_k$ condicional a la clase $GG_j$. Este procedimiento se conoce como "Naive Bayes" @hastieElementsStatisticalLearning2009[§6.6.3], y a pesar de su aparente ingenuidad es competitivo contra algoritmos mucho más sofisticados en un amplio rango de tareas. En términos de cómputo, permite resolver la estimación con $K times p$ KDE univariados. Además, permite que en $X$ se combinen variables cuantitativas y cualitativas: basta con reemplazar la estimación de densidad para las componentes $X_k$ cualitativas por su correspondiente histograma.
 
 === KDE multivariado
-Consideremos un _dataset_ compuesto por observaciones _sampleadas_ de dos círculos concéntricos con algo de ruido:
+Consideremos un _dataset_ compuesto por observaciones muestreadas de dos círculos concéntricos con algo de ruido:
 #figure(
   caption: flex-caption(
     "Dos círculos concéntricos y sus KDE marginales por clase: a pesar de que la frontera entre ambos grupos de puntos es muy clara, es casi imposible distinguirlas a partir de sus densidades marginales.",
@@ -614,7 +614,7 @@ Sean las clases de matrices $RR^(d times d)$
 - $cal(D)$, de matrices diagonales definidas positivas ($cal(D) subset.eq cal(F)$) y
 - $cal(S)$, de múltiplos escalares de la identidad: $cal(S) = {h^2 bu(I):h >0} subset.eq cal(D)$
 
-Aún tomando una única $HH$ para _toda_ la muestra, la elección de $HH$ en $d$ dimensiones requiere ajustar
+Aun tomando una única $HH$ para _toda_ la muestra, la elección de $HH$ en $d$ dimensiones requiere ajustar
 - $mat(d; 2) = (d^2 - d) slash 2$ parámetros si $HH in cal(F)$,
 - $d$ parámetros si $HH in cal(D)$ y
 - un único parámetro $h$ si $HH = h^2 bu(I)$.
@@ -629,7 +629,7 @@ Uno estaría perdonado por suponer que el problema de estimar densidades en alta
   Sean $X_i tilde.op^("iid")"Uniforme"([-1, 1]^d), thick i in [N]$, y consideremos la estimación de la densidad en el origen, $hat(f)(bu(0))$. Suponga que el núcleo $K_(HH)$ es un "núcleo producto" basado en la distribución univariada $"Uniforme"(-1, 1)$, y $HH = h^2 bu(I)$. Derive una expresión para la proporción esperada de puntos incluidos dentro del soporte del núcleo $KH$ para $(h, d)$ arbitrarios.
 ]
 
-El "núcleo producto" $d-$variado basado en cierta ley univariada, no es más que el producto de $d$ densidades univariadas como aquell. Para la  $"Uniforme"(-1, 1)$ el núcleo evaluado en el origen $x_0 = 0$ es:
+El "núcleo producto" $d-$variado basado en cierta ley univariada, no es más que el producto de $d$ densidades univariadas como aquella. Para la  $"Uniforme"(-1, 1)$ el núcleo evaluado en el origen $x_0 = 0$ es:
 $
   K(x - x_0) & = K(x) = product_(i = 1)^d 1/2 ind(-1 <= x_i <= 1) \
              & = 2^(-d) ind(inter.big_(i=1)^d thick abs(x_i) <= 1) \
@@ -649,7 +649,7 @@ $
 #let h = 0.5
 #let d = 20
 
-Para $h =#h, d=#d, thick Pr(X in [-#h,#h]^#d) = #h^(#d) approx #calc.round(calc.pow(h, d), digits: 8)$, ¡menos de uno en un millón! Dicho de otra forma: en 20 dimensiones, una "cajita" con la mitad del ancho de otra, contiene menos de una millonésima de su volumen. Aún para $h approx 1$, en verdaderamente altas dimensiones el fenómeno es dramático. Sea $X$ representa un segundo de audio muestreado respetando el estándar _mínimo_ para llamadas telefónicas  #footnote[De Wikipedia: La tasa #link("https://en.wikipedia.org/wiki/Digital_Signal_0")[DS0], o _Digital Signal 0_, fue introducida para transportar una sola llamada de voz "digitizada". La típica llamada de audio se digitiza a $8 "kHz"$, o a razón de 8.000 veces por segundo.], tal que $d=8000$. En tal espacio ambiente, aún con $h=0.999$, $Pr(dot) approx #calc.round(calc.pow(0.999, 8000), digits: 6)$, o 1:3.000.
+Para $h =#h, d=#d, thick Pr(X in [-#h,#h]^#d) = #h^(#d) approx #calc.round(calc.pow(h, d), digits: 8)$, ¡menos de uno en un millón! Dicho de otra forma: en 20 dimensiones, una "cajita" con la mitad del ancho de otra, contiene menos de una millonésima de su volumen. Aun para $h approx 1$, en verdaderamente altas dimensiones el fenómeno es dramático. Sea $X$ un segundo de audio muestreado respetando el estándar _mínimo_ para llamadas telefónicas  #footnote[De Wikipedia: La tasa #link("https://en.wikipedia.org/wiki/Digital_Signal_0")[DS0], o _Digital Signal 0_, fue introducida para transportar una sola llamada de voz "digitizada". La típica llamada de audio se digitiza a $8 "kHz"$, o a razón de 8.000 veces por segundo.], tal que $d=8000$. En tal espacio ambiente, aun con $h=0.999$, $Pr(dot) approx #calc.round(calc.pow(0.999, 8000), digits: 6)$, o 1:3.000.
 
 #figure(
   caption: flex-caption(
@@ -680,7 +680,7 @@ La hipótesis de la variedad no es exactamente una hipótesis contrastable en el
 ]
 
 #figure(caption: flex-caption(
-  [Ejemplos de variedades en el mundo físico: una bandera flameando al viento, el pétalo de una flor. Ambas tienen dimensión $d_MM = 2$ y están embedidas en $RR^3$. Ninguna es lineal.],
+  [Ejemplos de variedades en el mundo físico: una bandera flameando al viento, el pétalo de una flor. Ambas tienen dimensión $d_MM = 2$ y están embebidas en $RR^3$. Ninguna es lineal.],
   "Ejemplos de variedades en el mundo físico",
 ))[
   #grid(
@@ -713,8 +713,8 @@ A continuación, haremos un recorrido sumario e idiosincrático por ciertos conc
   Formalmente, se llama *espacio topológico* al par ordenado $(X, T)$ formado por un conjunto $X$ y una _topología_ $T$ sobre $X$, es decir una colección de subconjuntos de $X$ que cumple las siguientes tres propiedades:
   + El conjunto vacío y $X$ están en T: $ emptyset in T,quad X in T $
   + La intersección de cualquier subcolección _finita_ de $T$ está en $T$:
-  $ X in T, Y in T => X inter Y in T $La unión de _cualquier_ subcolección de conjuntos de $T$
-  está en $T$:
+  $ X in T, Y in T => X inter Y in T $
+  + La unión de _cualquier_ subcolección de conjuntos de $T$ está en $T$:
   $
     forall S subset T, thick union.big_(O in S) O in T
   $
@@ -812,7 +812,7 @@ Con las definiciones previas podemos definir algunos conceptos fundamentales com
     dg(p, q) = inf_(gamma) thick {L(gamma) : thick thick gamma: [0, 1] -> MM, thick gamma(0)=p,thick gamma(1)=q}
   $
 ]
-Una _geodésica_ es una generalización de la línea recta de la geometría euclídea. Considérese la siguiente analogía #footnote[Este párrafo y el que sigue están adaptados de "El Flujo Geodésico" @docarmoRiemannianGeometry1992[§3.2]]: en la física clásica, un objeto que no es sujeto a ninguna fuerza (no recibe _aceleración_ alguna) estará o quieto (con velocidad nula) o en movimiento _rectilíneo_ uniforme ("MRU"). En variedades diferenciables, las geodésicas son exactamente eso: curvas sin aceleración, $gamma''(t) = 0 forall t$. Las geodésica son localmente  minimizantes de longitud: la curva $gamma$ que realiza la distancia $dg(p, q)$ es necesariamente una geodésica.
+Una _geodésica_ es una generalización de la línea recta de la geometría euclídea. Considérese la siguiente analogía #footnote[Este párrafo y el que sigue están adaptados de "El Flujo Geodésico" @docarmoRiemannianGeometry1992[§3.2]]: en la física clásica, un objeto que no es sujeto a ninguna fuerza (no recibe _aceleración_ alguna) estará o quieto (con velocidad nula) o en movimiento _rectilíneo_ uniforme ("MRU"). En variedades diferenciables, las geodésicas son exactamente eso: curvas sin aceleración, $gamma''(t) = 0 forall t$. Las geodésicas son localmente minimizantes de longitud: la curva $gamma$ que realiza la distancia $dg(p, q)$ es necesariamente una geodésica.
 
 Sea $p in MM$ y $v in T_p MM$ un vector tangente en $p$, que interpretamos como una _velocidad inicial_: su dirección $v slash norm(v)$ indica hacia dónde ir, y su magnitud $norm(v)$, cuán rápido. Por existencia y unicidad de soluciones de ecuaciones diferenciales, existe una única geodésica $gamma$ con $gamma(0) = p$ y $gamma'(0) = v$. Como $gamma''(t) = 0 forall t$, la rapidez a lo largo de $gamma$ es constante: $norm(gamma'(t)) = norm(v) forall t$, de modo que $L(gamma) = integral_0^1 norm(gamma'(t)) dif t = norm(v)$. Tras una unidad de tiempo, la geodésica alcanza el punto $gamma(1) in MM$, habiendo recorrido una longitud $norm(v)$.
 
@@ -834,7 +834,7 @@ La frontera de $B_epsilon (p)$ es una "subvariedad" de #MM ortogonal a las geod�
 
 #defn(
   [radio de inyectividad #footnote[
-      Basado en @munozEstimacionNoParametrica2011[Def. 3.3.16] Una definición a mi entender más esclarecedora se encuentra en @docarmoRiemannianGeometry1992[§13.2, _The cut locus_], que introducimos aquí informalmente. Se le dice "punto de corte" de una geodésica al punto en que esta deja de ser minimizadoras de distancia. El _cut locus_ o _ligne de partage_ $C_m (p)$ --- algo así como "línea de corte" --- de un punto $p$ es la variedad que resulta de la unión de los puntos de corte de todas las geodésicas que irradian de $p$. El ínfimo de la distancia entre $p$ y su _cut locus_ es el radio de inyectividad de #MM en $p$, de modo podemos escribir $ "iny" MM = inf_(p in MM) d(p, C_m (p)) $
+      Basado en @munozEstimacionNoParametrica2011[Def. 3.3.16] Una definición a mi entender más esclarecedora se encuentra en @docarmoRiemannianGeometry1992[§13.2, _The cut locus_], que introducimos aquí informalmente. Se le dice "punto de corte" de una geodésica al punto en que esta deja de ser minimizadora de distancia. El _cut locus_ o _ligne de partage_ $C_m (p)$ --- algo así como "línea de corte" --- de un punto $p$ es la variedad que resulta de la unión de los puntos de corte de todas las geodésicas que irradian de $p$. El ínfimo de la distancia entre $p$ y su _cut locus_ es el radio de inyectividad de #MM en $p$, de modo podemos escribir $ "iny" MM = inf_(p in MM) d(p, C_m (p)) $
       donde la distancia de un punto a una variedad es el ínfimo de la distancia a todos los puntos de la variedad.]],
 )[
   Sea $(MM, g)$ una $d-$variedad Riemanniana. Llamamos "radio de inyectividad en $p$" a
@@ -891,9 +891,9 @@ Probablemente la referencia más antigua a un elemento aleatorio en una variedad
     [Pesos atómicos "módulo 1" sobre $S^1$],
   ),
 )
-Motivado también por un problema del mundo físico, Ronald Fisher escribe "Dispersiones en la esfera" @fisherDispersionSphere1957, donde desarrolla una teoría apropiada para mediciones de posición en una esfera #footnote[y como era de esperar del padre del test de hipótesis, también su correspondiente test de significancia, análogo al "t de Student".] y la ilustra a partir de mediciones de la dirección de la "magnetización termorremanenteremanente" de flujos de lava  en Islandia.
+Motivado también por un problema del mundo físico, Ronald Fisher escribe "Dispersiones en la esfera" @fisherDispersionSphere1957, donde desarrolla una teoría apropiada para mediciones de posición en una esfera #footnote[y como era de esperar del padre del test de hipótesis, también su correspondiente test de significancia, análogo al "t de Student".] y la ilustra a partir de mediciones de la dirección de la "magnetización termorremanente" de flujos de lava  en Islandia.
 #footnote[
-  Los datos que Fisher usa en la Sección 4 son mediciones de magnetismo remanenteen muestras de roca de flujos de lava islandeses, recolectadas por J. Hospers en Pembroke College, Cambridge. Cuando la lava se enfría y solidifica, los minerales ferromagnéticos (como la magnetita) se alinean con el campo magnético terrestre del momento y quedan "congelados" en esa orientación. Esto se llama magnetización termorremanente. Siglos o milenios después, se puede tomar una muestra de esa roca y medir en qué dirección apunta su magnetización residual, hecho que Fisher utiliza para "testear" si entre "su presente" y el período Cuaternario el campo magnético terrestre se invirtió --- cosa que efectivamente sucedió.
+  Los datos que Fisher usa en la Sección 4 son mediciones de magnetismo remanente en muestras de roca de flujos de lava islandeses, recolectadas por J. Hospers en Pembroke College, Cambridge. Cuando la lava se enfría y solidifica, los minerales ferromagnéticos (como la magnetita) se alinean con el campo magnético terrestre del momento y quedan "congelados" en esa orientación. Esto se llama magnetización termorremanente. Siglos o milenios después, se puede tomar una muestra de esa roca y medir en qué dirección apunta su magnetización residual, hecho que Fisher utiliza para "testear" si entre "su presente" y el período Cuaternario el campo magnético terrestre se invirtió --- cosa que efectivamente sucedió.
 ]
 
 
@@ -1056,7 +1056,7 @@ En el trabajo, se prueba que el clasificador de @clf-kde-variedad es fuertemente
 La hipótesis de la variedad nos ofrece un marco teórico en el que abordar la clasificación en alta dimensión, y encontramos en la literatura que la estimación de densidad por núcleos en variedades de Riemann compactas sin frontera está estudiada y tiene buenas garantías de convergencia. Por alentador que resulte, ya notamos una primera dificultad --- el cómputo de $theta_p (q)$ --- y nos resta una segunda: _la variedad que soporta las $X$ no suele ser conocida_. Salvo que los datasets estén generados sintéticamente o el objeto de estudio cuente con un dominio bien entendido y ya formalizado, tendremos problemas tanto para definir adecuadamente la dimensión intrínseca $d_MM$ como la distancia $d_g$ en #MM.
 
 #figure(caption: flex-caption(
-  [Data espacial en variedades bien definidas. (izq.) Los datos geoespaciales están sobre la corteza terrestre, que es aproximadamente la $2-$esfera $S^2 in RR^3$ que representa la frontera de nuestra "canica azul" , una $3-$bola. (der.) La clasificación clásica de Hubble distingue literalmente _variedades_ "elípticas","espirales" e "irregulares" de galaxias de acuerdo a cómo se orientan sus estrellas. #footnote[La categoriación completa es más compleja, con _outliers_ cuando #link("https://astronomy.stackexchange.com/questions/32947/what-decides-the-shape-of-a-galaxy")[distintas galaxias interactúan entre sí], como las #link("https://es.wikipedia.org/wiki/Galaxias_Antennae")[Antennae]. La #link("https://en.wikipedia.org/wiki/Spacetime_topology")[topología del espacio-tiempo] es un tópico de estudio clave en la relatividad general.]],
+  [Data espacial en variedades bien definidas. (izq.) Los datos geoespaciales están sobre la corteza terrestre, que es aproximadamente la $2-$esfera $S^2 in RR^3$ que representa la frontera de nuestra "canica azul" , una $3-$bola. (der.) La clasificación clásica de Hubble distingue literalmente _variedades_ "elípticas","espirales" e "irregulares" de galaxias de acuerdo a cómo se orientan sus estrellas. #footnote[La categorización completa es más compleja, con _outliers_ cuando #link("https://astronomy.stackexchange.com/questions/32947/what-decides-the-shape-of-a-galaxy")[distintas galaxias interactúan entre sí], como las #link("https://es.wikipedia.org/wiki/Galaxias_Antennae")[Antennae]. La #link("https://en.wikipedia.org/wiki/Spacetime_topology")[topología del espacio-tiempo] es un tópico de estudio clave en la relatividad general.]],
   "Data espacial con dimensiones bien definidas.",
 ))[
   #grid(
@@ -1167,7 +1167,7 @@ Una _conexión_ @docarmoRiemannianGeometry1992 es otro término de significado m
 
 === Isomap
 
-En rigor, no es necesario conocer #MM para estimar densidades en ella; bastaría con conocer una aproximación a la distancia geodésica en #MM que sirva de sustituto a la distancia euclídea en el espacio ambiente. Probablemente el algoritmo más conocido a tal fin, sea Isomap --- por "mapeo isométrico de _features_".
+En rigor, no es necesario conocer #MM para estimar densidades en ella; bastaría con conocer una aproximación a la distancia geodésica en #MM que sirva de sustituto a la distancia euclídea en el espacio ambiente. Probablemente el algoritmo más conocido a tal fin sea Isomap --- por "mapeo isométrico de _features_".
 
 Desarrollado a fines del siglo XX por Joshua Tenenbaum et al.  @tenenbaumMappingManifoldPerceptual1997 @tenenbaumGlobalGeometricFramework2000, el algoritmo consta de tres pasos:
 
@@ -1183,7 +1183,7 @@ Desarrollado a fines del siglo XX por Joshua Tenenbaum et al.  @tenenbaumMapping
 #figure(
   image("img/isomap-2.png", height: 16em),
   caption: flex-caption(
-    [Isomap aplicado a 1.000 dígitos "2" manuscritos del dataset _MNIST_ con $d=2$ Nótese que las dos direcciones se corresponden fuertemente con características de los dígitos: el rulo inferior en el eje $X$, y el arco superior en el eje $Y$. Fuente: @tenenbaumGlobalGeometricFramework2000.],
+    [Isomap aplicado a 1.000 dígitos "2" manuscritos del dataset _MNIST_ con $d=2$. Nótese que las dos direcciones se corresponden fuertemente con características de los dígitos: el rulo inferior en el eje $X$, y el arco superior en el eje $Y$. Fuente: @tenenbaumGlobalGeometricFramework2000.],
     [Isomap ($d=2$) aplicado 1.000 dígitos "2" manuscritos],
   ),
 )
@@ -1218,14 +1218,14 @@ Aprender una DBD nos permite saltearnos el problema ya harto descrito de aprende
 - consideran el grafo completo $bu(C)$ en lugar del de $k-$vecinos $bu(N N)_k$ y
 - pesan las aristas del grafo por la distancia euclídea en el espacio ambiente entre sus extremos _elevada al cuadrado_.
 
-Esta noción de "distancia de arista-al-cuadrado" #footnote[_edge-squared distance_ en el origignal] tiene el efecto de desalentar grandes saltos entre observaciones lejanas, que es una manera  de "asignar un costo alto a trayectos por regiones de baja densidad", por lo cual ya califica como una DBD  rudimentaria.
+Esta noción de "distancia de arista-al-cuadrado" #footnote[_edge-squared distance_ en el original] tiene el efecto de desalentar grandes saltos entre observaciones lejanas, que es una manera  de "asignar un costo alto a trayectos por regiones de baja densidad", por lo cual ya califica como una DBD  rudimentaria.
 
 #figure(image("img/distancia-cuadrada.svg", height: 16em), caption: flex-caption(
   [En este grafo geométrico representando un triángulo isósceles, hay solo dos caminos entre $a$ y $c$: $zeta = a -> b -> c$, y $gamma = a -> c$],
   [Grafo geométrico de triángulo isósceles.],
 )) <grafo-completo-3-vertices>
 
-Consideremos el grafo geométrico de @grafo-completo-3-vertices. Bajo la con la norma euclídea, las longitudes definida en @longitud son $ L(gamma) = 3 < 4 = 2 + 2 = L(zeta) $ de modo que $d(a, c) = 3$ con geodésica $gamma$. Con la distancia de arista-al-cuadrado, $ L(zeta) = 2^2 + 2^2 = 8 < 3^2 = L(gamma) $, y por lo tanto $d(a, c) = 8$ con geodésica $zeta$. La distancia de arista-al-cuadrado cambia las geodésicas como también la escala en que se miden las distancias.
+Consideremos el grafo geométrico de @grafo-completo-3-vertices. Con la norma euclídea, las longitudes definidas en @longitud son $ L(gamma) = 3 < 4 = 2 + 2 = L(zeta) $ de modo que $d(a, c) = 3$ con geodésica $gamma$. Con la distancia de arista-al-cuadrado, $ L(zeta) = 2^2 + 2^2 = 8 < 3^2 = L(gamma) $, y por lo tanto $d(a, c) = 8$ con geodésica $zeta$. La distancia de arista-al-cuadrado cambia las geodésicas como también la escala en que se miden las distancias.
 
 
 En las dos últimas décadas han surgido numerosos algoritmos para calcular DBDs y hasta algunos _surveys_ comparando las bondades relativas de cada una. #cite(<caytonAlgorithmsManifoldLearning2005>, form: "prose") provee un resumen de los algoritmos de aprendizaje de variedades más relevantes hasta entonces. En sus reflexiones finales #footnote[ #cite(<caytonAlgorithmsManifoldLearning2005>, form: "prose"), §5 "¿Qué queda por hacer?", cuya lectura recomendamos.], el autor considera que es tan amplio el espectro de variedades subyacentes y de representaciones "útiles" que se pueden concebir, que (a) en el plano teórico resulta muy difícil de obtener garantías de eficiencia y rendimiento#footnote[adoptamos "rendimiento" como traducción del inglés _performance_, anglicismo de uso extendido aún en el habla hispana.], y (b) en el plano experimental, quedamos reducidos a elegir un conjunto representativo de variedades y observar si los resultados obtenidos son "intuitivamente agradables". Más aún, las evaluaciones experimentales requieren _conocer_ la variedad subyacente para luego evaluar si el algoritmo de aprendizaje preserva información útil. Determinar si un dataset del mundo real efectivamente yace sobre cierta variedad es tan difícil como aprenderla; usar datos artificiales puede no rendir resultados realistas. Veintiún años más tarde, en esta monografía nos topamos con las mismas dificultades de antaño.
@@ -1303,7 +1303,7 @@ $
 
 Si #XX es una muestra "suficientemente densa" los saltos entre nodos de índices consecutivos serán "cortos", podemos estimar las distancias geodésicas $D_r$ como los "caminos mínimos" en el grafo completo de $XX$ con aristas pesadas por $norm(b - a)_p^q), thick a, b in XX$.
 
-Esta estimación es particularmente atractiva, en tanto no depende para nada de la dimensión ambiente $D$, y solo depende de la dimensión intrínseca $d$ de #MM a través de $q=r d+1$. De hecho, los autores mencionan que "casi cualquier par de valores $(p, q)$ funciona", y en particular encuentran que en sus experimento, $p=2, q=8$ "anda bien en general" @bijralSemisupervisedLearningDensity2011[§5.1] #footnote[tendremos más para decir al respecto en la @resultados, "Resultados"].
+Esta estimación es particularmente atractiva, en tanto no depende para nada de la dimensión ambiente $D$, y solo depende de la dimensión intrínseca $d$ de #MM a través de $q=r d+1$. De hecho, los autores mencionan que "casi cualquier par de valores $(p, q)$ funciona", y en particular encuentran que en sus experimentos, $p=2, q=8$ "anda bien en general" @bijralSemisupervisedLearningDensity2011[§5.1] #footnote[tendremos más para decir al respecto en la @resultados, "Resultados"].
 
 
 Un resultado interesante por lo exacto aparece en #cite(<chuExactComputationManifold2019>, form: "prose"). Dado un conjunto de puntos $P = {p_i : p_i in MM, i in [N]}$, considérese la "métrica de vecino más cercano"
@@ -1378,7 +1378,7 @@ $
   p = 2; quad q = alpha; quad r = beta = (alpha - 1) / d
 $
 
-. Los autores no se limitan a sugerir que la distancia en el espacio ambiente se puede aproximar a través de la distancia basada en el grafo completo con aristas pesadas, sino que precisan en qué sentido la una converge a la otra, y a qué tasa.#footnote[Con respecto a fijar $p=2$, en la "Observación 2.6" los autores mencionan que es posible y hasta sería interesante reemplazar la norma euclídea o "$2-$norma" por otra distancia --- e.g. otra $p-$norma ---, reemplazando las integrales con respecto a la longitud de arco, por integrales con respecto a la distancia involucrada. Entendemos de ello que no es una condición _necesaria_ para el desarrollo del trabajo, sino solo _conveniente_. Omitiremos el subíndice en la $2-$norma de aquí en más.]
+Los autores no se limitan a sugerir que la distancia en el espacio ambiente se puede aproximar a través de la distancia basada en el grafo completo con aristas pesadas, sino que precisan en qué sentido la una converge a la otra, y a qué tasa.#footnote[Con respecto a fijar $p=2$, en la "Observación 2.6" los autores mencionan que es posible y hasta sería interesante reemplazar la norma euclídea o "$2-$norma" por otra distancia --- e.g. otra $p-$norma ---, reemplazando las integrales con respecto a la longitud de arco, por integrales con respecto a la distancia involucrada. Entendemos de ello que no es una condición _necesaria_ para el desarrollo del trabajo, sino solo _conveniente_. Omitiremos el subíndice en la $2-$norma de aquí en más.]
 
 #defn([Distancia "macroscópica" de Fermat @groismanNonhomogeneousEuclideanFirstpassage2022[Definición 2.2]])[
 
@@ -1422,7 +1422,7 @@ Antes de presentar en qué sentido  #sfd converge a $cal(D)_(f, beta)$, una defi
 
   $ lim_(n->oo) n^beta D_(Q_n,alpha)(x,y) = mu cal(D)_(f,beta)(x,y) " casi seguramente." $
 
-  , donde  $mu$ es una constante que depende únicamente de $alpha$ y $d_MM$.
+  donde $mu$ es una constante que depende únicamente de $alpha$ y $d_MM$.
 ] <convergencia-sfd>
 
 #obs[
@@ -1452,11 +1452,11 @@ A continuación, mencionamos algunos aspectos salientes sobre los desarrollos de
 
 == Estimación de distancia de Fermat _out-of-sample_
 
-Un proyecto de código pre-existente a esta monografía ya implementa el cálculo de la distancia de Fermat microscópica o muestral para un conjunto de observaciones dado: #link("https://pypi.org/project/fermat/")[fermat], de Facundo Sapienza. Este paquete fue desarrollado para soportar los experimentos de #cite(<sapienzaWeightedGeodesicDistance2018>, form: "prose") que exploran los efectos de esta noción de distancia en tareas de _clustering_. Al ser una tarea no-supervisada #footnote[Una tarea supervisada de aprendizaje es aquella en que se entrena el algoritmo con un conjunto de observaciones para el que _ya se sabe_ el valor correcto de resuesta. Una tarea "no supervisada" no cuenta con una "respuesta correcta" de antemano. _Clustering_ --- identificar grupos en la muestra --- es una tarea no supervisada; _clasificación_ --- asignar elementos a clases conocidas de antemano --- es una tarea supervisada.], se utilizan todas las observaciones disponibles y solo se requiere calcular la distancia entre dos elementos cualesquiera de la muestra #XX, pero nunca contra otros $p : p in MM, p in.not XX$.
+Un proyecto de código pre-existente a esta monografía ya implementa el cálculo de la distancia de Fermat microscópica o muestral para un conjunto de observaciones dado: #link("https://pypi.org/project/fermat/")[fermat], de Facundo Sapienza. Este paquete fue desarrollado para soportar los experimentos de #cite(<sapienzaWeightedGeodesicDistance2018>, form: "prose") que exploran los efectos de esta noción de distancia en tareas de _clustering_. Al ser una tarea no-supervisada #footnote[Una tarea supervisada de aprendizaje es aquella en que se entrena el algoritmo con un conjunto de observaciones para el que _ya se sabe_ el valor correcto de respuesta. Una tarea "no supervisada" no cuenta con una "respuesta correcta" de antemano. _Clustering_ --- identificar grupos en la muestra --- es una tarea no supervisada; _clasificación_ --- asignar elementos a clases conocidas de antemano --- es una tarea supervisada.], se utilizan todas las observaciones disponibles y solo se requiere calcular la distancia entre dos elementos cualesquiera de la muestra #XX, pero nunca contra otros $p : p in MM, p in.not XX$.
 
 Entrenar un algoritmo _supervisado_ de clasificación requiere apartar una fracción de las observaciones disponibles #footnote[De no hacerlo y evaluar al clasificador sobre los mismos datos de entrenamiento, se corre el riesgo de sobreajustar el clasificador a los datos. De entrenar $k-$NN con toda la muestra, se puede tomar $k =1$ incondicionalmente. Durante el entrenamiento se acertará la clase correcta siempre, ya que cada observación es su propia vecina con distancia cero, pero el clasificador resultante generalizará muy mal a nuevas observaciones.] y conformar un conjunto de _test_ en el que evaluar la pérdida objetivo $L$. ¿Cómo calculamos entonces la distancia muestral de Fermat de una _nueva_ observación $x_0$ a los elementos de cada grupo $GG_i, i in [K]$, si no incluimos su nodo en el grafo completo de cada clase durante el entrenamiento?
 
-Sencillamene, para cada una de las $GG_i in GG$ clases, definimos el conjunto $ Q_i= {x_0} union {x_j : x_j in XX, GG_j = GG_i} $ resultante de unir la nueva observación $x_0$ al conjunto de entrenamiento cpte. a la clase $GG_i$, y recomputamos $D_(Q_i, alpha) (x_0, y) forall y in Q_i$. Aunque sencillo de describir, resultaría absurdamente costoso computacionalmente recomputar la matriz completa de distancias $D_(Q_i, alpha)$ para cada una de las $K$ clases por _cada_ nueva observación. En su lugar, implementamos un sencillo algoritmo "incremental", que permite recomputar únicamente las geodésicas que cambian al agregar la nueva observación $x_0$ al grafo completo de la clase en cuestión. #footnote[Para más detalles al respecto, léase el método `SampleFermatDistance._distancia` en el módulo `fkdc/fermat.py`.]
+Sencillamente, para cada una de las $GG_i in GG$ clases, definimos el conjunto $ Q_i= {x_0} union {x_j : x_j in XX, GG_j = GG_i} $ resultante de unir la nueva observación $x_0$ al conjunto de entrenamiento correspondiente a la clase $GG_i$, y recomputamos $D_(Q_i, alpha) (x_0, y) forall y in Q_i$. Aunque sencillo de describir, resultaría absurdamente costoso computacionalmente recomputar la matriz completa de distancias $D_(Q_i, alpha)$ para cada una de las $K$ clases por _cada_ nueva observación. En su lugar, implementamos un sencillo algoritmo "incremental", que permite recomputar únicamente las geodésicas que cambian al agregar la nueva observación $x_0$ al grafo completo de la clase en cuestión. #footnote[Para más detalles al respecto, léase el método `SampleFermatDistance._distancia` en el módulo `fkdc/fermat.py`.]
 
 == Elección del ancho de banda para clasificación
 
@@ -1512,7 +1512,7 @@ Tanto #kdc, #fkdc y #fkn son clasificadores suaves, por lo que los evaluaremos p
 
 Pírrica victoria sería mejorar con la distancia de Fermat el rendimiento de #kdc o #kn para encontrar que aún así, tales algoritmos no son competitivos contra el estado del arte en la misma tarea. A modo de referencia incluimos también los siguientes algoritmos en la comparación:
 - Naive Bayes Gaussiano (#gnb),
-- Regresión Logistica (#logr),
+- Regresión logística (#logr),
 - _Gradient Boosting Trees_ (#gbt) #footnote[Una traducción literal sería "árboles (de decisión) por potenciación del gradiente", pero este término casi nunca se traduce en la práctica.] y
 - Clasificador de Soporte Vectorial (#svc)
 
@@ -1553,11 +1553,11 @@ La estrategia de validación cruzada intenta evitar que los algoritmos sobreajus
 No todas las hiperparametrizaciones son equivalentes: en general, para cada hiperparámetro se puede establecer una dirección en la que el modelo se complejiza, en tanto adquiere mayor "flexibilidad" para adaptarse a los datos de entrenamiento #footnote[Por ejemplo, #kn se complejiza a medida que  _disminuye_ $k$, la cantidad de vecinos: las predicciones de $1-$NN sobre la variedad varían más seguido que las de $100$-NN]. Resolveremos este _tradeoff_ entre complejidad y poder predictivo recurriendo a un principio filosófico clásico:
 
 #obs(link("https://es.wikipedia.org/wiki/Navaja_de_Ockham")[Navaja de Occam])[
-  Atribuida a William de Ockham (c. 1287--1347), también se conoce como "Principio de Parsimonia", y se suele citar --- en palabras que su autor nunca pronunció exactamente --- como _Entia non sunt multiplicanda praerter necessitatem_, "No se deben multiplicar las entidades sin necesidad". Popularmente, se suele parafrasear como "de entre dos teorías en disputa, es preferible la explicación más simple de un fenómeno".
+  Atribuida a William de Ockham (c. 1287--1347), también se conoce como "Principio de Parsimonia", y se suele citar --- en palabras que su autor nunca pronunció exactamente --- como _Entia non sunt multiplicanda praeter necessitatem_, "No se deben multiplicar las entidades sin necesidad". Popularmente, se suele parafrasear como "de entre dos teorías en disputa, es preferible la explicación más simple de un fenómeno".
 ]
 Reformulando, diremos que sujeto a la implementación de _cierto_ algoritmo, cuando dos hiperparametrizaciones $nu, mu$ tienen _casi_ las mismas consecuencias --- alcanzan pérdidas tales que $abs(L(nu) - L(mu)) < c$ con $c$ "suficientemente pequeño" --- preferiremos la más sencilla: la de menor _complejidad_ $C$, para cierta función $C$ a definir.
 
-La validación cruzada de $k$ pliegos nos provee naturalmente de $k$ realizaciones de la métrica a optimizar para cada hiperparametrización, que podemos utilizar para estimar el desvío estándar de la misa. Sobre esta base, implementamos la siguiente regla:
+La validación cruzada de $k$ pliegos nos provee naturalmente de $k$ realizaciones de la métrica a optimizar para cada hiperparametrización, que podemos utilizar para estimar el desvío estándar de la misma. Sobre esta base, implementamos la siguiente regla:
 #defn([regla de un desvío estándar o "R1SD"])[
   Sea $mu^star$ la hiperparametrización que minimiza la pérdida de entrenamiento y $hat(s)_(L(mu^star))$ el desvío estimado de dicha pérdida. De entre todas las hiperparametrizaciones a menos de $hat(s)_(L(mu^star))$ de $mu^star$, elíjase _la más sencilla_:
   $         & mu^(1 sigma) = arg min_(mu in Mu) C(mu) \
@@ -1578,7 +1578,7 @@ Al no conocer _a priori_ demasiado con respecto a la teoría de la distribución
 = Resultados <resultados>
 
 == In Totis
-En total, ejecutamos unas 4,500 tareas, producto de #reps repeticiones por dataset y clasificador, sobre un total de 20 datasets y 9 clasificadores diferentes. De los clasificadores ya se habló; los _datasets_ --- cuyos nombres se estilan en fuente `monoespacio` se presentarán cuando nos aboquemos al análisis de cada uno.
+En total, ejecutamos unas 4500 tareas, producto de #reps repeticiones por dataset y clasificador, sobre un total de 20 datasets y 9 clasificadores diferentes. De los clasificadores ya se habló; los _datasets_ --- cuyos nombres se estilan en fuente `monoespacio` --- se presentarán cuando nos aboquemos al análisis de cada uno.
 
 Designaremos por $cal(K) = {#fkdc, #kdc, #fkn, #kn}$ a la familia de estimadores basados en densidad por núcleos, sobre la que se concentra el análisis comparativo del capítulo. Entre los clasificadores blandos, la distancia de Fermat rindió frutos, con el máximo $R^2$ mediano en 10 de los 20 experimentos: 7 preseas fueron para #fkdc y 3 para #fkn.
 
@@ -1591,7 +1591,7 @@ La amplia distribución de algoritmos óptimos según las condiciones del datase
   short-caption: [Mejor clasificador por dataset según $R^2$ mediano.],
 )
 
-El mismo análisis con métrica de exactitud es menos favorable a la familia $cal(K)$, que de ser óptimos en 14 de 20 datasets por $R^2$, pasan a serlo en sólo 8 de 20 por exactitud. #svc, entrenado en consecuencia, resulta un algoritmo casi imbatible en exactitud, con rendimiento sólido en todo tipo de datasets y máximo de entre la muestra en 6 de ellos. #gbt vuelve a brillar en aquellos con mucho ruido y siguen figurando como competitivos numerosos estimadores: hasta #fkdc retiene su título en 1 dataset, `espirales_lo`.
+El mismo análisis con métrica de exactitud es menos favorable a la familia $cal(K)$, que de ser óptimos en 14 de 20 datasets por $R^2$, pasan a serlo en solo 8 de 20 por exactitud. #svc, entrenado en consecuencia, resulta un algoritmo casi imbatible en exactitud, con rendimiento sólido en todo tipo de datasets y máximo de entre la muestra en 6 de ellos. #gbt vuelve a brillar en aquellos con mucho ruido y siguen figurando como competitivos numerosos estimadores: hasta #fkdc retiene su título en 1 dataset, `espirales_lo`.
 
 #tabla_clf_destacados(
   "data/mejor-clf-por-dataset-segun-accuracy-mediano.csv",
@@ -1599,10 +1599,10 @@ El mismo análisis con métrica de exactitud es menos favorable a la familia $ca
   short-caption: [Mejor clasificador por dataset según exactitud mediana.],
 )
 
-No es nuestra intención abrumar al lector, así que a continuación haremos un paneo arbitrario por algunos de los resultados que nos resultaron más llamativos o se acercan lo suficiente a algún resultado de la literatura previa como para merecer un comentario aparte #footnote[Si used, querido lector, es un alma crítica e inquieta y decide clonar el repositorio, cambiar las semillas y reproducir los experimentos --- ¡o aún incorporar nuevos datasets y algoritmos! --- ppor favor, no deje de hacer un _pull request_ al repositorio original.].
+No es nuestra intención abrumar al lector, así que a continuación haremos un paneo arbitrario por algunos de los resultados que nos resultaron más llamativos o se acercan lo suficiente a algún resultado de la literatura previa como para merecer un comentario aparte #footnote[Si usted, querido lector, es un alma crítica e inquieta y decide clonar el repositorio, cambiar las semillas y reproducir los experimentos --- ¡o aún incorporar nuevos datasets y algoritmos! --- por favor, no deje de hacer un _pull request_ al repositorio original.].
 == Lunas, círculos y espirales ($d=2, d_MM=1, K=2$)
 
-Para comenzar, consideramos el caso no trivial más sencillo con $d > d_MM$: $d=2, d_MM=1, K=2$, y exploramos tres curvas sampleadas con un poco de "ruido blanco" añadido: dos "lunas" --- semicírculos no superpuestos con sus centros en un extremo del semicírculo opuesto ---, dos círculos concéntricos y dos espirales con el mismo origen y sentido de rotación pero desfasadas medio giro #footnote[No entraremos en demasiado detalle sobre cómo se generó o de dónde se tomó cada _dataset_ para mantener el foco en los resultados experimentales. Las rutinas para generar cada conjunto de datos se puede leer en `fkdc/datasets.py`].
+Para comenzar, consideramos el caso no trivial más sencillo con $d > d_MM$: $d=2, d_MM=1, K=2$, y exploramos tres curvas muestreadas con un poco de "ruido blanco" añadido: dos "lunas" --- semicírculos no superpuestos con sus centros en un extremo del semicírculo opuesto ---, dos círculos concéntricos y dos espirales con el mismo origen y sentido de rotación pero desfasadas medio giro #footnote[No entraremos en demasiado detalle sobre cómo se generó o de dónde se tomó cada _dataset_ para mantener el foco en los resultados experimentales. Las rutinas para generar cada conjunto de datos se puede leer en `fkdc/datasets.py`].
 
 #v(-1em)
 
@@ -1738,7 +1738,7 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 #let sfd = $D_(Q, alpha)$
 
 #obs("riesgos computacionales")[
-  Una dificultad de entrenar un clasificador _original_ es que hay que definir las rutinas numéricas "a mano", usando librerías estándares como `numpy` y `scipy` para operaciones elementales y nada más. Además, _debugear_ errores en rutinas numéricas es particularmente difícil, puesto que las operaciones no producen errores obvios, sino que retornan valores irrisorios #footnote[Hubo montones de estos, cuya resolución progresiva dio lugar al módulo `fkdc/fermat.py` y las clases `SampleFermatDistance, FermatKNeighborsClassifier, FermatKDE` y `KDClassifier`--- que acepta tanto la métrica euclídea como de Fermat --- en la pequeña librería que acompaña esta tesis. Creemos que no los hay, pero todo error de cálculo que pueda persistir en el producto final depende exclusivamente de mí.].
+  Una dificultad de entrenar un clasificador _original_ es que hay que definir las rutinas numéricas "a mano", usando librerías estándares como `numpy` y `scipy` para operaciones elementales y nada más. Además, depurar (_debug_) errores en rutinas numéricas es particularmente difícil, puesto que las operaciones no producen errores obvios, sino que retornan valores irrisorios #footnote[Hubo montones de estos, cuya resolución progresiva dio lugar al módulo `fkdc/fermat.py` y las clases `SampleFermatDistance, FermatKNeighborsClassifier, FermatKDE` y `KDClassifier`--- que acepta tanto la métrica euclídea como de Fermat --- en la pequeña librería que acompaña esta tesis. Creemos que no los hay, pero todo error de cálculo que pueda persistir en el producto final depende exclusivamente de mí.].
 
   A ello se le suma que el cómputo de la distancia muestral de Fermat #sfd es realmente caro. Aun siguiendo "buenas prácticas computacionales" #footnote[Como sumar logaritmos en lugar de multiplicar valores "crudos" siempre que sea posible], implementaciones ingenuas pueden resultar impracticables hasta en datasets de baja cardinalidad y pocas dimensiones.
 
@@ -1749,13 +1749,13 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 
 === `lunas_lo`
 
-A contiunuación presentaremos el resumen de los resultados obtenidos para este dataset. Como tal gráfica de síntesis se repetirá por dataset, amerita una breve descripción. Consta de dos columnas: en la izquierda, un scatter plot 2D o 3D de algunas dimensiones del dataset y una tabla con la exactitud y el $R^2$ mediano por algoritmo. Para ayudar a la comprensión de un vistazo, los algoritmos se ordenan por $R^2$ descendiente, el mejor se resalta en verde, y atenuados en gris figuran aquellos cuya mediana de $R^2$ esté por debajo del primer cuartil del mejor --- salvo SVC  que no reporta $R^2$ #footnote[Una regla similar a la R1SD hubiese sido más consistente, pero al presentar los datos con boxplots esta demarcación nos resultó más natural.].
+A continuación presentaremos el resumen de los resultados obtenidos para este dataset. Como tal gráfica de síntesis se repetirá por dataset, amerita una breve descripción. Consta de dos columnas: en la izquierda, un scatter plot 2D o 3D de algunas dimensiones del dataset y una tabla con la exactitud y el $R^2$ mediano por algoritmo. Para ayudar a la comprensión de un vistazo, los algoritmos se ordenan por $R^2$ descendente, el mejor se resalta en verde, y atenuados en gris figuran aquellos cuya mediana de $R^2$ esté por debajo del primer cuartil del mejor --- salvo SVC  que no reporta $R^2$ #footnote[Una regla similar a la R1SD hubiese sido más consistente, pero al presentar los datos con boxplots esta demarcación nos resultó más natural.].
 
-En la columna derecha, los boxplots de ambas métricas para todos los clasificadores; los atenuados en la tabla se dibujan translúcidos, y el eje vertical se recorta por debajo del peor valor de #fkdc. Las líneas punteadas horizontales marcan la mediana del mejor algoritmo en cada métrica. En el cuerpo del capítulo presentamos solo las fichas que sostienen algún argumento; las #reps fichas restantes están en el #ref-anexo.
+En la columna derecha, los boxplots de ambas métricas para todos los clasificadores; los atenuados en la tabla se dibujan translúcidos, y el eje vertical se recorta por debajo del peor valor de #fkdc. Las líneas punteadas horizontales marcan la mediana del mejor algoritmo en cada métrica. En el cuerpo del capítulo presentamos solo las fichas que sostienen algún argumento; las fichas restantes están en el #ref-anexo.
 
 #highlights_figure("lunas_lo")
 
-#fkdc tiene el mejor rendimiento, pero no por mucho, y aún #logr _performa_ decentemente en `lunas_lo`:
+#fkdc tiene el mejor rendimiento, pero no por mucho, y aún #logr rinde decentemente en `lunas_lo`:
 
 #figure(
   image("img/lunas_lo-lr-decision_boundary.svg", height: 17em),
@@ -1927,7 +1927,7 @@ $
   #fkdc: & [0.1, 0.178, 0.316, 0.562] \
    #kdc: & [0.119, 0.143, 0.173, 0.208, 0.251, 0.303, 0.366, 0.441, 0.532] \
 $
-con lo cual #kdc _podría_ haber encontrado el ligeramente más conveniente $h^star approx 0.173$, pero la convalidación cruzada se inclinó por valores concentrados en el rango $[0.25, 0.3]$. De repetir el experimento tomando una grilla más fina en este rango crucial, es posible que $Delta_h^(1 sigma) approx 0$ y por ende $Delta_(R^2)$ también, aunque por el mismo argumento, de tomar una grilla más fina para $alpha approx 1$ terminaríamos encontrando tal vez un $alpha^(1 sigma) > 1$ para #fkdc #footnote[Hete aquí la dificultad de enunciar propiedades generales a partir de experimentos particulares: siempre hay _una prueba más_ para hacer, pero lamentablemente, en algún momento había que culminar la etapa experimental.]. En cualquier caso, hemos de aceptar que la ventaja de #fkdc en `lunas_lo` y `espirales_lo` sobre #kdc _no_ se debe a la inclusión del hiperparámetro $alpha$, sino quizás a una validación cruzada aleatoriamente favorable.
+con lo cual #kdc _podría_ haber encontrado el ligeramente más conveniente $h^star approx 0.173$, pero la validación cruzada se inclinó por valores concentrados en el rango $[0.25, 0.3]$. De repetir el experimento tomando una grilla más fina en este rango crucial, es posible que $Delta_h^(1 sigma) approx 0$ y por ende $Delta_(R^2)$ también, aunque por el mismo argumento, de tomar una grilla más fina para $alpha approx 1$ terminaríamos encontrando tal vez un $alpha^(1 sigma) > 1$ para #fkdc #footnote[Hete aquí la dificultad de enunciar propiedades generales a partir de experimentos particulares: siempre hay _una prueba más_ para hacer, pero lamentablemente, en algún momento había que culminar la etapa experimental.]. En cualquier caso, hemos de aceptar que la ventaja de #fkdc en `lunas_lo` y `espirales_lo` sobre #kdc _no_ se debe a la inclusión del hiperparámetro $alpha$, sino quizás a una validación cruzada aleatoriamente favorable.
 
 === Efectos de aumentar el ruido
 
@@ -2038,7 +2038,7 @@ La clasificación dura con estimación de densidad por núcleos --- con distanci
   ),
 )
 
-La semilla con mayor $Delta_(R^2)$ favorable a #fkdc corresponde a una hiperparametrización no-reducible a #kdc $(alpha = 1.25, h = 0.006)$ y le otorgga 23.7pp de $R^2$ _en términos absolutos_#footnote[en criollo, "un montón".] más que #kdc con $h = 0.208$ --- una ventana $approx 35$ veces más ancha.
+La semilla con mayor $Delta_(R^2)$ favorable a #fkdc corresponde a una hiperparametrización no-reducible a #kdc $(alpha = 1.25, h = 0.006)$ y le otorga 23.7pp de $R^2$ _en términos absolutos_#footnote[en criollo, "un montón".] más que #kdc con $h = 0.208$ --- una ventana $approx 35$ veces más ancha.
 
 Salta a la vista también que tales parametrizaciones "divergentes" tienen muy variado rendimiento por fuera del conjunto de entrenamiento #footnote[o _out-of-sample_, en inglés.] , pues para $s = 8096$ se eligió _la misma_ $mu$, contra $h_#kdc = 0.143 approx 25 h_#fkdc$ y se dio la segunda diferencia más amplia _en contra_ de #fkdc ($Delta_(R^2) = -0.098$).
 
@@ -2053,7 +2053,7 @@ Salta a la vista también que tales parametrizaciones "divergentes" tienen muy v
 
 Se podría argumentar en contra de #fkdc que $alpha = 1.25 approx 1$, pero al revisar el comportamiento de la regla de parsimonia,  encontramos por ejemplo que para $s = 1188, thin Delta_(R^2) = 0.227$  la parametrización maximizadora de $R^2$ en entrenamiento fue con $(h = 10^(-3), alpha=3)$ y todas las hiperparametrizaciones a menos de $1 sigma$ de esta tenían $alpha >= 2.5$, lejos de 1.
 
-Más aún, en unos cuantos casos --- $s in {1188, 1182, 2411}$ --- en que $alpha_#fkdc = alpha_#kdc = 1$, #fkdc todavía rinde un poco mejor que #kdc al elegir anchos de banda mucho más pequeños. Ya hemos visto que aún ligeras diferencias en $h$ pueden redundar en un $R^2$ favorable a #fkdc por el "detalle fino" de la búsqueda de hiperparámetros. Sin embargo vemos casos como el de
+Más aún, en unos cuantos casos --- $s in {1188, 1182, 2411}$ --- en que $alpha_#fkdc = alpha_#kdc = 1$, #fkdc todavía rinde un poco mejor que #kdc al elegir anchos de banda mucho más pequeños. Ya hemos visto que aun ligeras diferencias en $h$ pueden redundar en un $R^2$ favorable a #fkdc por el "detalle fino" de la búsqueda de hiperparámetros. Sin embargo vemos casos como el de
 
 $ s = 1182, quad Delta_R^2=0.111, quad alpha_#fkdc = alpha_#kdc = 1, quad h_#fkdc / h_#kdc approx 14.3 $
 
@@ -2137,7 +2137,7 @@ En #fkn, la distancia de Fermat parece ofrecer una diferencia significativa en $
 
 === Efecto de aumentar la dimensión ambiente
 
-Sobre los datasets de `lunas`, `circulos` y `espirales` analizamos los efectos de incrementar la cantidad de _ruido_ en el registro de las observaciones, sin modificar la dimensión del espacio ambiente. Para los datasets recién repsentados (`pionono`, `helice`, `hueveras`, `eslabones`) intentamos algo distinto: ¿qué pasa si los datos son los mismos, pero agregamos _dimensiones enteras_ de ruido independientes de las clases observadas? Para ello, se "extendieron" las observaciónes "sin ruido añadido" #footnote[de allí los sufijos `_0` y `_12`: con cero (doce) dimensiones de ruido agregadas] ya analizadas con 12 dimensiones, todas independiente entre sí, y distribución normal con media y varianza similares a las de las primeras 3 dimeniones _pooleadas_ #footnote[i.e., para cada dataset se concatenaron los valores de las 3 dimensiones de $N$ observaciones en una única muestra de longitud $3N$, de la cual se calculó la media y el desvío estándar.].
+Sobre los datasets de `lunas`, `circulos` y `espirales` analizamos los efectos de incrementar la cantidad de _ruido_ en el registro de las observaciones, sin modificar la dimensión del espacio ambiente. Para los datasets recién presentados (`pionono`, `helice`, `hueveras`, `eslabones`) intentamos algo distinto: ¿qué pasa si los datos son los mismos, pero agregamos _dimensiones enteras_ de ruido independientes de las clases observadas? Para ello, se "extendieron" las observaciones "sin ruido añadido" #footnote[de allí los sufijos `_0` y `_12`: con cero (doce) dimensiones de ruido agregadas] ya analizadas con 12 dimensiones, todas independiente entre sí, y distribución normal con media y varianza similares a las de las primeras 3 dimensiones _pooleadas_ #footnote[i.e., para cada dataset se concatenaron los valores de las 3 dimensiones de $N$ observaciones en una única muestra de longitud $3N$, de la cual se calculó la media y el desvío estándar.].
 
 El efecto sobre el $R^2$ es dramático para todos los clasificadores, pero la familia $cal(K)$ lo sufre en particular: en `helices_12` y `hueveras_12` ningún clasificador se distingue del azar, y en `pionono_12` y `eslabones_12` el $R^2$ de $cal(K)$ se desploma a $approx 0.1$ y $approx 0.25$, mientras que #gbt conserva $R^2 approx 0.8$ y $approx 0.9$ respectivamente.
 
