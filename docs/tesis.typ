@@ -181,6 +181,9 @@
   } else { t }
 }
 
+// Referencia al anexo de fichas (encabezado sin numeración: no admite @ref).
+#let ref-anexo = link(<anexo-fichas>)[Anexo A]
+
 // Wrapper de `figure` que estira el cuerpo por encima del ancho del texto.
 // Por defecto 140%; útil para gráficos triples (lunas/circulos/espirales) y
 // figuras-resumen panorámicas.
@@ -1527,7 +1530,7 @@ Por conocerlo en profundidad y en virtud de su sencillez de uso, la implementaci
 - nos permite, a nosotros mismos o a otros investigadores el día de mañana, integrar estos nuevos desarrollos al vasto universo de herramientas de estimación que toda la comunidad de aprendizaje automático construye alrededor de `scikit-learn`.
 
 
-=== Pre-tratamiento de los datos
+=== Pre-tratamiento de los datos <pretratamiento>
 
 Mantuvimos al mínimo el pre-tratamiento de los datos de entrada. Esta decisión fue deliberada: nos interesaba evaluar si la distancia de Fermat era capaz de capturar la estructura de la variedad subyacente sin asistencia adicional en la preparación de los datos, si bien reconocemos que este supuesto no es del todo razonable en aplicaciones del mundo real, donde el pre-procesamiento suele ser una etapa fundamental.
 
@@ -1584,7 +1587,7 @@ La amplia distribución de algoritmos óptimos según las condiciones del datase
 
 #tabla_clf_destacados(
   "data/mejor-clf-por-dataset-segun-r2-mediano.csv",
-  caption: [_Clasificadores con mayor $R^2$ mediano por dataset._ #fkdc gana en 7 de los 20 datasets, #gbt en 5, #fkn en 3 y #kdc en 2.],
+  caption: [_Clasificadores con mayor $R^2$ mediano por dataset_, sobre los atributos crudos (cf. @sensibilidad-escala). #fkdc gana en 7 de los 20 datasets, #gbt en 5, #fkn en 3 y #kdc en 2.],
   short-caption: [Mejor clasificador por dataset según $R^2$ mediano.],
 )
 
@@ -1748,7 +1751,7 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 
 A contiunuación presentaremos el resumen de los resultados obtenidos para este dataset. Como tal gráfica de síntesis se repetirá por dataset, amerita una breve descripción. Consta de dos columnas: en la izquierda, un scatter plot 2D o 3D de algunas dimensiones del dataset y una tabla con la exactitud y el $R^2$ mediano por algoritmo. Para ayudar a la comprensión de un vistazo, los algoritmos se ordenan por $R^2$ descendiente, el mejor se resalta en verde, y atenuados en gris figuran aquellos cuya mediana de $R^2$ esté por debajo del primer cuartil del mejor --- salvo SVC  que no reporta $R^2$ #footnote[Una regla similar a la R1SD hubiese sido más consistente, pero al presentar los datos con boxplots esta demarcación nos resultó más natural.].
 
-En la columna derecha, los boxplots de ambas métricas, _excluyendo_ aquellos clasificadores cuyo $R^2$ mediano está por debajo del _peor_ $R^2$ del mejor clasificador. Las líneas punteadas horizontales marcan la mediana del mejor algoritmo en cada métrica.
+En la columna derecha, los boxplots de ambas métricas para todos los clasificadores; los atenuados en la tabla se dibujan translúcidos, y el eje vertical se recorta por debajo del peor valor de #fkdc. Las líneas punteadas horizontales marcan la mediana del mejor algoritmo en cada métrica. En el cuerpo del capítulo presentamos solo las fichas que sostienen algún argumento; las #reps fichas restantes están en el #ref-anexo.
 
 #highlights_figure("lunas_lo")
 
@@ -1765,8 +1768,7 @@ Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) apren
 
 === `circulos_lo` y `espirales_lo`
 
-#highlights_figure("circulos_lo")
-#highlights_figure("espirales_lo")
+En ambos datasets se repite el cuadro de `lunas_lo`: #fkdc con el mejor $R^2$, la familia $cal(K)$ y #svc empatados en exactitud, y #logr, #slr y #gnb fuera de competencia (fichas en el #ref-anexo).
 
 Una inspección ocular a las fronteras de decisión revela las limitaciones de distintos algoritmos, siendo `espirales_lo` un caso vistoso y pedagógico: fijamos una semilla, y dibujamos las fronteras de decisión por clasificador.
 
@@ -1951,13 +1953,6 @@ En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" 
 - En `espirales_hi` todos los métodos de $cal(K)$ alcanzan un $R^2$ muy similar, #gbt queda largamente atrás y #gnb, #logr y #slr no se distinguen del $0$. #svc obtiene la mejor exactitud apenas por encima de #fkdc. Las ventajas de #fkdc por sobre #kdc son (casi) nulas en los tres casos.
 
 
-#highlights_figure("lunas_hi")
-
-#page(margin: (top: .9in, bottom: 1.2in))[
-  #highlights_figure("circulos_hi")
-  #highlights_figure("espirales_hi")
-]
-
 
 El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los estimadores, pero los métodos basados en densidad por núcleos parecen sufrirlo particularmente, aunque solo sea porque "caen desde más alto", a un nivel de rendimiento similar al de otros métodos.
 
@@ -2007,11 +2002,9 @@ Consideraremos a continuación datasets de variedades con dimensión intrínseca
 
 === Eslabones
 
-#highlights_figure("eslabones_0", width: 95%)
-
 Toda la familia de estimadores de densidad por núcleos alcanza un $R^2 approx 1$, y aun Naive Bayes tiene un rendimiento aceptable: con este nivel de ruido blanco en el muestreo, el "margen de separación" entre ambos anillos es tan amplio que la tarea resulta trivial.
 
-Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ --- no así el de exactitud --- revela un fuerte _outlier_ para la semilla $2411$:
+Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ --- no así el de exactitud; ver la ficha en el #ref-anexo --- revela un fuerte _outlier_ para la semilla $2411$:
 
 #tabla_csv(
   "data/eslabones_0-params-2411.csv",
@@ -2108,8 +2101,6 @@ Llegamos a la misma conclusión que antes por otra dirección: en los vecindario
 
 === Pionono
 
-#highlights_figure("pionono_0")
-
 Este dataset "clásico" para evaluar algoritmos de _clustering_ no-lineales es analizado en #cite(<sapienzaWeightedGeodesicDistance2018>, form: "prose"), así que decidimos incluirlo en la serie experimental. El trabajo citado también es una aplicación empírica de la distancia muestral de Fermat, pero tiene otro objetivo ---  _clustering_ basado en el algoritmo $k-$medoides --- y provee un gráfico de exactitud comparada contra Isomap. Los autores encuentran que
 #quote[$[dots]$ existe un amplio rango de $alpha$ #footnote[En el trabajo, "nuestro" $alpha$ se denomina $d$.] para los que la $alpha-$distancia se porta significativamente mejor que Isomap. $[dots]$ para la exactitud esta región está limitada a $1.7 <= alpha <= 2.2$
 ]
@@ -2117,7 +2108,6 @@ Este dataset "clásico" para evaluar algoritmos de _clustering_ no-lineales es a
 Nuestro objetivo (clasificación, no _clustering_) como también los algoritmos empleados (#kdc y #kn en lugar de $k-$medoides) son distintos, y en este _setting_ no encontramos diferencia significativa entre #kdc y #fkdc --- o entre $alpha = 1$ y $alpha > 1$ ---, que a su vez rinden tan bien como el estado del arte en exactitud (#svc) y $R^2$ (#gbt). Esta paridad es consistente con la observación de que, en las #reps repeticiones analizadas, #fkdc seleccionó $alpha = 1$ bajo la regla de parsimonia en _todos_ los casos, colapsando efectivamente a una variante de #kdc con ancho de banda ligeramente menor.
 
 === Hueveras ($d=3, d_MM=2, K=2$)
-#highlights_figure("hueveras_0")
 
 Este dataset sintético consiste de dos clases con idénticas distribuciones pero signo opuesto en la dirección de la coordenada vertical $ z = plus.minus(sin(x) times sin(y)) $ y se puede concebir bien como los dos cartones de un maple de huevos intentando ocupar el mismo espacio. La exactitud de la familia $cal(K)$ es competitiva contra la de #svc, que es ligeramente mejor. En términos de $R^2$, la familia $cal(K)$ es la única en alcanzar valores no-nulos aunque todavía bastante bajos ($0.25-0.30$).
 
@@ -2149,7 +2139,7 @@ En #fkn, la distancia de Fermat parece ofrecer una diferencia significativa en $
 
 Sobre los datasets de `lunas`, `circulos` y `espirales` analizamos los efectos de incrementar la cantidad de _ruido_ en el registro de las observaciones, sin modificar la dimensión del espacio ambiente. Para los datasets recién repsentados (`pionono`, `helice`, `hueveras`, `eslabones`) intentamos algo distinto: ¿qué pasa si los datos son los mismos, pero agregamos _dimensiones enteras_ de ruido independientes de las clases observadas? Para ello, se "extendieron" las observaciónes "sin ruido añadido" #footnote[de allí los sufijos `_0` y `_12`: con cero (doce) dimensiones de ruido agregadas] ya analizadas con 12 dimensiones, todas independiente entre sí, y distribución normal con media y varianza similares a las de las primeras 3 dimeniones _pooleadas_ #footnote[i.e., para cada dataset se concatenaron los valores de las 3 dimensiones de $N$ observaciones en una única muestra de longitud $3N$, de la cual se calculó la media y el desvío estándar.].
 
-El efecto en el $R^2$ de todos los clasificadores es dramático, pero la familia $cal(K)$ lo sufre particularmente, al punto que en dos datasets no logra diferenciarse del $0$ (`helices, hueveras`), y en los dos que sí (`pionono, eslabones`) el $R^2$ se desploma sin que le suceda lo mismo a #gbt, #gnb ni #logr.
+El efecto sobre el $R^2$ es dramático para todos los clasificadores, pero la familia $cal(K)$ lo sufre en particular: en `helices_12` y `hueveras_12` ningún clasificador se distingue del azar, y en `pionono_12` y `eslabones_12` el $R^2$ de $cal(K)$ se desploma a $approx 0.1$ y $approx 0.25$, mientras que #gbt conserva $R^2 approx 0.8$ y $approx 0.9$ respectivamente.
 
 #wide_figure(
   width: 100%,
@@ -2163,177 +2153,105 @@ El efecto en el $R^2$ de todos los clasificadores es dramático, pero la familia
     [Caída de $R^2$: 3D vs. 15D],
   ),
 )
-=== `pionono_12` y `eslabones_12`
-
-En estos datasets, el rendimiento de $cal(K)$ es tan malo que según nuestro propio criterio de exclusión, 
-#page(margin: (top: .9in, bottom: 1.2in))[
-  #highlights_figure("pionono_12")
-  #highlights_figure("eslabones_12")
-]
-
-
-En la versión 15D del pionono, #gbt domina con claridad ($R^2 approx 0.79$), seguido de lejos por #gnb ($R^2 approx 0.54$). Los clasificadores de densidad (#fkdc, #kdc) y los de vecinos (#fkn, #kn) colapsan a valores de $R^2 approx 0.10$, prácticamente indistinguibles entre variantes Fermat y euclídea. Los métodos lineales (#slr, #logr) se ubican en un rango intermedio ($R^2 approx 0.43$). Las 12 dimensiones de ruido degradan severamente a los estimadores por densidad de núcleos, cuya localidad los hace particularmente vulnerables a la maldición de la dimensionalidad.
-
-
-Nuevamente #gbt es el mejor clasificador ($R^2 approx 0.92$), seguido por #gnb ($R^2 approx 0.75$). Los clasificadores de densidad y vecinos se agrupan alrededor de $R^2 approx 0.24$, sin diferencia significativa entre variantes Fermat y euclídeas. La estructura de los eslabones --- dos anillos entrelazados --- se vuelve difícil de capturar por métodos locales cuando se añade ruido en 12 dimensiones adicionales.
-
-=== `helices_12`
-
-#highlights_figure("helices_12")
-
-=== `hueveras_12`
-
-#highlights_figure("hueveras_12")
-
-Estos dos son de los datasets más difíciles del conjunto: la exactitud máxima de _cualquier_ clasificador apenas supera el 50%, valores muy cercanos al azar. Los clasificadores de densidad (#fkdc, #kdc) obtienen $R^2$ negativo, lo que indica un desempeño peor que el de un clasificador trivial. Estas geometrías, ya de por sí adversas aun sin ruido añadido, se vuelven intratables con este nivel de ruido en alta dimensión.
 
 El fenómeno de las dimensiones de ruido sin correlación es particularmente pernicioso para los algoritmos basados en densidad por núcleos, aun con distancias basadas en densidad. Como la distancia de Fermat está computada como una geodésica en un grafo completo, y los pesos de cada arista están basados en distancia euclídea, las dimensiones de ruido puro "alejan" puntos cercanos entre sí en las dimensiones que importan. La ventaja de #gbt en _algunos_ de estos datasets del régimen de alto ruido es que al proceder con preguntas binarias sobre _un predictor a la vez_, puede identificar más fácilmente que cualquier pregunta sobre las columnas de ruido puro nunca sirve para partir la muestra en dos grupos con densidades bien distintas, y por eso las ignora.
 
-=== Datasets multiclase
+Estandarizar las columnas dentro del entrenamiento (@sensibilidad-escala) no cambia el cuadro: en `eslabones_12` la familia $cal(K)$ recupera algo de terreno --- #fkdc pasa de $R^2 approx 0.24$ a $approx 0.41$ --- pero sigue lejos de #gbt, y en `helices_12` y `hueveras_12` todo permanece al nivel del azar. Las fichas de los cuatro datasets están en el #ref-anexo.
 
-Se evaluaron cuatro datasets de clasificación con tres o más clases, provenientes de repositorios clásicos de _machine learning_ o generados sintéticamente.
+== Datasets "orgánicos" <organicos>
 
-#figure(
-  grid(
-    columns: 2,
-    gutter: 4pt,
-    ..("iris", "vino", "pinguinos", "anteojos").map(d => image("img/" + d + "-kdc-fkdc-r2-scatter.svg")),
-  ),
-  caption: flex-caption(
-    [$R^2$ por semilla de #fkdc vs. #kdc en los 4 datasets multiclase reales.],
-    [$R^2$ de #fkdc vs. #kdc en datasets multiclase],
-  ),
-)
+Los datasets restantes no fueron generados por nosotros a partir de una variedad conocida: `iris`, `vino` y `pinguinos` provienen de repositorios clásicos de _machine learning_, `anteojos` es sintético pero bidimensional y multiclase, y `digitos` y `mnist` son colecciones de imágenes. Tal como se explicó en @pretratamiento, los tratamos con el mínimo pre-procesamiento posible. Esa decisión, deliberada, tuvo una consecuencia que no anticipamos y que ilustramos con `pinguinos`.
 
-=== `iris` ($K = 3$, $d = 4$)
-
-#highlights_figure("iris")
-
-Este dataset es bien servido por métodos lineales: #logr ($R^2 approx 0.89$) tiene un desempeño tan bueno como el mejor de los métodos basados en densidad, #fkn. #fkdc tiene un $R^2$ ligeramente peor ($approx 0.86$) pero competitivo. Es un dataset donde los métodos simples bastan; las clases son casi linealmente separables en el espacio original y hasta #gnb alcanza una exactitud del $91%$ y $R^2 approx 0.81$.
-
-=== `pinguinos` ($K = 3$, $d = 4$)
+=== `pinguinos`: sensibilidad a la escala de los atributos <sensibilidad-escala>
 
 #highlights_figure("pinguinos")
 
-El dataset de pingüinos de Palmer es casi linealmente separable: #slr ($R^2 approx 0.96$) y #logr ($R^2 approx 0.96$) dominan. Los clasificadores de densidad y vecinos se ubican en un rango intermedio, muy por debajo de los métodos lineales. La diferencia entre #fkdc y #kdc es despreciable ($approx 1$ centésimo de $R^2$).
-
-Al investigar en mayor detalle qué es lo que sucede, la matriz de confusión muestra que #fkdc no predice la clase Chinstrap en absoluto: las 34 observaciones de Chinstrap en el conjunto de evaluación se clasifican como Adelie.
+El dataset de pingüinos de Palmer ($K = 3$, $d = 4$) es casi linealmente separable: #slr y #logr dominan con $R^2 approx 0.96$, y toda la familia $cal(K)$ queda entre $0.40$ y $0.50$. La matriz de confusión de #fkdc muestra que no predice la clase Chinstrap en absoluto: sus 34 observaciones del conjunto de evaluación se clasifican como Adelie.
 
 #figure(
-  image("img/pinguinos-fkdc-confusion_matrix.svg", width: 80%),
+  image("img/pinguinos-fkdc-confusion_matrix.svg", width: 70%),
   caption: flex-caption(
     [Matriz de confusión de #fkdc en `pinguinos`. La clase Chinstrap se confunde enteramente con Adelie.],
     [Matriz de confusión de #fkdc en `pinguinos`],
   ),
 )
 
-Si miramos el _pairplot_ con los gráficos de dispersión dimensión a dimensión, se observa que las distribuciones marginales de Adelie y Chinstrap se solapan considerablemente en las cuatro dimensiones del dataset.
+La explicación no está en la geometría de las clases sino en sus unidades. Tres de los cuatro atributos se miden en milímetros y toman valores entre 13 y 230; el cuarto, la masa corporal, se mide en gramos y va de 2700 a 6300. La distancia euclídea entre dos pingüinos es, a todos los efectos prácticos, su diferencia de masa, y la distancia de Fermat --- construida sobre aristas euclídeas --- hereda el problema. Adelie y Chinstrap tienen masas indistinguibles, y por eso se confunden. Los métodos que no dependen de la métrica del espacio ambiente no lo padecen: #gbt parte cada variable por separado, y #slr estandariza antes de ajustar.
+
+Para confirmarlo repetimos las #reps repeticiones de `pinguinos` con un único cambio: a cada clasificador se le antepuso un estandarizador --- media $0$ y desvío $1$ por columna --- ajustado sobre el pliego de entrenamiento correspondiente, exactamente como ya lo hacía #slr.
+
+// Los valores salen de data/pinguinos-crudo-vs-std.csv, generado por fkdc/viz.py a
+// partir de las corridas de `pinguinos` y `pinguinos_std`.
+#tabla_csv(
+  "data/pinguinos-crudo-vs-std.csv",
+  headers: (clf: [Clf.], r2_crudo: [$R^2$ crudo], r2_std: [$R^2$ est.], acc_crudo: [exac. cruda], acc_std: [exac. est.]),
+  caption: [$R^2$ y exactitud medianos en `pinguinos` sobre los atributos crudos y estandarizados dentro del entrenamiento.],
+  short-caption: [`pinguinos`: atributos crudos vs. estandarizados],
+) <tabla-pinguinos-std>
+
+Con la escala corregida, la familia $cal(K)$ alcanza a los métodos lineales y #fkdc registra el mejor $R^2$ del dataset (@tabla-pinguinos-std), mientras que #slr y #gbt --- invariantes a la escala por construcción --- no se mueven. La lección excede a `pinguinos`: la familia $cal(K)$ no es invariante a la escala de los atributos, y en datasets con unidades heterogéneas merece el mismo tratamiento que le dimos a la regresión logística. Las comparaciones "en crudo" de esta sección y de @resultados en general deben leerse con esa salvedad.
+
+No se trata, sin embargo, de estandarizar siempre. En `iris`, con las cuatro variables en centímetros, el mismo tratamiento _empeora_ ligeramente a $cal(K)$ (#fkn pasa de $R^2 approx 0.90$ a $approx 0.84$), y en `digitos` la caída es severa, como veremos a continuación. Las fichas de `iris`, `vino` y `anteojos` están en el #ref-anexo: en `iris` los métodos lineales y $cal(K)$ empatan; en `anteojos` todos salvo #logr y #slr alcanzan una exactitud del $97%$ y #fkdc saca una ventaja mínima en $R^2$; en `vino`, cuyas 13 variables recorren cuatro órdenes de magnitud, #gbt y #slr dominan con $R^2 approx 0.90$ y la brecha entre #logr ($0.69$) y #slr es, a la luz de `pinguinos`, un síntoma del mismo problema de escala.
+
+=== Alta dimensión: `digitos` y `mnist`
+
+#highlights_figure("digitos")
+
+El dataset de dígitos de scikit-learn ($N = 1797$, $K = 10$, $d = 64$, imágenes de $8 times 8$ píxeles) es el caso más favorable a $cal(K)$ en todo el experimento: #fkdc es el mejor clasificador global ($R^2 approx 0.98$), apenas por encima de #kdc ($approx 0.97$), y ambos por encima de todos los demás. Aquí la escala es homogénea --- píxeles con valores de $0$ a $16$ --- y estandarizar es contraproducente: los píxeles de los bordes, casi siempre nulos, ven su varianza inflada a $1$ y se convierten en dimensiones de ruido, con lo que #fkdc cae a $R^2 approx 0.87$. Esperábamos alguna ventaja más notable de #fkdc sobre #kdc, o de #fkn sobre #kn, que no se comprobó.
+
+A `mnist` ($N = 800$, $K = 10$) se lo redujo de $d = 784$ a $d = 96$ dimensiones por PCA #footnote[número que se eligió para conservar al menos el 90% de la variación en los datos originales] para volverlo manejable. #kdc ($R^2 approx 0.77$) supera a #fkdc ($approx 0.74$) con menor dispersión; ambos superan a #gbt y quedan a la par de #logr en exactitud y $R^2$, con #svc como el más exacto. La ficha está en el #ref-anexo.
+
+= Conclusiones
+
+Implementamos la distancia de Fermat muestral como una métrica compatible con los clasificadores de `scikit-learn` --- con estimación _out-of-sample_ y rutinas basadas en primitivos de `numpy` y `scipy` --- y sobre ella dos clasificadores, #fkdc y #fkn, que comparamos con sus pares euclídeos y con siete alternativas en 20 datasets y #reps repeticiones cada uno. Por $R^2$ mediano, #fkdc obtuvo el máximo en 7 datasets y #fkn en 3; #kdc, la implementación del clasificador de @loubesKernelbasedClassifierRiemannian2008, en otros 2. Por exactitud la ventaja se diluye, y #svc resulta casi imbatible.
+
+Sobre _cuándo_ aporta la distancia de Fermat, los experimentos son consistentes entre sí. En los vecindarios pequeños --- $k = 1$ en #fkn, $h$ chico en #fkdc --- coincide con la euclídea, y en datasets bien muestreados la superficie de pérdida de #fkdc exhibe un "risco" de parametrizaciones equivalentes, $log h prop alpha$, a lo largo del cual el efecto de $alpha$ se puede sustituir por otro $h$: allí la regla de parsimonia elige $alpha = 1$ y #fkdc colapsa a #kdc con un ancho de banda apenas distinto. Cuando #fkdc o #fkn aventajan a sus pares, la ventaja proviene de dos efectos: una interacción entre la regla de parsimonia y el espacio de hiperparámetros ampliado, que en `lunas_lo` y `espirales_lo` explica toda la diferencia; y, en `helices_0` y `hueveras_0`, parametrizaciones con el mismo $k$ o $h$ que la variante euclídea pero $alpha > 1$, es decir, una mejora neta atribuible a #sfd. Esta es consistente con la observación de @bijralSemisupervisedLearningDensity2011 de que basta con aprender $alpha$ sin estimar la dimensión intrínseca. El aporte más claro es cualitativo: la distancia de Fermat permite agrandar el vecindario sin cruzar a la otra variedad, con lo que #fkn se vuelve robusto a la elección de $k$ y las fronteras de #fkdc se alinean con la forma de las variedades, propiedad que no se reduce a una métrica escalar.
+
+Sobre _cuándo no_, aprendimos dos cosas. La primera es que las dimensiones de ruido son letales para los métodos locales: con 12 dimensiones de ruido añadidas a los datasets 3D, la familia $cal(K)$ se desploma, la distancia de Fermat no lo remedia --- hereda las aristas euclídeas que el ruido alarga --- y #gbt, que interroga una variable a la vez, apenas se inmuta. La segunda no la anticipamos: la familia $cal(K)$ no es invariante a la escala de los atributos. En `pinguinos`, un atributo en gramos frente a tres en milímetros bastó para que #fkdc confundiera dos especies por completo, y estandarizar dentro del entrenamiento --- como ya hacíamos con la regresión logística --- lo devolvió al primer puesto; en `digitos`, de escala homogénea, la misma estandarización lo perjudicó. Nuestra decisión de pre-procesar al mínimo fue deliberada, pero convierte las comparaciones sobre datasets "orgánicos" en comparaciones entre algoritmos con y sin tratamiento de escala, y así deben leerse.
+
+Dos observaciones prácticas. La distancia de Fermat aumenta la varianza entre repeticiones respecto de la euclídea, con _outliers_ negativos ocasionales (`eslabones_0`, `helices_0`): es el costo del espacio de hiperparámetros ampliado. Y el costo computacional, aunque varios órdenes de magnitud mayor que el de la distancia euclídea, no fue un obstáculo: las 4500 tareas corrieron en unas 12 horas en una computadora personal #footnote[Macbook Air M1 2020, 8GB RAM, 256GB SSD].
+
+Ningún algoritmo evaluado fue universalmente óptimo, y todos --- hasta #logr sin escalar --- tuvieron al menos un dataset favorable. La distancia de Fermat y nuestras implementaciones de #fkdc y #fkn son una herramienta más en la paleta del investigador, con un dominio de aplicación que empezamos a delimitar: variedades muy curvas o ralamente muestreadas, atributos en una escala común y pocas dimensiones de ruido.
+
+== Trabajo futuro
+
+- *Escala.* Incorporar la estandarización al pipeline de todos los clasificadores como opción por defecto, repetir el bloque de datasets orgánicos --- `vino` y `mnist` en particular --- y recontar la tabla de @resultados en esas condiciones. La infraestructura ya existe (variantes `_std` de los datasets); resta el análisis.
+- *Régimen ralamente muestreado.* Identificar condiciones reales en las que las variedades sean altamente no euclídeas y probar si, con $n$ pequeño relativo a la dimensión ambiente --- donde no queda otra que tomar $h > "iny" MM$, fuera del supuesto de @pelletierKernelDensityEstimation2005 ---, la distancia de Fermat mejora sistemáticamente el $R^2$.
+- *Ruido.* Evaluar una reducción lineal de dimensionalidad previa a la distancia de Fermat en presencia de dimensiones de ruido, que es lo que salvó a `mnist`.
+- *Grilla de $alpha$.* Ampliar $alpha in [1, 4]$: @bijralSemisupervisedLearningDensity2011 reportan buenos resultados con $alpha = 8$.
+- *Inspección visual.* El análisis de `pinguinos` nació de una matriz de confusión y un _pairplot_; sistematizar esa inspección antes de entrenar es barato y, a la luz de lo anterior, necesario.
+
+#heading(numbering: none, level: 1)[Anexo A: Fichas de resultados por dataset] <anexo-fichas>
+
+Cada ficha resume las #reps repeticiones de un dataset. A la izquierda, un gráfico de dispersión de las primeras dos (o tres) dimensiones y una tabla con la exactitud y el $R^2$ medianos por clasificador, ordenados por $R^2$: el mejor se resalta en verde y se atenúan aquellos cuya mediana de $R^2$ queda por debajo del primer cuartil de las repeticiones del mejor. A la derecha, los _boxplots_ de ambas métricas para todos los clasificadores, con los atenuados translúcidos, el eje vertical recortado por debajo del peor valor de #fkdc y una línea punteada en la mediana del mejor.
+
+#let ficha(dataset) = {
+  heading(numbering: none, level: 2, raw(dataset))
+  highlights_figure(dataset)
+}
+
+#for d in ("lunas_lo", "circulos_lo", "espirales_lo", "lunas_hi", "circulos_hi", "espirales_hi") { ficha(d) }
+#for d in ("eslabones_0", "helices_0", "pionono_0", "hueveras_0") { ficha(d) }
+#for d in ("eslabones_12", "helices_12", "pionono_12", "hueveras_12") { ficha(d) }
+#for d in ("iris", "vino", "pinguinos", "anteojos") { ficha(d) }
 
 #wide_figure(
   width: 120%,
   image("img/pinguinos-pairplot.svg"),
   caption: flex-caption(
-    [_Pairplot_ del dataset `pinguinos`. Las distribuciones marginales de Adelie y Chinstrap se solapan en todas las dimensiones, dificultando la clasificación por métodos basados en densidad.],
+    [_Pairplot_ del dataset `pinguinos`. Nótese la escala de la cuarta variable (masa corporal, en gramos) frente a las otras tres (en milímetros).],
     [_Pairplot_ de `pinguinos`],
   ),
 )
 
-Si entrenamos nuevamente #fkdc quitando una de las dimensiones altamente correlacionadas, la _performance_ mejora y si bien no supera a la de los mejores métodos, se vuelve comparativamente razonable. Es una victoria pírrica, que nos recuerda la importancia de realizar inspecciones visuales de los _datasets_ antes de largarse a entrenar algoritmos en tareas del mundo real.
+#for d in ("digitos", "mnist") { ficha(d) }
 
-=== `vino` ($K = 3$, $d = 11$)
+#heading(numbering: none, level: 2)[Variantes estandarizadas]
 
-#highlights_figure("vino")
+Fichas de los datasets reentrenados con un estandarizador antepuesto a cada clasificador (cf. @sensibilidad-escala).
 
-El dataset de vinos ($K = 3$, $d = 11$) favorece a #gbt ($R^2 approx 0.90$) y #slr ($R^2 approx 0.90$), los métodos paramétrico y no-paramétrico por excelencia en este conjunto. Hay una brecha notable entre #logr ($R^2 approx 0.69$) y #slr ($R^2 approx 0.90$), lo que sugiere que el escalado de _features_ es importante en este espacio de 11 dimensiones. #fkdc ($R^2 approx 0.43$) aventaja modestamente a #kdc ($R^2 approx 0.40$) pero ambos quedan lejos de los líderes. Se intentó el mismo acercamiento que en `pinguinos`, quitando dimensiones altamente correlacionadas para ver si el rendimiento mejoraba, pero esta vez la misma técnica no ayudó. Este es probablemente el peor dataset para #fkdc y #fkn. Sería de sumo interés investigar por qué en detalle.
-
-=== `anteojos` ($K = 3$, $d = 2$)
-
-#highlights_figure("anteojos")
-
-Dataset sintético bidimensional con tres clases en forma de anteojos ($K = 3$, $d = 2$), en el que todos los estimadores salvo #logr y #slr alcanzan casi la misma exactitud, 97% --- casi perfecta. #fkdc saca una ventaja mínima pero significativa en $R^2$. Al ser bidimensional, es el único dataset multiclase donde las fronteras de decisión se pueden visualizar directamente.
-
-
-#{
-  let clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb")
-  wide_figure(
-    width: 140%,
-    grid(columns: 3, gutter: 4pt, ..clfs.map(clf => image(
-        "img/anteojos-" + clf + "-decision_boundary.svg",
-      ))),
-    caption: flex-caption(
-      [Fronteras de decisión de los nueve algoritmos evaluados sobre `anteojos` con semilla $s=#plotting_seed$. Se observa que #logr y #slr no logran separar las tres clases, mientras que los demás algoritmos alcanzan fronteras muy similares entre sí.],
-      [Fronteras de decisión en `anteojos`],
-    ),
-  )
-} <fig-fronteras-anteojos>
-
-== Datasets de alta dimensionalidad
-
-#figure(
-  grid(
-    columns: 2,
-    gutter: 4pt,
-    image("img/digitos-kdc-fkdc-r2-scatter.svg"), image("img/mnist-kdc-fkdc-r2-scatter.svg"),
-  ),
-  caption: flex-caption(
-  [$R^2$ por semilla de #fkdc vs. #kdc en `digitos` ($d = 64$) y `mnist` ($d = 784$).],
-  [$R^2$ de #fkdc vs. #kdc en alta dimensión],
-))
-
-=== `digitos` ($K=10, d=64$)
-
-#highlights_figure("digitos")
-El dataset de dígitos de scikit-learn ($N = 1797$, $K = 10$, $d = 64$, imágenes de $8 times 8$ píxeles, $approx 180$ observaciones por clase) es el caso más favorable a #kdc en todo el experimento: #fkdc es el mejor clasificador global ($R^2 approx 0.98$), superando ligeramente a #kdc ($R^2 approx 0.97$), y estos dos superan más claramente a todos los demás. En este espacio de alta dimensión con estructura manifiesta de variedades --- un dígito manuscrito es una curva parametrizada con $d_MM=1$ en el espacio ambiente $d=2$ de la hoja ---, hubiéramos esperado alguna ventaja más notable de #fkdc sobre #kdc, o #fkn sobre #kn, que no se comprobó.
-
-=== `mnist` ($K=10, d=96$)
-#highlights_figure("mnist")
-
-La versión grande del problema de `digitos`, al dataset de `mnist` ($N = 800$, $approx 80$ observaciones por clase) se lo redujo de $d = 784$ a $d = 96$ #footnote[número que se eligió para conservar al menos el 90% de la variación en los datos originales] por PCA para volverlo más manejable. Presenta un resultado interesante: #kdc ($R^2 approx 0.77$) supera a #fkdc ($R^2 approx 0.74$), con bastante menor dispersión también según se observa en el _boxplot_. Nos llena de orgullo que la implementación propia del clasificador de @loubesKernelbasedClassifierRiemannian2008 obtenga un $R^2$ que se separa por bastante de otros métodos más complejos como #gbt y casi tan bueno como el mejor en exactitud (#svc), aunque hemos de admitir que termina obteniendo la misma _performance_ que el más que clásico #logr en exactitud y $R^2$.
-
-= Conclusiones
-
-A priori, nuestras tres propuestas de estimación --- #kdc, #fkdc y #fkn --- obtuvieron resultados a la par de métodos de primera línea tanto paramétricos (#svc) como no paramétricos (#gbt). Al evaluarlos por "exactitud", a pesar de estar entrenados para maximizar la log-verosimilitud, los métodos resultaron competitivos aunque sin mejoras significativas. Al evaluarlos por $R^2$, sí se observaron excelentes rendimientos para toda la familia $cal(K)$: #fkdc obtuvo el máximo $R^2$ mediano en 7 de los 20 datasets evaluados, y #fkn en otros 3. #kdc resultó óptimo en 2 datasets adicionales, consolidando la técnica del clasificador de densidad por núcleos como competitiva por sí misma.
-
-Ya existía una implementación previa de la Distancia de Fermat #link("https://www.aristas.com.ar/fermat/fermat.html")[como librería de Python], pero dado el extenso número de _datasets_ sobre los que evaluamos los clasificadores, nos inclinamos por una reimplementación propia,
-- con capacidad de estimación "out-of-sample",
-- métodos mínimamente eficientes basados en "primitivos" --- de `numpy` y `scipy` --- bien optimizados y
-- compatible con el marco de métricas aceptado por los clasificadores de `scikit-learn`, para extenderlos con Distancia de Fermat pero mantener la capacidad de evaluación sistemática comparada.
-
-
-Nuestros resultados son consistentes con la observación de @bijralSemisupervisedLearningDensity2011 de que basta con aprender un único parámetro $alpha$ ---que subsume los efectos de la dimensión intrínseca $d$ y el exponente $beta$--- sin necesidad de estimar la dimensión intrínseca de la variedad para que la distancia de Fermat resulte efectiva.
-
-En ninguno de los datasets estudiados con bajo $d in {2, 3}$ se vieron modos "catastróficos" donde el rendimiento de #fkdc/#fkn fuese muchísimo peor que el de sus pares euclídeos. Sí hubo dos datasets "reales" --- `vino` y `pinguinos`, $K=3$ --- en los que #fkdc confunde dos de las clases por estar muy "ensimismadas" en algunas direcciones, y pierde mucho en exactitud. En los datasets en que se comprueba una ventaja sistemática de #fkdc (resp. #fkn) sobre #kdc (resp. #kn), se puede explicar por dos efectos:
-1. En todos los casos examinados, una parte importante de la ventaja se da por una "simbiosis" positiva entre el mecanismo de selección de modelos de @r1sd, y el espacio de parámetros ampliado por la dimensión de $alpha$. Esta resulta en parametrizaciones de #fkdc (resp. #fkn) con $alpha=1$ y ligeramente mejor $R^2$ que las que #kdc (resp. #kn) selecciona.
-2. En ciertos casos (como #fkn en `hueveras_0` o #fkdc en `helices_0`), al menos parte de la mejora se debe a la elección de parametrizaciones de #fkn (resp. #fkdc) que coinciden en el $k$ (resp. $h$) elegido con #kn (resp. #kdc), pero además registran un $alpha > 1$ --- i.e., *una mejora netamente gracias al uso de la distancia de Fermat muestral*.
-
-En el "caso general" en el que #fkdc anda aproximadamente como #kdc, observamos una relación log-lineal, $ log(h) prop alpha $ que se discierne en la _superficie de pérdida_ de entrenamiento como un "risco" de parametrizaciones equivalentes en bondad. Entendemos que esto sucede porque
-- los datasets están "bien muestreados" y
-- para todo $p in MM$ una variedad de Riemann, siempre existe un vecindario dentro del radio de inyectividad de $"iny"_p MM$ en el que $cal(D)_(f,beta) prop norm(dot)$
-En estas circunstancias existe un $h <= "iny"_p MM$ tal que el efecto de $alpha$ "(des)inflando" la distancia euclídea puede ser sustituido completamente por una parametrización con distinto $h$, y no hay ventaja alguna que obtener usando distancia de Fermat (#fkn o #fkdc) en lugar de euclídea.
-
-Los métodos de estimación por densidad de núcleos son "altamente locales", y por ende solo vemos mejoras no-triviales de $R^2$ en circunstancias extraordinarias, como en los datasets de `espirales`, `helices` o `hueveras` en que aun los vecindarios locales son altamente no-euclídeos. Observamos que a medida que nos alejamos de estos vecindarios, el rendimiento de #fkdc y #fkn se mantiene muy competitivo, y el de #kdc, #kn degrada velozmente. Es un descubrimiento alentador, pero inútil en el contexto de tareas de clasificación como estas. Sí se observó, no obstante, que las fronteras de decisión que traza #fkdc se alinean cualitativamente con la forma de las variedades subyacentes ---una propiedad deseable que no resulta fácilmente reducible a una métrica escalar, y que se desdibuja en las comparaciones puramente numéricas.
-
-Al aumentar el nivel de ruido en los datasets bidimensionales, el terreno de juego se nivela considerablemente: las ventajas de la distancia de Fermat disminuyen, y los métodos basados en densidad por núcleos sufren una degradación particularmente pronunciada, si bien caen desde rendimientos inicialmente superiores a un nivel de rendimiento similar al de otros métodos.
-
-
-Con respecto a los tiempos de cómputo, no se hizo un análisis exhaustivo esencialmente porque no hizo falta: ejecutamos 25 repeticiones de 20 datasets para 9 clasificadores en unas 12 horas en una computadora personal #footnote[Macbook Air M1 2020, 8GB RAM, 256GB SSD] media docena de veces hasta tenerlo todo a punto, y en general ni siquiera fue #sfd el algoritmo más problemático. Es cierto que el cómputo de #sfd --- que implica calcular geodésicas en grafos completos --- puede requerir varios órdenes de magnitud mayores recursos que el de la distancia euclídea, pero para datasets "moderados" (en el desarrollo se consideraron $n_k <= 1000, p <= 90$) el tiempo de cómputo de base es pequeñísimo, y aunque crezca por órdenes de magnitud no afecta significativamente la experiencia del investigador.
-
-Un aspecto a tener en cuenta es la mayor varianza de #fkdc y #fkn respecto de sus pares euclídeos. Si bien la distancia de Fermat a veces mejora el $R^2$, también puede perjudicarlo: observamos _outliers_ negativos en datasets como `eslabones_0` ---donde una semilla adversa produjo $R^2_#fkdc approx 0.65$ contra $R^2_#kdc approx 0.9$--- y semillas en `helices_0` donde la misma parametrización que en otras repeticiones aventajaba a #kdc resultó significativamente peor. Esta mayor dispersión es un costo inherente al espacio ampliado de hiperparámetros.
-
-En los casos de peor rendimiento ---particularmente los datasets de 15 dimensiones con ruido añadido, así como `helices_12` y `hueveras_12`--- la degradación se explica por la combinación de ruido excesivo para el tamaño muestral disponible, o por no haber realizado una reducción _lineal_ de dimensionalidad antes de aplicar la distancia de Fermat. Las 12 dimensiones de ruido añadidas a los datasets tridimensionales degradaron severamente a todos los estimadores por densidad de núcleos, cuya localidad los hace particularmente vulnerables a la maldición de la dimensionalidad, y el agregado del hiperparámetro $alpha$ no logra subsanar.
-
-Cabe notar que _todo_ algoritmo evaluado --- incluso #logr sin escalar--- obtuvo el mejor rendimiento, o uno muy cercano, en al menos un dataset. No existe un único algoritmo universalmente óptimo; la elección sigue quedando a criterio del investigador según las características de cada problema. La distancia de Fermat y nuestras implementaciones de #fkdc y #fkn constituyen una herramienta más en la paleta del investigador.
-
-== Trabajo Futuro
-En el presente trabajo hemos desarrollado una biblioteca y un marco teórico sumamente riguroso para intentar identificar condiciones en las cuales estimadores de densidad entrenados con distancia de Fermat muestral son estrictamente mejores que sus versiones euclídeas.
-
-Es _infinita_ la cantidad de circunstancias en las que podemos poner a prueba una técnica de clasificación, y en los experimentos ejecutados y presentados apenas hemos arañado la superficie. Así y todo, pareciera ser que en espacios ralamente muestreados o altamente curvos ---donde para obtener una densidad "viable" no queda otra que tomar una ventana $h > "iny" MM$, violando el supuesto $h < "iny" MM$ bajo el cual @pelletierKernelDensityEstimation2005 garantiza la convergencia del KDE en variedades--- el uso de la distancia de Fermat mejora, si no la exactitud de los algoritmos, sí su $R^2$ y por ende la capacidad de discernimiento "relativo" de estos estimadores.
-
-Sería interesante entonces investigar si existen condiciones reales en las que sepamos "a priori" que las variedades intrínsecas son altamente no-euclídeas, y en ese contexto probar si en ciertos tamaños muestrales $n$ (y por cada clase, $n_1, dots, n_k$) pequeños relativos a la dimensión ambiente es particularmente conveniente el uso de la distancia de Fermat.
-
-
-Asimismo, la grilla de $alpha in [1, 4]$ utilizada en nuestros experimentos podría ampliarse ---@bijralSemisupervisedLearningDensity2011 reportan buenos resultados con $alpha = 8$--- para explorar si valores más extremos del parámetro ofrecen ventajas adicionales en datasets con geometrías particularmente complejas.
-
+// Agregar aquí las variantes a medida que se completan sus corridas (`make data`).
+#for d in ("digitos_std", "iris_std", "eslabones_12_std", "helices_12_std", "hueveras_12_std") { ficha(d) }
 
 #if anexo-ia [
   #heading(numbering: none, level: 1)[Anexo: Disquisiciones con IA]

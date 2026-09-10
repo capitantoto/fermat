@@ -104,7 +104,7 @@ $(ENTREGA_PDF): $(DOCS_DIR)/tesis.typ $(DOCS_DIR)/references.bib \
 
 # Datos: configs → pkl
 $(TARGETS_DIR)/%.pkl: $(CONFIGS_DIR)/%.yaml
-	uv run python fkdc/process.py --config-file $^ --workdir $(TARGETS_DIR)
+	uv run python fkdc/process.py --archivo-config $^ --dir-trabajo $(TARGETS_DIR)
 
 datasets: fkdc/datasets.py
 	uv run python $^

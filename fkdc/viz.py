@@ -24,7 +24,12 @@ from sklearn.neighbors import KernelDensity
 from sklearn.utils import Bunch
 
 from fkdc import config, dir_cache, dir_raiz
-from fkdc.datasets import Dataset, datasets_reales, datasets_sinteticos
+from fkdc.datasets import (
+    Dataset,
+    bases_estandarizar,
+    datasets_reales,
+    datasets_sinteticos,
+)
 from fkdc.tarea import Tarea
 
 # TODO: Reentrenar con versión consistente para evitar este problema
@@ -165,8 +170,12 @@ def boxplot(
     ax=None,
     paleta: dict | None = None,
     excluir_clfs: list[str] | None = None,
+    atenuar_clfs: list[str] | None = None,
 ):
-    """Diagrama de caja (boxplot) de una métrica por clasificador."""
+    """Diagrama de caja (boxplot) de una métrica por clasificador.
+
+    `atenuar_clfs` se dibujan translúcidos (cf. filas en gris de la tabla resumen).
+    """
     paleta = paleta or paleta_predeterminada
     info = _resolver_info_basica(info)
 
@@ -179,12 +188,20 @@ def boxplot(
         datos, hue="clf", y=metrica, gap=0.2, ax=ax, palette=paleta, saturation=1.0
     )
     aplicar_sombreado(ax)
+    if atenuar_clfs:
+        atenuar_cajas(ax, atenuar_clfs)
     ax.set_ylabel({"r2": "$R^2$", "accuracy": "exactitud"}.get(metrica, metrica))
     ax.axhline(
         datos.groupby("clf")[metrica].median().max(),
         linestyle="dotted",
         color="gray",
     )
+    # Recorte inferior del eje: el peor valor de fkdc (atípico o bigote), con margen
+    valores_fkdc = datos.loc[datos.clf.eq("fkdc"), metrica]
+    if not valores_fkdc.empty:
+        piso = valores_fkdc.min()
+        margen = 0.03 * (datos[metrica].max() - piso)
+        ax.set_ylim(bottom=piso - margen)
 
 
 def aplicar_sombreado(ax, clfs_sombreados=None):
@@ -201,6 +218,27 @@ def aplicar_sombreado(ax, clfs_sombreados=None):
             if i < len(parches_caja):
                 parches_caja[i].set_hatch("///")
             handles[i].set_hatch("///")
+
+
+def atenuar_cajas(ax, clfs, alpha=0.3):
+    """Vuelve translúcidas las cajas de `clfs`, con sus líneas y entrada en la leyenda.
+
+    Debe llamarse antes de agregar otras líneas al eje: seaborn dibuja, por caja y
+    en orden de leyenda, 6 `Line2D` (bigotes, topes, mediana y valores atípicos).
+    """
+    leyenda = ax.get_legend()
+    if leyenda is None:
+        return
+    etiquetas = [t.get_text() for t in leyenda.get_texts()]
+    parches_caja = [p for p in ax.patches if isinstance(p, PathPatch)]
+    lineas_por_caja = len(ax.lines) // max(len(parches_caja), 1)
+    for i, etiqueta in enumerate(etiquetas):
+        if etiqueta in clfs:
+            if i < len(parches_caja):
+                parches_caja[i].set_alpha(alpha)
+            for linea in ax.lines[i * lineas_por_caja : (i + 1) * lineas_por_caja]:
+                linea.set_alpha(alpha)
+            leyenda.legend_handles[i].set_alpha(alpha)
 
 
 def frontera_decision(
@@ -506,7 +544,11 @@ if __name__ == "__main__":
     # --- Cargar datos (con caché) ---
     ruta_cache = dir_cache / "infos_bi.pkl"
     ruta_cache.parent.mkdir(exist_ok=True)
-    if ruta_cache.exists():
+    infos_nuevos = ruta_cache.exists() and any(
+        p.stat().st_mtime > ruta_cache.stat().st_mtime
+        for p in dir_ejecucion.glob("*.pkl")
+    )
+    if ruta_cache.exists() and not infos_nuevos:
         logger.info(f"Cargando infos+bi desde caché: {ruta_cache}")
         with open(ruta_cache, "rb") as fp:
             infos, info_basica = pickle.load(fp)
@@ -550,6 +592,8 @@ if __name__ == "__main__":
         "mnist",
     ]
     datasets_alta_dim = {"digitos", "mnist"}
+    # Fichas (scatter, highlights, boxplots) de todo dataset con resultados
+    datasets_con_resultados = sorted(bi.dataset.unique())
 
     # =====================================================================
     # §2 Preliminares: figuras independientes
@@ -605,14 +649,16 @@ if __name__ == "__main__":
     # =====================================================================
     # Gráficos de dispersión (adaptativos por dimensionalidad)
     # =====================================================================
-    for dataset in todos_datasets:
+    for dataset in datasets_con_resultados:
         # Los datasets sintéticos se regeneran por semilla; los reales son fijos
         sufijo_semilla = (
             f"-{semilla_graficos}" if dataset in datasets_sinteticos else ""
         )
-        with open(dir_datasets / f"{dataset}{sufijo_semilla}.pkl", "rb") as fp:
+        # Las variantes `_std` comparten los datos crudos con su dataset base
+        base = dataset.removesuffix("_std")
+        with open(dir_datasets / f"{base}{sufijo_semilla}.pkl", "rb") as fp:
             ds = pickle.load(fp)
-        if dataset in datasets_alta_dim:
+        if base in datasets_alta_dim:
             # Proyección PCA: las dos primeras coordenadas no son informativas
             # (p. ej. el píxel superior izquierdo de `digitos` es siempre 0)
             fig, ax = plt.subplots(layout="tight")
@@ -673,10 +719,8 @@ if __name__ == "__main__":
     # Destacados JSON + Diagramas de caja
     # =====================================================================
     destacar_por = "r2"
-    for dataset in todos_datasets:
+    for dataset in datasets_con_resultados:
         hl = get_highlights(dataset, por=destacar_por, info=bi)
-        excluidos = hl.excluded
-
         # Guardar destacados JSON
         hl_json = dict(hl)
         hl_json["summary"] = hl.summary.round(4).to_csv()
@@ -685,11 +729,34 @@ if __name__ == "__main__":
             json.dump(hl_json, fp, indent=4)
         logger.info(f"Escribió {dir_datos / nombre_archivo}")
 
-        # Diagramas de caja (R² y accuracy), excluyendo clasificadores no competitivos
+        # Diagramas de caja (R² y accuracy) con todos los clasificadores; los que la
+        # tabla resumen muestra en gris (`hl.bad`) van translúcidos
         for metrica in ["r2", "accuracy"]:
             fig, ax = plt.subplots(layout="tight")
-            boxplot(dataset, metrica, info=bi, ax=ax, excluir_clfs=excluidos)
+            boxplot(dataset, metrica, info=bi, ax=ax, atenuar_clfs=hl.bad)
             guardar_fig(fig, dir_imagenes / f"{dataset}-{metrica}-boxplot.svg")
+
+    # =====================================================================
+    # CSVs crudo vs. estandarizado: medianas por clasificador, para cada dataset
+    # base que ya tenga corridas de su variante `_std` (aun parciales)
+    # =====================================================================
+    for base in bases_estandarizar:
+        if f"{base}_std" not in datasets_con_resultados:
+            continue
+        sub = bi[bi.dataset.isin([base, f"{base}_std"])]
+        med = sub.groupby(["clf", "dataset"])[["r2", "accuracy"]].median().unstack()
+        tabla = pd.DataFrame(
+            {
+                "clf": med.index,
+                "r2_crudo": med[("r2", base)].values,
+                "r2_std": med[("r2", f"{base}_std")].values,
+                "acc_crudo": med[("accuracy", base)].values,
+                "acc_std": med[("accuracy", f"{base}_std")].values,
+            }
+        ).sort_values("r2_crudo", ascending=False)
+        ruta = dir_datos / f"{base}-crudo-vs-std.csv"
+        tabla.round(3).to_csv(ruta, index=False)
+        logger.info(f"Escribió {ruta} ({sub.groupby('dataset').size().to_dict()})")
 
     # =====================================================================
     # CSVs "mejor-clf-por-dataset" (agregado sobre TODOS los datasets en bi)

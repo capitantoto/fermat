@@ -65,6 +65,23 @@ datasets_reales = [
     ## D "grande", k=10
     "digitos",
 ]
+# Variantes estandarizadas (media 0 y desvío 1 por columna) de los datasets cuyas
+# columnas tienen unidades o escalas dispares; ver `hacer_datasets_estandarizados`.
+bases_estandarizar = [
+    "iris",
+    "vino",
+    "pinguinos",
+    "digitos",
+    "mnist",
+    "eslabones_12",
+    "helices_12",
+    "hueveras_12",
+    "pionono_12",
+]
+datasets_sinteticos += [
+    f"{d}_std" for d in bases_estandarizar if d in datasets_sinteticos
+]
+datasets_reales += [f"{d}_std" for d in bases_estandarizar if d in datasets_reales]
 datasets = [*datasets_sinteticos, *datasets_reales]
 
 
@@ -261,10 +278,13 @@ def agregar_dims_ruido(X, ndims=None, scale=None, random_state=None):
 class Dataset:
     """Conjunto de datos con etiquetas, dimensiones y métodos de visualización."""
 
-    def __init__(self, X, y, nombre=None):
+    def __init__(self, X, y, nombre=None, estandarizar=False):
         self.X = X
         self.y = y.astype(str)
         self.nombre = nombre
+        # Si es True, `Tarea` antepone un StandardScaler al clasificador, ajustado
+        # en cada pliego de entrenamiento (sin fuga hacia evaluación).
+        self.estandarizar = estandarizar
         self.n, self.p = X.shape
         self.etiquetas = unique_labels(self.y)
         self.k = len(self.etiquetas)
@@ -329,15 +349,44 @@ class Dataset:
         return pickle.load(open(path, "rb"))
 
 
+def hacer_datasets_estandarizados(dir_datos: Path, bases: list[str] | None = None):
+    """Guarda una copia `{nombre}_std` de cada dataset base marcada `estandarizar=True`.
+
+    Los datos quedan crudos: la estandarización (media 0, desvío 1 por columna) la
+    aplica `Tarea` dentro del pipeline de cada clasificador, ajustada solo sobre el
+    pliego de entrenamiento. Se conservan las semillas:
+    `helices_12-1075.pkl` → `helices_12_std-1075.pkl`.
+    """
+    for base in bases or bases_estandarizar:
+        rutas = [*dir_datos.glob(f"{base}.pkl"), *dir_datos.glob(f"{base}-*.pkl")]
+        if not rutas:
+            logging.warning("No hay pickles de %s en %s", base, dir_datos)
+        for ruta in rutas:
+            ds = Dataset.cargar(ruta)
+            nombre = f"{base}_std"
+            destino = dir_datos / ruta.name.replace(base, nombre, 1)
+            Dataset(ds.X, ds.y, nombre=nombre, estandarizar=True).guardar(destino)
+            logging.info("Guardado %s", destino)
+
+
 def hacer_datasets(
     n_muestras: int = config.n_muestras,
     semilla_principal: int | None = config.semilla_principal,
     repeticiones: int = config.repeticiones,
     dir_datos: Path | None = None,
+    solo_estandarizar: bool = False,
 ):
-    """Genera todos los datasets y los guarda como pickles."""
+    """Genera todos los datasets y los guarda como pickles.
+
+    Con `--solo-estandarizar`, únicamente (re)genera las variantes `_std` a partir
+    de los pickles base ya existentes.
+    """
     dir_datos = dir_datos or Path.cwd() / "datasets"
     dir_datos.mkdir(parents=True, exist_ok=True)
+    if solo_estandarizar:
+        logging.basicConfig(level=logging.INFO)
+        hacer_datasets_estandarizados(dir_datos)
+        return
     np.random.default_rng(semilla_principal)
     # Semillas grandes devuelven error
     semilla_principal = semilla_principal or (hash(dt.datetime.now()) % 2**32)
@@ -428,6 +477,7 @@ def hacer_datasets(
     }.items():
         clave = "-".join(map(str, clave)) if isinstance(clave, tuple) else clave
         pickle.dump(dataset, open(dir_datos / (f"{clave}.pkl"), "wb"))
+    hacer_datasets_estandarizados(dir_datos)
 
 
 if __name__ == "__main__":
