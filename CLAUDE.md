@@ -50,7 +50,7 @@ El historial de commits de este repositorio permite verificar:
 - Usar `#defn` para definiciones
 - Etiquetar todos los bloques `#theorem`, `#definition`, `#obs`
 - El documento principal está en `docs/tesis.typ`
-- Todos los gráficos y tablas que se usan en el informe se generaron con `fkdc/viz.py` o desde `docs/figuras-y-tablas.ipynb`.
+- Todos los gráficos y tablas que se usan en el informe se generan con `fkdc/viz.py` (`make viz`), un SVG por panel; los paneles se combinan en Typst.
 
 ## Modo de trabajo
 - Proponer cambios explicando el motivo
@@ -160,4 +160,4 @@ estilo: reformatea figuras para usar #figure consistentemente
 ```
 
 ## Procesamiento del texto
-Los archivos `docs/tesis.typ` y `docs/figuras-y-tablas.ipynb` son extensos. Leerlos por secciones usando offset/limit en lugar de cargar el archivo completo. Buscar patrones específicos con Grep.
+Los archivos `docs/tesis.typ` y `fkdc/viz.py` son extensos. Leerlos por secciones usando offset/limit en lugar de cargar el archivo completo. Buscar patrones específicos con Grep.

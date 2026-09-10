@@ -14,10 +14,10 @@ from matplotlib import colormaps
 from matplotlib.axes import Axes
 from matplotlib.colors import Colormap
 from matplotlib.figure import Figure
-from matplotlib.lines import Line2D
 from matplotlib.patches import PathPatch
 from sklearn.base import BaseEstimator
 from sklearn.datasets import make_circles
+from sklearn.decomposition import PCA
 from sklearn.exceptions import InconsistentVersionWarning
 from sklearn.inspection import DecisionBoundaryDisplay
 from sklearn.neighbors import KernelDensity
@@ -407,6 +407,55 @@ def parametros_comparados(
     return params_comparados
 
 
+def dispersion_r2(dataset, sufijo="kdc", info=None, ax=None):
+    """R² por semilla: clasificador con Fermat (eje y) vs. su par euclídeo (eje x)."""
+    info = _resolver_info_basica(info)
+    ax = ax or plt.gca()
+    col_x, col_y = sufijo, f"f{sufijo}"
+    datos = (
+        info[info.dataset.eq(dataset) & info.clf.isin([col_x, col_y])]
+        .set_index(["semilla", "clf"])["r2"]
+        .unstack()
+    )
+    datos.plot(kind="scatter", y=col_y, x=col_x, ax=ax)
+    rango = datos.max().max() - datos.min().min()
+    x_izq = datos.min()[col_x] - 0.1 * rango
+    ax.set_xlim(x_izq)
+    ax.set_ylim(datos.min()[col_y] - 0.1 * rango)
+    ax.axline((x_izq, x_izq), slope=1, color="gray", linestyle="dotted")
+    ax.set_title(f"$R^2$ por semilla para {col_y} y {col_x} en `{dataset}`")
+    return ax
+
+
+def dumbbell_r2(medianas, antes, despues, ax=None, umbral=0.05):
+    """Dumbbell de R² mediano por clasificador entre dos condiciones.
+
+    `medianas` tiene una fila por clasificador y columnas `antes` (punto lleno)
+    y `despues` (punto vacío). Se omiten los clasificadores con R² ~ 0 en ambas,
+    se ordenan por `antes` y las variantes sin Fermat (y s-LR) llevan segmento
+    discontinuo, como el sombreado de los boxplots.
+    """
+    ax = ax or plt.gca()
+    signif = medianas[
+        (medianas[antes].abs() > umbral) | (medianas[despues].abs() > umbral)
+    ]
+    signif = signif.sort_values(antes)
+    for yi, (clf, fila) in enumerate(signif.iterrows()):
+        color = paleta_predeterminada.get(clf, "gray")
+        ls = "dashed" if clf in _clfs_sombreados else "solid"
+        ax.plot(
+            [fila[despues], fila[antes]], [yi, yi], color=color, lw=2.5, ls=ls, zorder=1
+        )
+        ax.scatter(fila[antes], yi, s=70, color=color, edgecolor="black", zorder=2)
+        ax.scatter(
+            fila[despues], yi, s=70, color="white", edgecolor=color, lw=2, zorder=2
+        )
+    ax.set_yticks(range(len(signif)))
+    ax.set_yticklabels(signif.index)
+    ax.set_xlabel("$R^2$ mediano")
+    return ax
+
+
 def graficar_fkn_kn_score_vs_n_vecinos(dataset, semilla, ax, infos=None):
     """Grafica mean_test_score vs n_neighbors para fkn y kn."""
     infos = infos or globals().get("infos") or cargar_infos(config.dir_ejecucion)
@@ -427,7 +476,8 @@ def graficar_fkn_kn_score_vs_n_vecinos(dataset, semilla, ax, infos=None):
         .groupby("param_n_neighbors")
         .mean_test_score.max()
     ).rename("kn")
-    pd.concat([puntaje_kn, puntaje_fkn], axis=1).plot(ax=ax)
+    # Marcadores en los valores de k efectivamente evaluados en la grilla
+    pd.concat([puntaje_kn, puntaje_fkn], axis=1).plot(ax=ax, marker="o", markersize=4)
     ax.set_xscale("log")
     ticks = [1, 2, 5, 10, 20, 50, 100, 200, 500]
     ax.set_xticks(ticks, labels=[str(t) for t in ticks], minor=False)
@@ -487,7 +537,19 @@ if __name__ == "__main__":
         "helices_0",
         "pionono_0",
         "hueveras_0",
+        # Otros datasets (§ Otros datasets): 15D, multiclase y alta dimensión
+        "pionono_12",
+        "eslabones_12",
+        "helices_12",
+        "hueveras_12",
+        "iris",
+        "vino",
+        "pinguinos",
+        "anteojos",
+        "digitos",
+        "mnist",
     ]
+    datasets_alta_dim = {"digitos", "mnist"}
 
     # =====================================================================
     # §2 Preliminares: figuras independientes
@@ -544,15 +606,43 @@ if __name__ == "__main__":
     # Gráficos de dispersión (adaptativos por dimensionalidad)
     # =====================================================================
     for dataset in todos_datasets:
-        ruta_ds = dir_datasets / f"{dataset}-{semilla_graficos}.pkl"
-        with open(ruta_ds, "rb") as fp:
+        # Los datasets sintéticos se regeneran por semilla; los reales son fijos
+        sufijo_semilla = (
+            f"-{semilla_graficos}" if dataset in datasets_sinteticos else ""
+        )
+        with open(dir_datasets / f"{dataset}{sufijo_semilla}.pkl", "rb") as fp:
             ds = pickle.load(fp)
-        if ds.p == 3:
+        if dataset in datasets_alta_dim:
+            # Proyección PCA: las dos primeras coordenadas no son informativas
+            # (p. ej. el píxel superior izquierdo de `digitos` es siempre 0)
+            fig, ax = plt.subplots(layout="tight")
+            pca = PCA(n_components=2)
+            X_pca = pca.fit_transform(ds.X)
+            sns.scatterplot(
+                x=X_pca[:, 0],
+                y=X_pca[:, 1],
+                hue=ds.y,
+                ax=ax,
+                s=15,
+                alpha=0.7,
+                palette="tab10",
+                legend="full",
+            )
+            ax.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0]:.0%} var.)")
+            ax.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1]:.0%} var.)")
+            ax.legend(
+                title="Clase",
+                bbox_to_anchor=(1.02, 1),
+                loc="upper left",
+                fontsize=7,
+                title_fontsize=8,
+            )
+        elif ds.p == 3:
             # Datasets 3D: scatter_3d por defecto
             fig, ax = plt.subplots(layout="tight", subplot_kw={"projection": "3d"})
             ds.scatter_3d(ax=ax)
         else:
-            # Datasets 2D: dispersión estándar
+            # Datasets 2D (o de más dimensiones, primeras dos coordenadas)
             fig, ax = plt.subplots(layout="tight")
             ds.scatter(ax=ax)
         ax.set_title(dataset, family="monospace")
@@ -568,6 +658,16 @@ if __name__ == "__main__":
     sns.move_legend(grafico, "upper right", bbox_to_anchor=(0.95, 0.95), title="Clase")
     grafico.figure.tight_layout()
     guardar_fig(grafico.figure, dir_imagenes / "helices-pairplot.svg")
+
+    # pingüinos pairplot (mismo formato que el de hélices)
+    with open(dir_datasets / "pinguinos.pkl", "rb") as fp:
+        ds_pinguinos = pickle.load(fp)
+    grafico = ds_pinguinos.pairplot(
+        height=2, plot_kws={"alpha": 0.5, "s": 5}, corner=True
+    )
+    sns.move_legend(grafico, "upper right", bbox_to_anchor=(0.95, 0.95), title="Clase")
+    grafico.figure.tight_layout()
+    guardar_fig(grafico.figure, dir_imagenes / "pinguinos-pairplot.svg")
 
     # =====================================================================
     # Destacados JSON + Diagramas de caja
@@ -643,42 +743,19 @@ if __name__ == "__main__":
         guardar_fig(fig, dir_imagenes / f"{dataset}-{clf}-decision_boundary.svg")
 
     # =====================================================================
-    # Gráficos de dispersión R²: fkdc vs kdc, fkn vs kn (curvas 2D)
+    # Gráficos de dispersión R² por semilla: variante Fermat vs. euclídea
     # =====================================================================
-    for dataset, sufijo in product(
-        ("lunas_lo", "circulos_lo", "espirales_lo"), ("kn", "kdc")
-    ):
-        col_x, col_y = sufijo, f"f{sufijo}"
-        datos = (
-            bi[bi.dataset.eq(dataset) & bi.clf.str.endswith(sufijo)]
-            .set_index(["semilla", "clf"])["r2"]
-            .unstack()
-        )
+    pares_r2 = [
+        *product(("lunas_lo", "circulos_lo", "espirales_lo"), ("kn", "kdc")),
+        ("helices_0", "kdc"),
+        *product(
+            ("iris", "vino", "pinguinos", "anteojos", "digitos", "mnist"), ("kdc",)
+        ),
+    ]
+    for dataset, sufijo in pares_r2:
         fig, ax = plt.subplots(layout="tight")
-        datos.plot(kind="scatter", y=col_y, x=col_x, ax=ax)
-        rango = datos.max().max() - datos.min().min()
-        x_izq = datos.min()[col_x] - 0.1 * rango
-        ax.set_xlim(x_izq)
-        ax.set_ylim(datos.min()[col_y] - 0.1 * rango)
-        ax.axline((x_izq, x_izq), slope=1, color="gray", linestyle="dotted")
-        ax.set_title(f"$R^2$ por semilla para {col_y} y {col_x} en `{dataset}`")
-        guardar_fig(fig, dir_imagenes / f"{dataset}-{col_x}-{col_y}-r2-scatter.svg")
-
-    # Dispersión R²: fkdc vs kdc para helices_0
-    datos_disp = (
-        bi[bi.dataset.eq("helices_0") & bi.clf.isin(["fkdc", "kdc"])]
-        .set_index(["semilla", "clf"])["r2"]
-        .unstack()
-    )
-    fig, ax = plt.subplots(layout="tight")
-    datos_disp.plot(kind="scatter", y="fkdc", x="kdc", ax=ax)
-    rango = datos_disp.max().max() - datos_disp.min().min()
-    x_izq = datos_disp.min()["kdc"] - 0.1 * rango
-    ax.set_xlim(x_izq)
-    ax.set_ylim(datos_disp.min()["fkdc"] - 0.1 * rango)
-    ax.axline((x_izq, x_izq), slope=1, color="gray", linestyle="dotted")
-    ax.set_title("$R^2$ por semilla para fkdc y kdc en `helices_0`")
-    guardar_fig(fig, dir_imagenes / "helices_0-r2-fkdc-vs-kdc.svg")
+        dispersion_r2(dataset, sufijo, info=bi, ax=ax)
+        guardar_fig(fig, dir_imagenes / f"{dataset}-{sufijo}-f{sufijo}-r2-scatter.svg")
 
     # Dispersión R²: fkn vs kn para helices_0 y eslabones_0 (seminario-modesto)
     for dataset, nombre_archivo in [
@@ -801,65 +878,30 @@ if __name__ == "__main__":
     guardar_fig(fig, dir_imagenes / f"{dataset}-[f]kdc-delta_r2-vs-delta_h.svg")
 
     # =====================================================================
-    # Caída de R² (lo vs hi): dumbbell por clasificador, un panel por figura
+    # Caída de R² mediano: dumbbells por figura (bajo vs. alto ruido; 3D vs. 15D)
     # =====================================================================
-    bi2d = bi[bi.dataset.str.endswith(("_lo", "_hi"))].copy()
-    bi2d[["figura", "ruido"]] = bi2d.dataset.str.split("_", expand=True)
-    caidas = (
-        bi2d.groupby(["figura", "ruido", "clf"])[["r2", "accuracy"]]
-        .median()
-        .unstack("ruido")
-    )
-    fig, axs = plt.subplots(1, 3, figsize=(12, 4), layout="tight")
-    for ax, figura in zip(axs, ["lunas", "circulos", "espirales"], strict=True):
-        caidas_fig = caidas.xs(figura)["r2"][["lo", "hi"]]
-        # Solo clfs con R² apreciable en al menos un nivel de ruido, mejor `_lo` arriba
-        signif = caidas_fig[
-            (caidas_fig["lo"].abs() > 0.05) | (caidas_fig["hi"].abs() > 0.05)
-        ]
-        signif = signif.sort_values("lo")
-        for yi, (clf, fila) in enumerate(signif.iterrows()):
-            color = paleta_predeterminada.get(clf, "gray")
-            # Segmento discontinuo para kdc, kn, s-lr (cf. boxplots sombreados)
-            ls = "dashed" if clf in _clfs_sombreados else "solid"
-            ax.plot(
-                [fila["hi"], fila["lo"]], [yi, yi], color=color, lw=2.5, ls=ls, zorder=1
-            )
-            ax.scatter(fila["lo"], yi, s=70, color=color, edgecolor="black", zorder=2)
-            ax.scatter(
-                fila["hi"], yi, s=70, color="white", edgecolor=color, lw=2, zorder=2
-            )
-        ax.set_yticks(range(len(signif)))
-        ax.set_yticklabels(signif.index)
+    def medianas_por_variante(sufijos):
+        sub = bi[bi.dataset.str.endswith(tuple(f"_{s}" for s in sufijos))].copy()
+        sub[["figura", "variante"]] = sub.dataset.str.rsplit("_", n=1, expand=True)
+        return (
+            sub.groupby(["figura", "variante", "clf"])["r2"]
+            .median()
+            .unstack("variante")
+        )
+
+    caidas_ruido = medianas_por_variante(("lo", "hi"))
+    for figura in ("lunas", "circulos", "espirales"):
+        fig, ax = plt.subplots(layout="tight")
+        dumbbell_r2(caidas_ruido.xs(figura), "lo", "hi", ax=ax)
         ax.set_title(figura)
-        ax.set_xlabel("$R^2$ mediano")
-    fig.legend(
-        handles=[
-            Line2D(
-                [],
-                [],
-                marker="o",
-                color="gray",
-                markeredgecolor="black",
-                ls="",
-                label="bajo ruido (_lo)",
-            ),
-            Line2D(
-                [],
-                [],
-                marker="o",
-                color="white",
-                markeredgecolor="gray",
-                markeredgewidth=2,
-                ls="",
-                label="alto ruido (_hi)",
-            ),
-        ],
-        loc="lower center",
-        ncol=2,
-        bbox_to_anchor=(0.5, -0.04),
-    )
-    guardar_fig(fig, dir_imagenes / "caida_r2.svg")
+        guardar_fig(fig, dir_imagenes / f"{figura}-caida_r2.svg")
+
+    caidas_15d = medianas_por_variante(("0", "12"))
+    for figura in ("pionono", "eslabones", "helices", "hueveras"):
+        fig, ax = plt.subplots(layout="tight")
+        dumbbell_r2(caidas_15d.xs(figura), "0", "12", ax=ax)
+        ax.set_title(figura)
+        guardar_fig(fig, dir_imagenes / f"{figura}-caida_r2-15d.svg")
 
     # =====================================================================
     # helices_0: diagrama de caja R² ampliado (solo clasificadores kernel)

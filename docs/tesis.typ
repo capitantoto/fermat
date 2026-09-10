@@ -1945,7 +1945,11 @@ El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los 
 
 #wide_figure(
   width: 120%,
-  image("img/caida_r2.svg", width: 100%),
+  grid(
+    columns: 3,
+    gutter: 4pt,
+    image("img/lunas-caida_r2.svg"), image("img/circulos-caida_r2.svg"), image("img/espirales-caida_r2.svg"),
+  ),
   caption: flex-caption(
     [$R^2$ mediano por clasificador y dataset con bajo y alto ruido en el muestreo; se excluyen aquellos con $R^2 approx 0$ en ambas variantes.],
     [Caída de $R^2$ mediano al aumentar el ruido],
@@ -2016,7 +2020,7 @@ Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la m
 )
 La clasificación dura con estimación de densidad por núcleos --- con distancia de Fermat o sin ella --- resulta ser ligeramente superior a todas las alternativas en términos de exactitud y muy superior en $R^2$. Encima de ello, #fkdc mejora en $R^2$ a #kdc por casi 5 puntos porcentuales y consistentemente en (casi) todas las semillas. ¿Con qué parámetros?
 #figure(
-  image("img/helices_0-r2-fkdc-vs-kdc.svg"),
+  image("img/helices_0-kdc-fkdc-r2-scatter.svg"),
   caption: flex-caption(
     [$R^2$ apareado por semilla en `helices_0`: cada punto compara una corrida de #fkdc con la de #kdc para la misma semilla. #fkdc supera a #kdc en casi todas las semillas, con una ventaja media de 5pp.],
     [$R^2$ de #fkdc vs. #kdc por semilla en `helices_0`.],
@@ -2134,9 +2138,13 @@ Presentamos aquí los resultados para diez datasets adicionales, agrupados en tr
 Los cuatro datasets tridimensionales del cuerpo principal (pionono, eslabones, hélices, hueveras) se ampliaron con 12 dimensiones de ruido gaussiano para evaluar la robustez de los clasificadores ante dimensiones irrelevantes.
 
 #wide_figure(
-  image("img/anexo-15d-delta-r2.svg"),
+  grid(
+    columns: 4,
+    gutter: 4pt,
+    ..("pionono", "eslabones", "helices", "hueveras").map(f => image("img/" + f + "-caida_r2-15d.svg")),
+  ),
   caption: flex-caption(
-    [Caída de $R^2$ (mediana) al agregar 12 dimensiones de ruido a los datasets 3D. Valores negativos indican peor $R^2$ en 15D.],
+    [Caída de $R^2$ mediano al agregar 12 dimensiones de ruido a los datasets 3D: punto lleno en 3D, punto vacío en 15D; el segmento une ambos valores. Se excluyen clasificadores con $R^2 approx 0$ en ambas versiones.],
     [Caída de $R^2$: 3D vs. 15D],
   ),
 )
@@ -2169,8 +2177,12 @@ El fenómeno de las dimensiones de ruido sin correlación es particularmente per
 
 Se evaluaron cuatro datasets de clasificación con tres o más clases, provenientes de repositorios clásicos de _machine learning_ o generados sintéticamente.
 
-#wide_figure(
-  image("img/anexo-multik-fkdc-vs-kdc.svg"),
+#figure(
+  grid(
+    columns: 2,
+    gutter: 4pt,
+    ..("iris", "vino", "pinguinos", "anteojos").map(d => image("img/" + d + "-kdc-fkdc-r2-scatter.svg")),
+  ),
   caption: flex-caption(
     [$R^2$ por semilla de #fkdc vs. #kdc en los 4 datasets multiclase reales.],
     [$R^2$ de #fkdc vs. #kdc en datasets multiclase],
@@ -2192,7 +2204,7 @@ El dataset de pingüinos de Palmer es casi linealmente separable: #slr ($R^2 app
 Al investigar en mayor detalle qué es lo que sucede, la matriz de confusión muestra que #fkdc no predice la clase Chinstrap en absoluto: las 34 observaciones de Chinstrap en el conjunto de evaluación se clasifican como Adelie.
 
 #figure(
-  image("img/pinguinos-fkdc-confusion_matrix.svg", width: 60%),
+  image("img/pinguinos-fkdc-confusion_matrix.svg", width: 80%),
   caption: flex-caption(
     [Matriz de confusión de #fkdc en `pinguinos`. La clase Chinstrap se confunde enteramente con Adelie.],
     [Matriz de confusión de #fkdc en `pinguinos`],
@@ -2202,7 +2214,8 @@ Al investigar en mayor detalle qué es lo que sucede, la matriz de confusión mu
 Si miramos el _pairplot_ con los gráficos de dispersión dimensión a dimensión, se observa que las distribuciones marginales de Adelie y Chinstrap se solapan considerablemente en las cuatro dimensiones del dataset.
 
 #wide_figure(
-  image("img/pinguinos-pairplot.svg", width: 100%),
+  width: 120%,
+  image("img/pinguinos-pairplot.svg"),
   caption: flex-caption(
     [_Pairplot_ del dataset `pinguinos`. Las distribuciones marginales de Adelie y Chinstrap se solapan en todas las dimensiones, dificultando la clasificación por métodos basados en densidad.],
     [_Pairplot_ de `pinguinos`],
@@ -2223,13 +2236,13 @@ El dataset de vinos ($K = 3$, $d = 11$) favorece a #gbt ($R^2 approx 0.90$) y #s
 
 Dataset sintético bidimensional con tres clases en forma de anteojos ($K = 3$, $d = 2$), en el que todos los estimadores salvo #logr y #slr alcanzan casi la misma exactitud, 97% --- casi perfecta. #fkdc saca una ventaja mínima pero significativa en $R^2$. Al ser bidimensional, es el único dataset multiclase donde las fronteras de decisión se pueden visualizar directamente.
 
+
 #{
   let clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "slr", "lr", "gnb")
   wide_figure(
-    width: 160%,
+    width: 140%,
     grid(columns: 3, gutter: 4pt, ..clfs.map(clf => image(
         "img/anteojos-" + clf + "-decision_boundary.svg",
-        height: 8em,
       ))),
     caption: flex-caption(
       [Fronteras de decisión de los nueve algoritmos evaluados sobre `anteojos` con semilla $s=#plotting_seed$. Se observa que #logr y #slr no logran separar las tres clases, mientras que los demás algoritmos alcanzan fronteras muy similares entre sí.],
@@ -2238,9 +2251,15 @@ Dataset sintético bidimensional con tres clases en forma de anteojos ($K = 3$, 
   )
 } <fig-fronteras-anteojos>
 
-=== Datasets de alta dimensionalidad
+== Datasets de alta dimensionalidad
 
-#wide_figure(width: 130%, image("img/anexo-hd-fkdc-vs-kdc.svg"), caption: flex-caption(
+#figure(
+  grid(
+    columns: 2,
+    gutter: 4pt,
+    image("img/digitos-kdc-fkdc-r2-scatter.svg"), image("img/mnist-kdc-fkdc-r2-scatter.svg"),
+  ),
+  caption: flex-caption(
   [$R^2$ por semilla de #fkdc vs. #kdc en `digitos` ($d = 64$) y `mnist` ($d = 784$).],
   [$R^2$ de #fkdc vs. #kdc en alta dimensión],
 ))
