@@ -1,10 +1,16 @@
 {
     "dataset": "pinguinos_std",
-    "summary": "clf,accuracy,r2\nfkdc,0.9883,0.9586\nlr,0.9883,0.9578\nfkn,0.9825,0.9522\nkn,0.9825,0.9521\nkdc,0.9825,0.9399\ngbt,0.9766,0.9147\ngnb,0.9649,0.8834\n",
-    "best": "fkdc",
+    "summary": "clf,accuracy,r2\nlr,0.9942,0.9639\nslr,0.9942,0.9639\nfkdc,0.9883,0.9586\nfkn,0.9825,0.9522\nkn,0.9825,0.9521\nkdc,0.9825,0.9399\ngbt,0.9766,0.9147\ngnb,0.9649,0.8834\nsvc,0.9766,\n",
+    "best": "lr",
     "bad": [
+        "fkn",
+        "kn",
+        "kdc",
         "gbt",
         "gnb"
     ],
-    "excluded": []
+    "excluded": [
+        "gbt",
+        "gnb"
+    ]
 }
