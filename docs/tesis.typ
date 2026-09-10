@@ -138,7 +138,9 @@
 // (array de contenido, típicamente fórmulas math) como encabezado real.
 // Opcionalmente `columns` proyecta sólo los índices de columna deseados,
 // útil para descartar columnas no relevantes para la tesis.
-#let tabla_params(path, labels, columns: none, skip-rows: 3, caption: none, short-caption: none) = {
+// `split: n` reparte las filas en `n` bloques lado a lado, cada uno con su
+// encabezado (útil para tablas largas y angostas).
+#let tabla_params(path, labels, columns: none, skip-rows: 3, split: 1, caption: none, short-caption: none) = {
   let data = csv(path)
   let rows = data.slice(skip-rows)
   let projected = if columns != none {
@@ -146,18 +148,34 @@
   } else {
     rows
   }
-  let cells = (
-    table.hline(stroke: 1pt),
-    ..labels.map(l => table.cell(align: center)[*#l*]),
-    table.hline(stroke: 0.5pt),
-    ..projected.flatten().map(c => align(center)[#c]),
-    table.hline(stroke: 1pt),
-  )
-  let t = table(
-    columns: labels.len(),
-    stroke: none,
-    ..cells,
-  )
+  let encabezado = labels.map(l => table.cell(align: center)[*#l*])
+  let t = if split <= 1 {
+    table(
+      columns: labels.len(),
+      stroke: none,
+      table.hline(stroke: 1pt),
+      ..encabezado,
+      table.hline(stroke: 0.5pt),
+      ..projected.flatten().map(c => align(center)[#c]),
+      table.hline(stroke: 1pt),
+    )
+  } else {
+    let alto = calc.ceil(projected.len() / split)
+    let bloques = range(split).map(j => projected.slice(j * alto, calc.min((j + 1) * alto, projected.len())))
+    let vacia = labels.map(_ => [])
+    let filas = range(alto).map(i => bloques.map(bl => if i < bl.len() { bl.at(i) } else { vacia }).flatten())
+    table(
+      columns: labels.len() * split,
+      stroke: none,
+      inset: (x: 0.6em, y: 0.35em),
+      table.hline(stroke: 1pt),
+      ..range(split).map(_ => encabezado).flatten(),
+      table.hline(stroke: 0.5pt),
+      ..filas.flatten().map(c => align(center)[#c]),
+      table.hline(stroke: 1pt),
+      ..range(1, split).map(j => table.vline(x: j * labels.len(), stroke: 0.5pt)),
+    )
+  }
   if caption != none {
     figure(t, caption: flex-caption(caption, if short-caption != none { short-caption } else { caption }))
   } else { t }
@@ -1545,7 +1563,7 @@ La validación cruzada de $k$ pliegos nos provee naturalmente de $k$ realizacion
 
 Para definir $C$ en modelos con más de un hiperparámetro sin entrar en consideraciones de "complejidad relativa" de cada uno, definimos un orden de complejidad creciente por clasificador como una lista de pares ordenados de hiperparámetros y la dirección de complejidad creciente. Para #fkdc, $C_#fkdc (mu)$  es creciente en $alpha$, y para cierto $alpha_0$ fijo, decreciente en $h$.
 
-La decisión de ordenar así los parámetros, con $alpha$ primero y $C$ ascendente, hace que en el entrenamiento de #fkdc, el algoritmo "prefiera" soluciones parsimoniosas en que #fkdc se reduce a #kdc --- cuando $alpha = 1$ --- o casi. En consecuencia, al entrenar #fkdc con R1SD solo se seleccionará un $alpha^star > 1$ cuando el rendimiento de #fkdc sea significativamente mejor que el de KDC.
+La decisión de ordenar así los parámetros, con $alpha$ primero y $C$ ascendente, hace que en el entrenamiento de #fkdc, el algoritmo "prefiera" soluciones parsimoniosas en que #fkdc se reduce a #kdc --- cuando $alpha = 1$ --- o casi. En consecuencia, al entrenar #fkdc con R1SD solo se seleccionará un $alpha^(1 sigma) > 1$ cuando el rendimiento de #fkdc sea significativamente mejor que el de KDC.
 
 #obs([complejidad en $h$])[
   La complejidad es _descendente_ en el tamaño de la ventana $h$: a mayor $h$, tanto más grande se vuelve el vecindario donde $K_h (d(x, x_i)) >> 0$ y $x_i$ pesa en la predicción, hasta que eventualmente es tan grande que "todo está cerca de todo" y la predicción en cualquier punto es prácticamente la misma Análogamente, $k-"NN"$ y su primo $epsilon- "NN"$ tienen complejidad _descendente_ en $k, epsilon$.
@@ -1891,7 +1909,7 @@ Veamos cómo se comparan los valores de $R^2$ que alcanza cada algoritmo en cada
     #image("img/lunas_lo-[f]kdc-delta_r2-vs-delta_h.svg")],
   caption: flex-caption(
     [(izq.) Dispersión --- _scatter_ --- de $R^2$ en función de $h$ por clasificador y semilla en `lunas_lo`, para #fkdc, #kdc;
-      (der.) dispersión de $Delta_(R^2) = R^2_#kdc - R^2_#fkdc$ en función de $Delta_h = h^star_#fkdc - h^star_#kdc$ para cada semilla.],
+      (der.) dispersión de $Delta_(R^2) = R^2_#kdc - R^2_#fkdc$ en función de $Delta_h = h^(1 sigma)_#fkdc - h^(1 sigma)_#kdc$ para cada semilla.],
     [$R^2$ vs. $h$ y $Delta_(R^2)$ vs. $Delta_h$ en `lunas_lo`],
   ),
 )
@@ -1907,7 +1925,7 @@ $
   #fkdc: & [0.1, 0.178, 0.316, 0.562] \
    #kdc: & [0.119, 0.143, 0.173, 0.208, 0.251, 0.303, 0.366, 0.441, 0.532] \
 $
-con lo cual #kdc _podría_ haber encontrado el ligeramente más conveniente $h^star approx 0.173$, pero la convalidación cruzada se inclinó por valores concentrados en el rango $[0.25, 0.3]$. De repetir el experimento tomando una grilla más fina en este rango crucial, es posible que $Delta_h^star approx 0$ y por ende $Delta_(R^2)$ también, aunque por el mismo argumento, de tomar una grilla más fina para $alpha approx 1$ terminaríamos encontrando tal vez un $alpha^star > 1$ para #fkdc #footnote[Hete aquí la dificultad de enunciar propiedades generales a partir de experimentos particulares: siempre hay _una prueba más_ para hacer, pero lamentablemente, en algún momento había que culminar la etapa experimental.]. En cualquier caso, hemos de aceptar que la ventaja de #fkdc en `lunas_lo` y `espirales_lo` sobre #kdc _no_ se debe a la inclusión del hiperparámetro $alpha$, sino quizás a una validación cruzada aleatoriamente favorable.
+con lo cual #kdc _podría_ haber encontrado el ligeramente más conveniente $h^star approx 0.173$, pero la convalidación cruzada se inclinó por valores concentrados en el rango $[0.25, 0.3]$. De repetir el experimento tomando una grilla más fina en este rango crucial, es posible que $Delta_h^(1 sigma) approx 0$ y por ende $Delta_(R^2)$ también, aunque por el mismo argumento, de tomar una grilla más fina para $alpha approx 1$ terminaríamos encontrando tal vez un $alpha^(1 sigma) > 1$ para #fkdc #footnote[Hete aquí la dificultad de enunciar propiedades generales a partir de experimentos particulares: siempre hay _una prueba más_ para hacer, pero lamentablemente, en algún momento había que culminar la etapa experimental.]. En cualquier caso, hemos de aceptar que la ventaja de #fkdc en `lunas_lo` y `espirales_lo` sobre #kdc _no_ se debe a la inclusión del hiperparámetro $alpha$, sino quizás a una validación cruzada aleatoriamente favorable.
 
 === Efectos de aumentar el ruido
 
@@ -2099,24 +2117,21 @@ Este dataset "clásico" para evaluar algoritmos de _clustering_ no-lineales es a
 Nuestro objetivo (clasificación, no _clustering_) como también los algoritmos empleados (#kdc y #kn en lugar de $k-$medoides) son distintos, y en este _setting_ no encontramos diferencia significativa entre #kdc y #fkdc --- o entre $alpha = 1$ y $alpha > 1$ ---, que a su vez rinden tan bien como el estado del arte en exactitud (#svc) y $R^2$ (#gbt). Esta paridad es consistente con la observación de que, en las #reps repeticiones analizadas, #fkdc seleccionó $alpha = 1$ bajo la regla de parsimonia en _todos_ los casos, colapsando efectivamente a una variante de #kdc con ancho de banda ligeramente menor.
 
 === Hueveras ($d=3, d_MM=2, K=2$)
+#highlights_figure("hueveras_0")
 
-Este dataset sintético consiste de dos clases con idénticas distribuciones pero signo opuesto en la dirección de la coordenada vertical $ z = plus.minus(sin(x) times sin(y)) $ y se puede concebir bien como los dos cartones de un maple de huevos intentando ocupar el mismo espacio:
-
-
-La exactitud de la familia $cal(K)$ es competitiva contra la de #svc, que parece ser ligera y significativamente mejor. En términos de $R^2$, la familia $cal(K)$ es la única en alcanzar valores no-nulos, y #sfd parece resultar en mejoras significativas al menos para #fkn.
+Este dataset sintético consiste de dos clases con idénticas distribuciones pero signo opuesto en la dirección de la coordenada vertical $ z = plus.minus(sin(x) times sin(y)) $ y se puede concebir bien como los dos cartones de un maple de huevos intentando ocupar el mismo espacio. La exactitud de la familia $cal(K)$ es competitiva contra la de #svc, que es ligeramente mejor. En términos de $R^2$, la familia $cal(K)$ es la única en alcanzar valores no-nulos aunque todavía bastante bajos ($0.25-0.30$).
 
 
-En efecto, observando los parámetros comparados de #fkdc v. #kdc, se repite que la hiperparametrización $(alpha_"opt", h_"opt")$ que maximiza $R^2$ en entrenamientotiene tiene $alpha > 1$, pero existe otra  $(alpha_(1 sigma), h_(1_sigma))$ con $alpha_(1 sigma) =1$   y $h_(1_sigma)$ "significativamente distinto" a $h_"opt"$ que cumple la regla de parsimonia.  Las tres semillas en la que #fkdc saca más ventaja sobre #kdc tiene por óptimos
+Analizando los hiperparámetros de #fkdc v. #kdc por semilla, se repite la observación de `helices_0`: el par $(alpha^star, h^star)$ que maximiza $R^2$ durante el entrenamiento de #fkdc tiene $alpha^star > 1$, pero existe otra $(alpha^(1 sigma), h^(1 sigma))$ que cumple la R1SD con $alpha^(1 sigma) = 1$ y $h^(1 sigma)$ distinta a la elegida por #kdc.  Las tres semillas en la que #fkdc saca más ventaja sobre #kdc tiene por óptimo $h_#fkdc = 0.562$ y en esos mismos _splits_ $h_#kdc = 0.774$, aunque $0.532$ y $0.641$ también estaban en la grilla de #kdc.
 
 #tabla_params(
   "data/hueveras_0-parametros_comparados-kdc-top3.csv",
   ($s$, $Delta_(R^2)$, $alpha_#fkdc$, $h_#fkdc$, $R^2_#fkdc$, $h_#kdc$, $R^2_#kdc$),
   skip-rows: 1,
-  caption: [Parámetros comparados de #fkdc vs. #kdc en `hueveras_0` para las tres semillas con mayor $Delta_(R^2)$. Los valores repetidos se muestran una sola vez en la fila del medio.],
+  caption: [Parámetros comparados de #fkdc vs. #kdc en `hueveras_0` para las tres semillas con mayor $Delta_(R^2)$.],
   short-caption: [Parámetros de #fkdc vs. #kdc en `hueveras_0` (top 3)],
 )
 
-#highlights_figure("hueveras_0")
 
 En #fkn, la distancia de Fermat parece ofrecer una diferencia significativa en $R^2$ sobre #kn, con varias repeticiones del experimento donde aún con regla de parsimonia, #fkn y #kn eligen _la misma cantidad_ de vecinos pero $alpha_#fkn > 1$:
 
@@ -2124,40 +2139,41 @@ En #fkn, la distancia de Fermat parece ofrecer una diferencia significativa en $
   "data/hueveras_0-parametros_comparados-kn-mismo_k.csv",
   ($Delta_(R^2)$, $k$, $alpha_#fkn$),
   skip-rows: 1,
+  split: 3,
   caption: [Parámetros comparados de #fkn vs. #kn en `hueveras_0`, restringido a las repeticiones donde $k_#fkn = k_#kn$. Cuando $alpha_#fkn > 1$, $Delta_(R^2) > 0$ en casi todos los casos, indicando una ganancia neta de usar #sfd.],
   short-caption: [$Delta_(R^2)$ en `hueveras_0` con $k_#fkn = k_#kn$],
 )
 
 
-== Otros datasets
+=== Efecto de aumentar la dimensión ambiente
 
-Presentamos aquí los resultados para diez datasets adicionales, agrupados en tres categorías: versiones en 15 dimensiones de los datasets 3D (con 12 dimensiones de ruido gaussiano añadidas), datasets multiclase de uso común en la literatura, y datasets de alta dimensionalidad.
+Sobre los datasets de `lunas`, `circulos` y `espirales` analizamos los efectos de incrementar la cantidad de _ruido_ en el registro de las observaciones, sin modificar la dimensión del espacio ambiente. Para los datasets recién repsentados (`pionono`, `helice`, `hueveras`, `eslabones`) intentamos algo distinto: ¿qué pasa si los datos son los mismos, pero agregamos _dimensiones enteras_ de ruido independientes de las clases observadas? Para ello, se "extendieron" las observaciónes "sin ruido añadido" #footnote[de allí los sufijos `_0` y `_12`: con cero (doce) dimensiones de ruido agregadas] ya analizadas con 12 dimensiones, todas independiente entre sí, y distribución normal con media y varianza similares a las de las primeras 3 dimeniones _pooleadas_ #footnote[i.e., para cada dataset se concatenaron los valores de las 3 dimensiones de $N$ observaciones en una única muestra de longitud $3N$, de la cual se calculó la media y el desvío estándar.].
 
-=== Datasets 3D con ruido añadido (15D)
-
-Los cuatro datasets tridimensionales del cuerpo principal (pionono, eslabones, hélices, hueveras) se ampliaron con 12 dimensiones de ruido gaussiano para evaluar la robustez de los clasificadores ante dimensiones irrelevantes.
+El efecto en el $R^2$ de todos los clasificadores es dramático, pero la familia $cal(K)$ lo sufre particularmente, al punto que en dos datasets no logra diferenciarse del $0$ (`helices, hueveras`), y en los dos que sí (`pionono, eslabones`) el $R^2$ se desploma sin que le suceda lo mismo a #gbt, #gnb ni #logr.
 
 #wide_figure(
+  width: 100%,
   grid(
-    columns: 4,
+    columns: 2,
     gutter: 4pt,
     ..("pionono", "eslabones", "helices", "hueveras").map(f => image("img/" + f + "-caida_r2-15d.svg")),
   ),
   caption: flex-caption(
-    [Caída de $R^2$ mediano al agregar 12 dimensiones de ruido a los datasets 3D: punto lleno en 3D, punto vacío en 15D; el segmento une ambos valores. Se excluyen clasificadores con $R^2 approx 0$ en ambas versiones.],
+    [Caída de $R^2$ mediano al agregar 12 dimensiones de ruido a los datasets 3D: punto lleno en 3D, punto vacío en 15D.],
     [Caída de $R^2$: 3D vs. 15D],
   ),
 )
+=== `pionono_12` y `eslabones_12`
 
-=== `pionono_12`
+En estos datasets, el rendimiento de $cal(K)$ es tan malo que según nuestro propio criterio de exclusión, 
+#page(margin: (top: .9in, bottom: 1.2in))[
+  #highlights_figure("pionono_12")
+  #highlights_figure("eslabones_12")
+]
 
-#highlights_figure("pionono_12")
 
 En la versión 15D del pionono, #gbt domina con claridad ($R^2 approx 0.79$), seguido de lejos por #gnb ($R^2 approx 0.54$). Los clasificadores de densidad (#fkdc, #kdc) y los de vecinos (#fkn, #kn) colapsan a valores de $R^2 approx 0.10$, prácticamente indistinguibles entre variantes Fermat y euclídea. Los métodos lineales (#slr, #logr) se ubican en un rango intermedio ($R^2 approx 0.43$). Las 12 dimensiones de ruido degradan severamente a los estimadores por densidad de núcleos, cuya localidad los hace particularmente vulnerables a la maldición de la dimensionalidad.
 
-=== `eslabones_12`
-
-#highlights_figure("eslabones_12")
 
 Nuevamente #gbt es el mejor clasificador ($R^2 approx 0.92$), seguido por #gnb ($R^2 approx 0.75$). Los clasificadores de densidad y vecinos se agrupan alrededor de $R^2 approx 0.24$, sin diferencia significativa entre variantes Fermat y euclídeas. La estructura de los eslabones --- dos anillos entrelazados --- se vuelve difícil de capturar por métodos locales cuando se añade ruido en 12 dimensiones adicionales.
 
