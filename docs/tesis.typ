@@ -1693,15 +1693,15 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 
 // Cuadrado de dos columnas: a la izquierda el scatterplot sobre la tabla resumen,
 // a la derecha los dos boxplots (verticales) uno debajo del otro.
-#let highlights_figure(dataset, width: 100%, spacing: 0.5em, gutter: 1em) = {
+// `figura: false` devuelve el cuadro sin envoltorio `figure` (sin número ni entrada
+// en el listado de figuras), para las fichas del anexo.
+#let highlights_figure(dataset, width: 100%, spacing: 0.5em, gutter: 1em, figura: true) = {
   let highlights = json("data/" + dataset + "-r2-highlights.json")
   let tabla_resumen = text(size: 9pt)[#highlights_table(highlights)]
   let scatter = image("img/" + dataset + "-scatter.svg")
   let boxplots = ("r2", "accuracy").map(m => image("img/" + dataset + "-" + m + "-boxplot.svg"))
 
-  wide_figure(
-    width: width,
-    layout(size => {
+  let cuerpo = layout(size => {
       let (spacing, gutter) = (spacing.to-absolute(), gutter.to-absolute())
       // Resolvemos el ancho de columna izquierda `w` para que el conjunto sea un cuadrado
       // de lado H: la columna izquierda (scatter de ancho `w` sobre la tabla) y la derecha
@@ -1727,10 +1727,17 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
         stack(dir: ttb, spacing: spacing, box(width: w, scatter), tabla_resumen),
         stack(dir: ttb, spacing: spacing, ..boxplots.map(im => box(width: r, im))),
       ))
-    }),
-    kind: image,
-    caption: flex-caption[_Scatterplot_, tabla resumen y _boxplots_ de $R^2$ y _accuracy_ en el _dataset_ #raw(dataset)][Resumen de resultados para #raw(dataset)],
-  )
+    })
+  if figura {
+    wide_figure(
+      width: width,
+      cuerpo,
+      kind: image,
+      caption: flex-caption[_Scatterplot_, tabla resumen y _boxplots_ de $R^2$ y _accuracy_ en el _dataset_ #raw(dataset)][Resumen de resultados para #raw(dataset)],
+    )
+  } else {
+    align(center, box(width: width, cuerpo))
+  }
 }
 
 
@@ -2223,13 +2230,18 @@ Ningún algoritmo evaluado fue universalmente óptimo, y todos tuvieron al menos
 - *Grilla de $alpha$.* Ampliar $alpha in [1, 4]$: @bijralSemisupervisedLearningDensity2011 reportan buenos resultados con $alpha = 8$.
 - *Inspección visual.* El análisis de `pinguinos` nació de una matriz de confusión y un _pairplot_; sistematizar esa inspección antes de entrenar es barato y, a la luz de lo anterior, necesario.
 
+// Dos fichas por página: márgenes verticales reducidos en todo el anexo.
+#set page(margin: (top: 0.7in, bottom: 0.7in))
 #heading(numbering: none, level: 1)[Anexo A: Fichas de resultados por dataset] <anexo-fichas>
 
 Cada ficha resume las #reps repeticiones de un dataset. A la izquierda, un gráfico de dispersión de las primeras dos (o tres) dimensiones y una tabla con la exactitud y el $R^2$ medianos por clasificador, ordenados por $R^2$: el mejor se resalta en verde y se atenúan aquellos cuya mediana de $R^2$ queda por debajo del primer cuartil de las repeticiones del mejor. A la derecha, los _boxplots_ de ambas métricas para todos los clasificadores, con los atenuados translúcidos, el eje vertical recortado por debajo del peor valor de #fkdc y una línea punteada en la mediana del mejor.
 
-// Dos fichas por página: márgenes verticales reducidos y fichas al 85 % del ancho.
-#set page(margin: (top: 0.7in, bottom: 0.7in))
-#let ficha(dataset) = highlights_figure(dataset, width: 85%)
+// Fichas a todo el ancho y sin envoltorio `figure` (no se numeran ni aparecen en
+// el listado de figuras).
+#let ficha(dataset) = {
+  heading(numbering: none, level: 4, outlined: false, raw(dataset))
+  highlights_figure(dataset, width: 100%, figura: false)
+}
 
 #for d in ("lunas_lo", "circulos_lo", "espirales_lo", "lunas_hi", "circulos_hi", "espirales_hi") { ficha(d) }
 #for d in ("eslabones_0", "helices_0", "pionono_0", "hueveras_0") { ficha(d) }
