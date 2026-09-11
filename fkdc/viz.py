@@ -26,7 +26,6 @@ from sklearn.utils import Bunch
 from fkdc import config, dir_cache, dir_raiz
 from fkdc.datasets import (
     Dataset,
-    bases_estandarizar,
     datasets_reales,
     datasets_sinteticos,
 )
@@ -47,11 +46,11 @@ infos = None
 info_basica = None
 
 # Paleta: clfs pareados comparten color base, variantes usan sombreado.
-# Familias: dc (fkdc/kdc), kn (fkn/kn), logr (lr/slr), gbt, gnb, svc
+# Familias: dc (fkdc/kdc), kn (fkn/kn), logr (lr), gbt, gnb, svc
 _familias_clf = {
     "dc": ["fkdc", "kdc"],
     "kn": ["fkn", "kn"],
-    "logr": ["lr", "slr"],
+    "logr": ["lr"],
     "gbt": ["gbt"],
     "gnb": ["gnb"],
     "svc": ["svc"],
@@ -64,7 +63,7 @@ paleta_predeterminada = {
     for familia, miembros in _familias_clf.items()
     for clf in miembros
 }
-_clfs_sombreados = {"kdc", "kn", "slr"}
+_clfs_sombreados = {"kdc", "kn"}
 
 
 def guardar_fig(fig: Figure, ruta: str | Path, **kw_guardar):
@@ -549,11 +548,15 @@ if __name__ == "__main__":
     # --- Cargar datos (con caché) ---
     ruta_cache = dir_cache / "infos_bi.pkl"
     ruta_cache.parent.mkdir(exist_ok=True)
-    infos_nuevos = ruta_cache.exists() and any(
-        p.stat().st_mtime > ruta_cache.stat().st_mtime
-        for p in dir_ejecucion.glob("*.pkl")
+    # El caché se rehace si hay infos más nuevos que él o si cambió su cantidad
+    rutas_infos = list(dir_ejecucion.glob("*.pkl"))
+    cache_vigente = ruta_cache.exists() and not any(
+        p.stat().st_mtime > ruta_cache.stat().st_mtime for p in rutas_infos
     )
-    if ruta_cache.exists() and not infos_nuevos:
+    if cache_vigente:
+        with open(ruta_cache, "rb") as fp:
+            cache_vigente = len(pickle.load(fp)[0]) == len(rutas_infos)
+    if cache_vigente:
         logger.info(f"Cargando infos+bi desde caché: {ruta_cache}")
         with open(ruta_cache, "rb") as fp:
             infos, info_basica = pickle.load(fp)
@@ -570,7 +573,9 @@ if __name__ == "__main__":
 
     semillas = config._obtener_semillas()
     semilla_graficos = semillas[0]
-    bi = info_basica  # alias corto
+    # s-LR (regresión logística con escalador) se descartó del análisis: el efecto
+    # de la escala se estudia con las variantes `_std` de cada dataset.
+    bi = info_basica[info_basica.clf.ne("slr")]  # alias corto
 
     # Datasets curados usados en la tesis
     todos_datasets = [
@@ -745,7 +750,7 @@ if __name__ == "__main__":
     # CSVs crudo vs. estandarizado: medianas por clasificador, para cada dataset
     # base que ya tenga corridas de su variante `_std` (aun parciales)
     # =====================================================================
-    for base in bases_estandarizar:
+    for base in config.bases_estandarizar:
         if f"{base}_std" not in datasets_con_resultados:
             continue
         sub = bi[bi.dataset.isin([base, f"{base}_std"])]
@@ -773,8 +778,9 @@ if __name__ == "__main__":
             bi_tesis.dropna(subset=metrica)
             .groupby(["dataset", "clf"])[metrica]
             .median()
-            .sort_values()
             .reset_index("clf")
+            # Desempate determinista (por nombre) ante medianas idénticas
+            .sort_values([metrica, "clf"])
             .groupby("dataset")
             .last()
             .clf.reset_index()
@@ -796,7 +802,6 @@ if __name__ == "__main__":
         "kn",
         "fkn",
         "gbt",
-        "slr",
         "lr",
         "gnb",
     )

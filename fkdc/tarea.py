@@ -30,6 +30,7 @@ class Tarea:
         cv=5,
         split_evaluacion=0.5,
         semilla=None,
+        estandarizar=False,
     ):
         self.dataset = ds = (
             Dataset.cargar(dataset) if isinstance(dataset, str) else dataset
@@ -48,7 +49,8 @@ class Tarea:
             raise ValueError(
                 "`algoritmos` debe ser una lista o un dict de 2-tuplas (clf, espacio)"
             )
-        if getattr(ds, "estandarizar", False):
+        self.estandarizar = estandarizar
+        if estandarizar:
             # Escalado dentro del pipeline: se ajusta en cada pliego de entrenamiento
             self.algoritmos = {
                 nombre: Bunch(

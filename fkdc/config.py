@@ -5,12 +5,10 @@ from typing import Annotated
 
 import numpy as np
 import typer
-from sklearn.discriminant_analysis import StandardScaler
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.utils import Bunch
 
@@ -36,7 +34,6 @@ grillas = {
     "kn": espacio_kn,
     "fkn": {**espacio_kn, "alpha": np.linspace(1, 4, 13)},
     "lr": {"C": np.logspace(-5, 2, 36)},
-    "slr": {"logreg__C": np.logspace(-5, 2, 36)},
     "svc": {"C": np.logspace(-4, 6, 61), "gamma": ["scale", "auto"]},
     "gbt": {"learning_rate": [0.025, 0.05, 0.1], "max_depth": [3, 5, 8, 13]},
 }
@@ -47,9 +44,6 @@ clasificadores = Bunch(
     kn=KNeighborsClassifier(),
     fkn=FermatKNeighborsClassifier(),
     lr=LogisticRegression(max_iter=50_000),
-    slr=Pipeline(
-        [("scaler", StandardScaler()), ("logreg", LogisticRegression(max_iter=50_000))]
-    ),
     svc=SVC(),
     gbt=HistGradientBoostingClassifier(max_features=0.5),
 )
@@ -60,6 +54,11 @@ cv = 5
 puntuacion = "neg_log_loss"
 repeticiones = 25
 dir_ejecucion = dir_raiz / "sandbox/v5/infos"
+
+# Datasets con atributos en unidades dispares: además de la tarea sobre los datos
+# crudos, se genera una variante `{dataset}_std` en la que `Tarea` antepone a cada
+# clasificador un StandardScaler ajustado sobre el pliego de entrenamiento.
+bases_estandarizar = ["iris", "vino", "pinguinos", "digitos"]
 
 
 def _obtener_semillas(semilla_principal=semilla_principal, repeticiones=repeticiones):
@@ -117,23 +116,30 @@ def hacer_configuraciones(
                 semillas_tarea = semillas
             else:
                 raise ValueError(f"Nombre de dataset inválido: {nombre_dataset}")
+            variantes = [(nombre_dataset, False)]
+            if nombre_dataset in bases_estandarizar:
+                variantes.append((f"{nombre_dataset}_std", True))
             for semilla_tarea in semillas_tarea:
                 puntuacion_tarea = (
                     "neg_log_loss" if hasattr(clf, "predict_proba") else "accuracy"
                 )
-                configuracion = dict(
-                    **config_base, seed=semilla_tarea, scoring=puntuacion_tarea
-                )
-                clave = (
-                    nombre_dataset,
-                    semilla_dataset,
-                    nombre_clf,
-                    semilla_tarea,
-                    puntuacion_tarea,
-                )
-                nombre_config = "-".join(map(str, clave)) + ".yaml"
-                logger.debug("Generando configuración %s", nombre_config)
-                yaml.dump(configuracion, open(dir_configs / nombre_config, "w"))
+                for nombre_variante, estandarizar in variantes:
+                    configuracion = dict(
+                        **config_base,
+                        seed=semilla_tarea,
+                        scoring=puntuacion_tarea,
+                        estandarizar=estandarizar,
+                    )
+                    clave = (
+                        nombre_variante,
+                        semilla_dataset,
+                        nombre_clf,
+                        semilla_tarea,
+                        puntuacion_tarea,
+                    )
+                    nombre_config = "-".join(map(str, clave)) + ".yaml"
+                    logger.debug("Generando configuración %s", nombre_config)
+                    yaml.dump(configuracion, open(dir_configs / nombre_config, "w"))
 
 
 if __name__ == "__main__":

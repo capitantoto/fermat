@@ -1,10 +1,9 @@
 {
     "dataset": "digitos_std",
-    "summary": "clf,accuracy,r2\ngbt,0.9588,0.9417\nlr,0.96,0.9312\nslr,0.96,0.9312\nfkn,0.9433,0.884\nkn,0.9388,0.8825\nfkdc,0.9644,0.8652\nkdc,0.9644,0.8407\ngnb,0.8065,0.6553\nsvc,0.9711,\n",
+    "summary": "clf,accuracy,r2\ngbt,0.9588,0.9417\nlr,0.96,0.9312\nfkn,0.9433,0.884\nkn,0.9388,0.8825\nfkdc,0.9644,0.8652\nkdc,0.9644,0.8407\ngnb,0.8065,0.6553\nsvc,0.9711,\n",
     "best": "gbt",
     "bad": [
         "lr",
-        "slr",
         "fkn",
         "kn",
         "fkdc",
