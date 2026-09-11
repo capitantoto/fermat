@@ -183,6 +183,9 @@
 
 // Referencia al anexo de fichas (encabezado sin numeración: no admite @ref).
 #let ref-anexo = link(<anexo-fichas>)[Anexo A]
+// Enlace a la ficha de un dataset en el Anexo A (etiqueta `ficha-<dataset>`).
+#let ficha-link(dataset, body) = link(label("ficha-" + dataset), body)
+#let ficha-de(dataset) = ficha-link(dataset, raw(dataset))
 
 // Wrapper de `figure` que estira el cuerpo por encima del ancho del texto.
 // Por defecto 140%; útil para gráficos triples (lunas/circulos/espirales) y
@@ -1775,7 +1778,7 @@ Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) apren
 
 === `circulos_lo` y `espirales_lo`
 
-En ambos datasets se repite el cuadro de `lunas_lo`: #fkdc con el mejor $R^2$, la familia $cal(K)$ y #svc empatados en exactitud, y #logr y #gnb fuera de competencia (fichas en el #ref-anexo).
+En ambos datasets se repite el cuadro de `lunas_lo`: #fkdc con el mejor $R^2$, la familia $cal(K)$ y #svc empatados en exactitud, y #logr y #gnb fuera de competencia (fichas de #ficha-de("circulos_lo") y #ficha-de("espirales_lo") en el #ref-anexo).
 
 Una inspección ocular a las fronteras de decisión revela las limitaciones de distintos algoritmos, siendo `espirales_lo` un caso vistoso y pedagógico: fijamos una semilla, y dibujamos las fronteras de decisión por clasificador.
 
@@ -2003,7 +2006,7 @@ El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los 
 
 Al ojo humano, las regiones de confianza que "dibuja" #fkdc se alinean "en espíritu" con la forma de las variedades que buscamos descubrir: la "región de indiferencia" gris en `lunas_hi` es una especie de curva casi-cúbica que efectivamente separa las lunas; el "huevo frito" de `circulos_hi` otorgga máxima confianza a la clase interna en el centro de la imagen y se va deformando progresivamente a medida que nos alejamos; en `espirales_hi` logra dibujar una espiral, aunque con algunas islas inconexas y cortocircuitos entre los brazos. Esta deseable propiedad  --- la "intuitividad" en las regiones que traza #fkdc --- no se repite ni para #gbt (que tuvo el mejor $R^2$) ni #svc (el de mayor exactitud), pero como no es fácilmente reducible a una métrica en $RR$, se desdibuja en las comparaciones puramente numéricas.
 
-Cerramos el plano con `anteojos`, un dataset sintético de tres clases con forma de anteojos ($K = 3$, $d = 2$) que incluimos por ser el único multiclase en dos dimensiones: todos los estimadores salvo #logr alcanzan una exactitud del $97%$, y #fkdc saca una ventaja mínima pero consistente en $R^2$ (ficha en el #ref-anexo).
+Cerramos el plano con `anteojos`, un dataset sintético de tres clases con forma de anteojos ($K = 3$, $d = 2$) que incluimos por ser el único multiclase en dos dimensiones: todos los estimadores salvo #logr alcanzan una exactitud del $97%$, y #fkdc saca una ventaja mínima pero consistente en $R^2$ (#ficha-link("anteojos")[ficha] en el #ref-anexo).
 
 == Pionono, Eslabones, Hélices y Hueveras ($d=3$)
 
@@ -2013,7 +2016,7 @@ Consideraremos a continuación datasets de variedades con dimensión intrínseca
 
 Toda la familia de estimadores de densidad por núcleos alcanza un $R^2 approx 1$, y aun Naive Bayes tiene un rendimiento aceptable: con este nivel de ruido blanco en el muestreo, el "margen de separación" entre ambos anillos es tan amplio que la tarea resulta trivial.
 
-Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ --- no así el de exactitud; ver la ficha en el #ref-anexo --- revela un fuerte _outlier_ para la semilla $2411$:
+Un punto en contra de #fkdc aquí es que el _boxplot_ de $R^2$ --- no así el de exactitud; ver la #ficha-link("eslabones_0")[ficha] en el #ref-anexo --- revela un fuerte _outlier_ para la semilla $2411$:
 
 #tabla_csv(
   "data/eslabones_0-params-2411.csv",
@@ -2165,7 +2168,7 @@ El efecto sobre el $R^2$ es dramático para todos los clasificadores, pero la fa
 
 El fenómeno de las dimensiones de ruido sin correlación es particularmente pernicioso para los algoritmos basados en densidad por núcleos, aun con distancias basadas en densidad. Como la distancia de Fermat está computada como una geodésica en un grafo completo, y los pesos de cada arista están basados en distancia euclídea, las dimensiones de ruido puro "alejan" puntos cercanos entre sí en las dimensiones que importan. La ventaja de #gbt en _algunos_ de estos datasets del régimen de alto ruido es que al proceder con preguntas binarias sobre _un predictor a la vez_, puede identificar más fácilmente que cualquier pregunta sobre las columnas de ruido puro nunca sirve para partir la muestra en dos grupos con densidades bien distintas, y por eso las ignora.
 
-Las fichas de los cuatro datasets están en el #ref-anexo.
+Las fichas de #ficha-de("pionono_12"), #ficha-de("eslabones_12"), #ficha-de("helices_12") y #ficha-de("hueveras_12") están en el #ref-anexo.
 
 == Datasets "orgánicos" <organicos>
 
@@ -2187,7 +2190,7 @@ El dataset de pingüinos de Palmer ($K = 3$, $d = 4$) es casi linealmente separa
 
 La explicación no está en la geometría de las clases sino en sus unidades. Tres de los cuatro atributos se miden en milímetros y toman valores entre 13 y 230; el cuarto, la masa corporal, se mide en gramos y va de 2700 a 6300. La distancia euclídea entre dos pingüinos es, a todos los efectos prácticos, su diferencia de masa, y la distancia de Fermat --- construida sobre aristas euclídeas --- hereda el problema. Adelie y Chinstrap tienen masas indistinguibles, y por eso se confunden. Los métodos que no dependen de la métrica del espacio ambiente no lo padecen: #gbt parte cada variable por separado, y #logr absorbe la escala de cada variable en su coeficiente.
 
-Para confirmarlo repetimos las #reps repeticiones de `pinguinos` con un único cambio: a cada clasificador se le antepuso un estandarizador --- media $0$ y desvío $1$ por columna --- ajustado sobre el pliego de entrenamiento correspondiente.
+Para confirmarlo repetimos las #reps repeticiones de `pinguinos` con un único cambio: a cada clasificador se le antepuso un estandarizador --- media $0$ y desvío $1$ por columna --- ajustado sobre el pliego de entrenamiento correspondiente (ficha de #ficha-de("pinguinos_std") en el #ref-anexo).
 
 // Los valores salen de data/pinguinos-crudo-vs-std.csv, generado por fkdc/viz.py a
 // partir de las corridas de `pinguinos` y `pinguinos_std`.
@@ -2200,7 +2203,7 @@ Para confirmarlo repetimos las #reps repeticiones de `pinguinos` con un único c
 
 Con la escala corregida, la familia $cal(K)$ alcanza a los métodos lineales: #fkdc pasa de $R^2 approx 0.42$ a $approx 0.96$, a cinco milésimas de #logr, y su exactitud de $73%$ a $99%$ (@tabla-pinguinos-std), mientras que #logr y #gbt --- insensibles a la escala en la práctica --- no se mueven. La lección excede a `pinguinos`: la familia $cal(K)$ no es invariante a la escala de los atributos, y en datasets con unidades heterogéneas hay que estandarizar. Las comparaciones "en crudo" de esta sección y de @resultados en general deben leerse con esa salvedad.
 
-No se trata, sin embargo, de estandarizar siempre. En `iris`, con las cuatro variables en centímetros, el mismo tratamiento _empeora_ ligeramente a $cal(K)$ (#fkn pasa de $R^2 approx 0.90$ a $approx 0.84$), y en `digitos` la caída es severa, como veremos a continuación. Las fichas de `iris` y `vino` están en el #ref-anexo: en `iris` los métodos lineales y $cal(K)$ empatan; en `vino`, cuyas 13 variables recorren cuatro órdenes de magnitud, #gbt domina con $R^2 approx 0.90$ y #logr, con $0.69$ sobre los datos crudos, muestra el mismo síntoma que la familia $cal(K)$: estandarizando, #logr sube a $0.90$ y $cal(K)$ de $R^2 approx 0.43$ a $0.84$--$0.88$, competitiva aunque todavía por debajo de #gbt.
+No se trata, sin embargo, de estandarizar siempre. En `iris`, con las cuatro variables en centímetros, el mismo tratamiento _empeora_ ligeramente a $cal(K)$ (#fkn pasa de $R^2 approx 0.90$ a $approx 0.84$), y en `digitos` la caída es severa, como veremos a continuación (#ficha-de("iris_std"), #ficha-de("digitos_std")). Las fichas de #ficha-de("iris") y #ficha-de("vino") --- y de sus variantes #ficha-de("iris_std") y #ficha-de("vino_std") --- están en el #ref-anexo: en `iris` los métodos lineales y $cal(K)$ empatan; en `vino`, cuyas 13 variables recorren cuatro órdenes de magnitud, #gbt domina con $R^2 approx 0.90$ y #logr, con $0.69$ sobre los datos crudos, muestra el mismo síntoma que la familia $cal(K)$: estandarizando, #logr sube a $0.90$ y $cal(K)$ de $R^2 approx 0.43$ a $0.84$--$0.88$, competitiva aunque todavía por debajo de #gbt.
 
 === Alta dimensión: `digitos` y `mnist`
 
@@ -2208,7 +2211,7 @@ No se trata, sin embargo, de estandarizar siempre. En `iris`, con las cuatro var
 
 El dataset de dígitos de scikit-learn ($N = 1797$, $K = 10$, $d = 64$, imágenes de $8 times 8$ píxeles) es el caso más favorable a $cal(K)$ en todo el experimento: #fkdc es el mejor clasificador global ($R^2 approx 0.98$), apenas por encima de #kdc ($approx 0.97$), y ambos por encima de todos los demás. Aquí la escala es homogénea --- píxeles con valores de $0$ a $16$ --- y estandarizar es contraproducente: los píxeles de los bordes, casi siempre nulos, ven su varianza inflada a $1$ y se convierten en dimensiones de ruido, con lo que #fkdc cae a $R^2 approx 0.87$. Esperábamos alguna ventaja más notable de #fkdc sobre #kdc, o de #fkn sobre #kn, que no se comprobó.
 
-A `mnist` ($N = 800$, $K = 10$) se lo redujo de $d = 784$ a $d = 96$ dimensiones por PCA #footnote[número que se eligió para conservar al menos el 90% de la variación en los datos originales] para volverlo manejable. #kdc ($R^2 approx 0.77$) supera a #fkdc ($approx 0.74$) con menor dispersión; ambos superan a #gbt y quedan a la par de #logr en exactitud y $R^2$, con #svc como el más exacto. Las componentes principales se usan sin escalar a propósito: sus varianzas decrecientes son justamente la información que ordena las direcciones, y estandarizarlas la borraría. La ficha está en el #ref-anexo.
+A `mnist` ($N = 800$, $K = 10$) se lo redujo de $d = 784$ a $d = 96$ dimensiones por PCA #footnote[número que se eligió para conservar al menos el 90% de la variación en los datos originales] para volverlo manejable. #kdc ($R^2 approx 0.77$) supera a #fkdc ($approx 0.74$) con menor dispersión; ambos superan a #gbt y quedan a la par de #logr en exactitud y $R^2$, con #svc como el más exacto. Las componentes principales se usan sin escalar a propósito: sus varianzas decrecientes son justamente la información que ordena las direcciones, y estandarizarlas la borraría. La #ficha-link("mnist")[ficha] está en el #ref-anexo.
 
 = Conclusiones
 
@@ -2224,11 +2227,11 @@ Ningún algoritmo evaluado fue universalmente óptimo, y todos tuvieron al menos
 
 == Trabajo futuro
 
-- *Escala.* Incorporar la estandarización al pipeline de todos los clasificadores como opción por defecto, repetir el bloque de datasets orgánicos --- `vino` y `mnist` en particular --- y recontar la tabla de @resultados en esas condiciones. La infraestructura ya existe (variantes `_std` de los datasets); resta el análisis.
-- *Régimen ralamente muestreado.* Identificar condiciones reales en las que las variedades sean altamente no euclídeas y probar si, con $n$ pequeño relativo a la dimensión ambiente --- donde no queda otra que tomar $h > "iny" MM$, fuera del supuesto de @pelletierKernelDensityEstimation2005 ---, la distancia de Fermat mejora sistemáticamente el $R^2$.
-- *Ruido.* Evaluar una reducción lineal de dimensionalidad previa a la distancia de Fermat en presencia de dimensiones de ruido, que es lo que salvó a `mnist`.
-- *Grilla de $alpha$.* Ampliar $alpha in [1, 4]$: @bijralSemisupervisedLearningDensity2011 reportan buenos resultados con $alpha = 8$.
-- *Inspección visual.* El análisis de `pinguinos` nació de una matriz de confusión y un _pairplot_; sistematizar esa inspección antes de entrenar es barato y, a la luz de lo anterior, necesario.
+Dos líneas de trabajo se desprenden directamente de lo anterior, y ambas apuntan a lo mismo: pasar de constatar _cuándo_ la distancia de Fermat ayuda a poder anticiparlo.
+
+La primera es la escala de los atributos. Los experimentos de @sensibilidad-escala muestran que estandarizar es indispensable cuando las unidades son arbitrarias (`pinguinos`, `vino`) y contraproducente cuando la escala ya ordena las direcciones (`digitos`, las componentes principales de `mnist`), pero no dicen dónde está la frontera entre ambos casos. Vale la pena estudiarla sistemáticamente: sobre las variedades sintéticas, estirando una coordenada a la vez y midiendo cuánto tarda en degradarse cada clasificador; sobre los datasets reales, comparando estandarización, reescalado robusto y ninguno. Conceptualmente, estandarizar no es más que una métrica diagonal aprendida de la manera más burda posible --- una $HH in cal(D)$ fija de antemano, en los términos de @kde-mv ---, así que la generalización natural es aprender esa diagonal junto con $alpha$, en lugar de decidirla a mano. Ese es también el camino para incorporar la reducción lineal de dimensionalidad que salvó a `mnist` como un paso más del mismo pipeline.
+
+La segunda es la simbiosis entre $h$ y $alpha$. En los datasets bien muestreados, la superficie de pérdida de #fkdc exhibe un risco $log h prop alpha$ a lo largo del cual ambos hiperparámetros son intercambiables, y la ventaja de #fkdc sobre #kdc se reduce a cómo la regla de parsimonia recorre ese risco; solo cuando la curvatura de la variedad es comparable a la distancia entre observaciones --- `helices_0`, `hueveras_0` --- aparece un $alpha > 1$ que ningún $h$ sustituye. Conjeturo que la magnitud relevante es el cociente entre la escala localmente lineal de la variedad, en el sentido de @brandChartingManifold2002, y la separación típica entre observaciones vecinas: cuando es grande, todo vecindario útil cae dentro del radio de inyectividad y $cal(D)_(f, beta) prop norm(dot)$; cuando es pequeño, hay que tomar $h > "iny" MM$, fuera del supuesto de @pelletierKernelDensityEstimation2005, y la distancia de Fermat es la que permite seguir agrandando el vecindario sin cruzar a otra variedad. Estimar ese cociente a partir de la muestra --- la tasa $c(r)$ de Brand es un candidato --- daría un criterio _a priori_ para saber si vale la pena pagar el costo de #sfd, y un diseño experimental natural: variedades de curvatura controlada muestreadas con $n$ decreciente hasta cruzar la frontera. Como detalle menor, la grilla $alpha in [1, 4]$ podría ampliarse; @bijralSemisupervisedLearningDensity2011 reportan buenos resultados con $alpha = 8$.
 
 // Dos fichas por página: márgenes verticales reducidos en todo el anexo.
 #set page(margin: (top: 0.7in, bottom: 0.7in))
@@ -2239,7 +2242,7 @@ Cada ficha resume las #reps repeticiones de un dataset. A la izquierda, un gráf
 // Fichas a todo el ancho y sin envoltorio `figure` (no se numeran ni aparecen en
 // el listado de figuras).
 #let ficha(dataset) = {
-  heading(numbering: none, level: 4, outlined: false, raw(dataset))
+  [#heading(numbering: none, level: 4, outlined: false, raw(dataset))#label("ficha-" + dataset)]
   highlights_figure(dataset, width: 100%, figura: false)
 }
 
