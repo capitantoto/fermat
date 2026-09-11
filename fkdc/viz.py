@@ -184,6 +184,15 @@ def boxplot(
     datos = info[info.dataset.eq(dataset)].sort_values("clf").dropna(subset=metrica)
     if excluir_clfs:
         datos = datos[~datos.clf.isin(excluir_clfs)]
+    # Piso del eje: el peor valor de fkdc (atípico o bigote), con margen. Los
+    # clasificadores que quedarían enteramente por debajo del piso no se dibujan,
+    # así las cajas visibles ocupan todo el ancho.
+    valores_fkdc = datos.loc[datos.clf.eq("fkdc"), metrica]
+    piso = None
+    if not valores_fkdc.empty:
+        piso = valores_fkdc.min() - 0.03 * (datos[metrica].max() - valores_fkdc.min())
+        maximos = datos.groupby("clf")[metrica].max()
+        datos = datos[~datos.clf.isin(maximos[maximos < piso].index)]
     sns.boxplot(
         datos, hue="clf", y=metrica, gap=0.2, ax=ax, palette=paleta, saturation=1.0
     )
@@ -196,12 +205,8 @@ def boxplot(
         linestyle="dotted",
         color="gray",
     )
-    # Recorte inferior del eje: el peor valor de fkdc (atípico o bigote), con margen
-    valores_fkdc = datos.loc[datos.clf.eq("fkdc"), metrica]
-    if not valores_fkdc.empty:
-        piso = valores_fkdc.min()
-        margen = 0.03 * (datos[metrica].max() - piso)
-        ax.set_ylim(bottom=piso - margen)
+    if piso is not None:
+        ax.set_ylim(bottom=piso)
 
 
 def aplicar_sombreado(ax, clfs_sombreados=None):
