@@ -60,6 +60,7 @@ Lectura completa del cuerpo (Vocabulario → Trabajo futuro), hecha con dos somb
 ### Conclusiones y trabajo futuro
 - Reescritas en esta rama; releerlas con el Resumen a la vista para que digan lo mismo con las mismas palabras clave.
 - «Ningún algoritmo evaluado fue universalmente óptimo» es un lugar común (*no free lunch*); si se mantiene, citar Wolpert (1996) o quitarlo.
+- Nueva sección 3.3 «La densidad de volumen, omitida»: verificar contra Besse §6.3 el desarrollo θ_p(exp_p v) = 1 − Ric_p(v,v)/6 + O(‖v‖³) antes de defenderlo; la afirmación «del mismo orden que el sesgo» es correcta si se acepta ese desarrollo. Demšar (2006) se agregó a mano a `references.bib`: falta cargarlo en Zotero.
 
 ## D. Estructura y extensión
 
