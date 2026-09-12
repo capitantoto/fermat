@@ -60,7 +60,7 @@ Lectura completa del cuerpo (Vocabulario → Trabajo futuro), hecha con dos somb
 ### Conclusiones y trabajo futuro
 - Reescritas en esta rama; releerlas con el Resumen a la vista para que digan lo mismo con las mismas palabras clave.
 - «Ningún algoritmo evaluado fue universalmente óptimo» es un lugar común (*no free lunch*); si se mantiene, citar Wolpert (1996) o quitarlo.
-- Nueva sección 3.3 «La densidad de volumen, omitida»: verificar contra Besse §6.3 el desarrollo θ_p(exp_p v) = 1 − Ric_p(v,v)/6 + O(‖v‖³) antes de defenderlo; la afirmación «del mismo orden que el sesgo» es correcta si se acepta ese desarrollo. Demšar (2006) se agregó a mano a `references.bib`: falta cargarlo en Zotero.
+- Nueva sección 3.3 «La densidad de volumen, omitida»: argumento puramente cualitativo, sin fórmulas ni referencias nuevas, a partir de lo ya establecido en 2.4 (θ ≡ 1 en variedades planas, θ_p(p) = 1, θ → 1 cerca de p) y de la restricción h < iny M de Pelletier. Trabajo futuro apunta al test barato en S² con la forma cerrada de Henry–Rodríguez.
 
 ## D. Estructura y extensión
 
