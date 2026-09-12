@@ -189,7 +189,7 @@ def boxplot(
     valores_fkdc = datos.loc[datos.clf.eq("fkdc"), metrica]
     piso = None
     if not valores_fkdc.empty:
-        piso = valores_fkdc.min() - 0.03 * (datos[metrica].max() - valores_fkdc.min())
+        piso = valores_fkdc.min() - 0.06 * (datos[metrica].max() - valores_fkdc.min())
         maximos = datos.groupby("clf")[metrica].max()
         datos = datos[~datos.clf.isin(maximos[maximos < piso].index)]
     sns.boxplot(
@@ -198,6 +198,8 @@ def boxplot(
     aplicar_sombreado(ax)
     if atenuar_clfs:
         atenuar_cajas(ax, atenuar_clfs)
+    # Leyenda fuera del área de datos: nunca tapa una caja ni un valor atípico
+    sns.move_legend(ax, "upper left", bbox_to_anchor=(1.01, 1), frameon=False)
     ax.set_ylabel({"r2": "$R^2$", "accuracy": "exactitud"}.get(metrica, metrica))
     ax.axhline(
         datos.groupby("clf")[metrica].median().max(),
