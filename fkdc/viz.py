@@ -776,17 +776,20 @@ if __name__ == "__main__":
     # Solo los 20 datasets del cuerpo: las variantes `_std` se analizan aparte
     bi_tesis = bi[~bi.dataset.str.endswith("_std")]
     for metrica in ["r2", "accuracy"]:
-        mejor = (
+        # Mediana por (dataset, clf), redondeada como en las tablas resumen; todo
+        # clasificador que alcanza el máximo de su dataset cuenta (los empates se
+        # cuentan una vez por clasificador, así el total puede superar los 20).
+        medianas = (
             bi_tesis.dropna(subset=metrica)
             .groupby(["dataset", "clf"])[metrica]
             .median()
-            .reset_index("clf")
-            # Desempate determinista (por nombre) ante medianas idénticas
-            .sort_values([metrica, "clf"])
-            .groupby("dataset")
-            .last()
-            .clf.reset_index()
-            .groupby("clf")
+            .round(4)
+            .reset_index()
+        )
+        maximos = medianas.groupby("dataset")[metrica].transform("max")
+        mejor = (
+            medianas[medianas[metrica].eq(maximos)]
+            .groupby("clf")["dataset"]
             .agg([len, ", ".join])
         )
         mejor.columns = ["cant", "datasets"]
