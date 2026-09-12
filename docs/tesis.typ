@@ -2020,7 +2020,11 @@ El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los 
 
 Al ojo humano, las regiones de confianza que "dibuja" #fkdc se alinean "en espíritu" con la forma de las variedades que buscamos descubrir: la "región de indiferencia" gris en `lunas_hi` es una especie de curva casi-cúbica que efectivamente separa las lunas; el "huevo frito" de `circulos_hi` otorgga máxima confianza a la clase interna en el centro de la imagen y se va deformando progresivamente a medida que nos alejamos; en `espirales_hi` logra dibujar una espiral, aunque con algunas islas inconexas y cortocircuitos entre los brazos. Esta deseable propiedad  --- la "intuitividad" en las regiones que traza #fkdc --- no se repite ni para #gbt (que tuvo el mejor $R^2$) ni #svc (el de mayor exactitud), pero como no es fácilmente reducible a una métrica en $RR$, se desdibuja en las comparaciones puramente numéricas.
 
-Cerramos el plano con `anteojos`, un dataset sintético de tres clases con forma de anteojos ($K = 3$, $d = 2$) que incluimos por ser el único multiclase en dos dimensiones: todos los estimadores salvo #logr alcanzan una exactitud del $97%$, y #fkdc saca una ventaja mínima pero consistente en $R^2$ (#ficha-link("anteojos")[ficha] en el #ref-anexo).
+=== `anteojos` ($K = 3$, $d = 2$)
+
+Cerramos el plano con `anteojos`, un dataset sintético de tres clases con forma de anteojos que incluimos por ser el único multiclase en dos dimensiones: todos los estimadores salvo #logr alcanzan una exactitud del $97%$, y #fkdc saca una ventaja mínima pero consistente en $R^2$.
+
+#highlights_figure("anteojos")
 
 == Pionono, Eslabones, Hélices y Hueveras ($d=3$)
 
