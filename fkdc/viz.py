@@ -674,7 +674,7 @@ if __name__ == "__main__":
             # Proyección PCA: las dos primeras coordenadas no son informativas
             # (p. ej. el píxel superior izquierdo de `digitos` es siempre 0)
             fig, ax = plt.subplots(layout="tight")
-            pca = PCA(n_components=2)
+            pca = PCA(n_components=2, svd_solver="full")  # determinista
             X_pca = pca.fit_transform(ds.X)
             sns.scatterplot(
                 x=X_pca[:, 0],
