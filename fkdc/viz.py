@@ -799,8 +799,8 @@ if __name__ == "__main__":
             {
                 "dataset": dataset,
                 "d": X.shape[1],
-                "nn_mediana": round(vecino, 3),
-                "pareada_mediana": round(pareada, 3),
+                "nn_mediana": round(vecino, 1),
+                "pareada_mediana": round(pareada, 1),
                 "cociente": round(pareada / vecino, 1),
             }
         )
