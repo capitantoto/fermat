@@ -502,11 +502,11 @@ def dumbbell_r2(
         color = paleta_predeterminada.get(clf, "gray")
         ls = "dashed" if clf in _clfs_sombreados else "solid"
         ax.plot(
-            [fila[despues], fila[antes]], [yi, yi], color=color, lw=2.5, ls=ls, zorder=1
+            [fila[despues], fila[antes]], [yi, yi], color=color, lw=4, ls=ls, zorder=1
         )
-        ax.scatter(fila[antes], yi, s=70, color=color, edgecolor="black", zorder=2)
+        ax.scatter(fila[antes], yi, s=110, color=color, edgecolor=color, zorder=2)
         ax.scatter(
-            fila[despues], yi, s=70, color="white", edgecolor=color, lw=2, zorder=2
+            fila[despues], yi, s=110, color="white", edgecolor=color, lw=2.5, zorder=2
         )
     ax.set_yticks(range(len(signif)))
     ax.set_yticklabels(signif.index)
