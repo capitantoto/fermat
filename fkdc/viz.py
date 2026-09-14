@@ -763,19 +763,13 @@ if __name__ == "__main__":
         logger.info(f"Escribió {ruta}")
 
     # =====================================================================
-    # Escala de las distancias por dataset (mediana al vecino más cercano y
-    # mediana pareada) para leer los anchos de banda elegidos en su contexto
+    # Escala de las distancias en los datasets orgánicos (mediana al vecino más
+    # cercano y mediana pareada) para leer los anchos de banda en su contexto
     # =====================================================================
     from scipy.spatial.distance import pdist, squareform
 
     filas = []
-    datasets_cuerpo = [
-        "lunas_lo", "circulos_lo", "espirales_lo", "anteojos",
-        "lunas_hi", "circulos_hi", "espirales_hi",
-        "eslabones_0", "helices_0", "pionono_0", "hueveras_0",
-        "eslabones_12", "helices_12", "pionono_12", "hueveras_12",
-        "iris", "vino", "pinguinos", "digitos", "mnist",
-    ]  # fmt: skip
+    datasets_cuerpo = ["iris", "vino", "pinguinos", "digitos", "mnist"]
     for dataset in datasets_cuerpo:
         sufijo_semilla = (
             f"-{semilla_graficos}" if dataset in datasets_sinteticos else ""
