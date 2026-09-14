@@ -1981,7 +1981,7 @@ En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" 
 El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los estimadores, pero los métodos basados en densidad por núcleos parecen sufrirlo particularmente, aunque solo sea porque "caen desde más alto", a un nivel de rendimiento similar al de otros métodos.
 
 #wide_figure(
-  width: 120%,
+  width: 140%,
   grid(
     columns: 3,
     gutter: 4pt,
@@ -1997,7 +1997,7 @@ El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los 
   let hi_clfs = (("fkdc", fkdc), ("gbt", gbt), ("svc", svc))
   let hi_datasets = ("lunas_hi", "circulos_hi", "espirales_hi")
   wide_figure(
-    width: 125%,
+    width: 135%,
     grid(
       columns: (auto, 1fr, 1fr, 1fr),
       gutter: 4pt,
@@ -2022,9 +2022,11 @@ Al ojo humano, las regiones de confianza que "dibuja" #fkdc se alinean "en espí
 
 === `anteojos` ($K = 3$, $d = 2$)
 
-Cerramos el plano con `anteojos`, un dataset sintético de tres clases con forma de anteojos que incluimos por ser el único multiclase en dos dimensiones: todos los estimadores salvo #logr alcanzan una exactitud del $97%$, y #fkdc saca una ventaja mínima pero consistente en $R^2$.
-
 #highlights_figure("anteojos")
+
+Cerramos el plano con `anteojos` #footnote[inspirado en la tesis de maestría de #cite(<battocchioTestHipotesisSobre2024>, form:"prose", supplement: [§3.1.3]), "Test de hipótesis sobre homología
+persistente utilizando la distancia de Fermat", que forma parte del mismo programa de investigación que esta.], un dataset sintético de tres clases con forma de anteojos que incluimos por ser el único multiclase en dos dimensiones: todos los estimadores salvo #logr alcanzan una exactitud del $97%$, y #fkdc saca una ventaja pequeña pero consistente en $R^2$ aun sobre #kdc.
+
 
 == Pionono, Eslabones, Hélices y Hueveras ($d=3$)
 
@@ -2052,7 +2054,7 @@ La semilla resultó adversa para ambos, pero particularmente para #fkdc. #gbt qu
 
 Este dataset consiste en dos hélices del mismo diámetro y "enroscadas" en la misma dirección, una de ellas empezando a "media altura" entre dos brazos consecutivos de la otra. El dataset es particularmente desafiante para Naive Bayes y regresión logística, que no logran diferenciarse en nada de un clasificador trivial que prediga siempre la misma clase.
 #obs[El rendimiento de #logr es malo únicamente porque se aplicó ciegamente a los datos. La primera tarea cuando se busca inferir la geometría de unos datos es graficarlos, y al observar la hélice uno puede parametrizarla de manera natural como $f(x, y, z) = ("ángulo, velocidad radial, velocidad vertical") ,$ entrenar sobre esta _representación_ y obtener un $R^2 approx 1$.
-  Todo algoritmo funciona OK sobre una representación adecuada --- la ventaja de algunos es que no hace falta "ponerle demasiada cabeza" a "masajearlos". Que a #gnb le resulte complejo no es sorprendente, ya que las distribuciones marginales son prácticamente idénticas.
+  Todo algoritmo funciona OK sobre una representación adecuada --- la ventaja de algunos es que son _plug and play_: no hace falta dedicarle demasiada atención a la elección de covariables. Que a #gnb le resulte complejo es esperable, ya que las distribuciones marginales son prácticamente idénticas.
 ]
 #figure(
   image("img/helices-pairplot.svg"),
@@ -2072,7 +2074,7 @@ La clasificación dura con estimación de densidad por núcleos --- con distanci
 
 La semilla con mayor $Delta_(R^2)$ favorable a #fkdc corresponde a una hiperparametrización no-reducible a #kdc $(alpha = 1.25, h = 0.006)$ y le otorga 23.7pp de $R^2$ _en términos absolutos_#footnote[en criollo, "un montón".] más que #kdc con $h = 0.208$ --- una ventana $approx 35$ veces más ancha.
 
-Salta a la vista también que tales parametrizaciones "divergentes" tienen muy variado rendimiento por fuera del conjunto de entrenamiento #footnote[o _out-of-sample_, en inglés.] , pues para $s = 8096$ se eligió _la misma_ $mu$, contra $h_#kdc = 0.143 approx 25 h_#fkdc$ y se dio la segunda diferencia más amplia _en contra_ de #fkdc ($Delta_(R^2) = -0.098$).
+Salta a la vista también que tales parametrizaciones "divergentes" tienen muy variado rendimiento por fuera del conjunto de entrenamiento #footnote[o _out-of-sample_, en inglés.] , pues para $s = 8096$ #fkdc eligió la misma ventana contra $h_#kdc = 0.143 approx 25 h_#fkdc$ y se dio la segunda diferencia más amplia _en contra_ de #fkdc ($Delta_(R^2) = -0.098$).
 
 #tabla_params(
   "data/helices_0-parametros_comparados-kdc.csv",
@@ -2135,9 +2137,7 @@ Llegamos a la misma conclusión que antes por otra dirección: en los vecindario
 
 #highlights_figure("pionono_0")
 
-Este dataset "clásico" para evaluar algoritmos de _clustering_ no-lineales es analizado en #cite(<sapienzaWeightedGeodesicDistance2018>, form: "prose"), así que decidimos incluirlo en la serie experimental. El trabajo citado también es una aplicación empírica de la distancia muestral de Fermat, pero tiene otro objetivo ---  _clustering_ basado en el algoritmo $k-$medoides --- y provee un gráfico de exactitud comparada contra Isomap. Los autores encuentran que
-#quote[$[dots]$ existe un amplio rango de $alpha$ #footnote[En el trabajo, "nuestro" $alpha$ se denomina $d$.] para los que la $alpha-$distancia se porta significativamente mejor que Isomap. $[dots]$ para la exactitud esta región está limitada a $1.7 <= alpha <= 2.2$
-]
+Este dataset "clásico" para evaluar algoritmos de _clustering_ no-lineales es analizado en #cite(<sapienzaWeightedGeodesicDistance2018>, form: "prose"), así que decidimos incluirlo en la serie experimental. El trabajo citado también es una aplicación empírica de la distancia muestral de Fermat, pero tiene otro objetivo ---  _clustering_ basado en el algoritmo $k-$medoides --- y provee un gráfico de exactitud comparada contra Isomap. Los autores encuentran que "$[dots]$ existe un amplio rango de $alpha$ #footnote[En el trabajo, "nuestro" $alpha$ se denomina $d$.] para los que la $alpha-$distancia se porta significativamente mejor que Isomap. $[dots]$ para la exactitud esta región está limitada a $1.7 <= alpha <= 2.2$".
 
 Nuestro objetivo (clasificación, no _clustering_) como también los algoritmos empleados (#kdc y #kn en lugar de $k-$medoides) son distintos, y en este _setting_ no encontramos diferencia significativa entre #kdc y #fkdc --- o entre $alpha = 1$ y $alpha > 1$ ---, que a su vez rinden tan bien como el estado del arte en exactitud (#svc) y $R^2$ (#gbt). Esta paridad es consistente con la observación de que, en las #reps repeticiones analizadas, #fkdc seleccionó $alpha = 1$ bajo la regla de parsimonia en _todos_ los casos, colapsando efectivamente a una variante de #kdc con ancho de banda ligeramente menor.
 
@@ -2172,9 +2172,9 @@ En #fkn, la distancia de Fermat parece ofrecer una diferencia significativa en $
 
 === Efecto de aumentar la dimensión ambiente
 
-Sobre los datasets de `lunas`, `circulos` y `espirales` analizamos los efectos de incrementar la cantidad de _ruido_ en el registro de las observaciones, sin modificar la dimensión del espacio ambiente. Para los datasets recién presentados (`pionono`, `helice`, `hueveras`, `eslabones`) intentamos algo distinto: ¿qué pasa si los datos son los mismos, pero agregamos _dimensiones enteras_ de ruido independientes de las clases observadas? Para ello, se "extendieron" las observaciones "sin ruido añadido" #footnote[de allí los sufijos `_0` y `_12`: con cero (doce) dimensiones de ruido agregadas] ya analizadas con 12 dimensiones, todas independiente entre sí, y distribución normal con media y varianza similares a las de las primeras 3 dimensiones _pooleadas_ #footnote[i.e., para cada dataset se concatenaron los valores de las 3 dimensiones de $N$ observaciones en una única muestra de longitud $3N$, de la cual se calculó la media y el desvío estándar.].
+Sobre los datasets de `lunas`, `circulos` y `espirales` analizamos los efectos de incrementar la cantidad de _ruido_ en el registro de las observaciones, sin modificar la dimensión del espacio ambiente. Para los datasets recién presentados (`pionono`, `helice`, `hueveras`, `eslabones`) intentamos algo distinto: ¿qué pasa si los datos son los mismos, pero agregamos _dimensiones enteras_ de ruido independientes de las clases observadas? Para ello, se "extendieron" las observaciones ya analizadas con 12 dimensiones #footnote[de allí los sufijos `_0` y `_12` que denotan la cantidad de dimensiones de ruido agregadas], todas independiente entre sí, y distribución normal con media y varianza en la escala de las primeras 3 dimensiones _pooleadas_ #footnote[i.e., para cada dataset se concatenaron los valores de las 3 dimensiones de $N$ observaciones en una única muestra de longitud $3N$, de la cual se calculó la media y el desvío estándar.].
 
-El efecto sobre el $R^2$ es dramático para todos los clasificadores, pero la familia $cal(K)$ lo sufre en particular: en `helices_12` y `hueveras_12` ningún clasificador se distingue del azar, y en `pionono_12` y `eslabones_12` el $R^2$ de $cal(K)$ se desploma a $approx 0.1$ y $approx 0.25$, mientras que #gbt conserva $R^2 approx 0.8$ y $approx 0.9$ respectivamente.
+El efecto sobre el $R^2$ es dramático para todos los clasificadores, pero la familia $cal(K)$ lo sufre en particular: en `helices_12` y `hueveras_12` ningún clasificador se distingue del azar, pero en `pionono_12` y `eslabones_12` el $R^2$ de $cal(K)$ se desploma a $approx 0.1$ y $approx 0.25$, mientras que #gbt, #gnb y #logr conservan orácticamente intacto el $R^2$ alvanzado en la versión sin ruido.
 
 #wide_figure(
   width: 100%,
@@ -2189,9 +2189,7 @@ El efecto sobre el $R^2$ es dramático para todos los clasificadores, pero la fa
   ),
 )
 
-El fenómeno de las dimensiones de ruido sin correlación es particularmente pernicioso para los algoritmos basados en densidad por núcleos, aun con distancias basadas en densidad. Como la distancia de Fermat está computada como una geodésica en un grafo completo, y los pesos de cada arista están basados en distancia euclídea, las dimensiones de ruido puro "alejan" puntos cercanos entre sí en las dimensiones que importan. La ventaja de #gbt en _algunos_ de estos datasets del régimen de alto ruido es que al proceder con preguntas binarias sobre _un predictor a la vez_, puede identificar más fácilmente que cualquier pregunta sobre las columnas de ruido puro nunca sirve para partir la muestra en dos grupos con densidades bien distintas, y por eso las ignora.
-
-Las fichas de #ficha-de("pionono_12"), #ficha-de("eslabones_12"), #ficha-de("helices_12") y #ficha-de("hueveras_12") están en el #ref-anexo.
+El fenómeno de las dimensiones de ruido sin correlación es particularmente pernicioso para los algoritmos basados en densidad por núcleos, aun con distancias basadas en densidad. Como la distancia de Fermat está computada como una geodésica en un grafo completo, y los pesos de cada arista están basados en distancia euclídea, las dimensiones de ruido puro "alejan" puntos cercanos entre sí en las dimensiones que importan. La ventaja de #gbt en _algunos_ de estos datasets del régimen de alto ruido es que al proceder con preguntas binarias sobre _un predictor a la vez_, puede identificar más fácilmente que cualquier pregunta sobre las columnas de ruido puro nunca sirve para partir la muestra en dos grupos con densidades bien distintas, y por eso las ignora. Algo análogo sucede con #gnb --- que no encuentra diferencia alguna en las dimensiones de ruido --- y #logr, que ajusta un coeficiente por dimensión. Las fichas de #ficha-de("pionono_12"), #ficha-de("eslabones_12"), #ficha-de("helices_12") y #ficha-de("hueveras_12") están en el #ref-anexo.
 
 == Datasets "orgánicos" <organicos>
 
@@ -2201,7 +2199,7 @@ Los datasets restantes no fueron generados por nosotros a partir de una variedad
 
 #highlights_figure("pinguinos")
 
-El dataset de pingüinos de Palmer ($K = 3$, $d = 4$) es casi linealmente separable: #logr domina con $R^2 approx 0.96$, y toda la familia $cal(K)$ queda entre $0.40$ y $0.50$. La matriz de confusión de #fkdc muestra que no predice la clase Chinstrap en absoluto: sus 34 observaciones del conjunto de evaluación se clasifican como Adelie.
+El dataset de pingüinos de Palmer ($K = 3$, $d = 4$) es casi linealmente separable: #logr domina con $R^2 approx 0.96$ y todos los clasificadores de referencia lo resuelven con exactitudes similares, pero toda la familia $cal(K)$ queda entre $0.40$ y $0.50$. La matriz de confusión de #fkdc muestra que no predice la clase Chinstrap en absoluto: sus 34 observaciones del conjunto de evaluación se clasifican como Adelie.
 
 #figure(
   image("img/pinguinos-fkdc-confusion_matrix.svg", width: 70%),
@@ -2211,20 +2209,35 @@ El dataset de pingüinos de Palmer ($K = 3$, $d = 4$) es casi linealmente separa
   ),
 )
 
-La explicación no está en la geometría de las clases sino en sus unidades. Tres de los cuatro atributos se miden en milímetros y toman valores entre 13 y 230; el cuarto, la masa corporal, se mide en gramos y va de 2700 a 6300. La distancia euclídea entre dos pingüinos es, a todos los efectos prácticos, su diferencia de masa, y la distancia de Fermat --- construida sobre aristas euclídeas --- hereda el problema. Adelie y Chinstrap tienen masas indistinguibles, y por eso se confunden. Los métodos que no dependen de la métrica del espacio ambiente no lo padecen: #gbt parte cada variable por separado, y #logr absorbe la escala de cada variable en su coeficiente.
+Un primer diagnóstico para entender lo que sucede consiste en observar el _pairplot_ #footnote[la grilla con los gráficos de densidad por dimensión y dispersión por cada par de dimensiones] de la muestra (cf. @pairplot-pinguinos). Efectivamente, en las dimensiones 1, 2 y especialmente en la 3 las clses Adelie y Chinstrap están sumamente solapadas, y si uno reentrena el clasificador excluyendo alguna de ellas, exactitud y el $R^2$ de la familia $cal(K)$ mejora. La verdadera explicación no está en la geometría de las clases sino en sus unidades. Tres de los cuatro atributos se miden en milímetros #footnote["largo del pico" (columna 0), "ancho del pico" (col. 1) y "largo de la aleta" (col .2)] y toman valores entre 13 y 230; el cuarto, la masa corporal, se mide en gramos y va de 2700 a 6300. La distancia euclídea entre dos pingüinos es, a todos los efectos prácticos, su diferencia de masa, y la distancia de Fermat --- construida sobre aristas euclídeas --- hereda el problema. Adelie y Chinstrap tienen masas indistinguibles, y por eso se confunden. Los métodos que no dependen de la métrica del espacio ambiente no lo padecen: #gbt parte cada variable por separado, y #logr absorbe la escala de cada variable en su coeficiente.
 
-Para confirmarlo repetimos las #reps repeticiones de `pinguinos` con un único cambio: a cada clasificador se le antepuso un estandarizador --- media $0$ y desvío $1$ por columna --- ajustado sobre el pliego de entrenamiento correspondiente (ficha de #ficha-de("pinguinos_std") en el #ref-anexo).
+#wide_figure(
+  width: 110%,
+  image("img/pinguinos-pairplot.svg"),
+  caption: flex-caption(
+    [_Pairplot_ del dataset `pinguinos`. Nótese la escala de la cuarta variable (masa corporal, en gramos) frente a las otras tres (en milímetros).],
+    [_Pairplot_ de `pinguinos`],
+  ),
+) <pairplot-pinguinos>
 
-// Los valores salen de data/pinguinos-crudo-vs-std.csv, generado por fkdc/viz.py a
-// partir de las corridas de `pinguinos` y `pinguinos_std`.
-#tabla_csv(
-  "data/pinguinos-crudo-vs-std.csv",
-  headers: (clf: [Clf.], r2_crudo: [$R^2$ crudo], r2_std: [$R^2$ est.], acc_crudo: [exac. cruda], acc_std: [exac. est.]),
-  caption: [$R^2$ y exactitud medianos en `pinguinos` sobre los atributos crudos y estandarizados dentro del entrenamiento.],
-  short-caption: [`pinguinos`: atributos crudos vs. estandarizados],
-) <tabla-pinguinos-std>
+Para confirmarlo repetimos las #reps repeticiones de `pinguinos` con un único cambio: a cada clasificador se le antepuso un estandarizador #footnote[Más precisamente, se usó #link("https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html")[`sklearn.prepocessing.StandarScaler`] con parámetros por defecto, que transforma los datos sustrayendo la media y dividiendo por el desvió estándar por columna] ajustado sobre el pliego de entrenamiento correspondiente (ficha de #ficha-de("pinguinos_std") en el #ref-anexo).
 
-Con la escala corregida, la familia $cal(K)$ alcanza a los métodos lineales: #fkdc pasa de $R^2 approx 0.42$ a $approx 0.96$, a cinco milésimas de #logr, y su exactitud de $73%$ a $99%$ (@tabla-pinguinos-std), mientras que #logr y #gbt --- insensibles a la escala en la práctica --- no se mueven. La lección excede a `pinguinos`: la familia $cal(K)$ no es invariante a la escala de los atributos, y en datasets con unidades heterogéneas hay que estandarizar. Las comparaciones "en crudo" de esta sección y de @resultados en general deben leerse con esa salvedad.
+// Los paneles salen de fkdc/viz.py a partir de las corridas de `pinguinos` y `pinguinos_std`;
+// los valores exactos quedan en data/pinguinos-crudo-vs-std.csv.
+#wide_figure(
+  width: 120%,
+  grid(
+    columns: 2,
+    gutter: 4pt,
+    image("img/pinguinos-crudo-vs-std-r2.svg"), image("img/pinguinos-crudo-vs-std-accuracy.svg"),
+  ),
+  caption: flex-caption(
+    [$R^2$ y exactitud medianos en `pinguinos` sobre los atributos crudos (punto lleno) y estandarizados dentro del entrenamiento (punto vacío); el segmento une ambos valores y es discontinuo para las variantes sin Fermat.],
+    [`pinguinos`: atributos crudos vs. estandarizados],
+  ),
+) <fig-pinguinos-std>
+
+Con la escala corregida, la familia $cal(K)$ alcanza a los métodos lineales: #fkdc pasa de $R^2 approx 0.42$ a $approx 0.96$, a cinco milésimas de #logr, y su exactitud de $73%$ a $99%$ (@fig-pinguinos-std), mientras que #logr y #gbt --- insensibles a la escala en la práctica --- no se mueven. La lección excede a `pinguinos`: la familia $cal(K)$ no es invariante a la escala de los atributos, y en datasets con unidades heterogéneas hay que estandarizar. Las comparaciones "en crudo" de esta sección y de @resultados en general deben leerse con esa salvedad.
 
 No se trata, sin embargo, de estandarizar siempre. En `iris`, con las cuatro variables en centímetros, el mismo tratamiento _empeora_ ligeramente a $cal(K)$ (#fkn pasa de $R^2 approx 0.90$ a $approx 0.84$), y en `digitos` la caída es severa, como veremos a continuación (#ficha-de("iris_std"), #ficha-de("digitos_std")). Las fichas de #ficha-de("iris") y #ficha-de("vino") --- y de sus variantes #ficha-de("iris_std") y #ficha-de("vino_std") --- están en el #ref-anexo: en `iris` los métodos lineales y $cal(K)$ empatan; en `vino`, cuyas 13 variables recorren cuatro órdenes de magnitud, #gbt domina con $R^2 approx 0.90$ y #logr, con $0.69$ sobre los datos crudos, muestra el mismo síntoma que la familia $cal(K)$: estandarizando, #logr sube a $0.90$ y $cal(K)$ de $R^2 approx 0.43$ a $0.84$--$0.88$, competitiva aunque todavía por debajo de #gbt.
 

@@ -471,7 +471,9 @@ def dispersion_r2(dataset, sufijo="kdc", info=None, ax=None):
     return ax
 
 
-def dumbbell_r2(medianas, antes, despues, ax=None, umbral=0.05):
+def dumbbell_r2(
+    medianas, antes, despues, ax=None, umbral=0.05, etiqueta="$R^2$ mediano"
+):
     """Dumbbell de R² mediano por clasificador entre dos condiciones.
 
     `medianas` tiene una fila por clasificador y columnas `antes` (punto lleno)
@@ -496,7 +498,7 @@ def dumbbell_r2(medianas, antes, despues, ax=None, umbral=0.05):
         )
     ax.set_yticks(range(len(signif)))
     ax.set_yticklabels(signif.index)
-    ax.set_xlabel("$R^2$ mediano")
+    ax.set_xlabel(etiqueta)
     return ax
 
 
@@ -769,6 +771,14 @@ if __name__ == "__main__":
         ruta = dir_datos / f"{base}-crudo-vs-std.csv"
         tabla.round(3).to_csv(ruta, index=False)
         logger.info(f"Escribió {ruta} ({sub.groupby('dataset').size().to_dict()})")
+        # Dumbbells crudo (lleno) → estandarizado (vacío), un panel por métrica
+        for metrica, etiqueta in [
+            ("r2", "$R^2$ mediano"),
+            ("accuracy", "exactitud mediana"),
+        ]:
+            fig, ax = plt.subplots(layout="tight")
+            dumbbell_r2(med[metrica], base, f"{base}_std", ax=ax, etiqueta=etiqueta)
+            guardar_fig(fig, dir_imagenes / f"{base}-crudo-vs-std-{metrica}.svg")
 
     # =====================================================================
     # CSVs "mejor-clf-por-dataset" (agregado sobre TODOS los datasets en bi)
