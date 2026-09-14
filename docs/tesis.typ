@@ -91,12 +91,13 @@
 
 // `collapse`: columnas (por nombre) cuyo valor solo se muestra cuando cambia
 // respecto de la fila anterior; entre grupos de la primera de ellas se traza una línea.
-#let tabla_csv(path, caption: none, short-caption: none, headers: encabezados_csv, collapse: ()) = {
+#let tabla_csv(path, caption: none, short-caption: none, headers: encabezados_csv, collapse: (), raw-cols: ()) = {
   let data = csv(path)
   let scope = (fkdc: fkdc, kn: kn, fkn: fkn, kdc: kdc, lr: logr, svc: svc, gnb: gnb, gbt: gbt, slr: slr)
   let nombres = data.at(0)
   let rows = data.slice(1)
   let render(v) = if v in scope { scope.at(v) } else { eval(v, mode: "markup", scope: scope) }
+  let render_col(i, v) = if nombres.at(i) in raw-cols { raw(v) } else { render(v) }
   let colapsadas = collapse.map(c => nombres.position(h => h == c)).filter(i => i != none)
 
   let cells = (
@@ -114,7 +115,7 @@
       let repetida = (
         previa != none and i in colapsadas and colapsadas.filter(j => j <= i).all(j => row.at(j) == previa.at(j))
       )
-      cells.push(if repetida { [] } else { render(v) })
+      cells.push(if repetida { [] } else { render_col(i, v) })
     }
     previa = row
   }
@@ -2287,7 +2288,18 @@ A `mnist` ($N = 800$, $K = 10$) se lo redujo de $d = 784$ a $d = 96$ dimensiones
 Las componentes principales se usan sin escalar a propósito: sus varianzas decrecientes son justamente la información que ordena las direcciones, y estandarizarlas la borraría. La #ficha-link("mnist")[ficha] está en el #ref-anexo.
 
 // Conteos por semilla en data/{digitos,mnist}-hiperparametros-K.csv (fkdc/viz.py).
-¿Importa más la distancia de Fermat en estos casos de alta dimensión y muchas clases? Los hiperparámetros elegidos dicen que no, y de dos maneras distintas según el clasificador. Para #fkdc, la regla de parsimonia eligió $alpha = 1$ en las #reps semillas de ambos datasets, y en `mnist` ni siquiera el maximizador del _score_ de validación cruzada se apartó de $alpha = 1$: la leve ventaja de #fkdc sobre #kdc en `digitos` es, una vez más, la de una ventana algo menor ($h approx 5.6$ contra $7.4$) que la grilla de #kdc no contenía. Los anchos de banda seleccionados en `mnist` --- entre $316$ y $562$ para ambos --- parecen enormes, pero solo reflejan la escala de los datos: la distancia mediana de una observación a su vecina más cercana es $approx 1300$, y la distancia mediana entre dos observaciones cualesquiera, $approx 2500$ #footnote[Medianas sobre la muestra de la semilla de graficación; cf. `data/escala-distancias.csv`. En `lunas_lo` los mismos valores son $0.04$ y $1.2$: la distancia típica es treinta veces la distancia al vecino más cercano, contra menos de dos veces en `mnist` y tres en `digitos`.]. Es la maldición de la dimensionalidad de @kde-mv en acto: en 96 dimensiones las distancias se concentran, no existe una escala en la que el núcleo pese "un vecindario" sin pesar a casi toda la muestra, y la validación cruzada responde encogiendo $h$ hasta que el vecino más cercano recibe un peso casi nulo y cada predicción descansa en una o dos observaciones. El clasificador de densidad degenera así en una versión blanda del de un vecino, lo que explica que #kdc y #kn rindan casi igual en ambos datasets y que $alpha$ no tenga sobre qué actuar. Para #fkn el cuadro es otro: el _score_ de validación cruzada se maximizó con $alpha$ entre $1.75$ y $4$ en _todas_ las semillas de ambos datasets, pero la mejora rara vez superó el desvío estándar entre pliegos, y la regla de parsimonia devolvió $alpha = 1$ en 13 de las 25 semillas de `digitos` y en 18 de las de `mnist`, casi siempre con $k$ entre 22 y 56 vecinos. La distancia de Fermat mejora de manera consistente pero pequeña el clasificador de vecinos en estos datasets, y no cambia nada en el de densidad.
+¿Importa más la distancia de Fermat en estos casos de alta dimensión y muchas clases? Los hiperparámetros elegidos dicen que no, y de dos maneras distintas según el clasificador. Para #fkdc, la regla de parsimonia eligió $alpha = 1$ en las #reps semillas de ambos datasets, y en `mnist` ni siquiera el maximizador del _score_ de validación cruzada se apartó de $alpha = 1$: la leve ventaja de #fkdc sobre #kdc en `digitos` es, una vez más, la de una ventana algo menor ($h approx 5.6$ contra $7.4$) que la grilla de #kdc no contenía. Los anchos de banda seleccionados en `mnist` --- entre $316$ y $562$ para ambos --- parecen enormes, pero solo reflejan la escala de los datos: la distancia mediana de una observación a su vecina más cercana es $approx 1300$, y la distancia mediana entre dos observaciones cualesquiera, $approx 2500$ #footnote[Medianas sobre la muestra de la semilla de graficación (@tabla-escala-distancias). En `lunas_lo` los mismos valores son $0.04$ y $1.2$: la distancia típica es treinta veces la distancia al vecino más cercano, contra menos de dos veces en `mnist` y tres en `digitos`.]. Es la maldición de la dimensionalidad de @kde-mv en acto: en 96 dimensiones las distancias se concentran, no existe una escala en la que el núcleo pese "un vecindario" sin pesar a casi toda la muestra, y la validación cruzada responde encogiendo $h$ hasta que el vecino más cercano recibe un peso casi nulo y cada predicción descansa en una o dos observaciones. El clasificador de densidad degenera así en una versión blanda del de un vecino, lo que explica que #kdc y #kn rindan casi igual en ambos datasets y que $alpha$ no tenga sobre qué actuar. Para #fkn el cuadro es otro: el _score_ de validación cruzada se maximizó con $alpha$ entre $1.75$ y $4$ en _todas_ las semillas de ambos datasets, pero la mejora rara vez superó el desvío estándar entre pliegos, y la regla de parsimonia devolvió $alpha = 1$ en 13 de las 25 semillas de `digitos` y en 18 de las de `mnist`, casi siempre con $k$ entre 22 y 56 vecinos. La distancia de Fermat mejora de manera consistente pero pequeña el clasificador de vecinos en estos datasets, y no cambia nada en el de densidad.
+
+La @tabla-escala-distancias reúne las magnitudes del párrafo anterior para los 20 datasets. El cociente entre la distancia típica y la distancia al vecino más cercano cae de decenas en el plano a $2$ en cuanto se agregan las 12 dimensiones de ruido, y a menos de $2$ en `mnist`; `pinguinos` exhibe el cociente más alto de todos, $169$, por la razón ya vista: la masa en gramos estira una sola dirección.
+
+// Generado por fkdc/viz.py sobre la muestra de la semilla de graficación de cada dataset.
+#tabla_csv(
+  "data/escala-distancias.csv",
+  headers: (dataset: [dataset], d: [$d$], nn_mediana: [al vecino más cercano], pareada_mediana: [entre pares], cociente: [cociente]),
+  raw-cols: ("dataset",),
+  caption: [Escala de las distancias euclídeas en cada dataset (muestra de la semilla de graficación): mediana de la distancia de cada observación a su vecina más cercana, mediana de la distancia entre pares de observaciones y cociente entre ambas.],
+  short-caption: [Escala de las distancias por dataset],
+) <tabla-escala-distancias>
 
 = Conclusiones
 
