@@ -189,8 +189,20 @@ def boxplot(
     valores_fkdc = datos.loc[datos.clf.eq("fkdc"), metrica]
     piso = None
     if not valores_fkdc.empty:
-        piso = valores_fkdc.min() - 0.06 * (datos[metrica].max() - valores_fkdc.min())
+        margen = 0.06 * (datos[metrica].max() - valores_fkdc.min())
+        piso = valores_fkdc.min() - margen
         maximos = datos.groupby("clf")[metrica].max()
+        # Siempre queda visible al menos una referencia ajena a la familia K: si el
+        # recorte las oculta a todas, se baja el piso hasta el bigote inferior de la
+        # mejor de ellas (por mediana).
+        familia_k = {"fkdc", "kdc", "fkn", "kn"}
+        rivales = datos[~datos.clf.isin(familia_k)]
+        if not rivales.empty and (maximos[rivales.clf.unique()] < piso).all():
+            mejor_rival = rivales.groupby("clf")[metrica].median().idxmax()
+            v = rivales.loc[rivales.clf.eq(mejor_rival), metrica]
+            q1, q3 = v.quantile([0.25, 0.75])
+            bigote_inferior = v[v >= q1 - 1.5 * (q3 - q1)].min()
+            piso = bigote_inferior - margen
         datos = datos[~datos.clf.isin(maximos[maximos < piso].index)]
     sns.boxplot(
         datos, hue="clf", y=metrica, gap=0.2, ax=ax, palette=paleta, saturation=1.0
