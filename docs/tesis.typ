@@ -2274,11 +2274,20 @@ No se trata, sin embargo, de estandarizar siempre. En `iris`, con las cuatro var
   ),
 ) <fig-ejemplos-digitos>
 
-#highlights_figure("digitos")
 
 El dataset de dígitos de scikit-learn ($N = 1797$, $K = 10$, $d = 64$, imágenes de $8 times 8$ píxeles) es el caso más favorable a $cal(K)$ en todo el experimento: #fkdc es el mejor clasificador global ($R^2 approx 0.98$), apenas por encima de #kdc ($approx 0.97$), y ambos por encima de todos los demás. Aquí la escala es homogénea --- píxeles con valores de $0$ a $16$ --- y estandarizar es contraproducente: los píxeles de los bordes, casi siempre nulos, ven su varianza inflada a $1$ y se convierten en dimensiones de ruido, con lo que #fkdc cae a $R^2 approx 0.87$. Esperábamos alguna ventaja más notable de #fkdc sobre #kdc, o de #fkn sobre #kn, que no se comprobó.
 
-A `mnist` ($N = 800$, $K = 10$) se lo redujo de $d = 784$ a $d = 96$ dimensiones por PCA #footnote[número que se eligió para conservar al menos el 90% de la variación en los datos originales] para volverlo manejable. #kdc ($R^2 approx 0.77$) supera a #fkdc ($approx 0.74$) con menor dispersión; ambos superan a #gbt y quedan a la par de #logr en exactitud y $R^2$, con #svc como el más exacto. Las componentes principales se usan sin escalar a propósito: sus varianzas decrecientes son justamente la información que ordena las direcciones, y estandarizarlas la borraría. La #ficha-link("mnist")[ficha] está en el #ref-anexo.
+
+#page(margin: (top: .9in, bottom: 1.2in))[
+  #highlights_figure("digitos")
+  #highlights_figure("mnist")
+]
+A `mnist` ($N = 800$, $K = 10$) se lo redujo de $d = 784$ a $d = 96$ dimensiones por PCA #footnote[número que se eligió para conservar al menos el 90% de la variación en los datos originales] para volverlo manejable. #kdc ($R^2 approx 0.77$) supera a #fkdc ($approx 0.74$) con menor dispersión; ambos superan a #gbt y quedan a la par de #logr en exactitud y $R^2$, con #svc como el más exacto. 
+
+Las componentes principales se usan sin escalar a propósito: sus varianzas decrecientes son justamente la información que ordena las direcciones, y estandarizarlas la borraría. La #ficha-link("mnist")[ficha] está en el #ref-anexo.
+
+// Conteos por semilla en data/{digitos,mnist}-hiperparametros-K.csv (fkdc/viz.py).
+¿Importa más la distancia de Fermat en estos casos de alta dimensión y muchas clases? Los hiperparámetros elegidos dicen que no, y de dos maneras distintas según el clasificador. Para #fkdc, la regla de parsimonia eligió $alpha = 1$ en las #reps semillas de ambos datasets, y en `mnist` ni siquiera el maximizador del _score_ de validación cruzada se apartó de $alpha = 1$: la leve ventaja de #fkdc sobre #kdc en `digitos` es, una vez más, la de una ventana algo menor ($h approx 5.6$ contra $7.4$) que la grilla de #kdc no contenía. Los anchos de banda seleccionados en `mnist` --- entre $316$ y $562$ para ambos --- son enormes comparados con los de los datasets de baja dimensión, señal de que en 96 dimensiones la estimación de densidad es extremadamente suave y cada predicción promedia sobre buena parte de la muestra. Para #fkn el cuadro es otro: el _score_ de validación cruzada se maximizó con $alpha$ entre $1.75$ y $4$ en _todas_ las semillas de ambos datasets, pero la mejora rara vez superó el desvío estándar entre pliegos, y la regla de parsimonia devolvió $alpha = 1$ en 13 de las 25 semillas de `digitos` y en 18 de las de `mnist`, casi siempre con $k$ entre 22 y 56 vecinos. La distancia de Fermat mejora de manera consistente pero pequeña el clasificador de vecinos en estos datasets, y no cambia nada en el de densidad.
 
 = Conclusiones
 

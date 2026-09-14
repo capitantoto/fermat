@@ -730,6 +730,39 @@ if __name__ == "__main__":
     guardar_fig(grafico.figure, dir_imagenes / "pinguinos-pairplot.svg")
 
     # =====================================================================
+    # Hiperparámetros elegidos (R1SD) y maximizadores del score de CV para la
+    # familia K en digitos y mnist: CSV por dataset con conteos por semilla
+    # =====================================================================
+    for dataset in ("digitos", "mnist"):
+        filas = []
+        for (ds_, _, clf, *_), info in infos.items():
+            if ds_ != dataset or clf not in ("fkdc", "kdc", "fkn", "kn"):
+                continue
+            busqueda = info[clf]["busqueda"]
+            params = busqueda.best_estimator_.get_params()
+            cv_res = pd.DataFrame(busqueda.cv_results_)
+            mejor_cv = cv_res.loc[cv_res.mean_test_score.idxmax()]
+            filas.append(
+                {
+                    "clf": clf,
+                    "alpha_1sd": params.get("alpha", 1.0),
+                    "param_1sd": params.get("bandwidth", params.get("n_neighbors")),
+                    "alpha_star": mejor_cv.get("param_alpha", 1.0),
+                }
+            )
+        conteos = (
+            pd.DataFrame(filas)
+            .groupby(["clf", "alpha_1sd", "param_1sd", "alpha_star"])
+            .size()
+            .rename("semillas")
+            .reset_index()
+            .sort_values(["clf", "semillas"], ascending=[True, False])
+        )
+        ruta = dir_datos / f"{dataset}-hiperparametros-K.csv"
+        conteos.to_csv(ruta, index=False)
+        logger.info(f"Escribió {ruta}")
+
+    # =====================================================================
     # Ejemplos de dígitos manuscritos: digitos (8×8) y mnist (28×28), 2 por clase
     # =====================================================================
     from sklearn.datasets import fetch_openml, load_digits
