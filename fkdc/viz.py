@@ -763,6 +763,39 @@ if __name__ == "__main__":
         logger.info(f"Escribió {ruta}")
 
     # =====================================================================
+    # Escala de las distancias por dataset (mediana al vecino más cercano y
+    # mediana pareada) para leer los anchos de banda elegidos en su contexto
+    # =====================================================================
+    from scipy.spatial.distance import pdist, squareform
+
+    filas = []
+    for dataset in ("lunas_lo", "digitos", "mnist"):
+        sufijo_semilla = (
+            f"-{semilla_graficos}" if dataset in datasets_sinteticos else ""
+        )
+        with open(dir_datasets / f"{dataset}{sufijo_semilla}.pkl", "rb") as fp:
+            X = pickle.load(fp).X.astype(float)
+        if X.shape[0] > config.n_muestras:
+            rng = np.random.default_rng(semilla_graficos)
+            X = X[rng.choice(X.shape[0], config.n_muestras, replace=False)]
+        distancias = squareform(pdist(X))
+        np.fill_diagonal(distancias, np.inf)
+        vecino = np.median(distancias.min(axis=1))
+        pareada = np.median(distancias[np.isfinite(distancias)])
+        filas.append(
+            {
+                "dataset": dataset,
+                "d": X.shape[1],
+                "nn_mediana": round(vecino, 3),
+                "pareada_mediana": round(pareada, 3),
+                "cociente": round(pareada / vecino, 1),
+            }
+        )
+    ruta = dir_datos / "escala-distancias.csv"
+    pd.DataFrame(filas).to_csv(ruta, index=False)
+    logger.info(f"Escribió {ruta}")
+
+    # =====================================================================
     # Ejemplos de dígitos manuscritos: digitos (8×8) y mnist (28×28), 2 por clase
     # =====================================================================
     from sklearn.datasets import fetch_openml, load_digits
