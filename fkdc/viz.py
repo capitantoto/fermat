@@ -730,6 +730,35 @@ if __name__ == "__main__":
     guardar_fig(grafico.figure, dir_imagenes / "pinguinos-pairplot.svg")
 
     # =====================================================================
+    # Ejemplos de dígitos manuscritos: digitos (8×8) y mnist (28×28), 2 por clase
+    # =====================================================================
+    from sklearn.datasets import fetch_openml, load_digits
+
+    rng = np.random.default_rng(semilla_graficos)
+    X_dig, y_dig = load_digits(return_X_y=True)
+    X_mn, y_mn = fetch_openml("mnist_784", version=1, return_X_y=True, as_frame=False)
+    y_mn = y_mn.astype(int)
+    fuentes = [
+        ("digitos ($8 times 8$)", X_dig, y_dig, 8),
+        ("mnist ($28 times 28$)", X_mn, y_mn, 28),
+    ]
+    fig, axs = plt.subplots(4, 10, figsize=(10, 4.4), layout="constrained")
+    for bloque, (titulo, X, y, lado) in enumerate(fuentes):
+        for clase in range(10):
+            idx = rng.choice(np.flatnonzero(y == clase), size=2, replace=False)
+            for fila, i in enumerate(idx):
+                ax = axs[2 * bloque + fila, clase]
+                ax.imshow(X[i].reshape(lado, lado), cmap="gray_r")
+                ax.set_xticks([])
+                ax.set_yticks([])
+                if fila == 0 and bloque == 0:
+                    ax.set_title(str(clase))
+        axs[2 * bloque, 0].set_ylabel(
+            titulo.split(" ")[0], rotation=0, ha="right", va="center", labelpad=8
+        )
+    guardar_fig(fig, dir_imagenes / "digitos-mnist-ejemplos.png", dpi=200)
+
+    # =====================================================================
     # Destacados JSON + Diagramas de caja
     # =====================================================================
     destacar_por = "r2"

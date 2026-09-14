@@ -2220,7 +2220,6 @@ Un primer diagnóstico para entender lo que sucede consiste en observar el _pair
   ),
 ) <pairplot-pinguinos>
 
-Para confirmarlo repetimos las #reps repeticiones de `pinguinos` con un único cambio: a cada clasificador se le antepuso un estandarizador #footnote[Más precisamente, se usó #link("https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html")[`sklearn.prepocessing.StandarScaler`] con parámetros por defecto, que transforma los datos sustrayendo la media y dividiendo por el desvió estándar por columna] ajustado sobre el pliego de entrenamiento correspondiente (ficha de #ficha-de("pinguinos_std") en el #ref-anexo).
 
 // Los paneles salen de fkdc/viz.py a partir de las corridas de `pinguinos` y `pinguinos_std`;
 // los valores exactos quedan en data/pinguinos-crudo-vs-std.csv.
@@ -2237,10 +2236,10 @@ Para confirmarlo repetimos las #reps repeticiones de `pinguinos` con un único c
   ),
 ) <fig-pinguinos-std>
 
-Con la escala corregida, la familia $cal(K)$ alcanza a los métodos lineales: #fkdc pasa de $R^2 approx 0.42$ a $approx 0.96$, a cinco milésimas de #logr, y su exactitud de $73%$ a $99%$ (@fig-pinguinos-std), mientras que #logr y #gbt --- insensibles a la escala en la práctica --- no se mueven. La lección excede a `pinguinos`: la familia $cal(K)$ no es invariante a la escala de los atributos, y en datasets con unidades heterogéneas hay que estandarizar. Las comparaciones "en crudo" de esta sección y de @resultados en general deben leerse con esa salvedad.
+Para confirmarlo repetimos las #reps repeticiones de `pinguinos` con un único cambio: a cada clasificador se le antepuso un estandarizador #footnote[Más precisamente, se usó #link("https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html")[`sklearn.prepocessing.StandarScaler`] con parámetros por defecto, que transforma los datos sustrayendo la media y dividiendo por el desvió estándar por columna] ajustado sobre el pliego de entrenamiento correspondiente (ficha de #ficha-de("pinguinos_std") en el #ref-anexo).
+Con la escala corregida, la familia $cal(K)$ alcanza a los métodos lineales: #fkdc pasa de $R^2 approx 0.42$ a $approx 0.96$, a cinco milésimas de #logr, y su exactitud de $73%$ a $99%$ (@fig-pinguinos-std), mientras que #logr y #gbt --- insensibles a la escala en la práctica --- no se mueven. La lección excede a `pinguinos`: la familia $cal(K)$ no es invariante a la escala de los atributos, y en datasets con unidades heterogéneas hay que estandarizar. Las comparaciones "en crudo" de esta sección en general deben leerse con esa salvedad.
 
 === `iris` y `vino`
-No se trata, sin embargo, de estandarizar siempre. En `iris`, con las cuatro variables en centímetros, el mismo tratamiento _empeora_ ligeramente a $cal(K)$ (#fkn pasa de $R^2 approx 0.90$ a $approx 0.84$), y en `digitos` la caída es severa, como veremos a continuación (#ficha-de("iris_std"), #ficha-de("digitos_std")). Las fichas de #ficha-de("iris") y #ficha-de("vino") --- y de sus variantes #ficha-de("iris_std") y #ficha-de("vino_std") --- están en el #ref-anexo: en `iris` los métodos lineales y $cal(K)$ empatan; en `vino`, cuyas 13 variables recorren cuatro órdenes de magnitud, #gbt domina con $R^2 approx 0.90$ y #logr, con $0.69$ sobre los datos crudos, muestra el mismo síntoma que la familia $cal(K)$: estandarizando, #logr sube a $0.90$ y $cal(K)$ de $R^2 approx 0.43$ a $0.84$--$0.88$, competitiva aunque todavía por debajo de #gbt.
 
 #wide_figure(
   width: 120%,
@@ -2259,12 +2258,21 @@ No se trata, sin embargo, de estandarizar siempre. En `iris`, con las cuatro var
   ),
   kind: image,
   caption: flex-caption(
-    [$R^2$ y exactitud medianos en `iris` y `vino` sobre los atributos crudos (punto lleno) y estandarizados dentro del entrenamiento (punto vacío), con las mismas convenciones que la @fig-pinguinos-std.],
+    [$R^2$ y exactitud medianos en `iris` y `vino` sobre los atributos crudos (punto lleno) y estandarizados  (punto vacío) como en @fig-pinguinos-std.],
     [`iris` y `vino`: atributos crudos vs. estandarizados],
   ),
 ) <fig-iris-vino-std>
 
+No se trata, sin embargo, de estandarizar siempre. En `iris`, con las cuatro variables en centímetros, el mismo tratamiento _empeora_ ligeramente a $cal(K)$ (#fkn pasa de $R^2 approx 0.90$ a $approx 0.84$), y en `digitos` la caída es severa, como veremos a continuación (#ficha-de("iris_std"), #ficha-de("digitos_std")). Las fichas de #ficha-de("iris") y #ficha-de("vino") --- y de sus variantes #ficha-de("iris_std") y #ficha-de("vino_std") --- están en el #ref-anexo: en `iris` los métodos lineales y $cal(K)$ empatan; en `vino`, cuyas 13 variables recorren cuatro órdenes de magnitud, #gbt domina con $R^2 approx 0.90$ y #logr, con $0.69$ sobre los datos crudos, muestra el mismo síntoma que la familia $cal(K)$: estandarizando, #logr sube a $0.90$ y $cal(K)$ de $R^2 approx 0.43$ a $0.84$--$0.88$, competitiva aunque todavía por debajo de #gbt.
 === Alta dimensión: `digitos` y `mnist`
+
+#figure(
+  image("img/digitos-mnist-ejemplos.png", width: 100%),
+  caption: flex-caption(
+    [Dos ejemplos por clase de `digitos` (arriba, imágenes de $8 times 8$ píxeles) y de `mnist` (abajo, $28 times 28$), semilla $s = #plotting_seed$.],
+    [Ejemplos de `digitos` y `mnist`],
+  ),
+) <fig-ejemplos-digitos>
 
 #highlights_figure("digitos")
 
