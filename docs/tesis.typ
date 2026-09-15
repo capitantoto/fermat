@@ -353,6 +353,23 @@ In high dimensions, the natural distance of the space in which the observations 
 
 #pagebreak()
 
+// Agradecimientos: página propia, sin numerar y fuera del índice.
+#align(center)[#text(size: 14pt, weight: "bold")[Agradecimientos]]
+
+A la Facultad de Ciencias Exactas y Naturales, mi segundo hogar académico, sus docentes y no docentes, por ofrecer una educación científica de nivel internacional aun a pesar del desfinanciamiento.
+
+A mi director de tesis, Pablo "Patu" Groisman, y a todos los docentes que, como María Eugenia Szretter y Mariela Sued, me insistieron en _seguir_ cuando contemplé abandonar, y que me instaron a _entregar_ cuando todavía quería _corregir_.
+
+A mis entonces compañeros y hoy amigos, cuya compañía transmutó las largas horas de cursada y las maratónicas tardes de estudio previas a los exámenes en ocasiones de disfrute.
+
+A mi esposa Victoria, que se encargó de encontrar actividades para los niños en los innumerables fines de semana dedicados a este trabajo, sin pedir nada a cambio.
+
+A mis hijos Nina y Eloy. Nina no había nacido cuando empecé la maestría, y Eloy recién era un plan abstracto cuando comencé con la tesis. Gracias por soportar que desapareciera del té con peluches para ir a revisar los signos en arcanas ecuaciones.
+
+Y por último a usted, querido lector, querida lectora, que al leer estas páginas me regala lo mismo que yo a usted, lo más valioso que tenemos para dar: nuestro tiempo y atención.
+
+#pagebreak()
+
 // Reinicia numeración de página y restablece margenes para el cuerpo
 #counter(page).update(1)
 #set page(margin: 1.75in, numbering: "1 de 1")
