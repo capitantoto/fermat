@@ -357,10 +357,21 @@ e Instituto de Cálculo, FCEN, UBA
 #outline(depth: 2)
 
 #pagebreak()
-= Introducción
+#heading(numbering: none)[Introducción]
 
+Hace ya un lustro, cuando ya salíamos a hacer las compras sin barbijos pero la educación seguía siendo fundamentalmente a distancia en los últimos estertores de la pandemia del covid, me anoté a una optativa del departamento de matemática para completar el programa de la maestría en estadística. Al igual que los otros 120 alumnos inscriptos, le vi nombre de materia práctica, pero resultó ser un paseo para nada aleatorio sobre tópicos de probabilidad, con tangenciales menciones a aplicaciones de aprendizaje automático. Tan "áspera" resultó para los que no veníamos de la licenciatura en matemátima, que sólo una décima parte de los inscriptos la cursamos hasta el final, y versiones más recientes del mismo curso llevan el siguiente descargo justo por encima del programa:
 
-= Preliminares
+#quote(attribution: [del sitio de #link("https://sites.google.com/view/pml2024")[probabilidad y machine learning (2024)]])[
+  _Esta es una materia de matemática_, más precisamente de probabilidad. Vamos a probar teoremas y todo eso (pero no sólo eso!). Los problemas que trataremos están motivados por cuestiones relativas al aprendizaje automático (ML), pero vamos a hacer matemática. $[dots]$ Ya enterados, si siguen con ganas, son todes bienvenides!
+]
+
+Quienes nos quedamos hasta el final, tuvimos la oportunidad de estudiar con riguroso fundamente matemático fenómenos "folclóricos" del análisis estadístico como la "maldición de la dimensionalidad", aprender marcos teóricos sólidos para áreas de frontera del aprendizaje automático como las redes neuronales @lecunDeepLearning2015 y el aprendizaje de variedades @bengioRepresentationLearningReview2013, y "mojar los pies" en el análisis de elementos aleatorios definidos en espacios de probabilidad no reducibles a $RR^d$ como grafos, procesos puntuales y paseos al azar.
+
+Encantado con el programa, le pregunté al docente a cargo si no tenía algún tema de investigación asequible a una tesis de maestría, y me contesto que sí. De las conversaciones posteriores surgió la idea de aplicar la "distancia de Fermat" @groismanNonhomogeneousEuclideanFirstpassage2022 al problema de clasificación en altas dimensiones. Las páginas que siguen están escritas en el mismo espíritu curioso e indagador de aquella materia que lo disparó. En ka @preliminares Comenzamos por definir las dificultades de la clasificación en alta dimensión, pero en lugar de ir "hacia adelante" a posibles soluciones, primero hacemos un recorrido preliminar en la dirección opuesta: hacia explicaciones posibles de lo desafiante del problema de clasificación en alta dimensión, y hacia el desarrollo histórico de los métodos estadísticos --- estimación de densidad por núcleos --- y la teoría matemática --- densidad en variedades riemannianas compactas sin frontera --- que subyacen a los algoritmos de clasificación novedosos basados en distancia de Fermat que proponemos en la @propuesta-original. Allí definimos también los experimentos y el proceso de evaluación de las bondades relativas de tales clasificadores, mientra que en la @resultados analizamos los resultados obtenidos. En las conclusiones de @conclusiones recapitulamos los resultados obtenidos: como es de esperar, el método propuesto ofrece ventajas marginales sobre métodos equivalentes entrenados con distancia euclídea, pero sólo en escenarios particulares, que intentamos caracterizar a partir de lo observado. Finalmente, proponemos algunas líneas de trabajo futuro _a priori_ prometedoras.
+
+En una época absolutamente obsesionada por la inteligencia artificial y los agentes, donde la red neuronal profunda parece ser la reina del aprendizaje automático, perseguir un resultado de mejora marginal en escenarios específicos para un método clásico puede parecer irrelevante. Este texto no fue escrito para "empujar la frontera", sino para disfrutar del humano placer de aprender en profundidad un tema, y compartirles a los demás lo aprendido. Espero que leer estas páginas les genera una fracción del placer que a mí me da presentárselas.
+
+= Preliminares <preliminares>
 
 == Vocabulario y Notación
 
@@ -1433,7 +1444,7 @@ La distancia muestral de Fermat $D_(Q, alpha)$ se puede aproximar a partir de un
 
 Trabajos contemporáneos a Groisman et al @littleBalancingGeometryDensity2022 @mckenziePowerWeightedShortest2019 analizan lo que ellos llaman "distancias de caminos mínimos pesadas por potencias" #footnote["power-weighted shortest-path distances" o PWSPDs por sus siglas en inglés], aplicándoles no a problemas de clasificación, sino de _clustering_ #footnote[i.e., de identificación de grupos en datos no etiquetados]. Las definiciones de ambos grupos son muy similares en espíritu, con una diferencia: la distancia microscópica que plantean Little et al no es la suma de las aristas pesadas por $q=alpha$ como en Bijral et al y Groisman et al, sino la raíz $alpha$-ésima de tal suma, en una especie de reversión de la distancia de Minkowski. Siendo la sustancia de estos trabajos muy similar a la de la distancia de Fermat pero aplicada a otro problema, no profundizaremos en ellos.
 
-= Propuesta Original
+= Propuesta Original <propuesta-original>
 
 En función de lo expuesto hasta ahora, creemos que es posible mejorar un algoritmo de clasificación reemplazando la distancia euclídea por una aprendida de los datos, y en particular que la distancia muestral de Fermat #sfd es una buena candidata de reemplazo. Deseamos también comprender si el efecto de la #sfd aprendida es independiente del algoritmo de clasificación que la incorpore. Para saldar ambas cuestiones, nos propusimos:
 
@@ -2303,7 +2314,7 @@ El cociente de `pinguinos` en la @tabla-escala-distancias, $169$, es el reverso 
   short-caption: [Escala de las distancias en los datasets orgánicos],
 ) <tabla-escala-distancias>
 
-= Conclusiones
+= Conclusiones <conclusiones>
 
 Implementamos la distancia de Fermat muestral como una métrica compatible con los clasificadores de `scikit-learn` --- con estimación _out-of-sample_ y rutinas propias basadas en primitivos de `numpy` y `scipy` --- y sobre ella dos clasificadores, #fkdc y #fkn, que comparamos en #reps corridas de entrenamiento y evaluación con sus pares euclídeos y cuatro alternativas de referencia en 20 datasets. Por $R^2$ mediano, #fkdc obtuvo el máximo en 7 datasets y #fkn en 5 --- dos de ellos empatado con #kn ---; #kdc, la implementación del clasificador de @loubesKernelbasedClassifierRiemannian2008, en otros 2. Por exactitud la ventaja se diluye, y #svc resulta casi imbatible.
 
