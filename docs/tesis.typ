@@ -176,8 +176,8 @@
 }
 
 // Referencia al anexo de fichas (encabezado sin numeración: no admite @ref).
-#let ref-anexo = link(<anexo-fichas>)[Anexo A]
-// Enlace a la ficha de un dataset en el Anexo A (etiqueta `ficha-<dataset>`).
+#let ref-anexo = link(<anexo-fichas>)[Anexo]
+// Enlace a la ficha de un dataset en el Anexo (etiqueta `ficha-<dataset>`).
 #let ficha-link(dataset, body) = link(label("ficha-" + dataset), body)
 #let ficha-de(dataset) = ficha-link(dataset, raw(dataset))
 
@@ -2345,7 +2345,7 @@ Quedan, por último, tres ajustes de diseño experimental que no cambian las pre
 
 // Dos fichas por página: márgenes verticales reducidos en todo el anexo.
 #set page(margin: (top: 0.7in, bottom: 0.7in))
-#heading(numbering: none, level: 1)[Anexo A: Fichas de resultados por dataset] <anexo-fichas>
+#heading(numbering: none, level: 1)[Anexo: Fichas de resultados por dataset] <anexo-fichas>
 
 Cada ficha resume las #reps repeticiones de un dataset. A la izquierda, un gráfico de dispersión de las primeras dos (o tres) dimensiones y una tabla con la exactitud y el $R^2$ medianos por clasificador, ordenados por $R^2$: el mejor se resalta en verde y se atenúan aquellos cuya mediana de $R^2$ queda por debajo del primer cuartil de las repeticiones del mejor. A la derecha, los _boxplots_ de ambas métricas para todos los clasificadores, con los atenuados translúcidos, el eje vertical recortado por debajo del peor valor de #fkdc y una línea punteada en la mediana del mejor.
 
