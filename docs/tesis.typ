@@ -357,8 +357,12 @@ e Instituto de Cálculo, FCEN, UBA
 #outline(depth: 2)
 
 #pagebreak()
+= Introducción
 
-= Vocabulario y Notación
+
+= Preliminares
+
+== Vocabulario y Notación
 
 A lo largo de esta monografía tomaremos como referencia enciclopédica el excelente _Elements of Statistical Learning_ @hastieElementsStatisticalLearning2009. En la medida de lo posible, basaremos nuestra notación en la suya.
 
@@ -404,7 +408,6 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 
 #pagebreak()
 
-= Preliminares
 
 == El problema de clasificación
 
@@ -882,7 +885,7 @@ Probablemente la referencia más antigua a un elemento aleatorio en una variedad
 ]
 
 #figure(
-  image("img/von-mises-s1.png", height: 16em),
+  image("img/von-mises-s1.png", height: 12em),
   caption: flex-caption(
     [Pretendido "error" --- diferencia módulo 1 --- de los pesos atómicos medidos para ciertos elementos sobre $S^1$. Nótese como la mayoría de las mediciones se agrupan en torno al $0.0$. Fuente: @vonmisesUberGanzzahligkeitAtomgewicht1918],
     [Pesos atómicos "módulo 1" sobre $S^1$],
@@ -2185,7 +2188,7 @@ El efecto sobre el $R^2$ es dramático para todos los clasificadores, pero la fa
 
 El fenómeno de las dimensiones de ruido sin correlación es particularmente pernicioso para los algoritmos basados en densidad por núcleos, aun con distancias basadas en densidad. Como la distancia de Fermat está computada como una geodésica en un grafo completo, y los pesos de cada arista están basados en distancia euclídea, las dimensiones de ruido puro "alejan" puntos cercanos entre sí en las dimensiones que importan. La ventaja de #gbt en _algunos_ de estos datasets del régimen de alto ruido es que al proceder con preguntas binarias sobre _un predictor a la vez_, puede identificar más fácilmente que cualquier pregunta sobre las columnas de ruido puro nunca sirve para partir la muestra en dos grupos con densidades bien distintas, y por eso las ignora. Algo análogo sucede con #gnb --- que no encuentra diferencia alguna en las dimensiones de ruido --- y #logr, que ajusta un coeficiente por dimensión. Las fichas de #ficha-de("pionono_12"), #ficha-de("eslabones_12"), #ficha-de("helices_12") y #ficha-de("hueveras_12") están en el #ref-anexo.
 
-== Datasets "orgánicos" <organicos>
+== Datasets "orgánicos" ($d >= 4$) <organicos>
 
 Los datasets restantes no fueron generados por nosotros a partir de una variedad conocida: `iris`, `vino` y `pinguinos` provienen de repositorios clásicos de _machine learning_, y `digitos` y `mnist` son colecciones de imágenes. Tal como se explicó en @pretratamiento, los tratamos con el mínimo pre-procesamiento posible. Esa decisión, deliberada, tuvo una consecuencia que no anticipamos y que ilustramos con `pinguinos`.
 
