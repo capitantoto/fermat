@@ -130,7 +130,7 @@
 // fila 0 con clasificador asociado, fila 1 con nombre de variable, fila 2
 // vacía marcando "semilla". Se descarta toda esa cabecera y se usa `labels`
 // (array de contenido, típicamente fórmulas math) como encabezado real.
-// Opcionalmente `columns` proyecta sólo los índices de columna deseados,
+// Opcionalmente `columns` proyecta solo los índices de columna deseados,
 // útil para descartar columnas no relevantes para la tesis.
 // `split: n` reparte las filas en `n` bloques lado a lado, cada uno con su
 // encabezado (útil para tablas largas y angostas).
@@ -589,7 +589,7 @@ $ <naive-bayes>
 donde $f_(j k)$ es la densidad de $X_k$ condicional a la clase $GG_j$. Este procedimiento se conoce como "Naive Bayes" @hastieElementsStatisticalLearning2009[§6.6.3], y a pesar de su aparente ingenuidad es competitivo contra algoritmos mucho más sofisticados en un amplio rango de tareas. En términos de cómputo, permite resolver la estimación con $K times d$ KDE univariados. Además, permite que en $X$ se combinen variables cuantitativas y cualitativas: basta con reemplazar la estimación de densidad para las componentes $X_k$ cualitativas por su correspondiente histograma.
 
 === KDE multivariado
-Consideremos un _dataset_ compuesto por observaciones muestreadas de dos círculos concéntricos con algo de ruido:
+Consideremos un dataset compuesto por observaciones muestreadas de dos círculos concéntricos con algo de ruido:
 #figure(
   caption: flex-caption(
     "Dos círculos concéntricos y sus KDE marginales por clase: a pesar de que la frontera entre ambos grupos de puntos es muy clara, es casi imposible distinguirlas a partir de sus densidades marginales.",
@@ -738,7 +738,7 @@ A los conjuntos pertenecientes a la topología $T$ se les llama "conjuntos abier
 
 #defn([espacio de Hausdorff @leeIntroductionRiemannianManifolds2018])[
 
-  Sea $(X, T)$ un espacio topológico. Se dice que dos puntos $p, q in X$ cumplen la propiedad de Hausdorff si existen dos entornos $U_p$ de $p$ y $U_q$ de $q$ tales que $U_p inter U_q = emptyset$ (i.e., son disjuntos).
+  Sea $(X, T)$ un espacio topológico. Se dice que dos puntos $p, q in X$ cumplen la propiedad de Hausdorff si existen dos entornos $U_p$ de $p$ y $U_q$ de $q$ tales que $U_p inter U_q = emptyset$ (es decir, son disjuntos).
 
   Se dice que un espacio topológico es un espacio de Hausdorff #footnote[Que "verifica la propiedad de Hausdorff", "es separado" o "es $bu(T_2)$".] si todo par de puntos distintos del espacio verifica la propiedad de Hausdorff.
 ]
@@ -1482,7 +1482,7 @@ El estimador de @kde-variedad incluye un factor $1 slash theta_(X_i) (p)$ que #k
 == Metodología
 
 La unidad de evaluación de los algoritmos a considerar es una `Tarea` #footnote[Cf. el archivo `fkdc/tarea.py` en el repositorio adjunto para más detalles.], que se compone de:
-- un _dataset_ con el conjunto de $N$ observaciones en $d$ dimensiones repartidas en $K$ clases, $(XX, bu(g))$,
+- un dataset con el conjunto de $N$ observaciones en $d$ dimensiones repartidas en $K$ clases, $(XX, bu(g))$,
 - un _split de evaluación_ $r in (0, 1)$, que determina la proporción de los datos a incluir en la muestra de entrenamiento $XX_"train"$ ($1 - r$) y la de evaluación $XX_"test"$ ($r$),
 - una _semilla_ $s in [2^32]$ que alimenta el generador de números aleatorios y determina cómo realizar la división antedicha y
 - una _métrica de evaluación_ #footnote[En muchos casos esta coincidirá con la función de pérdida $L$ a minimizar durante el entrenamiento, pero no necesariamente.] que resume la "bondad" de las predicciones sobre $XX_"test"$ del clasificador entrenado en $XX_"train"$.
@@ -1552,7 +1552,7 @@ Mantuvimos al mínimo el pretratamiento de los datos de entrada. Esta decisión 
 Ni siquiera la regresión logística, de la que es bien sabido que se degrada cuando las variables predictoras están en escalas muy distintas, recibió un tratamiento especial. El efecto de la escala se estudia aparte, en @sensibilidad-escala, reentrenando todos los clasificadores sobre variantes estandarizadas de los datasets que lo requieren.
 
 === Entrenamiento de los algoritmos
-La especificación completa de un clasificador incluye, además de un _dataset_ de entrenamiento, un algoritmo y también sus hiperparámetros. Para cada algoritmo y en cada dataset se seleccionaron hiperparámetros de una extensa grilla "cuadrada" #footnote["Cuadrada" en tanto para cada hiperparámetro se elige una secuencia de posibles valores, y se buscan soluciones en el espacio producto de tales secuencias.] maximizando la log-verosimilitud (cf. @vero) para los clasificadores suaves, y la exactitud (cf. @exactitud) para los duros #footnote[Entre los mencionados, el único clasificador duro es #svc. Técnicamente es posible entrenar un clasificador suave a partir de uno duro con un _segundo_ estimador que toma como _input_ el resultado "crudo" del clasificador duro y da como _output_ una probabilidad calibrada (cf. #link("https://scikit-learn.org/stable/modules/calibration.html")[Calibración] en la documentación de `scikit-learn`  @buitinckAPIDesignMachine2013), pero es un proceso computacionalmente costoso.] con una búsqueda exhaustiva por validación cruzada de 5 pliegos #footnote[Conocida en inglés como #emph[grid search 5-fold cross-validation].] sobre la grilla entera.
+La especificación completa de un clasificador incluye, además de un dataset de entrenamiento, un algoritmo y también sus hiperparámetros. Para cada algoritmo y en cada dataset se seleccionaron hiperparámetros de una extensa grilla "cuadrada" #footnote["Cuadrada" en tanto para cada hiperparámetro se elige una secuencia de posibles valores, y se buscan soluciones en el espacio producto de tales secuencias.] maximizando la log-verosimilitud (cf. @vero) para los clasificadores suaves, y la exactitud (cf. @exactitud) para los duros #footnote[Entre los mencionados, el único clasificador duro es #svc. Técnicamente es posible entrenar un clasificador suave a partir de uno duro con un _segundo_ estimador que toma como _input_ el resultado "crudo" del clasificador duro y da como _output_ una probabilidad calibrada (cf. #link("https://scikit-learn.org/stable/modules/calibration.html")[Calibración] en la documentación de `scikit-learn`  @buitinckAPIDesignMachine2013), pero es un proceso computacionalmente costoso.] con una búsqueda exhaustiva por validación cruzada de 5 pliegos #footnote[Conocida en inglés como #emph[grid search 5-fold cross-validation].] sobre la grilla entera.
 
 En una ronda "exploratoria" de Tareas, se identificó en qué escala estaban aproximadamente los hiperparámetros óptimos para cada algoritmo y dataset. Para la corrida "principal" de los experimentos, se definió una única grilla por clasificador, para todos los datasets, cubriendo el rango descubierto para cada hiperparámetro y suficientes puntos como para ser significativa a lo largo. #footnote[De contar con más tiempo, hubiésemos preferido definir una grilla específica a cada dataset y estimador --- multiplicando el trabajo por 20 (datasets) ---, o usar una búsqueda bayesiana de hiperparámetros como la que ofrece #link("https://scikit-optimize.github.io/stable/auto_examples/sklearn-gridsearchcv-replacement.html")[`scikit-optimize`] --- complejizando el diseño experimental tal vez más de lo necesario.]
 
@@ -1593,7 +1593,7 @@ Al no conocer _a priori_ demasiado con respecto a la teoría de la distribución
 = Resultados <resultados>
 
 == In toto
-En total, ejecutamos unas 4800 tareas: 4000 producto de #reps repeticiones por dataset y clasificador sobre 20 datasets y 8 clasificadores diferentes, más 800 sobre variantes estandarizadas de cuatro de esos datasets (@sensibilidad-escala). De los clasificadores ya se habló; los _datasets_ --- cuyos nombres se estilan en fuente `monoespacio` --- se presentarán cuando nos aboquemos al análisis de cada uno.
+En total, ejecutamos unas 4800 tareas: 4000 producto de #reps repeticiones por dataset y clasificador sobre 20 datasets y 8 clasificadores diferentes, más 800 sobre variantes estandarizadas de cuatro de esos datasets (@sensibilidad-escala). De los clasificadores ya se habló; los datasets --- cuyos nombres se estilan en fuente `monoespacio` --- se presentarán cuando nos aboquemos al análisis de cada uno.
 
 Designaremos por $cal(K) = {#fkdc, #kdc, #fkn, #kn}$ a la familia de estimadores basados en densidad por núcleos, sobre la que se concentra el análisis comparativo del capítulo. Entre los clasificadores blandos, la distancia de Fermat alcanzó el máximo $R^2$ mediano en 12 de los 20 datasets: 7 con #fkdc y 5 con #fkn, dos de estos empatados con #kn. En todo este recuento, un empate en la mediana --- a cuatro decimales, como en las tablas resumen --- se cuenta para cada clasificador que lo alcanza, así que los totales pueden superar los 20 datasets.
 
@@ -1617,7 +1617,7 @@ El mismo análisis con métrica de exactitud es menos favorable a la familia $ca
 No es nuestra intención abrumar al lector, así que a continuación haremos un paneo arbitrario por algunos de los resultados que nos resultaron más llamativos o se acercan lo suficiente a algún resultado de la literatura previa como para merecer un comentario aparte #footnote[Si usted, querido lector, es un alma crítica e inquieta y decide clonar el repositorio, cambiar las semillas y reproducir los experimentos --- ¡o aun incorporar nuevos datasets y algoritmos! --- por favor, no deje de hacer un _pull request_ al repositorio original.].
 == Lunas, círculos y espirales ($d=2, d_MM=1, K=2$)
 
-Para comenzar, consideramos el caso no trivial más sencillo con $d > d_MM$: $d=2, d_MM=1, K=2$, y exploramos tres curvas muestreadas con un poco de "ruido blanco" añadido: dos "lunas" --- semicírculos no superpuestos con sus centros en un extremo del semicírculo opuesto ---, dos círculos concéntricos y dos espirales con el mismo origen y sentido de rotación pero desfasadas medio giro #footnote[No entraremos en demasiado detalle sobre cómo se generó o de dónde se tomó cada _dataset_ para mantener el foco en los resultados experimentales. Las rutinas para generar cada conjunto de datos se pueden leer en `fkdc/datasets.py`.].
+Para comenzar, consideramos el caso no trivial más sencillo con $d > d_MM$: $d=2, d_MM=1, K=2$, y exploramos tres curvas muestreadas con un poco de "ruido blanco" añadido: dos "lunas" --- semicírculos no superpuestos con sus centros en un extremo del semicírculo opuesto ---, dos círculos concéntricos y dos espirales con el mismo origen y sentido de rotación pero desfasadas medio giro #footnote[No entraremos en demasiado detalle sobre cómo se generó o de dónde se tomó cada dataset para mantener el foco en los resultados experimentales. Las rutinas para generar cada conjunto de datos se pueden leer en `fkdc/datasets.py`.].
 
 #v(-1em)
 
@@ -1748,7 +1748,7 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
       width: width,
       cuerpo,
       kind: image,
-      caption: flex-caption[_Scatterplot_, tabla resumen y _boxplots_ de $R^2$ y _accuracy_ en el _dataset_ #raw(dataset)][Resumen de resultados para #raw(dataset)],
+      caption: flex-caption[_Scatterplot_, tabla resumen y _boxplots_ de $R^2$ y _accuracy_ en el dataset #raw(dataset)][Resumen de resultados para #raw(dataset)],
     )
   } else {
     align(center, box(width: width, cuerpo))
@@ -2349,10 +2349,12 @@ Quedan, por último, tres ajustes de diseño experimental que no cambian las pre
 
 Cada ficha resume las #reps repeticiones de un dataset. A la izquierda, un gráfico de dispersión de las primeras dos (o tres) dimensiones y una tabla con la exactitud y el $R^2$ medianos por clasificador, ordenados por $R^2$: el mejor se resalta en verde y se atenúan aquellos cuya mediana de $R^2$ queda por debajo del primer cuartil de las repeticiones del mejor. A la derecha, los _boxplots_ de ambas métricas para todos los clasificadores, con los atenuados translúcidos, el eje vertical recortado por debajo del peor valor de #fkdc y una línea punteada en la mediana del mejor.
 
+#outline(title: none, target: selector(heading.where(level: 4)).after(<anexo-fichas>))
+
 // Fichas a todo el ancho y sin envoltorio `figure` (no se numeran ni aparecen en
 // el listado de figuras).
 #let ficha(dataset) = {
-  [#heading(numbering: none, level: 4, outlined: false, raw(dataset))#label("ficha-" + dataset)]
+  [#heading(numbering: none, level: 4, outlined: true, raw(dataset))#label("ficha-" + dataset)]
   highlights_figure(dataset, width: 100%, figura: false)
 }
 
@@ -2372,11 +2374,11 @@ Fichas de los datasets reentrenados con un estandarizador antepuesto a cada clas
 
 #heading(numbering: none, level: 1)[Nota sobre el uso de inteligencia artificial]
 
-Durante la redacción del grueso de la tesis, entre 2023 y 2025, no se utilizó ningún asistente basado en LLMs. Así, la selección y presentación del marco teórico, el diseño experimental, la implementación, los resultados y su interpretación es mía.  Durante el proceso de revisión de los resultados y edición en 2026, utilicé un asistente de inteligencia artificial (_Claude Opus_ versiones 4.6 a 5.1, de Anthropic). A la luz de las crecientes capacidades  de estos sistemas, corresponde declarar con precisión qué hizo y qué no.
+Durante la redacción del grueso de la tesis, entre 2023 y 2025, no se utilizó ningún asistente basado en LLM. Así, la selección y presentación del marco teórico, el diseño experimental, la implementación, los resultados y su interpretación son míos. Durante el proceso de revisión de los resultados y edición en 2026, utilicé un asistente de inteligencia artificial (_Claude Opus_ versiones 4.6 a 5.1, de Anthropic). A la luz de las crecientes capacidades de estos sistemas, corresponde declarar con precisión qué hizo y qué no.
 
-Entre febrero y junio de 2026, la asistencia fue estrictamente de forma: corrección ortográfica y gramatical, sugerencias de estilo, formato en Typst, generación de figuras a partir de los datos y resolución de tareas mecánicas. En la revisión final, en septiembre de 2026, el alcance de la asistencia fue mayor: el asistente revisó la corrección de varias definiciones, y redactó primeras versiones de pasajes expositivos (Brand 2002, la omisión de la densidad de volumen), propuso los experimentos de @sensibilidad-escala reemplazando afirmaciones previas más imprecisas sobre el (mal) rendimiento de #fkdc en `pinguinos` y `vino`, propuso recortes a lo que se afirmaba en las conclusiones y asistió en la correcta atribución de las líneas de trabajo futuro. 
+Entre febrero y junio de 2026, la asistencia fue estrictamente de forma: corrección ortográfica y gramatical, sugerencias de estilo, formato en Typst, generación de figuras a partir de los datos y resolución de tareas mecánicas. En la revisión final, en septiembre de 2026, el alcance de la asistencia fue mayor: el asistente revisó la corrección de varias definiciones, y redactó primeras versiones de pasajes expositivos (Brand 2002, la omisión de la densidad de volumen), propuso los experimentos de @sensibilidad-escala reemplazando afirmaciones previas más imprecisas sobre el (mal) rendimiento de #fkdc en `pinguinos` y `vino`, propuso recortes a lo que se afirmaba en las conclusiones y asistió en la correcta atribución de las líneas de trabajo futuro.
 
-En todos los casos yo, Gonzalo Barrera Borla, examiné, verifiqué y decidí qué adoptar --- muchas veces iterando "a mano" y "con IA" alternadamente sobre el miusmo fragmento --- hasta estar personalmente satisfecho con lo expuesto, siendo todavía capaz de defender el contenido a ciegas ante un jurado. El texto final es mi entera responsabilidad. La historia completa  está en los _commits_ del repositorio, marcados con la leyenda "Asistido por IA" cuando así corresponde.
+En todos los casos yo, Gonzalo Barrera Borla, examiné, verifiqué y decidí qué adoptar --- muchas veces iterando "a mano" y "con IA" alternadamente sobre el mismo fragmento --- hasta estar personalmente satisfecho con lo expuesto, siendo todavía capaz de defender el contenido a ciegas ante un jurado. El texto final es mi entera responsabilidad. La historia completa está en los _commits_ del repositorio, marcados con la leyenda "Asistido por IA" cuando así corresponde.
 
 // Firmas posteriores al cuerpo del trabajo y antes de la bibliografía,
 // según Anexo II de la Res. 2265/18. Flotan al pie de la próxima página
@@ -2384,7 +2386,7 @@ En todos los casos yo, Gonzalo Barrera Borla, examiné, verifiqué y decidí qu�
 // no generar una hoja exclusiva para ellas ni overlapearse con el texto.
 #place(bottom + center, scope: "parent", float: true, firmas-bloque())
 
-= Listados
+#heading(numbering: none)[Listados]
 
 #outline(target: figure.where(kind: image), title: "Listado de Figuras")
 #outline(target: figure.where(kind: table), title: "Listado de Tablas")

@@ -199,3 +199,68 @@ Convenciones: **Aplicado** lista solo ediciones de fondo (las erratas no se list
 
 **Estado**
 - Sin novedades.
+
+## Bloque 11 — Anexo A, nota sobre IA, listados y consistencia global
+
+**Aplicado**
+- Nota D: los encabezados de las fichas pasan a `outlined: true` y el anexo abre con `#outline(title: none, target: selector(heading.where(level: 4)).after(<anexo-fichas>))`. Compila y lista las 24 fichas en una columna limpia; el índice general (`depth: 2`) no cambia.
+- «= Listados» era el único encabezado numerado después del cuerpo (el anexo y la nota sobre IA no lo están) → `#heading(numbering: none)[Listados]`.
+- Nota sobre IA: «los resultados y su interpretación es mía» → «son míos»; «miusmo» → «mismo»; «LLMs» → «LLM»; espacios dobles.
+- Nota E (bibliografía, sin editar): 54 entradas en `references.bib`; tres de tipo `@misc`, las tres preprints de arXiv: `bengioConsciousnessPrior2019`, `buitinckAPIDesignMachine2013`, `mckenziePowerWeightedShortest2019`. Ninguna entrada de Wikipedia (los enlaces a Wikipedia del texto son `#link`, no citas). Todas las claves citadas existen (el documento compila sin avisos); 24 entradas del `.bib` no se citan, lo que es normal en una exportación de biblioteca completa de Zotero: Typst solo imprime las citadas.
+- Nota H, pasada global por `grep`: no quedan «Riemanniana/o» (salvo el título de la monografía de Muñoz), «sólo» (salvo la cita textual del sitio de la materia), «i.e.», «et al» sin punto, «no-» con guion, «$x-$palabra», ni «dataset» en cursiva (unificado en redonda: 6 casos). $p$ como dimensión ya no aparece; $D$ ambiente solo en la nota de autocodificadores con aviso; $n$ solo en los enunciados que reproducen a Pelletier, Devroye y Groisman et al., con aviso, y como índice de partición en la curva rectificable.
+- Notas F y G: el chequeo automático sobre todo el archivo no encuentra notas al pie que empiecen en minúscula o terminen sin punto, ni ecuaciones destacadas sin puntuación (salvo las dos que terminan en «$square$» y la lista de valores de grilla, que llevan coma).
+
+**Para decidir**
+- Nota sobre IA: dice «_Claude Opus_ versiones 4.6 a 5.1»; el asistente de la revisión de septiembre de 2026 fue Claude Fable 5.1 (y en esta pasada final, también). Corregir el nombre o dejar «Claude (Anthropic), versiones de 2026».
+- `CLAUDE.md` del repositorio sigue diciendo que la IA no formula hipótesis ni redacta pasajes; la nota sobre IA dice, a propósito, lo contrario. Conviene alinear el archivo con la nota antes de la entrega, ya que la nota remite al historial del repositorio.
+- Encabezados: «Vocabulario y Notación», «Variedades Diferenciables», «Probabilidad en Variedades», «Propuesta Original», «Regla de Parsimonia», «Pionono, Eslabones, Hélices y Hueveras» llevan mayúsculas internas; el resto («Algoritmos de referencia», «Trabajo futuro») no. La RAE pide solo la inicial. Es un cambio global de una línea por encabezado; no lo apliqué por ser una decisión de estilo.
+
+---
+
+# Para decidir — lista consolidada, por sección
+
+**Carátula e Introducción**
+1. Fecha «19 de mayo de 2026» en la carátula: verificar si esta versión la reemplaza.
+2. «Lugar de Trabajo», «Fecha de Defensa»: mayúsculas internas (RAE: solo la inicial), salvo que el formato lo fije la Facultad.
+3. La cita del sitio de la materia conserva «sólo» y «bienvenides!» sin «¡»: es textual, se dejó.
+
+**2. Preliminares**
+4. §2.1: la primera línea de «$hat(G)(x) = arg min_f EE(L(G, f(X)))$» podría ser la versión condicional; el paso siguiente ya lo hace explícito.
+5. §2.3.5: nota al pie sobre Gallese y Bengio, larga (ya en `revision-editorial.md`).
+6. §2.4, def. «variedad compacta»: «cerrada y acotada = compacta» es Heine–Borel; en variedades vale por Hopf–Rinow (no citado). Se dejó.
+7. §2.4, mismo párrafo: el «cilindro infinito» con «$<1$» es el sólido, no la superficie; lo afirmado sigue siendo cierto.
+8. §2.4, KDE en variedades: restricción «$h <= h_0 <= "iny" MM$» vs. teorema «$h_n < h_0 < "iny" MM$»; verificar cuál escribe Pelletier.
+9. §2.4, núcleo isotrópico: «$Y ~ K$» usa `~` en modo matemático; verificar en el PDF.
+10. §2.6.3: nota al pie sobre el grupo de Bengio/Rifai, larga.
+11. §2.6.5: la oración «Las curvas rectificables son importantes porque permiten definir…» es relleno.
+12. §2.6.5, Bijral et al.: cadena «$approx … prop … = …$» con constante implícita (ya señalado).
+13. §2.6.5, def. de $D_(Q, alpha)$: «define … una pseudométrica sobre $RR^d$»; verificar contra la Observación 2.4 de Groisman et al.
+
+**3. Propuesta y metodología**
+14. §3.5.1, verosimilitud: «$product Pr(hat(g)_i = g_i)$» es informal; alternativa «$hat(Pr)(G = g_i | X = x_i)$».
+15. §3.5.1: «Tanto #kdc como #fkdc y #fkn son clasificadores suaves» omite a #kn, que se evalúa por $R^2$ en todo el capítulo 4.
+16. §3.5.4, R1SD: «minimiza la pérdida» vs. el _score_ que se maximiza (ya señalado).
+
+**4. Resultados**
+17. §4.1: nota al pie que invita al _pull request_ (ya señalado).
+18. §4.2, `lunas_lo`: «$1/3 dot 50% + 2/3 dot 100% approx 86.7%$» presentado como derivación; «a ojo» (ya señalado).
+19. §4.2.4: las dos «N. del E.» son notas del autor; «Nota:» si el chiste no gusta.
+20. §4.2.5, `espirales_hi`: «#svc … apenas por encima de #fkdc» son 0,8575 vs. 0,8325.
+21. «Hete aquí» ×2 en tres páginas.
+22. §4.3, `helices_0`: «maximiza el _score_ en $(alpha=3, h = 0.000562)$» para $s = 1182$; el CSV da `max_score_alpha_test = 3.5` para esa semilla. Verificar qué columna describe el texto.
+23. §4.3, `eslabones_0`: «La semilla resultó adversa para ambos»: ¿quién es el otro?
+24. §4.3, hélices: «Todo algoritmo funciona OK» (coloquial).
+25. §4.3, `hueveras_0`, pie de tabla: «$Delta_(R^2) > 0$ en casi todos los casos» (hay uno con $-0.092$).
+26. §4.4.1: «34 observaciones» y rangos 13–230 / 2700–6300 no verificados contra el dataset.
+27. §4.4.3, `mnist`: no se explica por qué el «$1$-NN blando» le gana a #kn; una frase sobre el peso decreciente con la distancia cerraría el argumento (contenido nuevo, no agregado).
+28. §4.3.5: «_pooleadas_».
+
+**5. Conclusiones y Trabajo futuro**
+29. «#svc resulta casi imbatible»; «Ningún algoritmo evaluado fue universalmente óptimo» (ya señalados).
+30. «hay que tomar $h > "iny" MM$» está dentro de «Conjeturo que…»; «habría que» si se quiere reforzar.
+31. Género de $theta$: «estimar $theta$ en lugar de ignorarla» (la función) vs. «el factor omitido».
+
+**Anexo, nota sobre IA, repositorio**
+32. Nota sobre IA: «_Claude Opus_ versiones 4.6 a 5.1» → el modelo de septiembre de 2026 fue Claude Fable 5.1.
+33. `CLAUDE.md` contradice la nota sobre IA; alinear antes de la entrega.
+34. Mayúsculas internas en encabezados (decisión global de estilo).
