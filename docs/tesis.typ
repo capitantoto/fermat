@@ -382,11 +382,11 @@ En una época absolutamente obsesionada por la inteligencia artificial y los age
 
 A lo largo de esta monografía tomaremos como referencia enciclopédica el excelente _Elements of Statistical Learning_ @hastieElementsStatisticalLearning2009. En la medida de lo posible, basaremos nuestra notación en la suya.
 
-Denotaremos a las variables independientes #footnote[También conocidas como predictoras, o #emph[inputs]] con $X$. Si $X$ es un vector, accederemos a sus componentes con subíndices, $X_j$. En el contexto del problema de clasificación, la variable _cualitativa_ dependiente #footnote[También conocida como variable respuesta u #emph[output]] será $G$ (de "G"rupo). Usaremos letras mayúsculas como $X, G$ para referirnos a los aspectos genéricos de una variable. Los valores _observados_ se escribirán en minúscula, de manera que el i-ésimo valor observado de $X$ será $x_i$ (de nuevo, $x_i$ puede ser un escalar o un vector).
+Denotaremos a las variables independientes #footnote[También conocidas como predictoras, o #emph[inputs].] con $X$. Si $X$ es un vector, accederemos a sus componentes con subíndices, $X_j$. En el contexto del problema de clasificación, la variable _cualitativa_ dependiente #footnote[También conocida como variable respuesta u #emph[output].] será $G$ (de "G"rupo). Usaremos letras mayúsculas como $X, G$ para referirnos a los aspectos genéricos de una variable. Los valores _observados_ se escribirán en minúscula, de manera que el $i$-ésimo valor observado de $X$ será $x_i$ (de nuevo, $x_i$ puede ser un escalar o un vector).
 
-Representaremos a las matrices con letras mayúsculas en negrita, #XX; e.g.: el conjunto de $N$ vectores $p$-dimensionales ${x_i, i in {1, dots, N}}$ será representado por la matriz #XX de dimensión $N times p$.
+Representaremos a las matrices con letras mayúsculas en negrita, #XX; p. ej., el conjunto de $N$ vectores $d$-dimensionales ${x_i, i in {1, dots, N}}$ será representado por la matriz #XX de dimensión $N times d$.
 
-En general, los vectores _no_ estarán en negrita, excepto cuando tengan $N$ componentes; esta convención distingue el $p-$vector de #emph[inputs] para la i-ésima observación,  $x_i$, del $N-$vector $bu(x)_j$ con todas las observaciones de la variable $X_j$. Como todos los vectores se asumen vectores columna, la i-ésima fila de #XX es $x_i^T$, la traspuesta de la i-ésima observación $x_i$. El elemento de la $i$-ésima fila y $j$-ésima columna de la matriz #XX se notará $XX_(i,j)$.
+En general, los vectores _no_ estarán en negrita, excepto cuando tengan $N$ componentes; esta convención distingue el $d$-vector de #emph[inputs] para la $i$-ésima observación, $x_i$, del $N$-vector $bu(x)_j$ con todas las observaciones de la variable $X_j$. Como todos los vectores se asumen vectores columna, la $i$-ésima fila de #XX es $x_i^T$, la traspuesta de la $i$-ésima observación $x_i$. El elemento de la $i$-ésima fila y $j$-ésima columna de la matriz #XX se notará $XX_(i,j)$.
 
 
 A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
@@ -395,32 +395,27 @@ A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
 
 #set terms(separator: h(2em, weak: true), spacing: 1em)
 
-/ $RR$: los números reales; $RR_+$ denotará los reales estrictamente positivos.
-/ $RR^p$: el espacio euclídeo de dimensión $p$
 / $[k]$: el conjunto de los enteros positivos del $1$ hasta $k$, ${1, 2, 3, dots, k}$
-/ #MM: una variedad arbitraria #footnote[típicamente Riemanniana, compacta y sin frontera; oportunamente definiremos estos calificativos]
-/ $T_p MM$: el espacio tangente a #MM en el punto $p in MM$
-/ $dotp(u, v)$: producto interno entre $u, v in T_p MM$ (la métrica Riemanniana de #MM en $p$)
-/ $dg(p, q)$: distancia Riemanniana (geodésica) entre $p, q in MM$
-/ $exp_p$: el mapa exponencial $T_p MM -> MM$ alrededor de $p$
-/ $h$: la ventana ($h in RR$) en un estimador de densidad por núcleos en $RR$
-/ $bu(H)$: ídem $h$, para estimadores en $RR^p$ ($bu(H) in RR^(p times p)$)
-/ $K$: función núcleo $RR^d -> RR$
-/ $K_h, KH$: el núcleo $K$ reescalado por la ventana $h$ o por la matriz $bu(H)$
-/ $norm(dot)$: norma euclídea del elemento $x$
-/ $bu(X)$: una muestra de $N$ elementos $p$-dimensionales ($XX in RR^(N times p)$)
-/ $cal(D)_(f, beta)(x, y)$: distancia macroscópica de Fermat entre $x$ e $y$ inducida por la densidad $f$  con parámetro $beta >= 1$
-/ $D_(Q, alpha)(x, y)$: distancia muestral de Fermat entre $x$ e $y$ a través del conjunto $Q$ con parámetro $alpha >= 1$
+/ $EE(dot)$: la función esperanza #footnote[En general no hará falta definir el espacio muestral ni la $sigma$-álgebra correspondientes; de hacer falta se indicarán con subíndices.] <fn-pr>
+/ $Pr(dot)$: función de probabilidad @fn-pr
 / $ind(x)$: la función indicadora, $ind(x)=cases(1 "si" x "es verdadero", 0 "si no")$
-/ $Pr(dot)$: función de probabilidad #footnote[en general no hará falta definir el espacio muestral ni la $sigma-$álgebra correspondientes; de hacer falta se indicarán con subíndices] <fn-pr>
-/ $EE(dot)$: la función esperanza @fn-pr
-/ $iid$: independientes e idénticamente distribuidos #footnote[típicamente los elementos aleatorios de #XX son $iid$]
-/ $emptyset$: el conjunto vacío
+/ $RR$: los números reales; $RR_+$ denotará los reales estrictamente positivos
+/ $RR^d$: el espacio euclídeo de dimensión $d$
+/ $h$: la ventana ($h in RR_+$) en un estimador de densidad por núcleos en $RR$
+/ $K$: función núcleo $RR^d -> RR$; también, el número de clases del problema de clasificación (el contexto desambigua)
+/ $iid$: independientes e idénticamente distribuidos #footnote[Típicamente, los elementos aleatorios de #XX son $iid$.]
+/ $bu(H)$: ídem $h$, para estimadores en $RR^d$ ($bu(H) in RR^(d times d)$)
+/ $K_h, KH$: el núcleo $K$ reescalado por la ventana $h$ o por la matriz $bu(H)$
+/ #MM: una variedad arbitraria #footnote[Típicamente riemanniana, compacta y sin frontera; oportunamente definiremos estos calificativos.]
+/ $T_p MM$: el espacio tangente a #MM en el punto $p in MM$
+/ $dotp(u, v)$: producto interno entre $u, v in T_p MM$ (la métrica riemanniana de #MM en $p$)
+/ $norm(dot)$: norma euclídea de un vector de $RR^d$
+/ $exp_p$: el mapa exponencial $T_p MM -> MM$ alrededor de $p$
 / $overline(S)$: la _clausura_ del conjunto $S$ (la unión de $S$ y sus puntos límite); ocasionalmente, también el segmento entre dos puntos $overline(a b)$
-/ $lambda(x)$: la medida de Lebesgue de $x$ en $RR^d$
-/ $a |-> b$: la función que "toma" $a$ y "devuelve" $b$  en notación de flechas
-/ $y prop x$: "y es proporcional a x", existe una constante $c : y = c times x$
-/ "c.s.": "casi seguramente", re. convergencia de elementos aleatorios
+/ $dg(p, q)$: distancia riemanniana (geodésica) entre $p, q in MM$
+/ $bu(X)$: una muestra de $N$ elementos $d$-dimensionales ($XX in RR^(N times d)$)
+/ $cal(D)_(f, beta)(x, y)$: distancia macroscópica de Fermat entre $x$ e $y$ inducida por la densidad $f$ con parámetro $beta >= 1$
+/ $D_(Q, alpha)(x, y)$: distancia muestral de Fermat entre $x$ e $y$ a través del conjunto $Q$ con parámetro $alpha >= 1$
 
 #pagebreak()
 

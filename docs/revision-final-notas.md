@@ -15,3 +15,18 @@ Convenciones: **Aplicado** lista solo ediciones de fondo (las erratas no se list
 **Estado**
 - Locuciones latinas no adaptadas («a priori», «in toto», «alla») en cursiva.
 - Referencias a capítulos: `@preliminares`, `@propuesta-original`, `@resultados`, `@conclusiones` se leen «la Sección N»; sin cambios.
+
+## Bloque 2 — Vocabulario y Notación
+
+**Aplicado**
+- Nota B: entradas reordenadas por primera aparición en el cuerpo. Eliminadas (no aparecen o son triviales): `∅`, medida de Lebesgue `λ(x)`, notación de flecha `a ↦ b`, proporcionalidad `∝`, «c.s.». Conservada `overline(S)` por su doble uso (clausura y segmento).
+- Nota H: la sección usaba `p` como dimensión ambiente (siguiendo a Hastie) mientras el cuerpo usa `d`. Cambiado a `d` en las entradas (`RR^d`, `H ∈ RR^(d×d)`, `X ∈ RR^(N×d)`) y en la prosa: «el conjunto de $N$ vectores $p$-dimensionales … matriz #XX de dimensión $N times p$» → `d`; «el $p-$vector de inputs» → «el $d$-vector». Quedan dos `N times p` / `RR^p` en la sección de PCA y en la definición de Isomap (bloque 5), a resolver allí.
+- Entrada `K`: agregado «también, el número de clases del problema de clasificación (el contexto desambigua)», porque el cuerpo usa `K` con ambos significados sin aviso.
+- Erratas: notas al pie con mayúscula y punto (nota F); «Riemanniana» → «riemanniana» (adjetivo, minúscula); `$p-$vector`/`$N-$vector` (guion dentro del modo matemático se ve como signo menos) → `$d$-vector`, `$N$-vector`; «e.g.:» → «p. ej.,»; «norma euclídea del elemento $x$» (el símbolo era `‖·‖`) → «de un vector de $RR^d$»; `h ∈ RR` → `h ∈ RR_+`.
+
+**Para decidir**
+- Ninguno.
+
+**Estado**
+- Adjetivos derivados de nombre propio en minúscula: riemanniana, euclídea, gaussiana. El cuerpo tiene ~30 «Riemanniana/o» (bloque 4) y «Gaussianas» (bloque 5); se corrigen allí, sin tocar títulos en inglés.
+- Dimensión ambiente `d` en todo el texto; `p` solo si reproduce la notación de un paper con aviso.
