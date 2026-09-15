@@ -185,3 +185,17 @@ Convenciones: **Aplicado** lista solo ediciones de fondo (las erratas no se list
 
 **Estado**
 - $d = 784$ para `mnist` original, $96$ tras PCA.
+
+## Bloque 10 — Conclusiones y Trabajo futuro
+
+**Aplicado**
+- Ninguna edición de fondo. Conteos de las Conclusiones (7 / 5 / 2 por $R^2$; 20 datasets; cuatro referencias; 4000 tareas) coinciden con 4.1.
+- Nota H: «$n$ decreciente», «$ln n$» → $N$. Nota F (2 notas al pie). Erratas: «empatado» → «empatados»; «logística. en `digitos`» → «logística; en `digitos`»; «puediera» → «pudiera»; «pre-procesar», «pre-tratamiento» → soldados; «Macbook … 8GB RAM» → «MacBook … 8 GB de RAM»; punto antes de la nota al pie del último ítem, que ya cerraba con «;».
+
+**Para decidir**
+- Conclusiones: «#svc resulta casi imbatible» y «Ningún algoritmo evaluado fue universalmente óptimo» siguen como estaban (ya señalados en `revision-editorial.md`).
+- Trabajo futuro, segunda línea: «cuando es pequeño, hay que tomar $h > "iny" MM$» va dentro de la oración que empieza «Conjeturo que…», así que ya está marcada como conjetura; si se quiere reforzar, «habría que tomar».
+- Trabajo futuro, tercera línea: «estimar $theta$ en lugar de ignorarla»: $theta$ es «la función de densidad de volumen» (femenino) pero en 3.3 se dice «el factor omitido»; el género flota entre «la» y «el» según se piense en la función o en el factor. Sin cambios.
+
+**Estado**
+- Sin novedades.
