@@ -361,6 +361,9 @@ In high dimensions, the natural distance of the space in which the observations 
 // ### TOC y listados
 #outline(depth: 2)
 
+#outline(target: figure.where(kind: image), title: "Listado de Figuras")
+#outline(target: figure.where(kind: table), title: "Listado de Tablas")
+
 #pagebreak()
 #heading(numbering: none)[Introducción]
 
@@ -2343,13 +2346,29 @@ Quedan, por último, tres ajustes de diseño experimental que no cambian las pre
 - entrenar los clasificadores blandos directamente con el $R^2$ de McFadden como _score_ y calibrar #svc para poder compararlo por $R^2$, y
 - reemplazar el recuento de podios de @resultados por una comparación estadística más seria sobre los 20 datasets, que dé cuenta de los "empates" y de la variabilidad entre semillas.
 
+#heading(numbering: none, level: 1)[Nota sobre el uso de inteligencia artificial]
+
+Durante la redacción del grueso de la tesis, entre 2023 y 2025, no se utilizó ningún asistente basado en LLM. Así, la selección y presentación del marco teórico, el diseño experimental, la implementación, los resultados y su interpretación son míos. Durante el proceso de revisión de los resultados y edición en 2026, utilicé un asistente de inteligencia artificial (_Claude Opus_ versiones 4.6 a 5.1, de Anthropic). A la luz de las crecientes capacidades de estos sistemas, corresponde declarar con precisión qué hizo y qué no.
+
+Entre febrero y junio de 2026, la asistencia fue estrictamente de forma: corrección ortográfica y gramatical, sugerencias de estilo, formato en Typst, generación de figuras a partir de los datos y resolución de tareas mecánicas. En la revisión final, en septiembre de 2026, el alcance de la asistencia fue mayor: el asistente revisó la corrección de varias definiciones, y redactó primeras versiones de pasajes expositivos (Brand 2002, la omisión de la densidad de volumen), propuso los experimentos de @sensibilidad-escala reemplazando afirmaciones previas más imprecisas sobre el (mal) rendimiento de #fkdc en `pinguinos` y `vino`, propuso recortes a lo que se afirmaba en las conclusiones y asistió en la correcta atribución de las líneas de trabajo futuro.
+
+En todos los casos yo, Gonzalo Barrera Borla, examiné, verifiqué y decidí qué adoptar --- muchas veces iterando "a mano" y "con IA" alternadamente sobre el mismo fragmento --- hasta estar personalmente satisfecho con lo expuesto, siendo todavía capaz de defender el contenido a ciegas ante un jurado. El texto final es mi entera responsabilidad. La historia completa está en los _commits_ del repositorio, marcados con la leyenda "Asistido por IA" cuando así corresponde.
+
+// Firmas posteriores al cuerpo del trabajo y antes de la bibliografía,
+// según Anexo II de la Res. 2265/18. Flotan al pie de la próxima página
+// disponible (típicamente la primera de la Bibliografía), de modo de
+// no generar una hoja exclusiva para ellas ni overlapearse con el texto.
+#place(bottom + center, scope: "parent", float: true, firmas-bloque())
+
+#bibliography("references.bib", style: "harvard-cite-them-right")
+
 // Dos fichas por página: márgenes verticales reducidos en todo el anexo.
 #set page(margin: (top: 0.7in, bottom: 0.7in))
 #heading(numbering: none, level: 1)[Anexo: Fichas de resultados por dataset] <anexo-fichas>
 
 Cada ficha resume las #reps repeticiones de un dataset. A la izquierda, un gráfico de dispersión de las primeras dos (o tres) dimensiones y una tabla con la exactitud y el $R^2$ medianos por clasificador, ordenados por $R^2$: el mejor se resalta en verde y se atenúan aquellos cuya mediana de $R^2$ queda por debajo del primer cuartil de las repeticiones del mejor. A la derecha, los _boxplots_ de ambas métricas para todos los clasificadores, con los atenuados translúcidos, el eje vertical recortado por debajo del peor valor de #fkdc y una línea punteada en la mediana del mejor.
 
-#v(1em)
+#v(2em)
 
 #outline(title: none, indent: 0pt, target: selector(heading.where(level: 4)).after(<anexo-fichas>))
 
@@ -2373,23 +2392,3 @@ Cada ficha resume las #reps repeticiones de un dataset. A la izquierda, un gráf
 Fichas de los datasets reentrenados con un estandarizador antepuesto a cada clasificador (cf. @sensibilidad-escala).
 
 #for d in ("iris_std", "vino_std", "pinguinos_std", "digitos_std") { ficha(d) }
-
-#heading(numbering: none, level: 1)[Nota sobre el uso de inteligencia artificial]
-
-Durante la redacción del grueso de la tesis, entre 2023 y 2025, no se utilizó ningún asistente basado en LLM. Así, la selección y presentación del marco teórico, el diseño experimental, la implementación, los resultados y su interpretación son míos. Durante el proceso de revisión de los resultados y edición en 2026, utilicé un asistente de inteligencia artificial (_Claude Opus_ versiones 4.6 a 5.1, de Anthropic). A la luz de las crecientes capacidades de estos sistemas, corresponde declarar con precisión qué hizo y qué no.
-
-Entre febrero y junio de 2026, la asistencia fue estrictamente de forma: corrección ortográfica y gramatical, sugerencias de estilo, formato en Typst, generación de figuras a partir de los datos y resolución de tareas mecánicas. En la revisión final, en septiembre de 2026, el alcance de la asistencia fue mayor: el asistente revisó la corrección de varias definiciones, y redactó primeras versiones de pasajes expositivos (Brand 2002, la omisión de la densidad de volumen), propuso los experimentos de @sensibilidad-escala reemplazando afirmaciones previas más imprecisas sobre el (mal) rendimiento de #fkdc en `pinguinos` y `vino`, propuso recortes a lo que se afirmaba en las conclusiones y asistió en la correcta atribución de las líneas de trabajo futuro.
-
-En todos los casos yo, Gonzalo Barrera Borla, examiné, verifiqué y decidí qué adoptar --- muchas veces iterando "a mano" y "con IA" alternadamente sobre el mismo fragmento --- hasta estar personalmente satisfecho con lo expuesto, siendo todavía capaz de defender el contenido a ciegas ante un jurado. El texto final es mi entera responsabilidad. La historia completa está en los _commits_ del repositorio, marcados con la leyenda "Asistido por IA" cuando así corresponde.
-
-// Firmas posteriores al cuerpo del trabajo y antes de la bibliografía,
-// según Anexo II de la Res. 2265/18. Flotan al pie de la próxima página
-// disponible (típicamente la primera del Listado de Figuras), de modo de
-// no generar una hoja exclusiva para ellas ni overlapearse con el texto.
-#place(bottom + center, scope: "parent", float: true, firmas-bloque())
-
-#heading(numbering: none)[Listados]
-
-#outline(target: figure.where(kind: image), title: "Listado de Figuras")
-#outline(target: figure.where(kind: table), title: "Listado de Tablas")
-#bibliography("references.bib", style: "harvard-cite-them-right")
