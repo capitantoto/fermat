@@ -17,13 +17,18 @@ from matplotlib.figure import Figure
 from matplotlib.patches import PathPatch
 from sklearn.base import BaseEstimator
 from sklearn.datasets import make_circles
+from sklearn.decomposition import PCA
 from sklearn.exceptions import InconsistentVersionWarning
 from sklearn.inspection import DecisionBoundaryDisplay
 from sklearn.neighbors import KernelDensity
 from sklearn.utils import Bunch
 
 from fkdc import config, dir_cache, dir_raiz
-from fkdc.datasets import Dataset, datasets_reales, datasets_sinteticos
+from fkdc.datasets import (
+    Dataset,
+    datasets_reales,
+    datasets_sinteticos,
+)
 from fkdc.tarea import Tarea
 
 # TODO: Reentrenar con versión consistente para evitar este problema
@@ -41,11 +46,11 @@ infos = None
 info_basica = None
 
 # Paleta: clfs pareados comparten color base, variantes usan sombreado.
-# Familias: dc (fkdc/kdc), kn (fkn/kn), logr (lr/slr), gbt, gnb, svc
+# Familias: dc (fkdc/kdc), kn (fkn/kn), logr (lr), gbt, gnb, svc
 _familias_clf = {
     "dc": ["fkdc", "kdc"],
     "kn": ["fkn", "kn"],
-    "logr": ["lr", "slr"],
+    "logr": ["lr"],
     "gbt": ["gbt"],
     "gnb": ["gnb"],
     "svc": ["svc"],
@@ -58,7 +63,7 @@ paleta_predeterminada = {
     for familia, miembros in _familias_clf.items()
     for clf in miembros
 }
-_clfs_sombreados = {"kdc", "kn", "slr"}
+_clfs_sombreados = {"kdc", "kn"}
 
 
 def guardar_fig(fig: Figure, ruta: str | Path, **kw_guardar):
@@ -164,8 +169,12 @@ def boxplot(
     ax=None,
     paleta: dict | None = None,
     excluir_clfs: list[str] | None = None,
+    atenuar_clfs: list[str] | None = None,
 ):
-    """Diagrama de caja (boxplot) de una métrica por clasificador."""
+    """Diagrama de caja (boxplot) de una métrica por clasificador.
+
+    `atenuar_clfs` se dibujan translúcidos (cf. filas en gris de la tabla resumen).
+    """
     paleta = paleta or paleta_predeterminada
     info = _resolver_info_basica(info)
 
@@ -174,15 +183,43 @@ def boxplot(
     datos = info[info.dataset.eq(dataset)].sort_values("clf").dropna(subset=metrica)
     if excluir_clfs:
         datos = datos[~datos.clf.isin(excluir_clfs)]
+    # Piso del eje: el peor valor de fkdc (atípico o bigote), con margen. Los
+    # clasificadores que quedarían enteramente por debajo del piso no se dibujan,
+    # así las cajas visibles ocupan todo el ancho.
+    valores_fkdc = datos.loc[datos.clf.eq("fkdc"), metrica]
+    piso = None
+    if not valores_fkdc.empty:
+        margen = 0.06 * (datos[metrica].max() - valores_fkdc.min())
+        piso = valores_fkdc.min() - margen
+        maximos = datos.groupby("clf")[metrica].max()
+        # Siempre queda visible al menos una referencia ajena a la familia K: si el
+        # recorte las oculta a todas, se baja el piso hasta el bigote inferior de la
+        # mejor de ellas (por mediana).
+        familia_k = {"fkdc", "kdc", "fkn", "kn"}
+        rivales = datos[~datos.clf.isin(familia_k)]
+        if not rivales.empty and (maximos[rivales.clf.unique()] < piso).all():
+            mejor_rival = rivales.groupby("clf")[metrica].median().idxmax()
+            v = rivales.loc[rivales.clf.eq(mejor_rival), metrica]
+            q1, q3 = v.quantile([0.25, 0.75])
+            bigote_inferior = v[v >= q1 - 1.5 * (q3 - q1)].min()
+            piso = bigote_inferior - margen
+        datos = datos[~datos.clf.isin(maximos[maximos < piso].index)]
     sns.boxplot(
         datos, hue="clf", y=metrica, gap=0.2, ax=ax, palette=paleta, saturation=1.0
     )
     aplicar_sombreado(ax)
+    if atenuar_clfs:
+        atenuar_cajas(ax, atenuar_clfs)
+    # Leyenda fuera del área de datos: nunca tapa una caja ni un valor atípico
+    sns.move_legend(ax, "upper left", bbox_to_anchor=(1.01, 1), frameon=False)
+    ax.set_ylabel({"r2": "$R^2$", "accuracy": "exactitud"}.get(metrica, metrica))
     ax.axhline(
         datos.groupby("clf")[metrica].median().max(),
         linestyle="dotted",
         color="gray",
     )
+    if piso is not None:
+        ax.set_ylim(bottom=piso)
 
 
 def aplicar_sombreado(ax, clfs_sombreados=None):
@@ -199,6 +236,27 @@ def aplicar_sombreado(ax, clfs_sombreados=None):
             if i < len(parches_caja):
                 parches_caja[i].set_hatch("///")
             handles[i].set_hatch("///")
+
+
+def atenuar_cajas(ax, clfs, alpha=0.3):
+    """Vuelve translúcidas las cajas de `clfs`, con sus líneas y entrada en la leyenda.
+
+    Debe llamarse antes de agregar otras líneas al eje: seaborn dibuja, por caja y
+    en orden de leyenda, 6 `Line2D` (bigotes, topes, mediana y valores atípicos).
+    """
+    leyenda = ax.get_legend()
+    if leyenda is None:
+        return
+    etiquetas = [t.get_text() for t in leyenda.get_texts()]
+    parches_caja = [p for p in ax.patches if isinstance(p, PathPatch)]
+    lineas_por_caja = len(ax.lines) // max(len(parches_caja), 1)
+    for i, etiqueta in enumerate(etiquetas):
+        if etiqueta in clfs:
+            if i < len(parches_caja):
+                parches_caja[i].set_alpha(alpha)
+            for linea in ax.lines[i * lineas_por_caja : (i + 1) * lineas_por_caja]:
+                linea.set_alpha(alpha)
+            leyenda.legend_handles[i].set_alpha(alpha)
 
 
 def frontera_decision(
@@ -405,6 +463,57 @@ def parametros_comparados(
     return params_comparados
 
 
+def dispersion_r2(dataset, sufijo="kdc", info=None, ax=None):
+    """R² por semilla: clasificador con Fermat (eje y) vs. su par euclídeo (eje x)."""
+    info = _resolver_info_basica(info)
+    ax = ax or plt.gca()
+    col_x, col_y = sufijo, f"f{sufijo}"
+    datos = (
+        info[info.dataset.eq(dataset) & info.clf.isin([col_x, col_y])]
+        .set_index(["semilla", "clf"])["r2"]
+        .unstack()
+    )
+    datos.plot(kind="scatter", y=col_y, x=col_x, ax=ax)
+    rango = datos.max().max() - datos.min().min()
+    x_izq = datos.min()[col_x] - 0.1 * rango
+    ax.set_xlim(x_izq)
+    ax.set_ylim(datos.min()[col_y] - 0.1 * rango)
+    ax.axline((x_izq, x_izq), slope=1, color="gray", linestyle="dotted")
+    ax.set_title(f"$R^2$ por semilla para {col_y} y {col_x} en `{dataset}`")
+    return ax
+
+
+def dumbbell_r2(
+    medianas, antes, despues, ax=None, umbral=0.05, etiqueta="$R^2$ mediano"
+):
+    """Dumbbell de R² mediano por clasificador entre dos condiciones.
+
+    `medianas` tiene una fila por clasificador y columnas `antes` (punto lleno)
+    y `despues` (punto vacío). Se omiten los clasificadores con R² ~ 0 en ambas,
+    se ordenan por `antes` y las variantes sin Fermat (y s-LR) llevan segmento
+    discontinuo, como el sombreado de los boxplots.
+    """
+    ax = ax or plt.gca()
+    signif = medianas[
+        (medianas[antes].abs() > umbral) | (medianas[despues].abs() > umbral)
+    ]
+    signif = signif.sort_values(antes)
+    for yi, (clf, fila) in enumerate(signif.iterrows()):
+        color = paleta_predeterminada.get(clf, "gray")
+        ls = "dashed" if clf in _clfs_sombreados else "solid"
+        ax.plot(
+            [fila[despues], fila[antes]], [yi, yi], color=color, lw=4, ls=ls, zorder=1
+        )
+        ax.scatter(fila[antes], yi, s=110, color=color, edgecolor=color, zorder=2)
+        ax.scatter(
+            fila[despues], yi, s=110, color="white", edgecolor=color, lw=2.5, zorder=2
+        )
+    ax.set_yticks(range(len(signif)))
+    ax.set_yticklabels(signif.index)
+    ax.set_xlabel(etiqueta)
+    return ax
+
+
 def graficar_fkn_kn_score_vs_n_vecinos(dataset, semilla, ax, infos=None):
     """Grafica mean_test_score vs n_neighbors para fkn y kn."""
     infos = infos or globals().get("infos") or cargar_infos(config.dir_ejecucion)
@@ -425,8 +534,14 @@ def graficar_fkn_kn_score_vs_n_vecinos(dataset, semilla, ax, infos=None):
         .groupby("param_n_neighbors")
         .mean_test_score.max()
     ).rename("kn")
-    pd.concat([puntaje_kn, puntaje_fkn], axis=1).plot(ax=ax)
+    # Marcadores en los valores de k efectivamente evaluados en la grilla
+    pd.concat([puntaje_kn, puntaje_fkn], axis=1).plot(ax=ax, marker="o", markersize=4)
     ax.set_xscale("log")
+    ticks = [1, 2, 5, 10, 20, 50, 100, 200, 500]
+    ax.set_xticks(ticks, labels=[str(t) for t in ticks], minor=False)
+    ax.set_xticks([], minor=True)
+    ax.set_xlabel("número de vecinos $k$")
+    ax.set_ylabel("mejor _score_ medio en CV".replace("_score_", "score"))
     return ax
 
 
@@ -449,7 +564,15 @@ if __name__ == "__main__":
     # --- Cargar datos (con caché) ---
     ruta_cache = dir_cache / "infos_bi.pkl"
     ruta_cache.parent.mkdir(exist_ok=True)
-    if ruta_cache.exists():
+    # El caché se rehace si hay infos más nuevos que él o si cambió su cantidad
+    rutas_infos = list(dir_ejecucion.glob("*.pkl"))
+    cache_vigente = ruta_cache.exists() and not any(
+        p.stat().st_mtime > ruta_cache.stat().st_mtime for p in rutas_infos
+    )
+    if cache_vigente:
+        with open(ruta_cache, "rb") as fp:
+            cache_vigente = len(pickle.load(fp)[0]) == len(rutas_infos)
+    if cache_vigente:
         logger.info(f"Cargando infos+bi desde caché: {ruta_cache}")
         with open(ruta_cache, "rb") as fp:
             infos, info_basica = pickle.load(fp)
@@ -466,7 +589,9 @@ if __name__ == "__main__":
 
     semillas = config._obtener_semillas()
     semilla_graficos = semillas[0]
-    bi = info_basica  # alias corto
+    # s-LR (regresión logística con escalador) se descartó del análisis: el efecto
+    # de la escala se estudia con las variantes `_std` de cada dataset.
+    bi = info_basica[info_basica.clf.ne("slr")]  # alias corto
 
     # Datasets curados usados en la tesis
     todos_datasets = [
@@ -480,7 +605,21 @@ if __name__ == "__main__":
         "helices_0",
         "pionono_0",
         "hueveras_0",
+        # Otros datasets (§ Otros datasets): 15D, multiclase y alta dimensión
+        "pionono_12",
+        "eslabones_12",
+        "helices_12",
+        "hueveras_12",
+        "iris",
+        "vino",
+        "pinguinos",
+        "anteojos",
+        "digitos",
+        "mnist",
     ]
+    datasets_alta_dim = {"digitos", "mnist"}
+    # Fichas (scatter, highlights, boxplots) de todo dataset con resultados
+    datasets_con_resultados = sorted(bi.dataset.unique())
 
     # =====================================================================
     # §2 Preliminares: figuras independientes
@@ -508,6 +647,8 @@ if __name__ == "__main__":
     )
     fig, ax = plt.subplots(figsize=(12, 4), layout="tight")
     df_maldicion.set_index(["d", "h"]).unstack()["h**d"].plot(ax=ax)
+    ax.set_xlabel("dimensión $d$")
+    ax.set_ylabel("proporción esperada")
     guardar_fig(fig, dir_imagenes / "curse-dim.svg")
 
     # comparación de kernels (gaussiano vs tophat) para seminario-modesto
@@ -515,7 +656,7 @@ if __name__ == "__main__":
     xs = np.sort(rng.standard_normal(200)).reshape(-1, 1)
     grilla = np.arange(-5, 5, 0.01).reshape(-1, 1)
     fig, axs = plt.subplots(1, 2, figsize=(16, 6), sharey=True, layout="tight")
-    for kernel, ax in zip(["gaussian", "tophat"], axs, strict=False):
+    for kernel, ax in zip(["gaussian", "tophat"], axs, strict=True):
         ax.plot(
             grilla,
             sp.stats.norm().pdf(grilla),
@@ -534,18 +675,49 @@ if __name__ == "__main__":
     # =====================================================================
     # Gráficos de dispersión (adaptativos por dimensionalidad)
     # =====================================================================
-    for dataset in todos_datasets:
-        ruta_ds = dir_datasets / f"{dataset}-{semilla_graficos}.pkl"
-        with open(ruta_ds, "rb") as fp:
+    for dataset in datasets_con_resultados:
+        # Los datasets sintéticos se regeneran por semilla; los reales son fijos
+        sufijo_semilla = (
+            f"-{semilla_graficos}" if dataset in datasets_sinteticos else ""
+        )
+        # Las variantes `_std` comparten los datos crudos con su dataset base
+        base = dataset.removesuffix("_std")
+        with open(dir_datasets / f"{base}{sufijo_semilla}.pkl", "rb") as fp:
             ds = pickle.load(fp)
-        if ds.p == 3:
+        if base in datasets_alta_dim:
+            # Proyección PCA: las dos primeras coordenadas no son informativas
+            # (p. ej. el píxel superior izquierdo de `digitos` es siempre 0)
+            fig, ax = plt.subplots(layout="tight")
+            pca = PCA(n_components=2, svd_solver="full")  # determinista
+            X_pca = pca.fit_transform(ds.X)
+            sns.scatterplot(
+                x=X_pca[:, 0],
+                y=X_pca[:, 1],
+                hue=ds.y,
+                ax=ax,
+                s=15,
+                alpha=0.7,
+                palette="tab10",
+                legend="full",
+            )
+            ax.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0]:.0%} var.)")
+            ax.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1]:.0%} var.)")
+            ax.legend(
+                title="Clase",
+                bbox_to_anchor=(1.02, 1),
+                loc="upper left",
+                fontsize=7,
+                title_fontsize=8,
+            )
+        elif ds.p == 3:
             # Datasets 3D: scatter_3d por defecto
             fig, ax = plt.subplots(layout="tight", subplot_kw={"projection": "3d"})
             ds.scatter_3d(ax=ax)
         else:
-            # Datasets 2D: dispersión estándar
+            # Datasets 2D (o de más dimensiones, primeras dos coordenadas)
             fig, ax = plt.subplots(layout="tight")
             ds.scatter(ax=ax)
+        ax.set_title(dataset, family="monospace")
         guardar_fig(fig, dir_imagenes / f"{dataset}-scatter.svg")
 
     # hélices pairplot
@@ -554,16 +726,123 @@ if __name__ == "__main__":
     grafico = ds_helices.pairplot(
         dims=[2, 1, 0], height=2, plot_kws={"alpha": 0.5, "s": 5}, corner=True
     )
+    # Leyenda superpuesta en el triángulo superior vacío del pairplot (corner=True)
+    sns.move_legend(grafico, "upper right", bbox_to_anchor=(0.95, 0.95), title="Clase")
+    grafico.figure.tight_layout()
     guardar_fig(grafico.figure, dir_imagenes / "helices-pairplot.svg")
+
+    # pingüinos pairplot (mismo formato que el de hélices)
+    with open(dir_datasets / "pinguinos.pkl", "rb") as fp:
+        ds_pinguinos = pickle.load(fp)
+    grafico = ds_pinguinos.pairplot(
+        height=2, plot_kws={"alpha": 0.5, "s": 5}, corner=True
+    )
+    sns.move_legend(grafico, "upper right", bbox_to_anchor=(0.95, 0.95), title="Clase")
+    grafico.figure.tight_layout()
+    guardar_fig(grafico.figure, dir_imagenes / "pinguinos-pairplot.svg")
+
+    # =====================================================================
+    # Hiperparámetros elegidos (R1SD) y maximizadores del score de CV para la
+    # familia K en digitos y mnist: CSV por dataset con conteos por semilla
+    # =====================================================================
+    for dataset in ("digitos", "mnist"):
+        filas = []
+        for (ds_, _, clf, *_), info in infos.items():
+            if ds_ != dataset or clf not in ("fkdc", "kdc", "fkn", "kn"):
+                continue
+            busqueda = info[clf]["busqueda"]
+            params = busqueda.best_estimator_.get_params()
+            cv_res = pd.DataFrame(busqueda.cv_results_)
+            mejor_cv = cv_res.loc[cv_res.mean_test_score.idxmax()]
+            filas.append(
+                {
+                    "clf": clf,
+                    "alpha_1sd": params.get("alpha", 1.0),
+                    "param_1sd": params.get("bandwidth", params.get("n_neighbors")),
+                    "alpha_star": mejor_cv.get("param_alpha", 1.0),
+                }
+            )
+        conteos = (
+            pd.DataFrame(filas)
+            .groupby(["clf", "alpha_1sd", "param_1sd", "alpha_star"])
+            .size()
+            .rename("semillas")
+            .reset_index()
+            .sort_values(["clf", "semillas"], ascending=[True, False])
+        )
+        ruta = dir_datos / f"{dataset}-hiperparametros-K.csv"
+        conteos.to_csv(ruta, index=False)
+        logger.info(f"Escribió {ruta}")
+
+    # =====================================================================
+    # Escala de las distancias en los datasets orgánicos (mediana al vecino más
+    # cercano y mediana pareada) para leer los anchos de banda en su contexto
+    # =====================================================================
+    from scipy.spatial.distance import pdist, squareform
+
+    filas = []
+    datasets_cuerpo = ["iris", "vino", "pinguinos", "digitos", "mnist"]
+    for dataset in datasets_cuerpo:
+        sufijo_semilla = (
+            f"-{semilla_graficos}" if dataset in datasets_sinteticos else ""
+        )
+        with open(dir_datasets / f"{dataset}{sufijo_semilla}.pkl", "rb") as fp:
+            X = pickle.load(fp).X.astype(float)
+        if X.shape[0] > config.n_muestras:
+            rng = np.random.default_rng(semilla_graficos)
+            X = X[rng.choice(X.shape[0], config.n_muestras, replace=False)]
+        distancias = squareform(pdist(X))
+        np.fill_diagonal(distancias, np.inf)
+        vecino = np.median(distancias.min(axis=1))
+        pareada = np.median(distancias[np.isfinite(distancias)])
+        filas.append(
+            {
+                "dataset": dataset,
+                "d": X.shape[1],
+                "nn_mediana": round(vecino, 1),
+                "pareada_mediana": round(pareada, 1),
+                "cociente": round(pareada / vecino, 1),
+            }
+        )
+    ruta = dir_datos / "escala-distancias.csv"
+    pd.DataFrame(filas).to_csv(ruta, index=False)
+    logger.info(f"Escribió {ruta}")
+
+    # =====================================================================
+    # Ejemplos de dígitos manuscritos: digitos (8×8) y mnist (28×28), 2 por clase
+    # =====================================================================
+    from sklearn.datasets import fetch_openml, load_digits
+
+    rng = np.random.default_rng(semilla_graficos)
+    X_dig, y_dig = load_digits(return_X_y=True)
+    X_mn, y_mn = fetch_openml("mnist_784", version=1, return_X_y=True, as_frame=False)
+    y_mn = y_mn.astype(int)
+    fuentes = [
+        ("digitos ($8 times 8$)", X_dig, y_dig, 8),
+        ("mnist ($28 times 28$)", X_mn, y_mn, 28),
+    ]
+    fig, axs = plt.subplots(4, 10, figsize=(10, 4.4), layout="constrained")
+    for bloque, (titulo, X, y, lado) in enumerate(fuentes):
+        for clase in range(10):
+            idx = rng.choice(np.flatnonzero(y == clase), size=2, replace=False)
+            for fila, i in enumerate(idx):
+                ax = axs[2 * bloque + fila, clase]
+                ax.imshow(X[i].reshape(lado, lado), cmap="gray_r")
+                ax.set_xticks([])
+                ax.set_yticks([])
+                if fila == 0 and bloque == 0:
+                    ax.set_title(str(clase))
+        axs[2 * bloque, 0].set_ylabel(
+            titulo.split(" ")[0], rotation=0, ha="right", va="center", labelpad=8
+        )
+    guardar_fig(fig, dir_imagenes / "digitos-mnist-ejemplos.png", dpi=200)
 
     # =====================================================================
     # Destacados JSON + Diagramas de caja
     # =====================================================================
     destacar_por = "r2"
-    for dataset in todos_datasets:
+    for dataset in datasets_con_resultados:
         hl = get_highlights(dataset, por=destacar_por, info=bi)
-        excluidos = hl.excluded
-
         # Guardar destacados JSON
         hl_json = dict(hl)
         hl_json["summary"] = hl.summary.round(4).to_csv()
@@ -572,26 +851,63 @@ if __name__ == "__main__":
             json.dump(hl_json, fp, indent=4)
         logger.info(f"Escribió {dir_datos / nombre_archivo}")
 
-        # Diagramas de caja (R² y accuracy), excluyendo clasificadores no competitivos
+        # Diagramas de caja (R² y accuracy) con todos los clasificadores; los que la
+        # tabla resumen muestra en gris (`hl.bad`) van translúcidos
         for metrica in ["r2", "accuracy"]:
             fig, ax = plt.subplots(layout="tight")
-            boxplot(dataset, metrica, info=bi, ax=ax, excluir_clfs=excluidos)
+            boxplot(dataset, metrica, info=bi, ax=ax, atenuar_clfs=hl.bad)
             guardar_fig(fig, dir_imagenes / f"{dataset}-{metrica}-boxplot.svg")
+
+    # =====================================================================
+    # CSVs crudo vs. estandarizado: medianas por clasificador, para cada dataset
+    # base que ya tenga corridas de su variante `_std` (aun parciales)
+    # =====================================================================
+    for base in config.bases_estandarizar:
+        if f"{base}_std" not in datasets_con_resultados:
+            continue
+        sub = bi[bi.dataset.isin([base, f"{base}_std"])]
+        med = sub.groupby(["clf", "dataset"])[["r2", "accuracy"]].median().unstack()
+        tabla = pd.DataFrame(
+            {
+                "clf": med.index,
+                "r2_crudo": med[("r2", base)].values,
+                "r2_std": med[("r2", f"{base}_std")].values,
+                "acc_crudo": med[("accuracy", base)].values,
+                "acc_std": med[("accuracy", f"{base}_std")].values,
+            }
+        ).sort_values("r2_crudo", ascending=False)
+        ruta = dir_datos / f"{base}-crudo-vs-std.csv"
+        tabla.round(3).to_csv(ruta, index=False)
+        logger.info(f"Escribió {ruta} ({sub.groupby('dataset').size().to_dict()})")
+        # Dumbbells crudo (lleno) → estandarizado (vacío), un panel por métrica
+        for metrica, etiqueta in [
+            ("r2", "$R^2$ mediano"),
+            ("accuracy", "exactitud mediana"),
+        ]:
+            fig, ax = plt.subplots(layout="tight")
+            dumbbell_r2(med[metrica], base, f"{base}_std", ax=ax, etiqueta=etiqueta)
+            guardar_fig(fig, dir_imagenes / f"{base}-crudo-vs-std-{metrica}.svg")
 
     # =====================================================================
     # CSVs "mejor-clf-por-dataset" (agregado sobre TODOS los datasets en bi)
     # =====================================================================
+    # Solo los 20 datasets del cuerpo: las variantes `_std` se analizan aparte
+    bi_tesis = bi[~bi.dataset.str.endswith("_std")]
     for metrica in ["r2", "accuracy"]:
-        mejor = (
-            bi.dropna(subset=metrica)
+        # Mediana por (dataset, clf), redondeada como en las tablas resumen; todo
+        # clasificador que alcanza el máximo de su dataset cuenta (los empates se
+        # cuentan una vez por clasificador, así el total puede superar los 20).
+        medianas = (
+            bi_tesis.dropna(subset=metrica)
             .groupby(["dataset", "clf"])[metrica]
             .median()
-            .sort_values()
-            .reset_index("clf")
-            .groupby("dataset")
-            .last()
-            .clf.reset_index()
-            .groupby("clf")
+            .round(4)
+            .reset_index()
+        )
+        maximos = medianas.groupby("dataset")[metrica].transform("max")
+        mejor = (
+            medianas[medianas[metrica].eq(maximos)]
+            .groupby("clf")["dataset"]
             .agg([len, ", ".join])
         )
         mejor.columns = ["cant", "datasets"]
@@ -609,7 +925,6 @@ if __name__ == "__main__":
         "kn",
         "fkn",
         "gbt",
-        "slr",
         "lr",
         "gnb",
     )
@@ -630,42 +945,19 @@ if __name__ == "__main__":
         guardar_fig(fig, dir_imagenes / f"{dataset}-{clf}-decision_boundary.svg")
 
     # =====================================================================
-    # Gráficos de dispersión R²: fkdc vs kdc, fkn vs kn (curvas 2D)
+    # Gráficos de dispersión R² por semilla: variante Fermat vs. euclídea
     # =====================================================================
-    for dataset, sufijo in product(
-        ("lunas_lo", "circulos_lo", "espirales_lo"), ("kn", "kdc")
-    ):
-        col_x, col_y = sufijo, f"f{sufijo}"
-        datos = (
-            bi[bi.dataset.eq(dataset) & bi.clf.str.endswith(sufijo)]
-            .set_index(["semilla", "clf"])["r2"]
-            .unstack()
-        )
+    pares_r2 = [
+        *product(("lunas_lo", "circulos_lo", "espirales_lo"), ("kn", "kdc")),
+        ("helices_0", "kdc"),
+        *product(
+            ("iris", "vino", "pinguinos", "anteojos", "digitos", "mnist"), ("kdc",)
+        ),
+    ]
+    for dataset, sufijo in pares_r2:
         fig, ax = plt.subplots(layout="tight")
-        datos.plot(kind="scatter", y=col_y, x=col_x, ax=ax)
-        rango = datos.max().max() - datos.min().min()
-        x_izq = datos.min()[col_x] - 0.1 * rango
-        ax.set_xlim(x_izq)
-        ax.set_ylim(datos.min()[col_y] - 0.1 * rango)
-        ax.axline((x_izq, x_izq), slope=1, color="gray", linestyle="dotted")
-        ax.set_title(f"$R^2$ por semilla para {col_y} y {col_x} en `{dataset}`")
-        guardar_fig(fig, dir_imagenes / f"{dataset}-{col_x}-{col_y}-r2-scatter.svg")
-
-    # Dispersión R²: fkdc vs kdc para helices_0
-    datos_disp = (
-        bi[bi.dataset.eq("helices_0") & bi.clf.isin(["fkdc", "kdc"])]
-        .set_index(["semilla", "clf"])["r2"]
-        .unstack()
-    )
-    fig, ax = plt.subplots(layout="tight")
-    datos_disp.plot(kind="scatter", y="fkdc", x="kdc", ax=ax)
-    rango = datos_disp.max().max() - datos_disp.min().min()
-    x_izq = datos_disp.min()["kdc"] - 0.1 * rango
-    ax.set_xlim(x_izq)
-    ax.set_ylim(datos_disp.min()["fkdc"] - 0.1 * rango)
-    ax.axline((x_izq, x_izq), slope=1, color="gray", linestyle="dotted")
-    ax.set_title("$R^2$ por semilla para fkdc y kdc en `helices_0`")
-    guardar_fig(fig, dir_imagenes / "helices_0-r2-fkdc-vs-kdc.svg")
+        dispersion_r2(dataset, sufijo, info=bi, ax=ax)
+        guardar_fig(fig, dir_imagenes / f"{dataset}-{sufijo}-f{sufijo}-r2-scatter.svg")
 
     # Dispersión R²: fkn vs kn para helices_0 y eslabones_0 (seminario-modesto)
     for dataset, nombre_archivo in [
@@ -759,7 +1051,7 @@ if __name__ == "__main__":
         names=("dataset", "seed", "clf", "main_seed", "scoring", "run"),
     )
     df_lunas.xs("fkdc", level="clf").query("rank_test_score == 1")[
-        ["param_alpha", "param_bandwidth"]
+        ["param_alpha"]
     ].round(4).value_counts().sort_index().reset_index().rename(
         columns=lambda s: s.replace("param_", "")
     ).to_csv(dir_datos / f"{dataset}-best_test_params.csv", index=False)
@@ -788,25 +1080,30 @@ if __name__ == "__main__":
     guardar_fig(fig, dir_imagenes / f"{dataset}-[f]kdc-delta_r2-vs-delta_h.svg")
 
     # =====================================================================
-    # Caída de R² (lo vs hi)
+    # Caída de R² mediano: dumbbells por figura (bajo vs. alto ruido; 3D vs. 15D)
     # =====================================================================
-    bi2d = bi[bi.dataset.str.endswith(("_lo", "_hi"))].copy()
-    bi2d[["figura", "ruido"]] = bi2d.dataset.str.split("_", expand=True)
-    caidas = (
-        bi2d.groupby(["figura", "ruido", "clf"])[["r2", "accuracy"]]
-        .mean()
-        .unstack("ruido")
-    )
-    # Excluir clasificadores que no se diferencian de cero en ningún nivel de ruido
-    for figura in bi2d.figura.unique():
-        caidas_fig = caidas.xs(figura)["r2"][["lo", "hi"]]
-        # Mantener solo clfs con R² significativo en al menos un nivel de ruido
-        lo_ok = caidas_fig["lo"].abs() > 0.05
-        hi_ok = caidas_fig["hi"].abs() > 0.05
-        significativos = caidas_fig[lo_ok | hi_ok]
+    def medianas_por_variante(sufijos):
+        sub = bi[bi.dataset.str.endswith(tuple(f"_{s}" for s in sufijos))].copy()
+        sub[["figura", "variante"]] = sub.dataset.str.rsplit("_", n=1, expand=True)
+        return (
+            sub.groupby(["figura", "variante", "clf"])["r2"]
+            .median()
+            .unstack("variante")
+        )
+
+    caidas_ruido = medianas_por_variante(("lo", "hi"))
+    for figura in ("lunas", "circulos", "espirales"):
         fig, ax = plt.subplots(layout="tight")
-        significativos.sort_values("hi", ascending=False).plot(kind="bar", ax=ax)
+        dumbbell_r2(caidas_ruido.xs(figura), "lo", "hi", ax=ax)
+        ax.set_title(figura)
         guardar_fig(fig, dir_imagenes / f"{figura}-caida_r2.svg")
+
+    caidas_15d = medianas_por_variante(("0", "12"))
+    for figura in ("pionono", "eslabones", "helices", "hueveras"):
+        fig, ax = plt.subplots(layout="tight")
+        dumbbell_r2(caidas_15d.xs(figura), "0", "12", ax=ax)
+        ax.set_title(figura)
+        guardar_fig(fig, dir_imagenes / f"{figura}-caida_r2-15d.svg")
 
     # =====================================================================
     # helices_0: diagrama de caja R² ampliado (solo clasificadores kernel)
@@ -869,8 +1166,43 @@ if __name__ == "__main__":
     # CSVs de parámetros comparados
     # =====================================================================
     parametros_comparados("helices_0", "kdc", infos=infos, bi=bi)
-    parametros_comparados("hueveras_0", "kdc", infos=infos, bi=bi)
-    parametros_comparados("hueveras_0", "kn", infos=infos, bi=bi)
+    parametros_comparados("pionono_0", "kdc", infos=infos, bi=bi)
+    hue_kdc = parametros_comparados("hueveras_0", "kdc", infos=infos, bi=bi)
+    hue_kn = parametros_comparados("hueveras_0", "kn", infos=infos, bi=bi)
+
+    # Filtro: solo casos con k_fkn = k_kn, columnas delta_r2, k, alpha_fkn
+    # delta_r2 vive en MultiIndex como ('', 'delta_r2'); xs lo extrae por second-level.
+    mismo_k = hue_kn[hue_kn[("fkn", "n_neighbors")] == hue_kn[("kn", "n_neighbors")]]
+    pd.DataFrame(
+        {
+            "delta_r2": mismo_k.xs("delta_r2", level=1, axis=1).iloc[:, 0],
+            "k": mismo_k[("fkn", "n_neighbors")].astype(int),
+            "alpha_fkn": mismo_k[("fkn", "alpha")],
+        }
+    ).round(3).to_csv(
+        dir_datos / "hueveras_0-parametros_comparados-kn-mismo_k.csv", index=False
+    )
+
+    # Versión compactada: top-3 semillas, valores constantes solo en fila del medio
+    top3 = (
+        hue_kdc.iloc[:3]
+        .drop(columns="max_score_alpha_test", errors="ignore")
+        .round(3)
+        .reset_index()
+    )
+    top3.columns = [
+        "_".join(map(str, c)).strip("_") if isinstance(c, tuple) else c
+        for c in top3.columns
+    ]
+    for col in top3.columns:
+        if col == "semilla":
+            continue
+        vals = top3[col].astype(str).tolist()
+        if len(set(vals)) == 1:
+            top3[col] = ["", vals[1], ""]
+    top3.to_csv(
+        dir_datos / "hueveras_0-parametros_comparados-kdc-top3.csv", index=False
+    )
 
     # =====================================================================
     # Seminario-modesto: score vs n_neighbors

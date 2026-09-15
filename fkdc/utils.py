@@ -165,8 +165,13 @@ def reajustar_parsimoniosamente(cv_results_: dict, ratio_std: float = 1) -> int:
     ].std_test_score.min()
     umbral_puntaje = puntaje_max - ratio_std * std_max
     resultados = resultados[resultados.mean_test_score.ge(umbral_puntaje)]
+    # Los clasificadores envueltos en un Pipeline (datasets `_std`) exponen sus
+    # hiperparámetros con prefijo `clf__`: se toma la columna que exista.
     regularizadores = [
-        reg for reg in regularizar_ascendente if reg[0] in resultados.columns
+        (col, asc)
+        for nombre, asc in regularizar_ascendente
+        for col in (nombre, nombre.replace("param_", "param_clf__", 1))
+        if col in resultados.columns
     ]
     by, ascending = map(list, zip(*regularizadores, strict=True))
     return resultados.sort_values(by=by, ascending=ascending).index[0]

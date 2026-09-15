@@ -65,6 +65,14 @@ datasets_reales = [
     ## D "grande", k=10
     "digitos",
 ]
+# Variantes `_std` (estandarización dentro de la tarea, cf. `config.bases_estandarizar`)
+# comparten los datos crudos con su dataset base; solo cambia el nombre de la tarea.
+datasets_sinteticos += [
+    f"{d}_std" for d in config.bases_estandarizar if d in datasets_sinteticos
+]
+datasets_reales += [
+    f"{d}_std" for d in config.bases_estandarizar if d in datasets_reales
+]
 datasets = [*datasets_sinteticos, *datasets_reales]
 
 

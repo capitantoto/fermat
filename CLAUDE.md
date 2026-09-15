@@ -4,28 +4,36 @@ Este archivo documenta de forma transparente el uso de herramientas de IA
 (Claude, de Anthropic) en la elaboración de esta tesis de maestría en
 Estadística Matemática.
 
-## Principios éticos de uso
+## Principios de uso
 
-### Lo que la IA **SÍ** hace en este proyecto:
-- Corrección de errores gramaticales y ortográficos
+### Lo que la IA hace por defecto en este proyecto:
+- Corrección de errores gramaticales y ortográficos según la RAE
 - Sugerencias de claridad y fluidez en oraciones
-- Detección de inconsistencias de estilo
+- Detección de inconsistencias de estilo y de notación
 - Formateo y estructura del documento Typst
+- Generación de figuras y tablas a partir de los datos (`fkdc/viz.py`)
 - Resolución de TODOs mecánicos (referencias, formato de figuras)
 
-### Lo que la IA **NO** hace en este proyecto:
-- Generar contenido matemático original
-- Escribir demostraciones o pruebas
-- Formular hipótesis o conclusiones
-- Crear argumentos o análisis nuevos
-- Redactar secciones completas de contenido original
+### Lo que la IA hace **solo a pedido expreso del autor**, tarea por tarea:
+- Revisar la corrección de definiciones y enunciados matemáticos
+- Redactar primeras versiones de pasajes expositivos sobre material ya citado
+- Proponer experimentos o recortes a lo que afirman los resultados y conclusiones
+- Implementar código de experimentación
+
+### Lo que la IA **NO** hace en ningún caso:
+- Introducir referencias, ecuaciones o resultados que no estén ya en el texto
+  o en la bibliografía (`docs/references.bib` lo exporta Zotero; no se edita a mano)
+- Ampliar el alcance de lo afirmado más allá de lo que el autor comprende y
+  puede defender ante un jurado
+- Escribir demostraciones o formular hipótesis por cuenta propia
+- Hacer commits sin autorización
 
 ## Flujo de trabajo
 
-1. El autor escribe todo el contenido intelectual
-2. La IA revisa y sugiere correcciones de forma
-3. El autor acepta, rechaza o modifica cada sugerencia
-4. Todos los cambios quedan registrados en el historial de git
+1. El autor escribe el contenido intelectual y decide qué tareas ampliadas delega
+2. La IA revisa y sugiere; cuando redacta a pedido, marca la extensión de su aporte
+3. El autor examina, verifica y decide qué adoptar, iterando a mano y con IA
+4. Todos los cambios quedan registrados en el historial de git, marcados como asistidos
 
 ## Verificabilidad
 
@@ -50,7 +58,7 @@ El historial de commits de este repositorio permite verificar:
 - Usar `#defn` para definiciones
 - Etiquetar todos los bloques `#theorem`, `#definition`, `#obs`
 - El documento principal está en `docs/tesis.typ`
-- Todos los gráficos y tablas que se usan en el informe se generaron con `fkdc/viz.py` o desde `docs/figuras-y-tablas.ipynb`.
+- Todos los gráficos y tablas que se usan en el informe se generan con `fkdc/viz.py` (`make viz`), un SVG por panel; los paneles se combinan en Typst.
 
 ## Modo de trabajo
 - Proponer cambios explicando el motivo
@@ -160,4 +168,4 @@ estilo: reformatea figuras para usar #figure consistentemente
 ```
 
 ## Procesamiento del texto
-Los archivos `docs/tesis.typ` y `docs/figuras-y-tablas.ipynb` son extensos. Leerlos por secciones usando offset/limit en lugar de cargar el archivo completo. Buscar patrones específicos con Grep.
+Los archivos `docs/tesis.typ` y `fkdc/viz.py` son extensos. Leerlos por secciones usando offset/limit en lugar de cargar el archivo completo. Buscar patrones específicos con Grep.

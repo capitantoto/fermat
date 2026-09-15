@@ -55,6 +55,7 @@ def main(
         split_evaluacion=split,
         semilla=semilla,
         scoring=scoring,
+        estandarizar=cfg.get("estandarizar", False),
     )
     logger.info("Entrenamiento principal")
     t_tarea = time.time()

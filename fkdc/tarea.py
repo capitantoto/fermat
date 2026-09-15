@@ -4,8 +4,11 @@ from time import time
 
 import numpy as np
 import pandas as pd
+from sklearn.base import clone
 from sklearn.metrics import accuracy_score, log_loss
 from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 from sklearn.utils import Bunch
 
 from fkdc.datasets import Dataset
@@ -27,6 +30,7 @@ class Tarea:
         cv=5,
         split_evaluacion=0.5,
         semilla=None,
+        estandarizar=False,
     ):
         self.dataset = ds = (
             Dataset.cargar(dataset) if isinstance(dataset, str) else dataset
@@ -45,6 +49,18 @@ class Tarea:
             raise ValueError(
                 "`algoritmos` debe ser una lista o un dict de 2-tuplas (clf, espacio)"
             )
+        self.estandarizar = estandarizar
+        if estandarizar:
+            # Escalado dentro del pipeline: se ajusta en cada pliego de entrenamiento
+            self.algoritmos = {
+                nombre: Bunch(
+                    clf=Pipeline(
+                        [("scaler", StandardScaler()), ("clf", clone(algo.clf))]
+                    ),
+                    espacio={f"clf__{k}": v for k, v in algo.espacio.items()},
+                )
+                for nombre, algo in self.algoritmos.items()
+            }
         self.busqueda_factory = busqueda_factory
         self.scoring = scoring
         self.refit = refit

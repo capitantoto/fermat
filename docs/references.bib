@@ -1,14 +1,14 @@
-@article{AprendizajeProfundo2025,
-  title = {{Aprendizaje profundo}},
-  year = 2025,
-  month = aug,
-  journal = {Wikipedia, la enciclopedia libre},
-  urldate = {2026-01-26},
-  abstract = {El aprendizaje profundo (en ingl\'es, deep learning) es una rama del aprendizaje autom\'atico que se basa en el uso de algoritmos para modelar y comprender datos complejos. Estos algoritmos se inspiran en la estructura y funci\'on del cerebro humano, utilizando m\'ultiples capas de procesamiento para extraer y transformar informaci\'on de manera iterativa. El objetivo es crear modelos que puedan aprender representaciones abstractas de los datos, lo que les permite realizar tareas como el reconocimiento de patrones, la clasificaci\'on y la predicci\'on con alta precisi\'on.\hspace{0pt} En esencia, el aprendizaje profundo busca identificar las mejores maneras de representar los datos para facilitar el aprendizaje de tareas espec\'ificas. Por ejemplo, una imagen puede representarse como un conjunto de pixeles, pero algunas representaciones, como las que resaltan las caracter\'isticas importantes de la imagen, pueden hacer que sea m\'as f\'acil para un modelo determinar si la imagen contiene un rostro humano. El aprendizaje profundo ha demostrado ser especialmente eficaz en \'areas como la visi\'on artificial, el reconocimiento del habla y el procesamiento de audio y m\'usica. Arquitecturas como las redes neuronales convolucionales y los transformadores han logrado resultados sobresalientes en estas \'areas, superando a menudo a otros enfoques de aprendizaje autom\'atico.},
-  copyright = {Creative Commons Attribution-ShareAlike License},
+@phdthesis{battocchioTestHipotesisSobre2024,
+  type = {{Tesis Doctoral}},
+  title = {{Test de hip\'otesis sobre homolog\'ia persistente utilizando la distancia de Fermat}},
+  author = {Battocchio, Diego Javier},
+  year = 2024,
+  month = oct,
+  urldate = {2026-09-12},
+  abstract = {Esta tesis se centra en el an\'alisis de datos topol\'ogicos (TDA) y, espec\'ificamente, en el desarrollo de tests de hip\'otesis para detectar caracter\'isticas topol\'ogicas de una variedad a partir de muestras i.i.d. de puntos. Se introducen conceptos clave de TDA y se describen t\'ecnicas actuales para realizar tests sobre diagramas de persistencia, los cuales resumen la homolog\'ia de un conjunto de datos, facilitando la identificaci\'on de ciclos de primer grado (curvas no deformables a un punto). Tradicionalmente, estas pruebas se basan en la norma eucl\'idea, pero aqu\'i se explora el uso de la distancia de Fermat, que ha demostrado ser beneficiosa en conjuntos con topolog\'ia subyacente. Mediante simulaciones de regiones de confianza sobre datos sint\'eticos y reales, se comparan ambas distancias, demostrando que la distancia de Fermat supera a la eucl\'idea en la detecci\'on de caracter\'isticas topol\'ogicas, con resultados estad\'isticamente significativos. Adem\'as, se muestra que la distancia de Fermat es computacionalmente escalable frente a la dimensionalidad de los datos. Como aporte adicional, se desarroll\'o una biblioteca en R para facilitar investigaciones futuras sobre el uso de la distancia de Fermat en este contexto.},
   langid = {spanish},
-  annotation = {Page Version ID: 168943690},
-  file = {/Users/gonzalo/Zotero/storage/UQJLN7EJ/index.html}
+  school = {Universidad de Buenos Aires. Facultad de Ciencias Exactas y Naturales},
+  file = {/Users/gonzalo/Zotero/storage/M3P7CDF4/Battocchio - 2024 - Test de hipótesis sobre homología persistente utilizando la distancia de Fermat.pdf}
 }
 
 @misc{bengioConsciousnessPrior2019,
@@ -43,18 +43,17 @@
 @article{bengioRepresentationLearningReview2013,
   title = {Representation {{Learning}}: {{A Review}} and {{New Perspectives}}},
   shorttitle = {Representation {{Learning}}},
-  author = {Bengio, Yoshua and Courville, Aaron and Vincent, Pascal},
+  author = {Bengio, Y. and Courville, A. and Vincent, P.},
   year = 2013,
   month = aug,
   journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
   volume = {35},
   number = {8},
   pages = {1798--1828},
-  publisher = {IEEE},
+  issn = {0162-8828, 2160-9292},
   doi = {10.1109/TPAMI.2013.50},
-  urldate = {2023-03-02},
-  abstract = {The success of machine learning algorithms generally depends on data representation, and we hypothesize that this is because different representations can entangle and hide more or less the different explanatory factors of variation behind the data. Although specific domain knowledge can be used to help design representations, learning with generic priors can also be used, and the quest for AI is motivating the design of more powerful representation-learning algorithms implementing such priors. This paper reviews recent work in the area of unsupervised feature learning and deep learning, covering advances in probabilistic models, auto-encoders, manifold learning, and deep networks. This motivates longer-term unanswered questions about the appropriate objectives for learning good representations, for computing representations (i.e., inference), and the geometrical connections between representation learning, density estimation and manifold learning.},
-  langid = {english},
+  urldate = {2026-09-05},
+  copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
   keywords = {Computer Science - Machine Learning},
   file = {/Users/gonzalo/Zotero/storage/I3TJUBUZ/Bengio et al. - 2014 - Representation Learning A Review and New Perspect.pdf}
 }
@@ -102,11 +101,12 @@
 
 @inproceedings{bijralSemisupervisedLearningDensity2011,
   title = {Semi-Supervised {{Learning}} with {{Density Based Distances}}},
+  booktitle = {Proceedings of the {{Twenty-Seventh Conference}} on {{Uncertainty}} in {{Artificial Intelligence}} ({{UAI}} 2011)},
   author = {Bijral, Avleen S. and Ratliff, Nathan and Srebro, Nathan},
   year = 2011,
-  booktitle = {Proceedings of the Twenty-Seventh Conference on Uncertainty in Artificial Intelligence ({{UAI}} 2011)},
   pages = {43--50},
   publisher = {AUAI Press},
+  address = {Arlington, Virginia},
   urldate = {2023-03-02},
   abstract = {We present a simple, yet effective, approach to Semi-Supervised Learning. Our approach is based on estimating density-based distances (DBD) using a shortest path calculation on a graph. These Graph-DBD estimates can then be used in any distance-based supervised learning method, such as Nearest Neighbor methods and SVMs with RBF kernels. In order to apply the method to very large data sets, we also present a novel algorithm which integrates nearest neighbor computations into the shortest path search and can find exact shortest paths even in extremely large dense graphs. Significant runtime improvement over the commonly used Laplacian regularization method is then shown on a large scale dataset.},
   keywords = {Computer Science - Machine Learning,Statistics - Machine Learning},
@@ -143,16 +143,20 @@
   file = {/Users/gonzalo/Zotero/storage/HEWYRQCF/Brand - 2002 - Charting a Manifold.pdf}
 }
 
-@inproceedings{buitinckAPIDesignMachine2013,
+@misc{buitinckAPIDesignMachine2013,
   title = {{{API}} Design for Machine Learning Software: Experiences from the Scikit-Learn Project},
   shorttitle = {{{API}} Design for Machine Learning Software},
   author = {Buitinck, Lars and Louppe, Gilles and Blondel, Mathieu and Pedregosa, Fabian and Mueller, Andreas and Grisel, Olivier and Niculae, Vlad and Prettenhofer, Peter and Gramfort, Alexandre and Grobler, Jaques and Layton, Robert and Vanderplas, Jake and Joly, Arnaud and Holt, Brian and Varoquaux, Ga{\"e}l},
   year = 2013,
   month = sep,
-  booktitle = {{{ECML PKDD Workshop}}: {{Languages}} for {{Data Mining}} and {{Machine Learning}}},
-  pages = {108--122},
+  number = {arXiv:1309.0238},
+  eprint = {1309.0238},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.1309.0238},
   urldate = {2024-05-16},
-  abstract = {Scikit-learn is an increasingly popular machine learning library. Written in Python, it is designed to be simple and efficient, accessible to non-experts, and reusable in various contexts. In this paper, we present and discuss our design choices for the application programming interface (API) of the project. In particular, we describe the simple and elegant interface shared by all learning and processing units in the library and then discuss its advantages in terms of composition and reusability. The paper also comments on implementation details specific to the Python ecosystem and analyzes obstacles faced by users and developers of the library.},
+  abstract = {Scikit-learn is an increasingly popular machine learning li- brary. Written in Python, it is designed to be simple and efficient, accessible to non-experts, and reusable in various contexts. In this paper, we present and discuss our design choices for the application programming interface (API) of the project. In particular, we describe the simple and elegant interface shared by all learning and processing units in the library and then discuss its advantages in terms of composition and reusability. The paper also comments on implementation details specific to the Python ecosystem and analyzes obstacles faced by users and developers of the library.},
+  archiveprefix = {arXiv},
   keywords = {Computer Science - Machine Learning,Computer Science - Mathematical Software},
   file = {/Users/gonzalo/Zotero/storage/QCQ7YXXR/Buitinck et al. - 2013 - API design for machine learning software experien.pdf;/Users/gonzalo/Zotero/storage/KBETFAYB/1309.html}
 }
@@ -204,7 +208,7 @@
   author = {Cortes, Corinna and Vapnik, Vladimir},
   year = 1995,
   month = sep,
-  journal = {Mach Learn},
+  journal = {Machine Learning},
   volume = {20},
   number = {3},
   pages = {273--297},
@@ -249,6 +253,22 @@
   file = {/Users/gonzalo/Zotero/storage/AFEZXQ7W/Devroye et al. - 1996 - A probabilistic theory of pattern recognition.pdf}
 }
 
+@article{dijkstraNoteTwoProblems1959,
+  title = {A Note on Two Problems in Connexion with Graphs},
+  author = {Dijkstra, E. W.},
+  year = 1959,
+  month = dec,
+  journal = {Numerische Mathematik},
+  volume = {1},
+  number = {1},
+  pages = {269--271},
+  issn = {0029-599X, 0945-3245},
+  doi = {10.1007/BF01386390},
+  urldate = {2026-09-05},
+  copyright = {http://www.springer.com/tdm},
+  langid = {english}
+}
+
 @book{docarmoRiemannianGeometry1992,
   title = {Riemannian {{Geometry}}},
   author = {{do Carmo}, Manfredo P.},
@@ -277,18 +297,34 @@
   file = {/Users/gonzalo/Zotero/storage/Q43MB6FW/Fisher - 1997 - Dispersion on a sphere.pdf}
 }
 
+@article{floydAlgorithm97Shortest1962,
+  title = {Algorithm 97: {{Shortest}} Path},
+  shorttitle = {Algorithm 97},
+  author = {Floyd, Robert W.},
+  year = 1962,
+  month = jun,
+  journal = {Communications of the ACM},
+  volume = {5},
+  number = {6},
+  pages = {345--345},
+  issn = {0001-0782, 1557-7317},
+  doi = {10.1145/367766.368168},
+  urldate = {2026-09-05},
+  langid = {english}
+}
+
 @article{forzaniPenalizationMethodEstimate2025,
   title = {A Penalization Method to Estimate the Intrinsic Dimensionality of Data},
   author = {Forzani, Liliana and Rodriguez, Daniela and Sued, Mariela},
   year = 2025,
+  month = feb,
   journal = {Statistical Papers},
   volume = {66},
   number = {2},
   pages = {46},
-  publisher = {Springer},
+  issn = {0932-5026, 1613-9798},
   doi = {10.1007/s00362-025-01667-0},
-  urldate = {2026-05-15},
-  abstract = {Extending the Probabilistic Principal Components Model beyond the Gaussian case, we present a penalization method to estimate the intrinsic dimensionality of data that follow such a model. Under mild conditions, the consistency of the presented procedure is proved. We show competitive advantages of our methodology compared to several methods in the literature.},
+  urldate = {2026-09-05},
   langid = {english},
   keywords = {Intrinsic Dimensionality,Probabilistic Principal Components},
   file = {/Users/gonzalo/Zotero/storage/2P74Q8AT/Forzani et al. - 2022 - A Penalization Method to Estimate the Intrinsic Di.pdf}
@@ -339,14 +375,12 @@
   journal = {Bernoulli},
   volume = {28},
   number = {1},
-  pages = {255--276},
-  publisher = {Bernoulli Society for Mathematical Statistics and Probability},
+  issn = {1350-7265},
   doi = {10.3150/21-BEJ1341},
-  urldate = {2023-03-02},
-  abstract = {Consider an i.i.d. sample from an unknown density function supported on an unknown manifold embedded in a high dimensional Euclidean space. We tackle the problem of learning a distance between points, able to capture both the geometry of the manifold and the underlying density. We define such a sample distance and prove the convergence, as the sample size goes to infinity, to a macroscopic one that we call Fermat distance as it minimizes a path functional, resembling Fermat principle in optics. The proof boils down to the study of geodesics in Euclidean first-passage percolation for nonhomogeneous Poisson point processes.},
-  langid = {english},
-  keywords = {Fermat distance,first-passage percolation,Mathematics - Probability},
-  file = {/Users/gonzalo/Zotero/storage/4AEYHE2D/Groisman et al. - 2019 - Nonhomogeneous Euclidean first-passage percolation.pdf}
+  urldate = {2026-09-05},
+  keywords = {G.3,Mathematics - Probability},
+  note = {Comment: 23 pages},
+  file = {/Users/gonzalo/Zotero/storage/4AEYHE2D/Groisman et al. - 2019 - Nonhomogeneous Euclidean first-passage percolation.pdf;/Users/gonzalo/Zotero/storage/7HYKK9NH/Groisman et al. - 2022 - Nonhomogeneous Euclidean first-passage percolation and distance learning.pdf}
 }
 
 @article{hallBandwidthChoiceNonparametric2005,
@@ -354,7 +388,7 @@
   author = {Hall, Peter and Kang, Kee-Hoon},
   year = 2005,
   month = feb,
-  journal = {Ann. Statist.},
+  journal = {The Annals of Statistics},
   volume = {33},
   number = {1},
   issn = {0090-5364},
@@ -379,7 +413,7 @@
   author = {Henry, Guillermo and Rodriguez, Daniela},
   year = 2009,
   month = jul,
-  journal = {J Math Imaging Vis},
+  journal = {Journal of Mathematical Imaging and Vision},
   volume = {34},
   number = {3},
   pages = {235--239},
@@ -431,6 +465,39 @@
   file = {/Users/gonzalo/Zotero/storage/M9W8RB56/Ke et al. - 2017 - LightGBM A Highly Efficient Gradient Boosting Decision Tree.pdf}
 }
 
+@article{kruskalMultidimensionalScalingOptimizing1964,
+  title = {Multidimensional {{Scaling}} by {{Optimizing Goodness}} of {{Fit}} to a {{Nonmetric Hypothesis}}},
+  author = {Kruskal, J. B.},
+  year = 1964,
+  month = mar,
+  journal = {Psychometrika},
+  volume = {29},
+  number = {1},
+  pages = {1--27},
+  issn = {0033-3123, 1860-0980},
+  doi = {10.1007/BF02289565},
+  urldate = {2026-09-05},
+  abstract = {Multidimensional scaling is the problem of representing               n               objects geometrically by               n               points, so that the interpoint distances correspond in some sense to experimental dissimilarities between objects. In just what sense distances and dissimilarities should correspond has been left rather vague in most approaches, thus leaving these approaches logically incomplete. Our fundamental hypothesis is that dissimilarities and distances are monotonically related. We define a quantitative, intuitively satisfying measure of goodness of fit to this hypothesis. Our technique of multidimensional scaling is to compute that configuration of points which optimizes the goodness of fit. A practical computer program for doing the calculations is described in a companion paper.},
+  copyright = {https://www.cambridge.org/core/terms},
+  langid = {english}
+}
+
+@article{lecunDeepLearning2015,
+  title = {Deep Learning},
+  author = {LeCun, Yann and Bengio, Yoshua and Hinton, Geoffrey},
+  year = 2015,
+  month = may,
+  journal = {Nature},
+  volume = {521},
+  number = {7553},
+  pages = {436--444},
+  issn = {0028-0836, 1476-4687},
+  doi = {10.1038/nature14539},
+  urldate = {2026-09-05},
+  langid = {english},
+  file = {/Users/gonzalo/Zotero/storage/H3EAE35W/LeCun et al. - 2015 - Deep learning.pdf}
+}
+
 @book{leeIntroductionRiemannianManifolds2018,
   title = {Introduction to {{Riemannian Manifolds}}},
   author = {Lee, John M.},
@@ -452,17 +519,18 @@
   shorttitle = {Balancing {{Geometry}} and {{Density}}},
   author = {Little, Anna and McKenzie, Daniel and Murphy, James M.},
   year = 2022,
+  month = mar,
   journal = {SIAM Journal on Mathematics of Data Science},
   volume = {4},
   number = {1},
   pages = {72--99},
-  publisher = {Society for Industrial and Applied Mathematics},
+  issn = {2577-0187},
   doi = {10.1137/20M1386657},
-  urldate = {2023-03-02},
-  abstract = {New geometric and computational analyses of power-weighted shortest-path distances (PWSPDs) are presented. By illuminating the way these metrics balance geometry and density in the underlying data, we clarify their key parameters and illustrate how they provide multiple perspectives for data analysis. Comparisons are made with related data-driven metrics, which illustrate the broader role of density in kernel-based unsupervised and semi-supervised machine learning. Computationally, we relate PWSPDs on complete weighted graphs to their analogues on weighted nearest neighbor graphs, providing high probability guarantees on their equivalence that are near-optimal. Connections with percolation theory are developed to establish estimates on the bias and variance of PWSPDs in the finite sample setting. The theoretical results are bolstered by illustrative experiments, demonstrating the versatility of PWSPDs for a wide range of data settings. Throughout the paper, our results generally require only that the underlying data is sampled from a compact low-dimensional manifold, and depend most crucially on the intrinsic dimension of this manifold, rather than its ambient dimension.},
+  urldate = {2026-09-05},
+  abstract = {New geometric and computational analyses of power-weighted shortest path distances (PWSPDs) are presented. By illuminating the way these metrics balance geometry and density in the underlying data, we clarify their key parameters and illustrate how they provide multiple perspectives for data analysis. Comparisons are made with related data-driven metrics, which illustrate the broader role of density in kernel-based unsupervised and semisupervised machine learning. Computationally, we relate PWSPDs on complete weighted graphs to their analogues on weighted nearest neighbor graphs, providing high probability guarantees on their equivalence that are near-optimal. Connections with percolation theory are developed to establish estimates on the bias and variance of PWSPDs in the finite sample setting. The theoretical results are bolstered by illustrative experiments, demonstrating the versatility of PWSPDs for a wide range of data settings. Throughout the paper, our results generally require only that the underlying data is sampled from a compact low-dimensional manifold, and depend most crucially on the intrinsic dimension of this manifold, rather than its ambient dimension.},
   langid = {english},
-  keywords = {Computer Science - Machine Learning,Statistics - Machine Learning},
-  file = {/Users/gonzalo/Zotero/storage/6XMA593D/Little et al. - 2021 - Balancing Geometry and Density Path Distances on .pdf}
+  keywords = {05C85 05C80,Computer Science - Data Structures and Algorithms,Computer Science - Machine Learning,I.5.3,Statistics - Machine Learning},
+  file = {/Users/gonzalo/Zotero/storage/5JGQ74JW/Little et al. - 2022 - Balancing Geometry and Density Path Distances on High-Dimensional Data.pdf}
 }
 
 @article{loubesKernelbasedClassifierRiemannian2008,
@@ -509,20 +577,21 @@
   file = {/Users/gonzalo/Zotero/storage/NHQVJRPR/McFadden - 1974 - Conditional logit analysis of qualitative choice b.pdf;/Users/gonzalo/Zotero/storage/TTYDMGLZ/10002395479.html}
 }
 
-@article{mckenziePowerWeightedShortest2019,
+@misc{mckenziePowerWeightedShortest2019,
   title = {Power {{Weighted Shortest Paths}} for {{Clustering Euclidean Data}}},
   author = {Mckenzie, Daniel and Damelin, Steven},
   year = 2019,
-  journal = {Foundations of Data Science},
-  volume = {1},
-  number = {3},
-  pages = {307--327},
-  publisher = {American Institute of Mathematical Sciences},
-  doi = {10.3934/fods.2019014},
+  month = sep,
+  number = {arXiv:1905.13345},
+  eprint = {1905.13345},
+  primaryclass = {cs, stat},
+  publisher = {arXiv},
   urldate = {2023-03-02},
   abstract = {We study the use of power weighted shortest path metrics for clustering high dimensional Euclidean data, under the assumption that the data is drawn from a collection of disjoint low dimensional manifolds. We argue, theoretically and experimentally, that this leads to higher clustering accuracy. We also present a fast algorithm for computing these distances.},
+  archiveprefix = {arXiv},
   langid = {english},
-  keywords = {Computer Science - Machine Learning,Statistics - Machine Learning},
+  keywords = {05C85 05C80,Computer Science - Machine Learning,I.5.3,Statistics - Machine Learning},
+  note = {Comment: 24 pages. Final version. To appear in Foundations of Data Science},
   file = {/Users/gonzalo/Zotero/storage/JY9XJQQX/Mckenzie and Damelin - 2019 - Power Weighted Shortest Paths for Clustering Eucli.pdf}
 }
 
@@ -711,46 +780,3 @@
   langid = {english},
   file = {/Users/gonzalo/Zotero/storage/662G7HUL/Wand and Jones - 1995 - Kernel Smoothing.pdf}
 }
-
-@article{wikipediaEntornoMatematica2025,
-  title = {{Entorno (matem\'atica)}},
-  author = {Wikipedia},
-  year = 2025,
-  month = nov,
-  journal = {Wikipedia, la enciclopedia libre},
-  urldate = {2025-12-06},
-  abstract = {Un entorno (o vecindad)\hspace{0pt} es uno de los conceptos b\'asicos de la   topolog\'ia. Adem\'as, este concepto se utiliza en muchas otras \'areas de las matem\'aticas como el an\'alisis y la teor\'ia de la probabilidad. Intuitivamente hablando, un entorno de un punto es un conjunto que contiene al punto y a un conjunto de los puntos m\'as pr\'oximos a \'el. El aspecto geogr\'afico de vecindad en un lugar se refleja en este concepto matem\'atico. El concepto de entorno est\'a estrechamente relacionado con los conceptos de conjunto abierto y punto interior.},
-  copyright = {Creative Commons Attribution-ShareAlike License},
-  langid = {spanish},
-  annotation = {Page Version ID: 170440062},
-  file = {/Users/gonzalo/Zotero/storage/48TLTTBX/index.html}
-}
-
-@article{wikipediaEspacioHausdorff2024,
-  title = {{Espacio de Hausdorff}},
-  author = {Wikipedia},
-  year = 2024,
-  month = jun,
-  journal = {Wikipedia, la enciclopedia libre},
-  urldate = {2025-08-25},
-  abstract = {En topolog\'ia, un espacio de Hausdorff, separado o                                    T                        2                                     \textbraceleft\textbackslash displaystyle T\_\textbraceleft 2\textbraceright\textbraceright{}     es un espacio topol\'ogico en el que puntos distintos tienen entornos disjuntos. Los espacios de Hausdorff se llaman as\'i en honor de Felix Hausdorff, uno de los fundadores de la topolog\'ia. La definici\'on original de Hausdorff de un espacio topol\'ogico (de 1914) inclu\'ia la propiedad de Hausdorff como axioma. Todo espacio m\'etrico (y por lo tanto todo espacio normado) es un espacio de Hausdorff.},
-  copyright = {Creative Commons Attribution-ShareAlike License},
-  langid = {spanish},
-  annotation = {Page Version ID: 160669217},
-  file = {/Users/gonzalo/Zotero/storage/QN6CIQVF/Espacio_de_Hausdorff.html}
-}
-
-@article{wikipediaEspacioTopologico2025,
-  title = {{Espacio topol\'ogico}},
-  author = {Wikipedia},
-  year = 2025,
-  month = aug,
-  journal = {Wikipedia, la enciclopedia libre},
-  urldate = {2025-12-06},
-  abstract = {Un espacio topol\'ogico es una estructura matem\'atica que permite la definici\'on formal de conceptos como convergencia, conectividad, continuidad y vecindad, usando subconjuntos de un conjunto dado.\hspace{0pt} La rama de las matem\'aticas que estudia los espacios topol\'ogicos se llama topolog\'ia. Las variedades, al igual que los espacios m\'etricos, son especializaciones de espacios topol\'ogicos con restricciones y estructuras propias.},
-  copyright = {Creative Commons Attribution-ShareAlike License},
-  langid = {spanish},
-  annotation = {Page Version ID: 169200292},
-  file = {/Users/gonzalo/Zotero/storage/L2RKJPE6/index.html}
-}
-

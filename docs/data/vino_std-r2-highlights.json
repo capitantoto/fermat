@@ -1,0 +1,12 @@
+{
+    "dataset": "vino_std",
+    "summary": "clf,accuracy,r2\ngbt,0.9663,0.9008\nlr,0.9775,0.8991\ngnb,0.9551,0.894\nfkdc,0.9551,0.8762\nkn,0.9551,0.8533\nfkn,0.9551,0.848\nkdc,0.9663,0.8352\nsvc,0.9775,\n",
+    "best": "gbt",
+    "bad": [
+        "fkdc",
+        "kn",
+        "fkn",
+        "kdc"
+    ],
+    "excluded": []
+}

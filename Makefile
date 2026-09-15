@@ -16,6 +16,8 @@ TARGETS := $(patsubst $(CONFIGS_DIR)/%, $(TARGETS_DIR)/%, $(CONFIGS:.yaml=.pkl))
 # Documentos .typ compilables (poster y seminario excluidos: dependencias faltantes)
 TYP_DOCS     := $(DOCS_DIR)/tesis.typ $(DOCS_DIR)/plan.typ
 TYP_PDFS     := $(TYP_DOCS:.typ=.pdf)
+# Fuentes tipográficas locales (Excalifont para los SVG de Excalidraw)
+TYPST        := typst compile --font-path $(DOCS_DIR)/fonts
 
 # Stamp file for viz.py output
 DOCS_STAMP   := $(DOCS_DIR)/.viz-stamp
@@ -70,16 +72,16 @@ viz: $(DOCS_STAMP)
 
 # Cada PDF depende de su .typ, de las visualizaciones generadas y la bibliografía
 $(DOCS_DIR)/tesis.pdf: $(DOCS_DIR)/tesis.typ $(DOCS_STAMP) $(DOCS_DIR)/references.bib
-	typst compile $<
+	$(TYPST) $<
 
 $(DOCS_DIR)/plan.pdf: $(DOCS_DIR)/plan.typ
-	typst compile $<
+	$(TYPST) $<
 
 $(DOCS_DIR)/poster.pdf: $(DOCS_DIR)/poster.typ $(DOCS_DIR)/poster-template.typ $(DOCS_STAMP)
-	typst compile $<
+	$(TYPST) $<
 
 $(DOCS_DIR)/seminario-modesto.pdf: $(DOCS_DIR)/seminario-modesto.typ $(DOCS_STAMP)
-	typst compile $<
+	$(TYPST) $<
 
 # Bundle final: tesis.typ ya integra carátula + resúmenes + cuerpo + firmas.
 # El nombre del archivo respeta el formato exigido por la maestría
@@ -89,7 +91,7 @@ $(ENTREGA_PDF): $(DOCS_DIR)/tesis.typ $(DOCS_DIR)/references.bib \
                 $(if $(filter 1,$(FIRMA)),$(DOCS_DIR)/img/firma-gonzalo.png $(DOCS_DIR)/img/firma-pablo.png,)
 	@echo "==> Compilando tesis completa (FIRMA=$(FIRMA))"
 	@TMP_RAW=$$(mktemp -t TESIS_RAW_XXXXXX) && mv $$TMP_RAW $$TMP_RAW.pdf && TMP_RAW=$$TMP_RAW.pdf; \
-	typst compile $(TYPST_FIRMAS) $(DOCS_DIR)/tesis.typ $$TMP_RAW; \
+	$(TYPST) $(TYPST_FIRMAS) $(DOCS_DIR)/tesis.typ $$TMP_RAW; \
 	echo "==> Comprimiendo con ghostscript (/printer + sRGB)"; \
 	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer \
 	   -dColorConversionStrategy=/sRGB \
@@ -102,7 +104,7 @@ $(ENTREGA_PDF): $(DOCS_DIR)/tesis.typ $(DOCS_DIR)/references.bib \
 
 # Datos: configs → pkl
 $(TARGETS_DIR)/%.pkl: $(CONFIGS_DIR)/%.yaml
-	uv run python fkdc/process.py --config-file $^ --workdir $(TARGETS_DIR)
+	uv run python fkdc/process.py --archivo-config $^ --dir-trabajo $(TARGETS_DIR)
 
 datasets: fkdc/datasets.py
 	uv run python $^
@@ -130,8 +132,8 @@ check:
 	@tmp=$$(mktemp /tmp/typst-check-XXXXXX.pdf); \
 	trap "rm -f $$tmp" EXIT; \
 	for f in $(TYP_DOCS); do \
-		echo "typst compile $$f"; \
-		typst compile $$f $$tmp 2>&1 || exit 1; \
+		echo "$(TYPST) $$f"; \
+		$(TYPST) $$f $$tmp 2>&1 || exit 1; \
 	done
 	@echo "All checks passed."
 
