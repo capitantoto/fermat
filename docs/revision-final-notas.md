@@ -152,3 +152,20 @@ Convenciones: **Aplicado** lista solo ediciones de fondo (las erratas no se list
 
 **Estado**
 - Conteo oficial: 4000 tareas crudas + 800 estandarizadas = 4800, 8 clasificadores.
+
+## Bloque 8 — Resultados 4.3 (datasets 3D y vecindarios de KN)
+
+**Aplicado**
+- `helices_0`: «en unos cuantos casos --- $s in {1188, 1182, 2411}$ --- en que $alpha_#fkdc = alpha_#kdc = 1$»: según `data/helices_0-parametros_comparados-kdc.csv`, la semilla 1188 eligió $alpha = 2.5$ (como el propio texto dice dos oraciones antes). Reemplazada por 6610 ($Delta_(R^2) = 0.098$, $alpha = 1$): ahora «$s in {1182, 6610, 2411}$».
+- `helices_0`: «$h_#fkdc / h_#kdc approx 14.3$» estaba invertido ($h_#fkdc = 0.01$, $h_#kdc = 0.143$) → «$h_#kdc / h_#fkdc approx 14.3$»; «$Delta_R^2$» → «$Delta_(R^2)$»; «$h = 0,000562$» → «$0.000562$» (coma decimal aislada).
+- «==== Hélices» estaba un nivel por debajo de «=== Eslabones», «=== Pionono» y «=== Hueveras» → «=== Hélices».
+- Notas G (2 ecuaciones) y F (5 notas al pie). Erratas: «consiste de» → «consiste en»; «en la que … tiene» → «en las que … tienen»; «iguala o supera» → «igualan o superan»; «`helice`» → «`helices`»; «orácticamente», «alvanzado»; «todas independiente» → «independientes»; «aún con» → «aun con»; «$0.25-0.30$» → «$0.25$--$0.30$» (el guion en modo matemático es un menos); «no-reducible», «no-lineales», «no-nulos» → sin guion; «$||dot||$» → «$norm(dot)$»; espacio y punto en el pie de la figura de superficies (`$alpha = 3$.(der., …).`).
+
+**Para decidir**
+- `helices_0`, párrafo «Nuestra hipótesis…»: «el entrenamiento por CV maximiza el _score_ en $(alpha=3, h = 0.000562)$» para $s = 1182$; la columna `max_score_alpha_test` del CSV da 3.5 para esa semilla. Si esa columna es el maximizador que describe el texto, corresponde $alpha = 3.5$; si es otra cosa, nada que cambiar.
+- `eslabones_0`: «La semilla resultó adversa para ambos» — la tabla previa solo muestra a #fkdc; no queda claro quién es el otro (¿#fkn?).
+- «Todo algoritmo funciona OK» (observación sobre #logr en hélices): coloquial; «funciona bien» si se quiere formalizar.
+- Pie de la tabla de #fkn vs. #kn en `hueveras_0`: «$Delta_(R^2) > 0$ en casi todos los casos» (hay un caso con $Delta = -0.092$; ya señalado).
+
+**Estado**
+- Sin novedades de notación.
