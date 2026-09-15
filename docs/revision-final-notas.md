@@ -53,3 +53,30 @@ Convenciones: **Aplicado** lista solo ediciones de fondo (las erratas no se list
 - Puntuación de ecuaciones: signo dentro del `$ $`, sin `thin`; «donde/con» en minúscula tras coma.
 - Siglas sin plural (KDE, SVM, PCA). Prefijo «no» sin guion (quedan 8 «no-…» en bloques posteriores).
 - $phi.alt$ = densidad normal (estándar); $Phi$ no se usa.
+
+## Bloque 4 — Preliminares 2.4 (variedades de Riemann, geodésicas, probabilidad y KDE en variedades, densidad de volumen)
+
+**Aplicado**
+- Def. de espacio topológico, axioma 2: el ejemplo reutilizaba $X$ (el conjunto total) como abierto genérico: «$X in T, Y in T => X inter Y in T$» → «$U in T, V in T => U inter V in T$». Def. de entorno: «$(X,Τ)$» usaba una tau griega mayúscula en lugar de $T$.
+- Homeomorfismo: «es una función $phi$ entre dos espacios topológicos si es biyectiva y tanto ella como su inversa son continuas» (condición colgante) → «que es biyectiva y tal que tanto ella como su inversa son continuas».
+- Observación $MM = RR^d$: «La base canónica de $T_p RR^d$ formada por las columnas de $bu(I)_d$ es una matriz positiva definida» (una base no es una matriz) → «La matriz identidad $bu(I)_d$, cuyas columnas forman la base canónica de $T_p RR^d = RR^d$, es definida positiva».
+- Partición de la unidad: «Sea entonces: $[ecuación]$ es posible verificar…» (oración sin verbo principal) → «Definiendo entonces $[ecuación],$ es posible verificar…».
+- Mapa exponencial: «$exp_p (v) : T_p MM -> MM = gamma_(p,v)(1)$» → «$exp_p : T_p MM -> MM, quad exp_p (v) = gamma_(p,v)(1)$» (misma corrección de forma que en la normal multivariada del bloque 3).
+- Observación tras el núcleo isotrópico: «Todo núcleo válido en @kde-mv también es un núcleo isotrópico» es falso (un núcleo producto no es radial); invertido a «Todo núcleo isotrópico es también un núcleo válido según @kde-mv», que es lo que se usa.
+- Nota H: en la observación sobre variedades con frontera, «$n$-variedad», «dimensión $n-1$» → $d$. En la def. de KDE en variedades, la nota que avisa que se mantiene la notación del original ahora también avisa que el teorema de Pelletier escribe $n$ por $N$.
+- Nota al pie de Henry–Rodríguez: «la antípoda de $p, -p$ cae justo fuera de $"iny"_p S^d$» → «$S^2$» (la fórmula es para $S^2$).
+- «$S^1 subset RR^2 = {(x, y) : x^2 + y^2 = 1}$» → «$S^1 = {(x, y) in RR^2 : x^2 + y^2 = 1}$».
+- Título alemán de von Mises: «Über die 'ganzzahligkeit der' atomgewichte und verwandte fragen» → «Über die 'Ganzzahligkeit' der Atomgewichte und verwandte Fragen» (sustantivos con mayúscula; las comillas del original rodean solo «Ganzzahligkeit»).
+- Notas G (18 ecuaciones) y F (16 notas al pie) aplicadas. «Riemanniana/o» → minúscula en todo el archivo salvo el título de la monografía de Muñoz. Patrón «$x-$palabra» (guion dentro del modo matemático, se ve como signo menos) → «$x$-palabra» en todo el archivo (28 casos: $d$-variado, $n$-esfera, $k$-NN, $p$-norma, etc.).
+- Erratas: «sí y solo si» → «si y solo si»; «verifican» → «verifica» (sujeto «todo par»); «no es sujeto» → «no está sujeto»; «bilinear» → «bilineal»; «conceptos claves» → «conceptos clave»; «Nótese como» → «cómo»; «aún cuando» → «aun cuando»; «von Mises -- Fisher» → «von Mises--Fisher»; «Rodriguez» → «Rodríguez»; coma sujeto–predicado (×1); raya inconsistente (– y —) → «---»; «$s in RR > 0$» → «$s in RR_+$»; doble punto tras nota al pie en la restricción $h <= h_0$.
+
+**Para decidir**
+- Def. «variedad compacta»: «cerrada y acotada se denomina compacta» es Heine–Borel, válido en $RR^d$ pero no en un espacio métrico arbitrario (en variedades riemannianas completas lo da Hopf–Rinow, no citado). No lo toqué: corregirlo exige una referencia que no está en la bibliografía.
+- Observación tras esa definición: el «cilindro infinito» ${(x, y, z) in RR^3 : x^2 + y^2 < 1}$ es el cilindro sólido abierto (3-variedad), no la superficie cilíndrica; lo dicho (ni acotado ni cerrado) sigue siendo cierto. Si querías la superficie, cambiar «$<$» por «$=$» y «cerrado» por «cerrada pero no acotada».
+- Def. de KDE en variedades: la restricción se enuncia como $h <= h_0 <= "iny" MM$ y el teorema como $h_n < h_0 < "iny" MM$; verificar cuál escribe Pelletier.
+- Núcleo isotrópico: en la tabla, «$Y ~ K$» usa `~` dentro del modo matemático; verificar en el PDF que se lea como «distribuido según».
+- Encabezados con mayúsculas internas («Variedades Diferenciables», «Probabilidad en Variedades», «Propuesta Original», «Regla de Parsimonia», «Vocabulario y Notación») conviven con encabezados en minúscula («Algoritmos de referencia»). La RAE pide solo la inicial; es una decisión global, no la apliqué.
+
+**Estado**
+- $n$ se tolera solo en $S^n$ (esfera) y en enunciados que reproducen a Pelletier/Henry–Rodríguez con aviso.
+- «no» + adjetivo sin guion, ya aplicado hasta la línea ~1020.
