@@ -111,3 +111,23 @@ Convenciones: **Aplicado** lista solo ediciones de fondo (las erratas no se list
 **Estado**
 - $a, b$ para puntos genéricos de #MM desde el costo $J_(g compose f)$ en adelante; $m$ para longitudes de caminos/paseos; $D$ ambiente solo en la nota de autocodificadores, con aviso.
 - «et al.» con punto.
+
+## Bloque 6 — Propuesta Original y Metodología (3.1–3.5)
+
+**Aplicado**
+- Objetivo 2: «Implementar un estimador de densidad por núcleos basado en la distancia de Fermat, "$f$-KDC"» → «un clasificador de densidad por núcleos» ($f$-KDC es el clasificador, no el estimador).
+- Distancia _out-of-sample_: «$Q_i = {x_0} union {x_j : x_j in XX, GG_j = GG_i}$» mezclaba la etiqueta de $x_j$ con el nombre de la clase → «$g_j = i$».
+- Regla de parsimonia: «La estrategia de validación cruzada … evaluando su comportamiento en $XX_"test"$, disjunto de $XX_"train"$» confundía los pliegos de validación con el conjunto de evaluación → «evaluando su comportamiento, en cada pliego, sobre observaciones de $XX_"train"$ no usadas para ajustarlos».
+- Def. R1SD: paréntesis sobrante en «$hat(s)_(L(mu^star)))$» y punto final movido dentro del `$ $`.
+- Def. de verosimilitud: la log-verosimilitud usaba «$op("L")$» donde la verosimilitud se llamó «$op("vero")$» → unificado; «$RR^(n times k)$» → «$RR^(N times K)$»; «$hat(bu(Y))_(i, y_i)$» → «$_(i, g_i)$» (las clases se llaman $g_i$). Def. de exactitud: «$RR^(N times p)$ … $p$ atributos … $n^(-1) sum_(i=1)^n$» → $d$ y $N$ (nota H).
+- «@trabajo-futuro["Trabajo Futuro", §]» (suplemento malformado) → «@trabajo-futuro».
+- Notas G (5 ecuaciones) y F (11 notas al pie) aplicadas. Erratas: «a fines de» → «a fin de» (×2); «pre-existente», «pre-tratamiento», «pre-procesamiento» → sin guion (RAE); «Github» → «GitHub», con la URL como enlace; «aún así» → «aun así»; «Tanto #kdc, #fkdc y #fkn» → «Tanto #kdc como…»; «Sea además … las predicciones» → «Sean»; punto perdido antes de «Análogamente»; «$k-"NN"$, $epsilon- "NN"$» → «$k$-NN, $epsilon$-NN»; «_tradeoff_» → «_trade-off_»; «Naive Bayes Gaussiano» → «gaussiano»; «KDC» → macro `#kdc`; «$(h_i^*, alpha_i^*)$» → «$^star$»; «no-supervisada», «no-euclídeas», «no-paramétricas» → sin guion.
+
+**Para decidir**
+- §3.5.1, def. de verosimilitud: «$product_(i=1)^N Pr(hat(g)_i = g_i)$» es una notación informal (la probabilidad que el clasificador asigna a la clase verdadera); podría escribirse «$hat(Pr)(G = g_i | X = x_i)$». Sin cambios.
+- §3.5.1: «Tanto #kdc como #fkdc y #fkn son clasificadores suaves» omite a #kn, que en `scikit-learn` también devuelve probabilidades (frecuencias de vecinos) y se evalúa por $R^2$ en todo el capítulo 4. Sugiero «#kdc, #fkdc, #kn y #fkn».
+- §3.5.4, def. R1SD: «minimiza la pérdida de entrenamiento» convive con el $R^2$/log-verosimilitud que se *maximiza* (ya señalado en `revision-editorial.md`). Una línea «(o maximiza el _score_; la pérdida es su opuesto)» bastaría.
+- §3.3 (omisión de $theta$): «retomamos como debilidad en @trabajo-futuro»: ahora sin el suplemento; verificar que la referencia se lea bien (debe decir «Sección 6.x»).
+
+**Estado**
+- Prefijos soldados: preexistente, pretratamiento, preprocesamiento. El anclaje `<pretratamiento>` no cambió.
