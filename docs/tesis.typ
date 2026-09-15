@@ -337,6 +337,9 @@ En altas dimensiones, la distancia natural del espacio en que se registran las o
 #align(center)[#text(size: 14pt, weight: "bold")[Abstract]]
 #v(0.5em)
 
+In high dimensions, the natural distance of the space in which the observations of a random element are recorded --- typically the Euclidean distance in $RR^d$ --- does not adequately tell apart the elements in the local neighbourhood of an observation from those farther away, which severely hinders any distance-based classification task. According to the "manifold hypothesis", the random elements under study may lie on a manifold of intrinsic dimension potentially much lower than the ambient one --- that of the recording support ---, and in that setting it should be possible to learn from the data a distance that remains useful in high dimension. Having analysed the genealogy and the theoretical foundations of distance learning, we propose a kernel density classifier for random elements defined on compact, boundaryless and a priori unknown Riemannian manifolds, using the Fermat distance learned from the available data. A systematic study of these constructions shows that density-based classifiers are competitive with state-of-the-art methods, with none of them clearly dominating. On datasets of high curvature and little separation between classes, classifiers trained with the Fermat distance improve on their Euclidean counterparts in terms of $R^2$ without losing accuracy. In well-sampled scenarios, where the classifier's bandwidth is small and defines a neighbourhood within the injectivity radius of the manifold, the Fermat distance is indistinguishable from the Euclidean one and the benefit is close to nil.
+#v(0.5em)
+
 #v(1em)
 
 *Keywords:* supervised classification, kernel density estimation, Riemannian manifolds, Fermat distance, density-based distances, representation learning, non-parametric learning.
