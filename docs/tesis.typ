@@ -389,7 +389,7 @@ Representaremos a las matrices con letras mayúsculas en negrita, #XX; p. ej., e
 En general, los vectores _no_ estarán en negrita, excepto cuando tengan $N$ componentes; esta convención distingue el $d$-vector de #emph[inputs] para la $i$-ésima observación, $x_i$, del $N$-vector $bu(x)_j$ con todas las observaciones de la variable $X_j$. Como todos los vectores se asumen vectores columna, la $i$-ésima fila de #XX es $x_i^T$, la traspuesta de la $i$-ésima observación $x_i$. El elemento de la $i$-ésima fila y $j$-ésima columna de la matriz #XX se notará $XX_(i,j)$.
 
 
-A continuación, algunos símbolos y operadores utilizados a lo largo del texto:
+A continuación, algunos símbolos y operadores utilizados en el texto:
 
 #v(1em)
 
@@ -1867,7 +1867,7 @@ Veamos primero qué sucede durante el entrenamiento para `circulos_lo`: ¿es que
 #obs(
   "unidades de la pérdida",
 )[Si bien buscamos maximizar el $R^2$, el entrenamiento se realizó maximizando la log-verosimilitud --- o _score_ `neg_log_loss` #footnote[
-    N. del E.: A posteriori de la experimentación descubrimos que entre las numerosas funciones de _score_ que tolera `scikit-learn`, se incluye #link("https://scikit-learn.org/stable/modules/model_evaluation.html#d2-score-classification")[`d2_log_loss_score`], que es esencialmente el $R^2$ de McFadden que proponemos como métrica de evaluación. Sería ideal recomputar los experimentos entrenándolos con dicha función objetivo, pero no hay razones de peso para suponer que el resultado sería distinto: al fin y al cabo, tanto la log-verosimilitud como el $R^2$ se maximizan en el mismo punto que la verosimilitud.] en `scikit-learn`  --- que toma valores en el intervalo $(-oo, 0]$. Como el _score_ es exactamente la pérdida cambiada de signo, mantenemos el nombre habitual de "superficie de pérdida" para estos gráficos, pero en ellos el óptimo es un _máximo_.]
+    A posteriori de la experimentación descubrimos que entre las numerosas funciones de _score_ que tolera `scikit-learn`, se incluye #link("https://scikit-learn.org/stable/modules/model_evaluation.html#d2-score-classification")[`d2_log_loss_score`], que es esencialmente el $R^2$ de McFadden que proponemos como métrica de evaluación. Sería ideal recomputar los experimentos entrenándolos con dicha función objetivo, pero no hay razones de peso para suponer que el resultado sería distinto: al fin y al cabo, tanto la log-verosimilitud como el $R^2$ se maximizan en el mismo punto que la verosimilitud.] en `scikit-learn`  --- que toma valores en el intervalo $(-oo, 0]$. Como el _score_ es exactamente la pérdida cambiada de signo, mantenemos el nombre habitual de "superficie de pérdida" para estos gráficos, pero en ellos el óptimo es un _máximo_.]
 
 #figure(
   image("img/circulos_lo-8527-fkdc-bandwidth-alpha-loss_contour.svg"),
@@ -1945,7 +1945,7 @@ En el panel izquierdo se observa una clara tendencia a mejorar ligeramente el $R
 Cabe aquí una crítica al diseño experimental: si #fkdc está tomando siempre $alpha =1$, ¿por qué #kdc no puede elegir el mismo $h$ que #fkdc y así equiparar su rendimiento? ¿Se exploró una grilla de hiperparámetros a propósito desfavorable para #kdc? Pues no, todo lo contrario #footnote[La definición exacta está en `fkdc/config.py`, y es `np.logspace(-5, 6, 45)` para #fkdc y `np.logspace(-5, 6, 136)` para #kdc.]: las grillas de $h$ para #kdc y #fkdc cubren de manera "logarítmicamente equidistante" el mismo rango de $h: [10^(-5), 10^6]$ y la grilla de #kdc cuenta con $approx$ el triple de puntos de #fkdc ($136 "vs." 45$).
 
 Como en el entrenamiento de #fkdc se gastaron 13 veces más recursos evaluando 13 valores distintos de $alpha in {1, 1.25, dots, 3.75, 4}$, consideramos oportuno permitirle a #kdc explorar más valores de $h$, y la cantidad se eligió para que la grilla de #kdc coincida con la de #fkdc, y tenga además otros dos valores intermedios entre dos valores cualesquiera de la grilla de #fkdc #footnote[
-  N. del E.: Para hacer esto correctamente, deberíamos haber tomado $(45 - 1) times (2 + 1) + 1= 133$ elementos en la segunda grilla, pero olvidamos restar 1 a 45 --- hay 45 puntos pero 44 "espacios" entre puntos de la grilla --- y por eso obtuvimos 136 puntos, con lo cual las grillas están ligeramente "desalineadas" y una no es un subconjunto de la otra. De todas maneras, la grilla de #kdc contiene el $0.173$, mucho más cercano al $0.178$ óptimo de #fkdc, con lo cual no se termina de explicar que la elección "modal" de #kdc haya sido $0.251$.
+  Para hacer esto correctamente, deberíamos haber tomado $(45 - 1) times (2 + 1) + 1= 133$ elementos en la segunda grilla, pero olvidamos restar 1 a 45 --- hay 45 puntos pero 44 "espacios" entre puntos de la grilla --- y por eso obtuvimos 136 puntos, con lo cual las grillas están ligeramente "desalineadas" y una no es un subconjunto de la otra. De todas maneras, la grilla de #kdc contiene el $0.173$, mucho más cercano al $0.178$ óptimo de #fkdc, con lo cual no se termina de explicar que la elección "modal" de #kdc haya sido $0.251$.
 ].
 En efecto, en el rango de interés, las grillas contaban con los valores redondeados a 3 decimales:
 $
@@ -1975,7 +1975,7 @@ En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" 
 - En `lunas_hi` observamos que #gbt alcanza un $R^2$ marginalmente mejor que #fkdc, y todos los métodos basados en densidad por núcleos (la familia $cal(K)$) alcanzan una exactitud ligeramente mejor que la de #gbt.
 - En `circulos_hi` #gbt es superior en $R^2$ y exactitud, aunque aún su propio rendimiento no es muy alentador con $R^2_#gbt approx 0.09$.
 
-- En `espirales_hi` todos los métodos de $cal(K)$ alcanzan un $R^2$ muy similar, #gbt queda largamente atrás y #gnb y #logr no se distinguen del $0$. #svc obtiene la mejor exactitud apenas por encima de #fkdc. Las ventajas de #fkdc por sobre #kdc son (casi) nulas en los tres casos.
+- En `espirales_hi` todos los métodos de $cal(K)$ alcanzan un $R^2$ muy similar, #gbt queda largamente atrás y #gnb y #logr no se distinguen del $0$. #svc obtiene la mejor exactitud,  por encima de #fkdc. Las ventajas de #fkdc por sobre #kdc son (casi) nulas en los tres casos.
 
 #highlights_figure("lunas_hi")
 
@@ -2345,7 +2345,7 @@ Quedan, por último, tres ajustes de diseño experimental que no cambian las pre
 
 #heading(numbering: none, level: 1)[Nota sobre el uso de inteligencia artificial]
 
-Durante la redacción del grueso de la tesis, entre 2023 y 2025, no se utilizó ningún asistente basado en LLM. Así, la selección y presentación del marco teórico, el diseño experimental, la implementación, los resultados y su interpretación son míos. Durante el proceso de revisión de los resultados y edición en 2026, utilicé un asistente de inteligencia artificial (_Claude Opus_ versiones 4.6 a 5.1, de Anthropic). A la luz de las crecientes capacidades de estos sistemas, corresponde declarar con precisión qué hizo y qué no.
+Durante la redacción del grueso de la tesis, entre 2023 y 2025, no se utilizó ningún asistente basado en LLM. Así, la selección y presentación del marco teórico, el diseño experimental, la implementación, los resultados y su interpretación son míos. Durante el proceso de revisión de los resultados y edición en 2026, utilicé un asistente de inteligencia artificial (_Claude_ en sus versiones _Opus 4.6, 5_ y _Fable 5.1_, de Anthropic). A la luz de las crecientes capacidades de estos sistemas, corresponde declarar con precisión qué hizo y qué no.
 
 Entre febrero y junio de 2026, la asistencia fue estrictamente de forma: corrección ortográfica y gramatical, sugerencias de estilo, formato en Typst, generación de figuras a partir de los datos y resolución de tareas mecánicas. En la revisión final, en septiembre de 2026, el alcance de la asistencia fue mayor: el asistente revisó la corrección de varias definiciones, y redactó primeras versiones de pasajes expositivos (Brand 2002, la omisión de la densidad de volumen), propuso los experimentos de @sensibilidad-escala reemplazando afirmaciones previas más imprecisas sobre el (mal) rendimiento de #fkdc en `pinguinos` y `vino`, propuso recortes a lo que se afirmaba en las conclusiones y asistió en la correcta atribución de las líneas de trabajo futuro.
 
