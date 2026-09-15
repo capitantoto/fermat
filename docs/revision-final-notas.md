@@ -80,3 +80,34 @@ Convenciones: **Aplicado** lista solo ediciones de fondo (las erratas no se list
 **Estado**
 - $n$ se tolera solo en $S^n$ (esfera) y en enunciados que reproducen a Pelletier/Henry–Rodríguez con aviso.
 - «no» + adjetivo sin guion, ya aplicado hasta la línea ~1020.
+
+## Bloque 5 — Preliminares 2.5–2.6 (clasificación en variedades, aprendizaje de distancias, distancia de Fermat)
+
+**Aplicado**
+- Def. de consistencia (Devroye): «Sea $L_n = ind(hat(G)_n != G_n)$ la pérdida 0-1 para $hat(G)_n$» hacía de $L_n$ un indicador, con lo que «$lim L_n = L^*$ con probabilidad 1» no tenía sentido. Ahora: «$L_n = Pr(hat(G)_n (X) != G | XX, bu(g))$ la probabilidad de error de $hat(G)_n$ condicional a la muestra», que es la definición de Devroye §6.1 y hace consistentes las dos ecuaciones.
+- Loubes et al.: en el denominador de $hat(Pr)(G=k|X)$ la suma reutilizaba el índice $k$ del numerador → índice $j$.
+- Isomap, $k$-Isomap: la nota «o viceversa, pues en un grafo no dirigido la relación de vecinos más cercanos es mutua» era falsa (la relación no es simétrica; el grafo se simetriza). Ahora: «O viceversa: el grafo se toma no dirigido, así que basta con que uno de los dos sea vecino más cercano del otro».
+- Curva rectificable: en $L(gamma) = sup sum |gamma(t_i) - gamma(t_(i-1))|$ la resta de puntos de #MM no está definida → $dg(gamma(t_i), gamma(t_(i-1)))$.
+- Distancia de Chebyshev: «$norm(x)_(p->oo) = max |x_i - y_i|$» mezclaba norma de $x$ con diferencia $x - y$ → «$d_oo (x, y) = norm(x - y)_oo = max abs(x_i - y_i)$».
+- Ejemplo edad/cabellos: «$sop(X) = RR^2$» → «$sop(X) subset RR^2$» (edad y cantidad de cabellos no cubren el plano); «$X(Omega) = (X_1, X_2)$» → «$X(omega) = (X_1(omega), X_2(omega))$».
+- Nota sobre autocodificadores: el decodificador se llamaba $d(x)$ en la misma frase en que $d$ es la dimensión del código → $delta(x)$.
+- Convergencia de $D_(Q, alpha)$ (Groisman et al., Teorema 2.7) estaba en un bloque `#defn` («Definición») → `#thm` («Teorema»). La referencia `@convergencia-sfd` en Resultados ahora dice «Teorema».
+- Nota H, colisiones de símbolos:
+  - $p$ era a la vez punto de #MM y exponente de la $p$-norma en la definición del costo $J_(g compose f)$ («entre dos puntos cualesquiera $p, q in MM$ … $norm(dot)_p$ es la $p$-norma») → los puntos pasan a $a, b$, coherente con la nota al pie que ya anunciaba ese cambio para Bijral et al.
+  - $K$ era la longitud del camino en la def. de distancia muestral de Fermat, y $k$ la del paseo en Bijral et al. y en $d_bu(2)$ de Chu et al. → $m$ en los tres lugares.
+  - PCA: «$XX in RR^(N times p)$ … $bu(U)_p$ … primeras $k <= p$ direcciones … $RR^(n times k)$» → dimensión $d$, componentes $m <= d$, $N$ filas. Isomap: «$x_i in RR^p$ … $p$-dimensionales» → $d$; la dimensión de la representación MDS («$d$-dimensional … $RR^d$ … valor óptimo de $d$», «con $d = 2$» en la figura) → $d_MM$.
+  - Vincent & Bengio: «si la variedad es $d$-dimensional … $(d+1)$-ésima … las $d$ direcciones principales … $bu(V)_d bu(Lambda)_d bu(V)_d^T$ … dimensión intrínseca $d$ del paso (1)» → $d_MM$ (la subsección siguiente, Brand, ya usaba $d$ ambiente y $d_MM$ intrínseca).
+  - Parametrización de Groisman et al.: «$r = beta = (alpha - 1) / d$» → «$d_MM$», como en la observación que sigue al teorema.
+  - «$n = 3$ observaciones», «con $n -> oo$ converge», «$k = O(2^(d_MM) ln n)$», «$gamma: [a,b] -> RR^n$, $f: RR^n -> RR$» → $N$ / $RR^d$. «no depende para nada de la dimensión ambiente $D$» → sin el símbolo (Bijral et al. no lo usan así en el texto).
+- Notas G (20 ecuaciones) y F (27 notas al pie) aplicadas. «et al» → «et al.» (×7). Erratas: «sí y solo si», «isómetrico», «$epsilon$ ó $k$», «de-por-sí», «cementa» → «cimenta», «aplicándoles» → «aplicándolas», «toma» → «toman» (Vincent et al.), «trabajando» → «trabajó» (oración sin verbo), «monótonicamente» → «monótona», «resulta muy difícil de obtener» → «resulta muy difícil obtener», «aún antes/aún en el habla» → «aun», «en límite» → «en el límite», «Hemos encontrado candidato» → «un candidato», «Data espacial» → «Datos espaciales», «DBDs/PWSPDs» → sin plural, «pseudo-métrica» → «pseudométrica», «$S^2 in RR^3$» → «$subset$», «$Phi$» → «$phi.alt$», «Gaussianas» → minúscula, «--,» → «---,» (×4), un «)» sobrante en «$norm(b - a)_p^q)$», un punto suelto al inicio de línea tras la ecuación de $hat(SS)_cal(K)$, «approx prop» → «prop».
+
+**Para decidir**
+- §2.6.3 (Vincent & Bengio): la nota al pie sobre el grupo de Bengio/Rifai es larga para lo que aporta; podría reducirse a la primera oración más las dos citas.
+- §2.6.5, definición de «curva rectificable»: la frase «Las curvas rectificables son importantes porque permiten definir conceptos como la longitud de arco y la parametrización por longitud de arco, que son fundamentales en geometría diferencial y análisis» es relleno; se puede quitar sin pérdida.
+- §2.6.5, Bijral et al.: la cadena «$approx … prop … = …$» termina en «$=$» con constante implícita; ya señalado en `revision-editorial.md`, sin cambios.
+- §2.6.5, «Nótese que #sfd satisface la desigualdad triangular, define una métrica sobre $Q$ y una pseudométrica sobre $RR^d$»: para $x, y in.not Q$ con $alpha > 1$, $sfd(x, y)$ no es en general una pseudométrica en el sentido de la nota (puede fallar la desigualdad triangular fuera de $Q$ según cómo se defina «camino de $x$ a $y$»). Lo dejé; verificar contra la Observación 2.4 de Groisman et al.
+- «dataset» aparece 111 veces en redonda y 6 en cursiva; unificar en redonda (lo hago en el bloque 11 salvo indicación contraria).
+
+**Estado**
+- $a, b$ para puntos genéricos de #MM desde el costo $J_(g compose f)$ en adelante; $m$ para longitudes de caminos/paseos; $D$ ambiente solo en la nota de autocodificadores, con aviso.
+- «et al.» con punto.
