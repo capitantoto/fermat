@@ -30,3 +30,26 @@ Convenciones: **Aplicado** lista solo ediciones de fondo (las erratas no se list
 **Estado**
 - Adjetivos derivados de nombre propio en minúscula: riemanniana, euclídea, gaussiana. El cuerpo tiene ~30 «Riemanniana/o» (bloque 4) y «Gaussianas» (bloque 5); se corrigen allí, sin tocar títulos en inglés.
 - Dimensión ambiente `d` en todo el texto; `p` solo si reproduce la notación de un paper con aviso.
+
+## Bloque 3 — Preliminares 2.1–2.3 (clasificación, KDE, KDE multivariado, maldición de la dimensionalidad, hipótesis de la variedad)
+
+**Aplicado**
+- Regla de Bayes, reescritura de $hat(G)$: las líneas 3 y 4 igualaban una probabilidad condicional a un máximo no normalizado. Antes: «$Pr(g|X=x) = max_(g in GG) Pr(X=x|g) times Pr(g)$» y «$Pr(GG_k|X=x) = max_(k in [K]) Pr(X=x|GG_k) times Pr(GG_k)$». Ahora el lado izquierdo es también «$Pr(X=x|g) times Pr(g)$» (resp. «$Pr(X=x|GG_k) times Pr(GG_k)$»).
+- EPE: «Por la ley de la probabilidad total, podemos condicionar a X» → «Por la ley de la esperanza total»; y en la cadena $"EPE"(f) = …$ el argumento era $hat(G)(X)$ en lugar de $f(X)$ (tres líneas). También «la esperanza es contra la distribución conjunta» → «respecto de».
+- Observación tras la def. de núcleo: «Todas las funciones de densidad simétricas centradas en 0 son núcleos» → «simétricas y unimodales centradas en 0» (la condición 4 exige máximo en 0).
+- Elección de $HH$: «$mat(d; 2) = (d^2 - d) slash 2$ parámetros si $HH in cal(F)$» → «$binom(d + 1, 2) = (d^2 + d) slash 2$»: una matriz simétrica $d times d$ tiene $d(d+1)/2$ parámetros libres.
+- Densidad normal multivariada: «$Phi(x) : RR^d -> RR = (2 pi)^(-d/2) exp(-(||x||^2)/2)$» → «$phi.alt : RR^d -> RR, quad phi.alt(x) = …$» ($Phi$ es la notación usual de la función de distribución; $phi.alt$ ya se usó para la densidad normal estándar unidimensional).
+- Clasificador duro: «$arg max_(i in [K]) hat(G)_"Blando"(x_0)$» → «$arg max_(i in [K]) [hat(G)_"Blando"(x_0)]_i$»; en la observación siguiente, la suma del denominador reutilizaba el índice $i$ del numerador → índice $j$.
+- Nota H: Naive Bayes usaba $p$ como dimensión ($X_1, dots, X_p$; $p$ densidades; $K times p$; $product_(k=1)^p$) → $d$; «$X_1, dots, X_k$» → «$X_1, dots, X_d$».
+- Nota al pie sobre 8 bits: «$sop X = B^8000 = 2^64000$» confundía conjunto y cardinal → «$sop X = B^8000$ y $abs(B^8000) = 2^64000$».
+- Nota G aplicada a las 20 ecuaciones destacadas del bloque. Nota F aplicada a 14 notas al pie.
+- Erratas: coma sujeto–predicado (×3); «Regla de Bayes» → «regla de Bayes»; «plugin» → _plug-in_; «SVMs», «KDEs» → «SVM», «KDE» (las siglas no pluralizan); «data genómica» → «datos genómicos»; «$d-$variado» → «$d$-variado»; «no-lineal», «no-euclídeo», «no-supervisada» → sin guion; «$d u$» → «$dif u$»; «$GG_1, dots, GG_k$» → «$GG_K$»; desigualdad $<$ / $<=$ unificada en $U_h$; «interconexiones - es decir» → raya.
+
+**Para decidir**
+- §2.1 «Definición y vocabulario»: la primera línea de «$hat(G)(x) = arg min_f EE(L(G, f(X)))$» repite el mínimo global antes del punto a punto; podría leerse «$= arg min_(g) EE(L(G, g) | X = x)$». No lo cambié: el paso siguiente ya lo hace explícito.
+- §2.3.5 (hipótesis de la variedad): la nota sobre Gallese y Bengio sigue siendo larga (ya señalado en `revision-editorial.md`); intacta.
+
+**Estado**
+- Puntuación de ecuaciones: signo dentro del `$ $`, sin `thin`; «donde/con» en minúscula tras coma.
+- Siglas sin plural (KDE, SVM, PCA). Prefijo «no» sin guion (quedan 8 «no-…» en bloques posteriores).
+- $phi.alt$ = densidad normal (estándar); $Phi$ no se usa.
