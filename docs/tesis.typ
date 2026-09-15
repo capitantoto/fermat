@@ -1592,8 +1592,8 @@ Al no conocer _a priori_ demasiado con respecto a la teoría de la distribución
 
 = Resultados <resultados>
 
-== In Totis
-En total, ejecutamos unas 4900 tareas: 4000 producto de #reps repeticiones por dataset y clasificador sobre 20 datasets y 8 clasificadores diferentes, más 900 sobre variantes estandarizadas de cuatro de esos datasets (@sensibilidad-escala). De los clasificadores ya se habló; los _datasets_ --- cuyos nombres se estilan en fuente `monoespacio` --- se presentarán cuando nos aboquemos al análisis de cada uno.
+== In toto
+En total, ejecutamos unas 4800 tareas: 4000 producto de #reps repeticiones por dataset y clasificador sobre 20 datasets y 8 clasificadores diferentes, más 800 sobre variantes estandarizadas de cuatro de esos datasets (@sensibilidad-escala). De los clasificadores ya se habló; los _datasets_ --- cuyos nombres se estilan en fuente `monoespacio` --- se presentarán cuando nos aboquemos al análisis de cada uno.
 
 Designaremos por $cal(K) = {#fkdc, #kdc, #fkn, #kn}$ a la familia de estimadores basados en densidad por núcleos, sobre la que se concentra el análisis comparativo del capítulo. Entre los clasificadores blandos, la distancia de Fermat alcanzó el máximo $R^2$ mediano en 12 de los 20 datasets: 7 con #fkdc y 5 con #fkn, dos de estos empatados con #kn. En todo este recuento, un empate en la mediana --- a cuatro decimales, como en las tablas resumen --- se cuenta para cada clasificador que lo alcanza, así que los totales pueden superar los 20 datasets.
 
@@ -1606,7 +1606,7 @@ La amplia distribución de algoritmos óptimos según las condiciones del datase
   short-caption: [Mejor clasificador por dataset según $R^2$ mediano.],
 )
 
-El mismo análisis con métrica de exactitud es menos favorable a la familia $cal(K)$, que de ser óptimos en 14 de 20 datasets por $R^2$, pasan a serlo en 9 de 20 por exactitud, casi siempre empatados entre sí. #svc, entrenado en consecuencia, obtiene la mayor exactitud mediana en 7 de los 20 datasets, con rendimiento sólido en todo tipo de datasets. #gbt vuelve a brillar en aquellos con mucho ruido y siguen figurando como competitivos numerosos estimadores: hasta #fkdc retiene su título en 1 dataset, `espirales_lo`.
+El mismo análisis con métrica de exactitud es menos favorable a la familia $cal(K)$, que de ser óptima en 14 de 20 datasets por $R^2$ pasa a serlo en 9 de 20 por exactitud, casi siempre empatados entre sí. #svc, entrenado en consecuencia, obtiene la mayor exactitud mediana en 7 de los 20 datasets, con rendimiento sólido en todo tipo de datasets. #gbt vuelve a brillar en aquellos con mucho ruido y siguen figurando como competitivos numerosos estimadores: hasta #fkdc retiene su título en 1 dataset, `espirales_lo`.
 
 #tabla_clf_destacados(
   "data/mejor-clf-por-dataset-segun-accuracy-mediano.csv",
@@ -1614,10 +1614,10 @@ El mismo análisis con métrica de exactitud es menos favorable a la familia $ca
   short-caption: [Mejor clasificador por dataset según exactitud mediana.],
 )
 
-No es nuestra intención abrumar al lector, así que a continuación haremos un paneo arbitrario por algunos de los resultados que nos resultaron más llamativos o se acercan lo suficiente a algún resultado de la literatura previa como para merecer un comentario aparte #footnote[Si usted, querido lector, es un alma crítica e inquieta y decide clonar el repositorio, cambiar las semillas y reproducir los experimentos --- ¡o aún incorporar nuevos datasets y algoritmos! --- por favor, no deje de hacer un _pull request_ al repositorio original.].
+No es nuestra intención abrumar al lector, así que a continuación haremos un paneo arbitrario por algunos de los resultados que nos resultaron más llamativos o se acercan lo suficiente a algún resultado de la literatura previa como para merecer un comentario aparte #footnote[Si usted, querido lector, es un alma crítica e inquieta y decide clonar el repositorio, cambiar las semillas y reproducir los experimentos --- ¡o aun incorporar nuevos datasets y algoritmos! --- por favor, no deje de hacer un _pull request_ al repositorio original.].
 == Lunas, círculos y espirales ($d=2, d_MM=1, K=2$)
 
-Para comenzar, consideramos el caso no trivial más sencillo con $d > d_MM$: $d=2, d_MM=1, K=2$, y exploramos tres curvas muestreadas con un poco de "ruido blanco" añadido: dos "lunas" --- semicírculos no superpuestos con sus centros en un extremo del semicírculo opuesto ---, dos círculos concéntricos y dos espirales con el mismo origen y sentido de rotación pero desfasadas medio giro #footnote[No entraremos en demasiado detalle sobre cómo se generó o de dónde se tomó cada _dataset_ para mantener el foco en los resultados experimentales. Las rutinas para generar cada conjunto de datos se puede leer en `fkdc/datasets.py`].
+Para comenzar, consideramos el caso no trivial más sencillo con $d > d_MM$: $d=2, d_MM=1, K=2$, y exploramos tres curvas muestreadas con un poco de "ruido blanco" añadido: dos "lunas" --- semicírculos no superpuestos con sus centros en un extremo del semicírculo opuesto ---, dos círculos concéntricos y dos espirales con el mismo origen y sentido de rotación pero desfasadas medio giro #footnote[No entraremos en demasiado detalle sobre cómo se generó o de dónde se tomó cada _dataset_ para mantener el foco en los resultados experimentales. Las rutinas para generar cada conjunto de datos se pueden leer en `fkdc/datasets.py`.].
 
 #v(-1em)
 
@@ -1640,8 +1640,8 @@ Para comenzar, consideramos el caso no trivial más sencillo con $d > d_MM$: $d=
 
 
 
-En una primera variación con "bajo ruido" (y sufijada "`_lo`") #footnote[en inglés, _low_ y _high_ - baja y alta - son casi homófonos de _lo_ y _hi_], a las observaciones #XX sobre la variedad #MM se les añadió ruido blanco con un parámetro de escala $sigma$ según la distribución normal bivariada, $epsilon ~ cal(N)_2(0, sigma^2 bu(I))$. $sigma$ se ajustó a cada dataset para resultar "poco" relativo a la escala de los datos #footnote[La distribución normal multivariada no determina un radio finito para el tubo $B(MM, tau)$. En la práctica, con muestras relativamente pequeñas como las nuestras --- 400 observaciones por clase --- el tubo de diámetro $tau approx 6 sigma$ _no_ captura a todas la observaciones con probabilidad menor a uno en un millón.].
-$ sigma_"lunas" = 0.25 quad sigma_"circulos" = 0.08 quad sigma_"espirales" = 0.1 $.
+En una primera variación con "bajo ruido" (y sufijada "`_lo`") #footnote[En inglés, _low_ y _high_ --- baja y alta --- son casi homófonos de _lo_ y _hi_.], a las observaciones #XX sobre la variedad #MM se les añadió ruido blanco con un parámetro de escala $sigma$ según la distribución normal bivariada, $epsilon ~ cal(N)_2(0, sigma^2 bu(I))$. $sigma$ se ajustó a cada dataset para resultar "poco" relativo a la escala de los datos #footnote[La distribución normal multivariada no determina un radio finito para el tubo $B(MM, tau)$. En la práctica, con muestras relativamente pequeñas como las nuestras --- 400 observaciones por clase --- el tubo de radio $tau = 6 sigma$ deja afuera alguna observación con probabilidad del orden de $10^(-5)$.].
+$ sigma_"lunas" = 0.25 quad sigma_"circulos" = 0.08 quad sigma_"espirales" = 0.1. $
 
 En los tres datasets, el resultado es muy similar: #fkdc es el estimador que mejor $R^2$ reporta, y en todos tiene una exactitud comparable a la del mejor para el dataset. En ninguno de los tres datasets #fkdc tiene una exactitud muy distinta a la de #kdc, pero saca ventaja en $R^2$ para `lunas_lo` y `espirales_lo`.
 
@@ -1760,24 +1760,24 @@ Entre el resto de los algoritmos, los no paramétricos son competitivos: #kn, #f
 #let sfd = $D_(Q, alpha)$
 
 #obs("riesgos computacionales")[
-  Una dificultad de entrenar un clasificador _original_ es que hay que definir las rutinas numéricas "a mano", usando librerías estándares como `numpy` y `scipy` para operaciones elementales y nada más. Además, depurar #footnote[_debug_ en inglés]  errores en rutinas numéricas es particularmente difícil, puesto que las operaciones no producen errores obvios, sino que retornan valores irrisorios #footnote[Hubo montones de estos, cuya resolución progresiva dio lugar al módulo `fkdc/fermat.py` y las clases `SampleFermatDistance, FermatKNeighborsClassifier, FermatKDE` y `KDClassifier`--- que acepta tanto la métrica euclídea como de Fermat --- en la pequeña librería que acompaña esta tesis. Creemos que no los hay, pero todo error de cálculo que pueda persistir en el producto final depende exclusivamente de mí.].
+  Una dificultad de entrenar un clasificador _original_ es que hay que definir las rutinas numéricas "a mano", usando librerías estándares como `numpy` y `scipy` para operaciones elementales y nada más. Además, depurar #footnote[_Debug_ en inglés.] errores en rutinas numéricas es particularmente difícil, puesto que las operaciones no producen errores obvios, sino que retornan valores irrisorios #footnote[Hubo montones de estos, cuya resolución progresiva dio lugar al módulo `fkdc/fermat.py` y las clases `SampleFermatDistance, FermatKNeighborsClassifier, FermatKDE` y `KDClassifier` --- que acepta tanto la métrica euclídea como de Fermat --- en la pequeña librería que acompaña esta tesis. Creemos que no los hay, pero todo error de cálculo que pueda persistir en el producto final depende exclusivamente de mí.].
 
-  A ello se le suma que el cómputo de la distancia muestral de Fermat #sfd es realmente caro. Aun siguiendo "buenas prácticas computacionales" #footnote[Como sumar logaritmos en lugar de multiplicar valores "crudos" siempre que sea posible], implementaciones ingenuas pueden resultar impracticables hasta en datasets de baja cardinalidad y pocas dimensiones.
+  A ello se le suma que el cómputo de la distancia muestral de Fermat #sfd es realmente caro. Aun siguiendo "buenas prácticas computacionales" #footnote[Como sumar logaritmos en lugar de multiplicar valores "crudos" siempre que sea posible.], implementaciones ingenuas pueden resultar impracticables hasta en datasets de baja cardinalidad y pocas dimensiones.
 
-  Por otra parte, el teorema de convergencia @convergencia-sfd nos garantiza que cuando $n->oo, quad sfd -> cal(D)_(f, beta)$, pero esa es una afirmación asintótica y aquí estamos tomando $k=5$ pliegos de entre $n = 800$ observaciones, con $n_"train" = n_"eval" = n slash 2$ observaciones para un tamaño muestral efectivo de $(k-1)/k n/2 = 320$. ¿Es 320 un tamaño muestral "lo suficientemente grande" para que sea válida?
+  Por otra parte, el teorema de convergencia @convergencia-sfd nos garantiza que cuando $N->oo, quad sfd -> cal(D)_(f, beta)$, pero esa es una afirmación asintótica y aquí estamos tomando $k=5$ pliegos de entre $N = 800$ observaciones, con $N_"train" = N_"eval" = N slash 2$ observaciones para un tamaño muestral efectivo de $(k-1)/k N/2 = 320$. ¿Es 320 un tamaño muestral "lo suficientemente grande" para que sea válida?
 
   Por todo ello, que la bondad de los clasificadores _no empeore_ con el uso de #sfd en lugar de #euc es de por sí un hito importante.
 ]
 
 === `lunas_lo`
 
-A continuación presentaremos el resumen de los resultados obtenidos para este dataset. Como tal gráfica de síntesis se repetirá por dataset, amerita una breve descripción. Consta de dos columnas: en la izquierda, un scatter plot 2D o 3D de algunas dimensiones del dataset y una tabla con la exactitud y el $R^2$ mediano por algoritmo. Para ayudar a la comprensión de un vistazo, los algoritmos se ordenan por $R^2$ descendente, el mejor se resalta en verde, y atenuados en gris figuran aquellos cuya mediana de $R^2$ esté por debajo del primer cuartil del mejor --- salvo SVC  que no reporta $R^2$ #footnote[Una regla similar a la R1SD hubiese sido más consistente, pero al presentar los datos con boxplots esta demarcación nos resultó más natural.].
+A continuación presentaremos el resumen de los resultados obtenidos para este dataset. Como tal gráfica de síntesis se repetirá por dataset, amerita una breve descripción. Consta de dos columnas: en la izquierda, un gráfico de dispersión 2D o 3D de algunas dimensiones del dataset y una tabla con la exactitud y el $R^2$ mediano por algoritmo. Para ayudar a la comprensión de un vistazo, los algoritmos se ordenan por $R^2$ descendente, el mejor se resalta en verde, y atenuados en gris figuran aquellos cuya mediana de $R^2$ esté por debajo del primer cuartil del mejor --- salvo #svc, que no reporta $R^2$ #footnote[Una regla similar a la R1SD hubiese sido más consistente, pero al presentar los datos con boxplots esta demarcación nos resultó más natural.].
 
 En la columna derecha, los boxplots de ambas métricas para todos los clasificadores; los atenuados en la tabla se dibujan translúcidos, y el eje vertical se recorta por debajo del peor valor de #fkdc. Las líneas punteadas horizontales marcan la mediana del mejor algoritmo en cada métrica. Las fichas de todos los datasets, incluidas las que no se reproducen en el cuerpo del capítulo, están reunidas en el #ref-anexo.
 
 #highlights_figure("lunas_lo")
 
-#fkdc tiene el mejor rendimiento, pero no por mucho, y aún #logr rinde decentemente en `lunas_lo`:
+#fkdc tiene el mejor rendimiento, pero no por mucho, y aun #logr rinde decentemente en `lunas_lo`:
 
 #figure(
   image("img/lunas_lo-lr-decision_boundary.svg", height: 17em),
@@ -1786,7 +1786,7 @@ En la columna derecha, los boxplots de ambas métricas para todos los clasificad
     [Frontera de #logr en `lunas_lo`],
   ),
 )
-Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) aprendida por #logr separa "bastante bien" la muestra: pasa por el punto medio del segmento que une el "centro" de cada luna, y de todas las direcciones con tal origen, elige la que mejor separa las clases. _Grosso modo_, en el tercio de la muestra más cercano a la frontera, alcanza una exactitud de $~50%$, pero en los tercios al interior de cada acierta virtualmente el 100%, para un promedio global de $1/3 50% + 2/3 100% approx 86.7%$, muy cercano a la exactitud observada.
+Nótese que la frontera _lineal_ entre clases (al centro de la banda gris) aprendida por #logr separa "bastante bien" la muestra: pasa por el punto medio del segmento que une el "centro" de cada luna, y de todas las direcciones con tal origen, elige la que mejor separa las clases. _Grosso modo_, en el tercio de la muestra más cercano a la frontera, alcanza una exactitud de $approx 50%$, pero en los tercios al interior de cada una acierta virtualmente el 100%, para un promedio global de $1/3 dot 50% + 2/3 dot 100% approx 86.7%$, muy cercano a la exactitud observada.
 
 === `circulos_lo` y `espirales_lo`
 
@@ -1799,7 +1799,7 @@ Una inspección ocular a las fronteras de decisión revela las limitaciones de d
 
 #logr solo puede dibujar fronteras "lineales", y como ninguna frontera lineal que corte la muestra logra dividirla en dos regiones con densidades de clase realmente diferentes, el algoritmo no es mejor que "lanzar una moneda". #gnb falla de manera análoga, aunque su problema es otro --- no lidia bien con distribuciones con densidades marginales muy similares.
 
-Entre #kn y #fkn casi no observamos diferencias, asunto que ahondaremos más adelante. Por lo pronto, sí se nota que se adaptan bastante bien a los datos, con algunas regiones de incertidumbre que resultan onerosas en términos de $R^2$: a primera vista los mapas de decisión recién expuestos se ven muy similares, pero las pequeñas diferencias de probabilidades resultaron en una diferencia de $0.19$ en $R^2$ _en contra_ del #fkn para esta semilla #footnote[La diferencia en la _mediana_ de $R^2$ para ambos es mucho menor, $approx 0.03$, lo cual resalta la sensibilidad de los resultados a la semilla aleatorizante y la importancia de realizar muchas repeticiones de cada experimento para evitar resultados espurios]. También resulta llamativa la "creatividad" de #gbt para aproximar las verdaderas fronteras --- espirales curvas --- con una serie de _splits_ binarios, que le permiten dibujar una especie "espiral rectangular".
+Entre #kn y #fkn casi no observamos diferencias, asunto que ahondaremos más adelante. Por lo pronto, sí se nota que se adaptan bastante bien a los datos, con algunas regiones de incertidumbre que resultan onerosas en términos de $R^2$: a primera vista los mapas de decisión recién expuestos se ven muy similares, pero las pequeñas diferencias de probabilidades resultaron en una diferencia de $0.19$ en $R^2$ _en contra_ del #fkn para esta semilla #footnote[La diferencia en la _mediana_ de $R^2$ para ambos es mucho menor, $approx 0.03$, lo cual resalta la sensibilidad de los resultados a la semilla aleatorizante y la importancia de realizar muchas repeticiones de cada experimento para evitar resultados espurios.]. También resulta llamativa la "creatividad" de #gbt para aproximar las verdaderas fronteras --- espirales curvas --- con una serie de _splits_ binarios, que le permiten dibujar una especie de "espiral rectangular".
 
 #let clfs = ("kdc", "fkdc", "svc", "kn", "fkn", "gbt", "lr", "gnb")
 #wide_figure(
@@ -1828,11 +1828,11 @@ Entre #kn y #fkn casi no observamos diferencias, asunto que ahondaremos más ade
   ),
 )
 
-Las fronteras de #svc, que no tienen gradiente de color sino solo una frontera lineal #footnote[Como aprendimos: la frontera de una variedad riemanniana de dimensión intrínseca $d_MM$ es una variedad sin frontera de dimensión intrínseca $d_MM - 1$; la frontera de estas regiones en es una curva parametrizable en $RR^1$ embebida en $RR^2$] puesto que al ser un clasificador duro determina una frontera abrupta donde cambia la clase predicha. Es sorprendente la flexibilidad del algoritmo, que consigue dibujar una única frontera sumamente no-lineal que separa los datos con altísima exactitud. La ventaja que #fkdc pareciera tener sobre #svc es que la frontera que dibuja pasa "más lejos" de las observaciones de clase, mientras que la #svc parece estar muy pegada a los brazos de la espiral, particularmente en el giro más interno.
+Las fronteras de #svc no tienen gradiente de color sino solo una línea #footnote[Como aprendimos: la frontera de una variedad riemanniana de dimensión intrínseca $d_MM$ es una variedad sin frontera de dimensión intrínseca $d_MM - 1$; la frontera de estas regiones es una curva parametrizable en $RR^1$ embebida en $RR^2$.], puesto que al ser un clasificador duro determina una frontera abrupta donde cambia la clase predicha. Es sorprendente la flexibilidad del algoritmo, que consigue dibujar una única frontera sumamente no lineal que separa los datos con altísima exactitud. La ventaja que #fkdc pareciera tener sobre #svc es que la frontera que dibuja pasa "más lejos" de las observaciones de clase, mientras que la de #svc parece estar muy pegada a los brazos de la espiral, particularmente en el giro más interno.
 
-=== Estudio de ablación: $R^2$ para #kdc/ #kn con y sin distancia de Fermat.
+=== Estudio de ablación: $R^2$ para #kdc / #kn con y sin distancia de Fermat
 
-Según la #link("https://dle.rae.es/ablaci%C3%B3n")[RAE], "ablación" proviene del latín tardío "ablatio, -ōnis", y significa 'acción de quitar'. ¿Qué se pierde en términos de $R^2$ al _no_ usar la distancia de Fermat muestral #sfd en estos algoritmos? Sirva para enfocar la atención, los gráficos de dispersión del $R^2$ alcanzado en $XX_"test"$ para #kn y #kdc con y sin distancia de Fermat, en las #reps repeticiones de cada Tarea.
+Según la #link("https://dle.rae.es/ablaci%C3%B3n")[RAE], "ablación" proviene del latín tardío "ablatio, -ōnis", y significa 'acción de quitar'. ¿Qué se pierde en términos de $R^2$ al _no_ usar la distancia de Fermat muestral #sfd en estos algoritmos? Sirvan para enfocar la atención los gráficos de dispersión del $R^2$ alcanzado en $XX_"test"$ para #kn y #kdc con y sin distancia de Fermat, en las #reps repeticiones de cada Tarea.
 
 #let curvas = ("lunas", "circulos", "espirales")
 #wide_figure(
@@ -1908,7 +1908,7 @@ Ahora bien, esto es solo en _un_ dataset, con _una_ semilla específica. ¿Se re
 
 Efectivamente, el fenómeno se replica. Podemos observar también en datasets como `circulos_lo`, $s =7354$, cómo actúa la regla de parsimonia. Dentro de la "meseta color lima" que ocupa toda el área por encima de la diagonal principal del gráfico,  todas las hiperparametrizaciones alcanzan resultados similares. Sin embargo, la validación cruzada elige consistentemente para cada $h$ el menor $alpha$ posible que no "cae" hacia la región azul de menores _scores_.
 
-Estamos ahora frente a una contradicción: en la @fig-17 vimos que por ejemplo, para `lunas_lo`, #fkdc alcanzaba un $R^2$ consistentemente mejor que #kdc; mientras que de los paneles superiores de la @fig-19 observamos que los _scores_ que se alcanzan limitándonos a $alpha = 1$ son tan altos como los de $alpha > 1$. Es cierto que los resultados de @fig-17 son a través de _todas_ las semillas, y en el conjunto de evaluación, mientras que en la @fig-19 observamos _algunas_ semillas y sobre los datos de entrenamiento, pero la pregunta es válida: ¿de dónde proviene la ventaja de #fkdc en estos datasets?
+Estamos ahora frente a una contradicción: en la @fig-17 vimos que, por ejemplo, para `lunas_lo`, #fkdc alcanzaba un $R^2$ consistentemente mejor que #kdc; mientras que de los paneles superiores de la @fig-19 observamos que los _scores_ que se alcanzan limitándonos a $alpha = 1$ son tan altos como los de $alpha > 1$. Es cierto que los resultados de @fig-17 son a través de _todas_ las semillas, y en el conjunto de evaluación, mientras que en la @fig-19 observamos _algunas_ semillas y sobre los datos de entrenamiento, pero la pregunta es válida: ¿de dónde proviene la ventaja de #fkdc en estos datasets?
 
 === Hiperparámetros óptimos en `lunas_lo` para #kdc, #fkdc
 
@@ -1942,23 +1942,23 @@ Veamos cómo se comparan los valores de $R^2$ que alcanza cada algoritmo en cada
 )
 En el panel izquierdo se observa una clara tendencia a mejorar ligeramente el $R^2$ a medida que disminuye el ancho de la ventana $h$ (en el rango en cuestión). En el panel derecho, para confirmar que la tendencia sucede _en cada repetición del experimento_, comparamos no los valores absolutos sino las diferencias relativas en $R^2, h$ entre #fkdc y #kdc apareando los resultados _para cada semilla_, y vemos que a mayor diferencia en el $h$ de #kdc por sobre #fkdc, peor es la caída en $R^2$.
 
-Cabe aquí una crítica al diseño experimental: si #fkdc está tomando siempre $alpha =1$, por qué #kdc no puede elegir el mismo $h$ que #fkdc y así equiparar su rendimiento? ¿Se exploró una grilla de hiperparámetros a propósito desfavorable para #kdc? Pues no, todo lo contrario #footnote[La definición exacta está en `fkdc/config.py`, y es `np.logspace(-5, 6, 45)` para #fkdc y `np.logspace(-5, 6, 136)` para #kdc]: las grillas de $h$ para #kdc y #fkdc cubren de manera "logarítmicamente equidistante" el mismo rango de $h: [10^(-5), 10^6]$ y la grilla de #kdc cuenta con $approx$ el triple de puntos de #fkdc ($136 "vs." 45$).
+Cabe aquí una crítica al diseño experimental: si #fkdc está tomando siempre $alpha =1$, ¿por qué #kdc no puede elegir el mismo $h$ que #fkdc y así equiparar su rendimiento? ¿Se exploró una grilla de hiperparámetros a propósito desfavorable para #kdc? Pues no, todo lo contrario #footnote[La definición exacta está en `fkdc/config.py`, y es `np.logspace(-5, 6, 45)` para #fkdc y `np.logspace(-5, 6, 136)` para #kdc.]: las grillas de $h$ para #kdc y #fkdc cubren de manera "logarítmicamente equidistante" el mismo rango de $h: [10^(-5), 10^6]$ y la grilla de #kdc cuenta con $approx$ el triple de puntos de #fkdc ($136 "vs." 45$).
 
 Como en el entrenamiento de #fkdc se gastaron 13 veces más recursos evaluando 13 valores distintos de $alpha in {1, 1.25, dots, 3.75, 4}$, consideramos oportuno permitirle a #kdc explorar más valores de $h$, y la cantidad se eligió para que la grilla de #kdc coincida con la de #fkdc, y tenga además otros dos valores intermedios entre dos valores cualesquiera de la grilla de #fkdc #footnote[
-  N. del E.: Para hace esto correctamente, deberíamos haber tomado $(45 - 1) times (2 + 1) + 1= 133$ elementos en la segunda grilla, pero olvidamos restar 1 a 45 --- hay 45 puntos pero 44 "espacios" entre puntos de la grilla --- y por eso obtuvimos 136 puntos, con lo cual las grillas están ligeramente "desalineadas" y una no es un subconjunto de la otra. De todas maneras, la grilla de #kdc contiene el $0.173$, mucho más cercano al $0.178$ óptimo de #fkdc, con lo cual no se termina de explicar que la elección "modal" de #kdc haya sido $0.251$
+  N. del E.: Para hacer esto correctamente, deberíamos haber tomado $(45 - 1) times (2 + 1) + 1= 133$ elementos en la segunda grilla, pero olvidamos restar 1 a 45 --- hay 45 puntos pero 44 "espacios" entre puntos de la grilla --- y por eso obtuvimos 136 puntos, con lo cual las grillas están ligeramente "desalineadas" y una no es un subconjunto de la otra. De todas maneras, la grilla de #kdc contiene el $0.173$, mucho más cercano al $0.178$ óptimo de #fkdc, con lo cual no se termina de explicar que la elección "modal" de #kdc haya sido $0.251$.
 ].
 En efecto, en el rango de interés, las grillas contaban con los valores redondeados a 3 decimales:
 $
   #fkdc: & [0.1, 0.178, 0.316, 0.562] \
-   #kdc: & [0.119, 0.143, 0.173, 0.208, 0.251, 0.303, 0.366, 0.441, 0.532] \
+   #kdc: & [0.119, 0.143, 0.173, 0.208, 0.251, 0.303, 0.366, 0.441, 0.532],
 $
 con lo cual #kdc _podría_ haber encontrado el ligeramente más conveniente $h^star approx 0.173$, pero la validación cruzada se inclinó por valores concentrados en el rango $[0.25, 0.3]$. De repetir el experimento tomando una grilla más fina en este rango crucial, es posible que $Delta_h^(1 sigma) approx 0$ y por ende $Delta_(R^2)$ también, aunque por el mismo argumento, de tomar una grilla más fina para $alpha approx 1$ terminaríamos encontrando tal vez un $alpha^(1 sigma) > 1$ para #fkdc #footnote[Hete aquí la dificultad de enunciar propiedades generales a partir de experimentos particulares: siempre hay _una prueba más_ para hacer, pero lamentablemente, en algún momento había que culminar la etapa experimental.]. En cualquier caso, hemos de aceptar que la ventaja de #fkdc en `lunas_lo` y `espirales_lo` sobre #kdc _no_ se debe a la inclusión del hiperparámetro $alpha$, sino quizás a una validación cruzada aleatoriamente favorable.
 
 === Efectos de aumentar el ruido
 
-Consideremos ahora los mismos datasets que hasta ahora, pero muestreando las observaciones sobre la variedad con "más ruido"; i.e., aumentando el valor de $sigma$ en el ruido blanco (@ruido-blanco) que le agregamos a los $X in MM$ según
+Consideremos ahora los mismos datasets que hasta ahora, pero muestreando las observaciones sobre la variedad con "más ruido"; es decir, aumentando el valor de $sigma$ en el ruido blanco (@ruido-blanco) que le agregamos a los $X in MM$ según
 
-$ sigma_"lunas" = 0.5 quad sigma_"circulos" = 0.2 quad sigma_"espirales" = 0.2 quad. $
+$ sigma_"lunas" = 0.5 quad sigma_"circulos" = 0.2 quad sigma_"espirales" = 0.2. $
 
 #wide_figure(
   width: 140%,
@@ -1973,7 +1973,7 @@ $ sigma_"lunas" = 0.5 quad sigma_"circulos" = 0.2 quad sigma_"espirales" = 0.2 q
 En general, #fkdc y #fkn siguen siendo competitivos, pero el "terreno de juego" se ha nivelado considerablemente, y las ventajas antes vistas disminuyen.
 
 - En `lunas_hi` observamos que #gbt alcanza un $R^2$ marginalmente mejor que #fkdc, y todos los métodos basados en densidad por núcleos (la familia $cal(K)$) alcanzan una exactitud ligeramente mejor que la de #gbt.
-- En `circulos_hi` #gnb  es superior en $R^2$ y exactitud, aunque aún su propio rendimiento no es muy alentador con $R^2_#gbt approx 0.09$.
+- En `circulos_hi` #gbt es superior en $R^2$ y exactitud, aunque aún su propio rendimiento no es muy alentador con $R^2_#gbt approx 0.09$.
 
 - En `espirales_hi` todos los métodos de $cal(K)$ alcanzan un $R^2$ muy similar, #gbt queda largamente atrás y #gnb y #logr no se distinguen del $0$. #svc obtiene la mejor exactitud apenas por encima de #fkdc. Las ventajas de #fkdc por sobre #kdc son (casi) nulas en los tres casos.
 
@@ -2026,14 +2026,14 @@ El aumento en la cantidad de ruido hace la tarea más difícil para _todos_ los 
   )
 }
 
-Al ojo humano, las regiones de confianza que "dibuja" #fkdc se alinean "en espíritu" con la forma de las variedades que buscamos descubrir: la "región de indiferencia" gris en `lunas_hi` es una especie de curva casi-cúbica que efectivamente separa las lunas; el "huevo frito" de `circulos_hi` otorgga máxima confianza a la clase interna en el centro de la imagen y se va deformando progresivamente a medida que nos alejamos; en `espirales_hi` logra dibujar una espiral, aunque con algunas islas inconexas y cortocircuitos entre los brazos. Esta deseable propiedad  --- la "intuitividad" en las regiones que traza #fkdc --- no se repite ni para #gbt (que tuvo el mejor $R^2$) ni #svc (el de mayor exactitud), pero como no es fácilmente reducible a una métrica en $RR$, se desdibuja en las comparaciones puramente numéricas.
+Al ojo humano, las regiones de confianza que "dibuja" #fkdc se alinean "en espíritu" con la forma de las variedades que buscamos descubrir: la "región de indiferencia" gris en `lunas_hi` es una especie de curva casi cúbica que efectivamente separa las lunas; el "huevo frito" de `circulos_hi` otorga máxima confianza a la clase interna en el centro de la imagen y se va deformando progresivamente a medida que nos alejamos; en `espirales_hi` logra dibujar una espiral, aunque con algunas islas inconexas y cortocircuitos entre los brazos. Esta deseable propiedad  --- la "intuitividad" en las regiones que traza #fkdc --- no se repite ni para #gbt (que tuvo el mejor $R^2$) ni #svc (el de mayor exactitud), pero como no es fácilmente reducible a una métrica en $RR$, se desdibuja en las comparaciones puramente numéricas.
 
 === `anteojos` ($K = 3$, $d = 2$)
 
 #highlights_figure("anteojos")
 
-Cerramos el plano con `anteojos` #footnote[inspirado en la tesis de maestría de #cite(<battocchioTestHipotesisSobre2024>, form:"prose", supplement: [§3.1.3]), "Test de hipótesis sobre homología
-persistente utilizando la distancia de Fermat", que forma parte del mismo programa de investigación que esta.], un dataset sintético de tres clases con forma de anteojos que incluimos por ser el único multiclase en dos dimensiones: todos los estimadores salvo #logr alcanzan una exactitud del $97%$, y #fkdc saca una ventaja pequeña pero consistente en $R^2$ aun sobre #kdc.
+Cerramos el plano con `anteojos` #footnote[Inspirado en la tesis de maestría de #cite(<battocchioTestHipotesisSobre2024>, form:"prose", supplement: [§3.1.3]), "Test de hipótesis sobre homología
+persistente utilizando la distancia de Fermat", que forma parte del mismo programa de investigación que esta.], un dataset sintético de tres clases con forma de anteojos que incluimos por ser el único multiclase en dos dimensiones: todos los estimadores salvo #logr alcanzan una exactitud de aproximadamente $97%$, y #fkdc saca una ventaja pequeña pero consistente en $R^2$ aun sobre #kdc.
 
 
 == Pionono, Eslabones, Hélices y Hueveras ($d=3$)

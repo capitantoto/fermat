@@ -131,3 +131,24 @@ Convenciones: **Aplicado** lista solo ediciones de fondo (las erratas no se list
 
 **Estado**
 - Prefijos soldados: preexistente, pretratamiento, preprocesamiento. El anclaje `<pretratamiento>` no cambió.
+
+## Bloque 7 — Resultados 4.1–4.2 (In toto, curvas en el plano, anteojos)
+
+**Aplicado**
+- Nota A: «In Totis» → «In toto».
+- Conteo de tareas: «unas 4900 tareas … más 900 sobre variantes estandarizadas» contaba las 100 tareas de s-LR, excluido del análisis. Con 8 clasificadores × 4 datasets × 25 semillas son 800 → «unas 4800 … más 800».
+- `circulos_hi`: «#gnb es superior en $R^2$ y exactitud, aunque … $R^2_#gbt approx 0.09$» → «#gbt» (el JSON de la ficha da GBT 0.089 / 0.655; GNB 0.034).
+- `espirales_lo`, fronteras de #svc: la oración «Las fronteras de #svc, que no tienen gradiente de color sino solo una frontera lineal [nota] puesto que…» no tenía verbo principal y la frontera no es lineal → «Las fronteras de #svc no tienen gradiente de color sino solo una línea [nota], puesto que…»; en la nota, «la frontera de estas regiones en es una curva» → «es una curva».
+- Nota sobre el tubo $B(MM, tau)$: «el tubo de diámetro $tau approx 6 sigma$ _no_ captura a todas la observaciones con probabilidad menor a uno en un millón» era incorrecto con cualquiera de las dos lecturas: con radio $3 sigma$ (diámetro $6 sigma$), $Pr(norm(epsilon) > 3 sigma) = e^(-4.5) approx 0.011$ por observación y con 800 observaciones casi seguramente alguna queda afuera; con radio $6 sigma$, $800 dot e^(-18) approx 1.2 dot 10^(-5)$. Ahora: «el tubo de radio $tau = 6 sigma$ deja afuera alguna observación con probabilidad del orden de $10^(-5)$».
+- Observación «riesgos computacionales»: $n$ por $N$ (nota H) en «$n -> oo$», «$n = 800$», «$n_"train" = n_"eval" = n slash 2$», «$(k-1)/k n/2 = 320$».
+- Notas G (3 ecuaciones) y F (10 notas al pie) aplicadas. Erratas: «que de ser óptimos …, pasan» → «óptima … pasa» (sujeto «la familia»); «se puede leer» → «se pueden leer»; «Sirva … , los gráficos» → «Sirvan … los gráficos»; falta el «¿» de apertura en «por qué #kdc no puede elegir»; «de cada acierta» → «de cada una acierta»; «una especie "espiral rectangular"» → «una especie de»; «otorgga»; «casi-cúbica»; «Para hace esto» → «hacer»; «aún» → «aun» (×2); «i.e.» → «es decir»; «scatter plot» → «gráfico de dispersión»; «SVC» → macro `#svc`; «$~50%$» → «$approx 50%$» y «$1/3 50% + 2/3 100%$» con puntos de producto; «$quad.$» y punto fuera del `$ $` en las ecuaciones de $sigma$; punto final en el encabezado del estudio de ablación; «exactitud del $97%$» → «de aproximadamente $97%$» (GBT tiene 96,25 %).
+
+**Para decidir**
+- §4.1: la nota al pie que invita al _pull request_ sigue en el cuerpo (ya señalado en `revision-editorial.md`).
+- §4.2, `lunas_lo`: el cálculo «$1/3 dot 50% + 2/3 dot 100% approx 86.7%$» sigue presentado como derivación; la sugerencia de «a ojo» de la revisión anterior no se aplicó.
+- §4.2.4, observación «unidades de la pérdida» y nota de las grillas: las dos «N. del E.» son notas del autor, no de un editor; si el tribunal no comparte el chiste, «Nota:» basta.
+- §4.2.5 («Efectos de aumentar el ruido»): «En `espirales_hi` … #svc obtiene la mejor exactitud apenas por encima de #fkdc» son 0,8575 contra 0,8325; «apenas» es generoso.
+- «Hete aquí» aparece dos veces en tres páginas (ya señalado).
+
+**Estado**
+- Conteo oficial: 4000 tareas crudas + 800 estandarizadas = 4800, 8 clasificadores.
