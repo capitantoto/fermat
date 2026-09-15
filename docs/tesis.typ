@@ -361,9 +361,6 @@ In high dimensions, the natural distance of the space in which the observations 
 // ### TOC y listados
 #outline(depth: 2)
 
-#outline(target: figure.where(kind: image), title: "Listado de Figuras")
-#outline(target: figure.where(kind: table), title: "Listado de Tablas")
-
 #pagebreak()
 #heading(numbering: none)[Introducción]
 
@@ -2361,6 +2358,9 @@ En todos los casos yo, Gonzalo Barrera Borla, examiné, verifiqué y decidí qu�
 #place(bottom + center, scope: "parent", float: true, firmas-bloque())
 
 #bibliography("references.bib", style: "harvard-cite-them-right")
+
+#outline(target: figure.where(kind: image), title: "Listado de Figuras")
+#outline(target: figure.where(kind: table), title: "Listado de Tablas")
 
 // Dos fichas por página: márgenes verticales reducidos en todo el anexo.
 #set page(margin: (top: 0.7in, bottom: 0.7in))

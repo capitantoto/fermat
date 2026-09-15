@@ -204,7 +204,7 @@ Convenciones: **Aplicado** lista solo ediciones de fondo (las erratas no se list
 
 **Aplicado**
 - Nota D: los encabezados de las fichas pasan a `outlined: true` y el anexo abre con `#outline(title: none, target: selector(heading.where(level: 4)).after(<anexo-fichas>))`. Compila y lista las 24 fichas en una columna limpia; el índice general (`depth: 2`) no cambia.
-- Orden final de la parte posterior, a pedido del autor: Conclusiones → Nota sobre IA → firmas → Bibliografía → Anexo A. Los listados de figuras y tablas pasan al frente, tras el índice general.
+- Orden final de la parte posterior, a pedido del autor: Conclusiones → Nota sobre IA → firmas → Bibliografía → Anexo A. Los listados de figuras y tablas quedan entre la bibliografía y el anexo.
 - «= Listados» era el único encabezado numerado después del cuerpo (el anexo y la nota sobre IA no lo están) → `#heading(numbering: none)[Listados]`.
 - Nota sobre IA: «los resultados y su interpretación es mía» → «son míos»; «miusmo» → «mismo»; «LLMs» → «LLM»; espacios dobles.
 - Nota E (bibliografía, sin editar): 54 entradas en `references.bib`; tres de tipo `@misc`, las tres preprints de arXiv: `bengioConsciousnessPrior2019`, `buitinckAPIDesignMachine2013`, `mckenziePowerWeightedShortest2019`. Ninguna entrada de Wikipedia (los enlaces a Wikipedia del texto son `#link`, no citas). Todas las claves citadas existen (el documento compila sin avisos); 24 entradas del `.bib` no se citan, lo que es normal en una exportación de biblioteca completa de Zotero: Typst solo imprime las citadas.
