@@ -169,3 +169,19 @@ Convenciones: **Aplicado** lista solo ediciones de fondo (las erratas no se list
 
 **Estado**
 - Sin novedades de notación.
+
+## Bloque 9 — Resultados 4.4 (ruido 12D, datasets orgánicos, alta dimensión)
+
+**Aplicado**
+- `mnist`: «$d = 768$» (×2: en la introducción de «Alta dimensión» y en «A `mnist` ($N = 60000$, $d = 768$) se lo redujo de $d = 784$…») → «$d = 784$» ($28 times 28 = 784$, como dice el propio texto a continuación).
+- Nota al pie sobre el estandarizador: el nombre de la clase enlazada estaba mal escrito, «`sklearn.prepocessing.StandarScaler`» → «`sklearn.preprocessing.StandardScaler`».
+- Verificados contra los JSON/CSV de `docs/data`: podios de `pinguinos`, `iris`, `vino`, `digitos`, `mnist` y sus variantes `_std`; «a cinco milésimas de #logr» (0,9639 − 0,9586); «13 de las 25» y «18 de las 25» ($alpha = 1$ bajo parsimonia para #fkn); anchos de banda 316–562; tabla de escala de distancias (1300 / 2500 / 169; «entre diez y treinta veces», «menos de tres», «menos de dos»); caídas de $R^2$ en `pionono_12` ($approx 0.1$) y `eslabones_12` ($approx 0.25$). Todo coincide.
+- Nota F (6 notas al pie). Erratas: «clses»; «exactitud y el $R^2$ … mejora» → «la exactitud y el $R^2$ … mejoran»; «se ajustan … bien la hipótesis» → «bien a la hipótesis»; «capturados» → «capturado» (el dígito); «desvió» → «desvío»; «(col .2)»; «pre-procesamiento» → «preprocesamiento»; «pero sin embargo … no sólo» → «y sin embargo … no solo»; «90%» → «90 %».
+
+**Para decidir**
+- §4.4.1: «sus 34 observaciones del conjunto de evaluación se clasifican como Adelie» y los rangos «entre 13 y 230» / «2700 a 6300» no se verificaron contra el dataset (ya señalado en `revision-editorial.md`); los rangos son consistentes con Palmer penguins de memoria.
+- §4.4.3, `mnist`: «El clasificador de densidad degenera así en una especie de $1$-NN blando, y sin embargo #kdc supera por un buen margen a #kn»: la explicación de por qué un «1-NN blando» le gana a #kn no se da; una frase («porque el peso decae con la distancia en lugar de ser uniforme en los $k$ vecinos») cerraría el argumento, pero es contenido nuevo; no lo agregué.
+- «_pooleadas_» (§4.3.5): anglicismo adaptado a la criolla; «agrupadas» o «concatenadas» si se quiere neutralizar.
+
+**Estado**
+- $d = 784$ para `mnist` original, $96$ tras PCA.
