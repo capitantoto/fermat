@@ -265,3 +265,12 @@ Convenciones: **Aplicado** lista solo ediciones de fondo (las erratas no se list
 32. Nota sobre IA: «_Claude Opus_ versiones 4.6 a 5.1» → el modelo de septiembre de 2026 fue Claude Fable 5.1.
 33. `CLAUDE.md` contradice la nota sobre IA; alinear antes de la entrega.
 34. Mayúsculas internas en encabezados (decisión global de estilo).
+
+## Decisiones del autor (2026-09-15) y ediciones derivadas
+
+- Bloque 4: Pelletier (2005) impone $r <= r_0$ con $0 < r_0 < "inj"_g (M)$ → en la definición «$h <= h_0 < "iny" MM$» y en el teorema «$h_n <= h_0 < "iny" MM$». Heine–Borel y el cilindro se dejan como están. Encabezados con solo la inicial en mayúscula: «Vocabulario y notación», «Variedades diferenciables», «Probabilidad en variedades», «análisis de componentes principales (PCA)», «Propuesta original», «Regla de parsimonia», «Pionono, eslabones, hélices y hueveras».
+- Bloque 5: nota sobre el grupo de Bengio/Rifai reducida a dos oraciones con las mismas tres citas. «dataset» en redonda (ya aplicado).
+- Bloque 6: «#kdc, #fkdc, #kn y #fkn son clasificadores suaves».
+- Bloque 8, `helices_0`, $s = 1182$: la lectura del autor es correcta (en entrenamiento el maximizador tiene $alpha > 1$ y la R1SD vuelve a $alpha = 1$ con $h = 0.01$). El detalle numérico estaba mal: `cv_results_` del pickle da como maximizador $(alpha = 3.5, h = 0.001)$, no $(alpha = 3, h = 0.000562)$ (esos valores son la «isla» de $s = 1188$). Corregido.
+- Bloque 9: rangos de `pinguinos` verificados contra `seaborn.load_dataset("penguins")` sin faltantes ($N = 333$): milímetros 13,1–231, gramos 2700–6300, 68 Chinstrap en total (34 en un _split_ al 50 %). Coinciden con el texto. `mnist`: agregado «en el que el peso de cada vecino decae con la distancia en lugar de repartirse en partes iguales entre los $k$ más cercanos, lo que explicaría que…». «_pooleadas_» → «agrupadas».
+- Bloque 10: `CLAUDE.md` reescrito: competencias ampliadas solo a pedido expreso y sin extender el conocimiento más allá de lo que el autor puede defender.

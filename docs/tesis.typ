@@ -378,7 +378,7 @@ En una época absolutamente obsesionada por la inteligencia artificial y los age
 
 = Preliminares <preliminares>
 
-== Vocabulario y Notación
+== Vocabulario y notación
 
 A lo largo de esta monografía tomaremos como referencia enciclopédica el excelente _Elements of Statistical Learning_ @hastieElementsStatisticalLearning2009. En la medida de lo posible, basaremos nuestra notación en la suya.
 
@@ -715,7 +715,7 @@ Adelantando la respuesta a la segunda pregunta, resulta ser que si el soporte de
 
 A continuación, haremos un recorrido sumario e idiosincrático por ciertos conceptos básicos de topología y variedades que consideramos necesarios para motivar la definición de variedades riemannianas, que de paso precisarán la respuesta a la primera pregunta en el contexto que nos interesa. Seguiremos la exposición de la monografía _Estimación no paramétrica de la densidad en variedades Riemannianas_ @munozEstimacionNoParametrica2011, que a su vez sigue, entre otros, el clásico _Introduction to Riemannian Manifolds_ @leeIntroductionRiemannianManifolds2018.
 
-=== Variedades Diferenciables
+=== Variedades diferenciables
 
 #v(-1em)
 
@@ -886,7 +886,7 @@ Agregamos una última definición para restringir la clase de variedades de Riem
 Ahora sí, hemos arribado a un objeto lo suficientemente "bien portado" para soportar funciones diferenciables, una noción de distancia y todo aquello que precisamos para definir elementos aleatorios: la _variedad de Riemann compacta sin frontera_. Cuando hablemos de una variedad de Riemann sin calificarla, nos referiremos a esta.
 
 
-=== Probabilidad en Variedades
+=== Probabilidad en variedades
 Hemos definido una clase bastante general de variedades --- las variedades de Riemann --- capaces de soportar funciones de densidad y sus estimaciones @pelletierKernelDensityEstimation2005. Estos desarrollos relativamente modernos no constituyen el origen de la probabilidad en variedades. Mucho antes de su sistematización, ciertos casos particulares fueron ya bien estudiados y allanaron el camino para el interés en variedades más generales.
 
 Probablemente la referencia más antigua a un elemento aleatorio en una variedad distinta a $RR^d$ se deba a Richard von Mises, en _Sobre la naturaleza entera del peso atómico y cuestiones relacionadas_ @vonmisesUberGanzzahligkeitAtomgewicht1918 #footnote["Über die 'Ganzzahligkeit' der Atomgewichte und verwandte Fragen", en el alemán original.]. En él, von Mises se plantea si los pesos atómicos --- que empíricamente se observan siempre muy cercanos a la unidad para los elementos más livianos --- son enteros con un cierto error de medición, y argumenta que para tal tratamiento, el "error gaussiano" clásico es inadecuado:
@@ -929,13 +929,13 @@ Ya en el siglo XXI, Bruno Pelletier propone una adaptación directa del estimado
                & = N^(-1) sum_(i=1)^N 1/h^d 1/(theta_X_i (p))K((dg(p, X_i))/h),
   $
 ] <kde-variedad>
-con la restricción de que la ventana $h <= h_0 <= "iny" MM$, el radio de inyectividad de #MM #footnote[
+con la restricción de que la ventana $h <= h_0 < "iny" MM$, el radio de inyectividad de #MM #footnote[
   Esta restricción no es catastrófica. Para toda variedad compacta, el radio de inyectividad será estrictamente positivo @munozEstimacionNoParametrica2011[Prop. 3.3.18]. Como además $h$ es en realidad una sucesión ${h_n}_(n=1)^N$ decreciente como función del tamaño muestral, siempre existirá un cierto tamaño muestral a partir del cual $h_n < "iny" MM$.
 ].
 El autor prueba la convergencia en $L^2(MM)$:
 
 #thm([convergencia de $hat(f)$ en $L^2$ @pelletierKernelDensityEstimation2005[§3 Teorema 5]])[
-  Sea $f$ una densidad de probabilidad dos veces diferenciable en #MM con segunda derivada covariante acotada. Sea $hat(f)_n$ el estimador de densidad definido en @kde-variedad con ventana $h_n < h_0 < "iny" MM$. Luego, existe una constante $C_f$ tal que
+  Sea $f$ una densidad de probabilidad dos veces diferenciable en #MM con segunda derivada covariante acotada. Sea $hat(f)_n$ el estimador de densidad definido en @kde-variedad con ventana $h_n <= h_0 < "iny" MM$. Luego, existe una constante $C_f$ tal que
   $
     EE norm(hat(f)_n - f)_(L^2(MM))^2 <= C_f (1/ (n h^d)+ h^4).
   $
@@ -1103,7 +1103,7 @@ La distancia entre dos puntos es una _representación_ útil de cuán similares 
 
 
 
-=== El ejemplo canónico: Análisis de Componentes Principales (PCA)
+=== El ejemplo canónico: análisis de componentes principales (PCA)
 
 El término "hipótesis de la variedad" es moderno, pero el concepto está presente hace más de un siglo en la teoría estadística #footnote[Estas referencias vienen del mismo Bengio #link("https://www.reddit.com/r/MachineLearning/comments/mzjshl/comment/gwq8szw/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button")[comentando en Reddit sobre el origen del término].].
 
@@ -1141,7 +1141,7 @@ Ahora bien, computar una $hat(SS)_cal(K)_i$  para cada una de las $N$ observacio
 La aproximación resultante #box[$hat(SS)_i = bu(V)_(d_MM) bu(Lambda)_(d_MM) bu(V)_(d_MM)^T + sigma^2 bu(I)$] --- con $bu(V)_(d_MM), bu(Lambda)_(d_MM)$ los primeros $d_MM$ autovectores y autovalores de $hat(SS)_cal(K)_i$ --- es mucho menos costosa de invertir, y tiene una interpretación geométrica bastante intuitiva en cada punto.
 Usando el mismo clasificador basado en la regla de Bayes de @clf-bayes que ya mencionamos, obtienen así resultados superadores a los de @kde-mv con $HH = h^2 bu(I)$. El método es intuitivo e ingenioso, pero todavía consta de dos dificultades:
 - no es obvio cuál debería ser la dimensión intrínseca $d_MM$ del paso (1) cuando la variedad es desconocida, y
-- el subespacio generado por los primeros $d_MM$ autovectores de la matriz de covarianza local a $x_i$ aproxima el espacio tangente $T_(x_i)MM$, pero no dicen nada de cómo es $T_p MM$ en otros puntos. #footnote[El grupo de investigación de Bengio, Vincent, Rifai et al. continuó trabajando estos estimadores, con especial énfasis en la necesidad de aprender una geometría _global_ de la variedad para evitar el crecimiento exponencial de tamaño muestral que exigen los métodos locales como KDE en alta dimensión o variedades muy "rugosas", pero a partir de aquí su camino se desvía del de esta monografía. Una brevísima reseña de lo que _no_ cubriremos: en #cite(<bengioNonLocalManifoldParzen2005>, form: "prose") se agregan restricciones globales a la estimación de los núcleos punto a punto y los computan simultáneamente usando redes neuronales; en #cite(<rifaiManifoldTangentClassifier2011>, form: "prose") se aprende explícitamente un atlas que luego usan para clasificación con TangentProp @simardTangentPropFormalism1991. Este último propone una modificación del algoritmo de _backpropagation_ típico de redes neuronales, para aprender una representación que conserve las "direcciones tangentes" a las observaciones de #XX.]
+- el subespacio generado por los primeros $d_MM$ autovectores de la matriz de covarianza local a $x_i$ aproxima el espacio tangente $T_(x_i)MM$, pero no dicen nada de cómo es $T_p MM$ en otros puntos. #footnote[El grupo de Bengio, Vincent y Rifai continuó con estos estimadores, con énfasis en aprender una geometría _global_ de la variedad, pero a partir de aquí su camino se desvía del de esta monografía: #cite(<bengioNonLocalManifoldParzen2005>, form: "prose") agregan restricciones globales a los núcleos punto a punto y los computan con redes neuronales, y #cite(<rifaiManifoldTangentClassifier2011>, form: "prose") aprenden explícitamente un atlas para clasificar con TangentProp @simardTangentPropFormalism1991.]
 
 En un trabajo contemporáneo a @vincentManifoldParzenWindows2002, "Charting a Manifold" @brandChartingManifold2002, el autor aborda dificultades análogas en el contexto de la reducción de dimensionalidad, en tres etapas:
 + estimar la dimensión intrínseca de la variedad $d_MM$; luego
@@ -1444,7 +1444,7 @@ La distancia muestral de Fermat $D_(Q, alpha)$ se puede aproximar a partir de un
 
 Trabajos contemporáneos a Groisman et al. @littleBalancingGeometryDensity2022 @mckenziePowerWeightedShortest2019 analizan lo que ellos llaman "distancias de caminos mínimos pesadas por potencias" #footnote[_Power-weighted shortest-path distances_, o PWSPD por sus siglas en inglés.], aplicándolas no a problemas de clasificación, sino de _clustering_ #footnote[Es decir, de identificación de grupos en datos no etiquetados.]. Las definiciones de ambos grupos son muy similares en espíritu, con una diferencia: la distancia microscópica que plantean Little et al. no es la suma de las aristas pesadas por $q=alpha$ como en Bijral et al. y Groisman et al., sino la raíz $alpha$-ésima de tal suma, en una especie de reversión de la distancia de Minkowski. Siendo la sustancia de estos trabajos muy similar a la de la distancia de Fermat pero aplicada a otro problema, no profundizaremos en ellos.
 
-= Propuesta Original <propuesta-original>
+= Propuesta original <propuesta-original>
 
 En función de lo expuesto hasta ahora, creemos que es posible mejorar un algoritmo de clasificación reemplazando la distancia euclídea por una aprendida de los datos, y en particular que la distancia muestral de Fermat #sfd es una buena candidata de reemplazo. Deseamos también comprender si el efecto de la #sfd aprendida es independiente del algoritmo de clasificación que la incorpore. Para saldar ambas cuestiones, nos propusimos:
 
@@ -1521,7 +1521,7 @@ La verosimilitud de una muestra varía en el rango $[0, 1]$ y su log-verosimilit
 #obs[ $op(R^2)(clf_0) = 0$. Un clasificador perfecto --- un "oráculo" --- $clf^star$ que otorgue toda la masa de probabilidad a la clase correcta, tendrá $op("vero")(clf^star) = 1$ y log-verosimilitud igual a 0, de manera que $op(R^2)(clf^star) = 1 - 0 = 1$. Un clasificador _peor_ que $clf_0$, en tanto asigne bajas probabilidades a las clases correctas, puede tener un $R^2$ infinitamente negativo.
 ]
 
-Tanto #kdc como #fkdc y #fkn son clasificadores suaves, por lo que los evaluaremos principalmente según el $R^2$ de @R2-mcf. Sin embargo, mantendremos un ojo en la exactitud de @exactitud, para asegurarnos de que su rendimiento en esta métrica estándar no sea significativamente peor que la de los algoritmos de referencia.
+#kdc, #fkdc, #kn y #fkn son clasificadores suaves, por lo que los evaluaremos principalmente según el $R^2$ de @R2-mcf. Sin embargo, mantendremos un ojo en la exactitud de @exactitud, para asegurarnos de que su rendimiento en esta métrica estándar no sea significativamente peor que la de los algoritmos de referencia.
 
 === Algoritmos de referencia
 
@@ -1562,7 +1562,7 @@ En última instancia, cualquier métrica evaluada no es otra cosa que un _estad�
 En los conjuntos de datos generados sintéticamente, las semillas se utilizaron para generar #reps versiones distintas y perfectamente replicables del mismo dataset, y en todas se utilizó una misma semilla maestra $s^star$ para definir el _split_ de evaluación. Para los conjuntos de datos "silvestres", las #reps semillas $s_1, dots, s_#reps$ fueron utilizadas para definir diferentes particiones de entrenamiento/evaluación sobre el único dataset disponible.
 
 
-=== Regla de Parsimonia
+=== Regla de parsimonia
 
 La estrategia de validación cruzada intenta evitar que los algoritmos sobreajusten durante el entrenamiento, evaluando su comportamiento, en cada pliego, sobre observaciones de $XX_"train"$ no usadas para ajustarlos.
 No todas las hiperparametrizaciones son equivalentes: en general, para cada hiperparámetro se puede establecer una dirección en la que el modelo se complejiza, en tanto adquiere mayor "flexibilidad" para adaptarse a los datos de entrenamiento #footnote[Por ejemplo, #kn se complejiza a medida que  _disminuye_ $k$, la cantidad de vecinos: las predicciones de $1$-NN sobre la variedad varían más seguido que las de $100$-NN.]. Resolveremos este _trade-off_ entre complejidad y poder predictivo recurriendo a un principio filosófico clásico:
@@ -2036,7 +2036,7 @@ Cerramos el plano con `anteojos` #footnote[Inspirado en la tesis de maestría de
 persistente utilizando la distancia de Fermat", que forma parte del mismo programa de investigación que esta.], un dataset sintético de tres clases con forma de anteojos que incluimos por ser el único multiclase en dos dimensiones: todos los estimadores salvo #logr alcanzan una exactitud de aproximadamente $97%$, y #fkdc saca una ventaja pequeña pero consistente en $R^2$ aun sobre #kdc.
 
 
-== Pionono, Eslabones, Hélices y Hueveras ($d=3$)
+== Pionono, eslabones, hélices y hueveras ($d=3$)
 
 Consideraremos a continuación datasets de variedades con dimensión intrínseca  $1$ (`eslabones, helices`) y $2$ (`pionono, hueveras`) embebidas en 3D.
 
@@ -2117,7 +2117,7 @@ que cuesta explicar únicamente en base al mismo fenómeno.
 
 Nuestra hipótesis es que el dominio ampliado de hiperparámetros de #fkdc junto con la regla de parsimonia trabajan en tándem:
 
-Durante el entrenamiento, #kdc encuentra la solución $h_#kdc=0.143$ (cf. posición $(1)$ de @alpha-ne-1, der.) con $alpha = 1$, sobre el borde inferior de la superficie. Presumiblemente, la varianza del rendimiento en testeo para dicha solución fue tal que ningún punto en el entorno de $h_#fkdc=0.01$ (cf. pos. $(3)$) estaba a menos de $1 sigma$ del _score_ en $(1)$. Cuando entrenamos #fkdc y ampliamos el dominio de la parametrización a toda la superficie computada, el entrenamiento por CV maximiza el _score_ en $(alpha=3, h = 0.000562)$ --- posición $(2)$. Con esta hiperparametrización, la varianza en los resultados de cada pliego de CV es mayor, por lo que la cota inferior de la R1SD será más laxa. En ese rango ampliado de hiperparametrizaciones "suficientemente buenas" se encuentra $(alpha=1, h=0.01)$, la solución de $(3)$ que en entrenamiento #kdc vio y no eligió.
+Durante el entrenamiento, #kdc encuentra la solución $h_#kdc=0.143$ (cf. posición $(1)$ de @alpha-ne-1, der.) con $alpha = 1$, sobre el borde inferior de la superficie. Presumiblemente, la varianza del rendimiento en testeo para dicha solución fue tal que ningún punto en el entorno de $h_#fkdc=0.01$ (cf. pos. $(3)$) estaba a menos de $1 sigma$ del _score_ en $(1)$. Cuando entrenamos #fkdc y ampliamos el dominio de la parametrización a toda la superficie computada, el entrenamiento por CV maximiza el _score_ en $(alpha=3.5, h = 0.001)$ --- posición $(2)$. Con esta hiperparametrización, la varianza en los resultados de cada pliego de CV es mayor, por lo que la cota inferior de la R1SD será más laxa. En ese rango ampliado de hiperparametrizaciones "suficientemente buenas" se encuentra $(alpha=1, h=0.01)$, la solución de $(3)$ que en entrenamiento #kdc vio y no eligió.
 
 === Efecto de #sfd en las vecindades óptimas de #kn
 
@@ -2180,7 +2180,7 @@ En #fkn, la distancia de Fermat parece ofrecer una diferencia significativa en $
 
 === Efecto de aumentar la dimensión ambiente
 
-Sobre los datasets de `lunas`, `circulos` y `espirales` analizamos los efectos de incrementar la cantidad de _ruido_ en el registro de las observaciones, sin modificar la dimensión del espacio ambiente. Para los datasets recién presentados (`pionono`, `helices`, `hueveras`, `eslabones`) intentamos algo distinto: ¿qué pasa si los datos son los mismos, pero agregamos _dimensiones enteras_ de ruido independientes de las clases observadas? Para ello, se "extendieron" las observaciones ya analizadas con 12 dimensiones #footnote[De allí los sufijos `_0` y `_12`, que denotan la cantidad de dimensiones de ruido agregadas.], todas independientes entre sí, y distribución normal con media y varianza en la escala de las primeras 3 dimensiones _pooleadas_ #footnote[Es decir, para cada dataset se concatenaron los valores de las 3 dimensiones de $N$ observaciones en una única muestra de longitud $3N$, de la cual se calculó la media y el desvío estándar.].
+Sobre los datasets de `lunas`, `circulos` y `espirales` analizamos los efectos de incrementar la cantidad de _ruido_ en el registro de las observaciones, sin modificar la dimensión del espacio ambiente. Para los datasets recién presentados (`pionono`, `helices`, `hueveras`, `eslabones`) intentamos algo distinto: ¿qué pasa si los datos son los mismos, pero agregamos _dimensiones enteras_ de ruido independientes de las clases observadas? Para ello, se "extendieron" las observaciones ya analizadas con 12 dimensiones #footnote[De allí los sufijos `_0` y `_12`, que denotan la cantidad de dimensiones de ruido agregadas.], todas independientes entre sí, y distribución normal con media y varianza en la escala de las primeras 3 dimensiones agrupadas #footnote[Es decir, para cada dataset se concatenaron los valores de las 3 dimensiones de $N$ observaciones en una única muestra de longitud $3N$, de la cual se calculó la media y el desvío estándar.].
 
 El efecto sobre el $R^2$ es dramático para todos los clasificadores, pero la familia $cal(K)$ lo sufre en particular: en `helices_12` y `hueveras_12` ningún clasificador se distingue del azar, pero en `pionono_12` y `eslabones_12` el $R^2$ de $cal(K)$ se desploma a $approx 0.1$ y $approx 0.25$, mientras que #gbt, #gnb y #logr conservan prácticamente intacto el $R^2$ alcanzado en la versión sin ruido.
 
@@ -2301,7 +2301,7 @@ A `mnist` ($N = 60000$, $d = 784$) se lo redujo a $d = 96$ dimensiones por PCA #
 #highlights_figure("mnist")
 
 // Conteos por semilla en data/mnist-hiperparametros-K.csv (fkdc/viz.py).
-Aquí ni siquiera el maximizador del _score_ de validación cruzada se aparta de $alpha = 1$ para #fkdc, en ninguna semilla; para #fkn se repite lo de `digitos`, con $alpha = 1$ bajo parsimonia en 18 de las 25. Lo que sí merece atención son los anchos de banda seleccionados, entre $316$ y $562$ para #kdc y #fkdc: parecen enormes, pero hay que leerlos contra la escala de los datos, que la @tabla-escala-distancias resume para los cinco datasets orgánicos. En `mnist` la distancia mediana de una observación a su vecina más cercana es $approx 1300$, y la distancia mediana entre dos observaciones cualesquiera, $approx 2500$. Es la maldición de la dimensionalidad de @kde-mv en acción: mientras que en `iris` o `vino` la distancia típica es entre diez y treinta veces la distancia al vecino más cercano, en `digitos` es menos de tres veces y en `mnist` menos de dos. Con las distancias así concentradas no existe una escala en la que el núcleo pese un vecindario sin pesar a casi toda la muestra --- ni siquiera con distancia geodésica ---, y la validación cruzada responde encogiendo $h$ muy por debajo de la distancia al vecino más cercano --- $5.6$ contra $18$ en `digitos`, $316$ contra $1300$ en `mnist`. Incluso ese vecino recibe un peso casi nulo y cada predicción descansa en una o dos observaciones. El clasificador de densidad degenera así en una especie de $1$-NN blando, y sin embargo #kdc supera por un buen margen a #kn no solo en $R^2$, sino también en exactitud --- especialmente en `mnist`.
+Aquí ni siquiera el maximizador del _score_ de validación cruzada se aparta de $alpha = 1$ para #fkdc, en ninguna semilla; para #fkn se repite lo de `digitos`, con $alpha = 1$ bajo parsimonia en 18 de las 25. Lo que sí merece atención son los anchos de banda seleccionados, entre $316$ y $562$ para #kdc y #fkdc: parecen enormes, pero hay que leerlos contra la escala de los datos, que la @tabla-escala-distancias resume para los cinco datasets orgánicos. En `mnist` la distancia mediana de una observación a su vecina más cercana es $approx 1300$, y la distancia mediana entre dos observaciones cualesquiera, $approx 2500$. Es la maldición de la dimensionalidad de @kde-mv en acción: mientras que en `iris` o `vino` la distancia típica es entre diez y treinta veces la distancia al vecino más cercano, en `digitos` es menos de tres veces y en `mnist` menos de dos. Con las distancias así concentradas no existe una escala en la que el núcleo pese un vecindario sin pesar a casi toda la muestra --- ni siquiera con distancia geodésica ---, y la validación cruzada responde encogiendo $h$ muy por debajo de la distancia al vecino más cercano --- $5.6$ contra $18$ en `digitos`, $316$ contra $1300$ en `mnist`. Incluso ese vecino recibe un peso casi nulo y cada predicción descansa en una o dos observaciones. El clasificador de densidad degenera así en una especie de $1$-NN blando en el que el peso de cada vecino decae con la distancia en lugar de repartirse en partes iguales entre los $k$ más cercanos, lo que explicaría que #kdc supere por un buen margen a #kn no solo en $R^2$, sino también en exactitud --- especialmente en `mnist`.
 
 El cociente de `pinguinos` en la @tabla-escala-distancias, $169$, es el reverso del mismo fenómeno: la masa en gramos estira una sola dirección y las distancias, lejos de concentrarse, quedan dominadas por ella.
 
