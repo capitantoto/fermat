@@ -39,7 +39,8 @@ TYPST_FIRMAS  := $(if $(filter 1,$(FIRMA)),--input firmas=true,)
 # Targets principales
 # ========================
 .PHONY: all docs data viz clean clean-docs clean-data clean-all clean-entrega \
-        help lint fmt check entrega tesis-firmada
+        help lint fmt check entrega tesis-firmada preparar-campania correr-cpu \
+        correr-torch progreso-campania tablas-campania
 
 all: $(TARGETS)
 
@@ -113,6 +114,60 @@ configs: fkdc/config.py
 	uv run python $^
 
 # ========================
+# Campañas (fkdc/campanias.py y fkdc/correr.py)
+# ========================
+# Cadena de marcas: datasets → configs → lotes.mk → un lote por marca `.hecho`. Toda
+# escritura es atómica (temporal + renombre) y cada lote saltea las configs que ya
+# tienen info, así que tras un corte (incluso kill -9 o un apagón) basta con repetir
+# el mismo comando: `make -k` sigue ante lotes fallidos y la próxima corrida los
+# reintenta. Ejemplo (los dos carriles a la vez):
+#   caffeinate -i make -k -j10 correr-cpu    y    caffeinate -i make -k correr-torch
+CAMPANIA     ?= heroica
+CONJUNTOS    ?=
+CAMPANIA_DIR := sandbox/$(CAMPANIA)
+LOTES_MK     := $(CAMPANIA_DIR)/lotes.mk
+CORRER       := nice -n 10 .venv/bin/python -m fkdc.correr lote $(CAMPANIA)
+
+ifneq ($(filter correr-cpu correr-torch,$(MAKECMDGOALS)),)
+-include $(LOTES_MK)
+endif
+
+$(CAMPANIA_DIR)/datasets.hecho:
+	.venv/bin/python -m fkdc.campanias datasets $(CAMPANIA) --escribir
+	@touch $@
+
+$(CAMPANIA_DIR)/configs.hecho: $(CAMPANIA_DIR)/datasets.hecho
+	.venv/bin/python -m fkdc.campanias configs $(CAMPANIA) $(CONJUNTOS)
+	@touch $@
+
+$(LOTES_MK): $(CAMPANIA_DIR)/configs.hecho
+	.venv/bin/python -m fkdc.campanias lotes $(CAMPANIA) $(CONJUNTOS)
+
+$(CAMPANIA_DIR)/lotes/cpu/%.hecho:
+	@mkdir -p $(CAMPANIA_DIR)/logs/cpu
+	$(CORRER) cpu $@ $^ >> $(CAMPANIA_DIR)/logs/cpu/$*.log 2>&1
+
+$(CAMPANIA_DIR)/lotes/torch/%.hecho:
+	@mkdir -p $(CAMPANIA_DIR)/logs/torch
+	$(CORRER) torch $@ $^ >> $(CAMPANIA_DIR)/logs/torch/$*.log 2>&1
+
+## Preparar datasets, configs y lotes de la campaña (también lo hace correr-*)
+preparar-campania: $(CAMPANIA_DIR)/configs.hecho
+	.venv/bin/python -m fkdc.campanias lotes $(CAMPANIA) $(CONJUNTOS)
+
+## Carril de CPU (con -j N, N procesos de un hilo) y carril de torch (sin -j)
+correr-cpu: $(LOTES_CPU)
+correr-torch: $(LOTES_TORCH)
+
+## Avance: infos por clasificador, lotes completos y lotes con fallas
+progreso-campania:
+	@.venv/bin/python -m fkdc.campanias progreso $(CAMPANIA) $(CONJUNTOS)
+
+## Tablas resumen de la campaña ({dir}/tablas)
+tablas-campania:
+	.venv/bin/python -m fkdc.campanias tablas $(CAMPANIA) $(CONJUNTOS)
+
+# ========================
 # Linting y formato
 # ========================
 
@@ -177,6 +232,13 @@ help:
 	@echo "  make clean-data    Borrar .pkl procesados"
 	@echo "  make clean-all     Borrar todo lo generado"
 	@echo "  make help          Mostrar esta ayuda"
+	@echo ""
+	@echo "Campañas (CAMPANIA=heroica por omisión; repetir el mismo comando reanuda):"
+	@echo "  make preparar-campania     Datasets, configs y lotes"
+	@echo "  make -k -j10 correr-cpu    Carril de CPU, 10 procesos"
+	@echo "  make -k correr-torch       Carril de torch (fundacionales y profundos)"
+	@echo "  make progreso-campania     Avance"
+	@echo "  make tablas-campania       Tablas resumen"
 	@echo ""
 	@echo "Entrega al sistema de la maestría:"
 	@echo "  make entrega                  Armar $(ENTREGA_PDF) (sin firmas)"
