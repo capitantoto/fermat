@@ -32,3 +32,5 @@ jurado
 /data/
 # Viz stamp file
 docs/.viz-stamp
+# Credenciales locales
+.env
