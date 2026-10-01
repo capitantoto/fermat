@@ -171,6 +171,50 @@ class FermatKDE(BaseEstimator, DensityMixin):
         return self.score_samples(X).sum()
 
 
+class DistanciaEuclidea:
+    """Distancia euclídea con la interfaz mínima de `SampleFermatDistance`.
+
+    Usa `euclidean.func`, el cómputo exacto con `cdist`/`pdist` sin el caché en disco:
+    los valores son bit a bit los que se cachean y `dir_cache` no crece.
+    """
+
+    def __init__(self, Q):
+        self.Q = Q
+        self.N, self.D = Q.shape
+
+    @property
+    def A(self):
+        # Solo para `score_samples(X=None)`: distancias de Q contra sí misma
+        return {0: euclidean.func(self.Q)}
+
+    def __call__(self, X, Y=None):
+        if X.ndim == 1:  # en caso de que lo llamen con una sola observación
+            X = X.reshape(1, self.D)
+        return euclidean.func(X, self.Q if Y is None else Y)
+
+
+class EuclideanKDE(FermatKDE):
+    """Estimador de densidad por núcleos euclídeo exacto (fuerza bruta).
+
+    Alternativa a `sklearn.neighbors.KernelDensity`, cuyo recorrido del árbol
+    (KDTree/BallTree) devuelve log-densidades erróneas en la cola profunda: puntos
+    dentro de la caja que envuelve a una clase pero lejos de todas sus observaciones.
+    Hereda `score_samples` de `FermatKDE` (la suma exacta de núcleos sobre la matriz de
+    distancias, con la misma normalización y el mismo recorte), de modo que
+    `KDClassifier(metric="euclidea_exacta")` coincide bit a bit con
+    `KDClassifier(metric="fermat", alpha=1)`.
+    """
+
+    def __init__(self, bandwidth: float = 1, d: int = -1):
+        super().__init__(alpha=1, bandwidth=bandwidth, d=d)
+
+    def fit(self, X):
+        self.distance_ = DistanciaEuclidea(X)
+        if self.d == -1:
+            self.d = self.distance_.D
+        return self
+
+
 class KDClassifier(ClassifierMixin, BaseEstimator):
     """Clasificador por densidad kernel (Bayes ingenuo con KDE)."""
 
@@ -184,6 +228,10 @@ class KDClassifier(ClassifierMixin, BaseEstimator):
         conjuntos_entrenamiento = [X[y == yi] for yi in self.classes_]
         if self.metric == "fermat":
             fabrica_densidad = partial(FermatKDE, alpha=self.alpha)
+        elif self.metric == "euclidea_exacta":
+            # KDE euclídea exacta; "euclidean" sigue usando `KernelDensity`, como en la
+            # tesis, para que sus números y figuras se reproduzcan tal cual
+            fabrica_densidad = EuclideanKDE
         else:
             fabrica_densidad = partial(KernelDensity, metric=self.metric)
         self.models_ = [
