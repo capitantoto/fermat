@@ -86,7 +86,11 @@ def main(
     logger.info("Resumen resultados")
     campos = ["logvero", "r2", "accuracy", "t_entrenar", "t_evaluar"]
     logger.info(f"\n{pd.DataFrame(tarea.info).T[campos].to_markdown()}")
-    pickle.dump(tarea.info, open(dir_trabajo / f"{archivo_config.stem}.pkl", "wb"))
+    # Temporal + renombre: un corte nunca deja un info a medias con nombre válido
+    temporal = dir_trabajo / f".{archivo_config.stem}.pkl.tmp"
+    with open(temporal, "wb") as archivo:
+        pickle.dump(tarea.info, archivo)
+    temporal.rename(dir_trabajo / f"{archivo_config.stem}.pkl")
 
 
 if __name__ == "__main__":
