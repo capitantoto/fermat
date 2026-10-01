@@ -31,6 +31,7 @@ class Tarea:
         split_evaluacion=0.5,
         semilla=None,
         estandarizar=False,
+        n_jobs=-1,
     ):
         self.dataset = ds = (
             Dataset.cargar(dataset) if isinstance(dataset, str) else dataset
@@ -62,6 +63,9 @@ class Tarea:
                 for nombre, algo in self.algoritmos.items()
             }
         self.busqueda_factory = busqueda_factory
+        # -1: la búsqueda usa todos los núcleos (la tesis); 1: el paralelismo queda
+        # entre tareas (`fkdc.correr`)
+        self.n_jobs = n_jobs
         self.scoring = scoring
         self.refit = refit
         self.cv = cv
@@ -99,7 +103,7 @@ class Tarea:
                 scoring=self.scoring,
                 cv=self.cv,
                 refit=self.refit,
-                n_jobs=-1,
+                n_jobs=self.n_jobs,
                 return_train_score=True,
             )
             t0 = time()

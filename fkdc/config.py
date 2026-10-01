@@ -122,6 +122,13 @@ def hacer_configuraciones(
             if len(partes) == 2:
                 nombre_dataset, semilla_dataset = partes
                 semilla_dataset = int(semilla_dataset)
+                if semilla_dataset not in semillas:
+                    logger.warning(
+                        "%s: la semilla del dataset no está entre las %d semillas y "
+                        "se lo trata como real; ¿datasets con otras `repeticiones`?",
+                        ruta_dataset.name,
+                        len(semillas),
+                    )
                 semillas_tarea = (
                     [semilla_principal] if semilla_dataset in semillas else semillas
                 )
