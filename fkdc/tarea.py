@@ -83,6 +83,16 @@ class Tarea:
         for nombre, algo in self.algoritmos.items():
             logger.info("Entrenando %s", nombre)
             self.info[nombre] = info = Bunch()
+            if not algo.espacio:
+                # Sin hiperparámetros que elegir, la validación cruzada no aporta:
+                # se ajusta directamente sobre el pliego de entrenamiento.
+                clf = clone(algo.clf)
+                t0 = time()
+                clf.fit(self.X_entr, self.y_entr)
+                info.t_entrenar = time() - t0
+                self.clasificadores[nombre] = clf
+                info.busqueda = None
+                continue
             busqueda = self.busqueda_factory(
                 algo.clf,
                 algo.espacio,
@@ -119,7 +129,9 @@ class Tarea:
             try:
                 info = self.info[nombre]
                 if verosimilitud and hasattr(clf, "predict_proba"):
+                    t0 = time()
                     info.probas = clf.predict_proba(self.X_eval)
+                    info.t_probas = time() - t0
                     info.preds_proba = clf.classes_[info.probas.argmax(axis=1)]
                     info.logvero = -log_loss(
                         self.y_eval,
