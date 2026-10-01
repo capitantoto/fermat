@@ -1,4 +1,5 @@
 import logging
+from importlib import import_module
 from math import floor
 from pathlib import Path
 from typing import Annotated
@@ -76,17 +77,31 @@ def hacer_configuraciones(
     dir_datasets: Path = Path("datasets"),
     dir_configs: Path = Path("configs"),
     verbose: Annotated[bool, typer.Option("--verbose")] = False,
+    registro: str | None = None,
+    nombres_datasets: list[str] | None = None,
 ):
-    """Genera configs YAML para cada combinación dataset × clf."""
+    """Genera configs YAML para cada combinación dataset × clf.
+
+    `registro` nombra un módulo con sus propios `clasificadores` y `grillas` (p. ej.,
+    `fkdc.fundacionales`); por omisión se usan los de la tesis. `nombres_datasets`
+    restringe los datasets a los de esos nombres (sin semilla); por omisión, todos.
+    """
     dir_configs.mkdir(parents=True, exist_ok=True)
     logger.setLevel(logging.DEBUG if verbose else logging.INFO)
     logger.info("Generando configuraciones")
 
-    datasets = {ds.stem: ds for ds in dir_datasets.glob("*.pkl")}
-    for nombre_clf, clf in clasificadores.items():
+    modulo = import_module(registro) if registro else None
+    clfs = modulo.clasificadores if modulo else clasificadores
+    grillas_clfs = modulo.grillas if modulo else grillas
+    datasets = {
+        ds.stem: ds
+        for ds in dir_datasets.glob("*.pkl")
+        if nombres_datasets is None or ds.stem.split("-")[0] in nombres_datasets
+    }
+    for nombre_clf, clf in clfs.items():
         grilla_base = {  # Evita usar np.array que serializa feo
             param: valores if isinstance(valores, list) else valores.tolist()
-            for param, valores in grillas[nombre_clf].items()
+            for param, valores in grillas_clfs[nombre_clf].items()
         }
         for nombre_dataset, ruta_dataset in datasets.items():
             grilla_hipers = grilla_base.copy()
