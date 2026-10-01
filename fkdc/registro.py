@@ -222,6 +222,14 @@ def registro() -> dict[str, Clasificador]:
                 ("tabpfn_v2", "TabPFN v2 con pesos locales (licencia priorlabs-1-1)"),
             )
         ),
+        Clasificador(
+            "tabpfn_ajustado",
+            "fundacionales",
+            "fkdc.tabpfn_ajustado:clasificador",
+            carril="torch",
+            semilla=True,
+            descripcion="TabPFN-3.5 con pesos locales, ajustado a cada tarea",
+        ),
         *(
             Clasificador(
                 nombre,
