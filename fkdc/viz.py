@@ -74,11 +74,19 @@ def guardar_fig(fig: Figure, ruta: str | Path, **kw_guardar):
     plt.close(fig)
 
 
+def rutas_infos(directorio: Path) -> list[Path]:
+    """Infos de los clasificadores de la tesis (`clfs`) en `directorio`.
+
+    Infos de otros clasificadores en el mismo directorio no entran en las figuras.
+    """
+    return [p for p in directorio.glob("*.pkl") if p.stem.split("-")[2] in clfs]
+
+
 def cargar_infos(dir_o_rutas: list[Path] | Path):
     """Carga diccionarios de info desde pickles."""
     if isinstance(dir_o_rutas, Path):
         assert dir_o_rutas.is_dir()
-        rutas = dir_o_rutas.glob("*.pkl")
+        rutas = rutas_infos(dir_o_rutas)
     elif isinstance(dir_o_rutas, list):
         rutas = dir_o_rutas
     else:
@@ -565,13 +573,13 @@ if __name__ == "__main__":
     ruta_cache = dir_cache / "infos_bi.pkl"
     ruta_cache.parent.mkdir(exist_ok=True)
     # El caché se rehace si hay infos más nuevos que él o si cambió su cantidad
-    rutas_infos = list(dir_ejecucion.glob("*.pkl"))
+    rutas_tesis = rutas_infos(dir_ejecucion)
     cache_vigente = ruta_cache.exists() and not any(
-        p.stat().st_mtime > ruta_cache.stat().st_mtime for p in rutas_infos
+        p.stat().st_mtime > ruta_cache.stat().st_mtime for p in rutas_tesis
     )
     if cache_vigente:
         with open(ruta_cache, "rb") as fp:
-            cache_vigente = len(pickle.load(fp)[0]) == len(rutas_infos)
+            cache_vigente = len(pickle.load(fp)[0]) == len(rutas_tesis)
     if cache_vigente:
         logger.info(f"Cargando infos+bi desde caché: {ruta_cache}")
         with open(ruta_cache, "rb") as fp:
