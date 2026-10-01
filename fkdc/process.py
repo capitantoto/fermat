@@ -9,7 +9,7 @@ import typer
 import yaml
 from sklearn.exceptions import ConvergenceWarning
 
-from fkdc import config
+from fkdc import config, registro
 from fkdc.datasets import Dataset
 from fkdc.tarea import Tarea
 
@@ -27,14 +27,34 @@ def main(
     archivo_config: Path = Path("config.yaml"),
     dir_trabajo: Path | None = None,
 ):
-    """Ejecuta entrenamiento y evaluación desde un archivo de config."""
+    """Ejecuta entrenamiento y evaluación desde un archivo de config.
+
+    Las configs de una campaña (`fkdc.campanias`, con la clave `campania`) las ejecuta
+    `fkdc.correr.ejecutar`. Las demás siguen el camino de la tesis; un clasificador
+    que no es de la tesis se instancia desde `fkdc.registro`.
+    """
     dir_trabajo = dir_trabajo or Path.cwd()
     dir_trabajo.mkdir(parents=True, exist_ok=True)
     logger.info("Leyendo config %s", archivo_config)
     cfg = yaml.safe_load(open(archivo_config))
+    if "campania" in cfg:
+        from fkdc import correr  # diferido: correr importa este paquete entero
+
+        fila = correr.ejecutar(archivo_config, dir_trabajo, n_jobs=-1)
+        logger.info("- Tomó %.2fs", fila["segundos"])
+        return
     dataset = Dataset.cargar(cfg["dataset"])
     clf = cfg["clasificador"]
     clasificador = config.clasificadores.get(clf)
+    if clasificador is None and clf in registro.registro():
+        clasificador, _, _ = registro.preparar(
+            clf,
+            dataset.n,
+            dataset.p,
+            variante=archivo_config.stem.split("-")[0],
+            semilla=cfg.get("seed", config.semilla_principal),
+            grilla={},
+        )
     if clasificador is None:
         try:
             clasificador = open(Path(clf), "rb")
