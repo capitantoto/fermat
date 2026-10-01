@@ -17,8 +17,9 @@ fija todo lo que hace falta para regenerarla:
 La comparación crítica de una campaña usa solo clasificadores locales
 (`fkdc.registro`); los que corren por una API van en `extras`.
 
-Las semillas son `config._obtener_semillas(semilla_principal, repeticiones)`: los
-conjuntos de 25, 64 y 100 están anidados. Datasets y configs de una campaña usan
+Las semillas son las de `config._obtener_semillas(semilla_principal, repeticiones)`,
+pero en orden de generación y no ordenadas: así las primeras 25 son las de la tesis y
+los prefijos de 25, 64 y 100 están anidados. Datasets y configs de una campaña usan
 siempre sus mismas `repeticiones`: si no, `hacer_configuraciones` trataría como real a
 un dataset sintético cuya semilla no está en la lista.
 
@@ -125,7 +126,10 @@ class Campania:
 
     @property
     def semillas(self) -> list[int]:
-        return config._obtener_semillas(self.semilla_principal, self.repeticiones)
+        # Orden de generación, no `sorted`: las primeras `config.repeticiones` son las
+        # de la tesis (ordenada, la lista de 100 las intercala con las nuevas).
+        rng = np.random.default_rng(self.semilla_principal)
+        return rng.integers(1000, 10000, size=self.repeticiones).tolist()
 
     @property
     def dir_datasets(self) -> Path:
