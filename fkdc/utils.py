@@ -157,6 +157,24 @@ def reajustar_parsimoniosamente(cv_results_: dict, ratio_std: float = 1) -> int:
         ("param_logreg__C", True),
         ("param_var_smoothing", False),
         ("param_max_depth", True),
+        # Compendio (`fkdc.compendio`): nombres que no usa ningún clasificador de la
+        # tesis; en cada clasificador, el orden de prioridad es el de esta lista
+        ("param_reg_param", False),  # qda
+        ("param_shrinkage", False),  # lda
+        ("param_n_components", True),  # gmm
+        ("param_covariance_type", True),  # gmm: "diag" < "full", también alfabético
+        ("param_reg_covar", False),  # gmm
+        ("param_recorte__n_componentes", True),  # isomap_*
+        ("param_isomap__n_neighbors", False),  # isomap_*: k grande, casi euclídea
+        ("param_nca__n_components", True),  # nca_kn
+        ("param_vecinos__n_neighbors", False),  # isomap_kn, nca_kn
+        ("param_kdc__bandwidth", False),  # isomap_kdc
+        ("param_ls__n_neighbors", False),  # label_spreading
+        ("param_ls__alpha", False),  # label_spreading: α grande, más difusión
+        ("param_bosque__min_samples_leaf", False),  # rf, et
+        ("param_bosque__max_features", True),  # rf, et: más azar, más regularización
+        ("param_mlp__hidden_layer_sizes", True),  # mlp
+        ("param_mlp__alpha", False),  # mlp: penalización L2
     ]
     resultados = pd.DataFrame(cv_results_)
     puntaje_max = resultados.mean_test_score.max()
