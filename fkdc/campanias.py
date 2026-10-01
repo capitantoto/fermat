@@ -72,7 +72,7 @@ conjuntos = {
         "et",
     ],
     # Fundacionales y profundos locales elegidos por el autor el 2026-10-01
-    "fundacionales": ["tabpfn", "tabicl", "tabm"],
+    "fundacionales": ["tabpfn", "tabpfn_v2", "tabicl", "tabm"],
     "compendio_caro": ["isomap_kdc", "rf", "mlp"],
     "profundos": ["realmlp", "tabdpt"],
     "oraculos": [
@@ -227,7 +227,7 @@ def campania(nombre: str, elegidos: tuple[str, ...] | None = None) -> Campania:
             nombre="prueba",
             dir=dir_raiz / "sandbox/prueba",
             repeticiones=2,
-            clasificadores=["kn", "gnb", "qda", "kdc_exacto", "lr"],
+            clasificadores=["kn", "gnb", "qda", "kdc_exacto", "lr", "tabpfn_v2"],
             variantes=["lunas_lo", "iris", "nudos_200"],
             extras=[],
         )

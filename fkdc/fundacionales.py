@@ -164,6 +164,9 @@ clasificadores = Bunch(
     tabpfn_fast=Fundacional(
         "fkdc.fundacionales:tabpfn_local", {"version": "v3.5-fast"}
     ),
+    # TabPFN v2 (pesos `Prior-Labs/TabPFN-v2-clf`, licencia "priorlabs-1-1", sin
+    # aceptación previa), con su configuración por omisión en tabpfn 9
+    tabpfn_v2=Fundacional("fkdc.fundacionales:tabpfn_local", {"version": "v2"}),
     tabpfn_api=Fundacional(
         "fkdc.fundacionales:tabpfn_api", {"plus": False}, local=False
     ),

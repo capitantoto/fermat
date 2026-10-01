@@ -219,6 +219,7 @@ def registro() -> dict[str, Clasificador]:
             for nombre, descripcion in (
                 ("tabpfn", "TabPFN-3.5 con pesos locales (licencia no comercial)"),
                 ("tabpfn_fast", "TabPFN-3.5-fast con pesos locales"),
+                ("tabpfn_v2", "TabPFN v2 con pesos locales (licencia priorlabs-1-1)"),
             )
         ),
         *(
