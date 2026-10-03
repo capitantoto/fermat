@@ -202,6 +202,10 @@ def cargar_campania(
     primario = "kdc_exacto" if kdc == "exacto" else "kdc"
     corridas = corridas[corridas.clf.ne("kdc" if kdc == "exacto" else "kdc_exacto")]
     corridas["clf"] = corridas.clf.replace({primario: "kdc"})
+    # Prerregistro, enmienda 1: las pruebas y el podio son entre los ocho de la tesis
+    from fkdc import config
+
+    corridas = corridas[corridas.clf.isin(config.clasificadores)]
     if r2 == "templado":
         corridas["r2"] = corridas.r2_temp
     if semillas is not None:
