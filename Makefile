@@ -14,7 +14,7 @@ CONFIGS := $(wildcard $(CONFIGS_DIR)/*.yaml)
 TARGETS := $(patsubst $(CONFIGS_DIR)/%, $(TARGETS_DIR)/%, $(CONFIGS:.yaml=.pkl))
 
 # Documentos .typ compilables (poster y seminario excluidos: dependencias faltantes)
-TYP_DOCS     := $(DOCS_DIR)/tesis.typ $(DOCS_DIR)/plan.typ
+TYP_DOCS     := $(DOCS_DIR)/tesis.typ $(DOCS_DIR)/plan.typ $(DOCS_DIR)/defensa.typ
 TYP_PDFS     := $(TYP_DOCS:.typ=.pdf)
 # Fuentes tipográficas locales (Excalifont para los SVG de Excalidraw)
 TYPST        := typst compile --font-path $(DOCS_DIR)/fonts
