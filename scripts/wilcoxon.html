@@ -1,0 +1,586 @@
+<title>Wilcoxon en la heroica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
+<style>
+/* Layout: columna única de lectura; barra de controles pegajosa; matrices y tiras a todo el ancho */
+:root {
+  --bg: #f2f3f5;
+  --surface: #ffffff;
+  --ink: #14171c;
+  --ink-2: #4a515c;
+  --ink-3: #7b838f;
+  --rule: #dce0e5;
+  --accent: #5442c0;
+  --accent-soft: #e9e6fb;
+  --ns: #e6e8eb;
+  --mejor-1: #c4dbf8;
+  --mejor-2: #5d9be6;
+  --mejor-3: #1d5aa6;
+  --peor-1: #f6cdcc;
+  --peor-2: #e1696a;
+  --peor-3: #ab2e30;
+  --lider: #d9e7fb;
+  --lider-top: #1d5aa6;
+  --lider-top-ink: #ffffff;
+  --rope: rgba(84, 66, 192, 0.10);
+  --font-display: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --font-body: "IBM Plex Sans", -apple-system, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101216; --surface: #181b20; --ink: #eef0f3; --ink-2: #b7bec8; --ink-3: #848c97;
+    --rule: #2a2f37; --accent: #a193f5; --accent-soft: #2b2650; --ns: #262a31;
+    --mejor-1: #22406a; --mejor-2: #2f6ec0; --mejor-3: #6aa6f2;
+    --peor-1: #55282a; --peor-2: #b14345; --peor-3: #f08483;
+    --lider: #1f3350; --lider-top: #6aa6f2; --lider-top-ink: #0d1726;
+    --rope: rgba(161, 147, 245, 0.14);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101216; --surface: #181b20; --ink: #eef0f3; --ink-2: #b7bec8; --ink-3: #848c97;
+  --rule: #2a2f37; --accent: #a193f5; --accent-soft: #2b2650; --ns: #262a31;
+  --mejor-1: #22406a; --mejor-2: #2f6ec0; --mejor-3: #6aa6f2;
+  --peor-1: #55282a; --peor-2: #b14345; --peor-3: #f08483;
+  --lider: #1f3350; --lider-top: #6aa6f2; --lider-top-ink: #0d1726;
+  --rope: rgba(161, 147, 245, 0.14);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--font-body); margin: 0; }
+.envoltura { max-width: 1240px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 64px; }
+header.portada { display: grid; gap: 10px; max-width: 78ch; }
+.sobretitulo { font: 500 12px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+h1 { font: 600 clamp(30px, 4.2vw, 44px)/1.05 var(--font-display); margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+h2 { font: 600 22px/1.2 var(--font-display); margin: 0; text-wrap: balance; }
+h3 { font: 600 15px/1.3 var(--font-body); margin: 0; }
+p { margin: 0; }
+.bajada { color: var(--ink-2); max-width: 70ch; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 12px/1 var(--font-mono); padding: 6px 8px; border-radius: 4px; background: var(--surface); border: 1px solid var(--rule); color: var(--ink-2); }
+.chip.aviso { border-color: var(--accent); color: var(--accent); }
+.controles { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); margin-block: 22px 18px; padding-block: 10px; border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+.grupo-control { display: flex; align-items: center; gap: 8px; }
+.grupo-control > .rotulo { font: 500 11px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.segmentado { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--surface); }
+.segmentado button { font: 500 13px/1 var(--font-body); padding: 7px 11px; border: 0; background: transparent; color: var(--ink-2); cursor: pointer; }
+.segmentado button + button { border-left: 1px solid var(--rule); }
+.segmentado button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.segmentado button:focus-visible, select:focus-visible, td[tabindex]:focus-visible, .fila-dataset:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+select { font: 500 13px/1 var(--font-body); padding: 7px 8px; border-radius: 6px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); }
+section.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 18px; display: grid; gap: 12px; min-width: 0; }
+.pila { display: grid; gap: 18px; }
+.cabecera-panel { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; }
+.nota { color: var(--ink-3); font-size: 13px; max-width: 80ch; }
+.desborde { overflow-x: auto; }
+table { border-collapse: separate; border-spacing: 2px; font-variant-numeric: tabular-nums; }
+th, td { font-weight: 400; }
+.mat-lider th.var { text-align: left; white-space: nowrap; font: 500 13px var(--font-mono); padding-right: 10px; color: var(--ink); cursor: pointer; }
+.mat-lider th.var:hover { color: var(--accent); }
+.mat-lider th.var .marca { color: var(--ink-3); margin-left: 4px; }
+th.col { vertical-align: bottom; padding: 0 0 4px; height: 98px; }
+th.col span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; font: 500 12px var(--font-mono); color: var(--ink-2); }
+th.col.fermat span, td.etq.fermat, .fermat-txt { color: var(--accent); font-weight: 600; }
+.mat-lider td { width: 42px; min-width: 42px; height: 24px; text-align: center; font: 12px var(--font-mono); border-radius: 3px; color: var(--ink-3); }
+.mat-lider td.lider { background: var(--lider); color: var(--ink); }
+.mat-lider td.top { background: var(--lider-top); color: var(--lider-top-ink); font-weight: 500; }
+.mat-lider tr.sep th { text-align: left; font: 600 12px var(--font-body); color: var(--ink-2); padding-top: 12px; }
+.mat-lider tfoot td { color: var(--ink); font-weight: 500; }
+.mat-lider tfoot th { text-align: left; font: 500 12px var(--font-body); color: var(--ink-2); }
+.mat-vict td { width: 36px; min-width: 36px; height: 26px; text-align: center; font: 12px var(--font-mono); border-radius: 3px; }
+.mat-vict th.fila, .mat-par th.fila { text-align: right; font: 500 12px var(--font-mono); padding-right: 8px; white-space: nowrap; color: var(--ink-2); }
+.mat-vict th.fila.fermat, .mat-par th.fila.fermat { color: var(--accent); font-weight: 600; }
+.mat-par td { width: 30px; min-width: 30px; height: 26px; border-radius: 3px; text-align: center; font: 11px var(--font-mono); cursor: pointer; }
+.mat-par.grande td { width: 58px; min-width: 58px; height: 30px; }
+.mat-par td.vacio { cursor: default; }
+.mat-par td.sel { outline: 2px solid var(--ink); outline-offset: -2px; }
+.leyenda { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--ink-2); align-items: center; }
+.leyenda .sw { display: inline-block; width: 14px; height: 12px; border-radius: 2px; vertical-align: -2px; margin-right: 4px; }
+.dos-col { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 900px) { .dos-col { grid-template-columns: minmax(0, 1fr); } }
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+svg text { font-family: var(--font-mono); fill: var(--ink-2); }
+.eje line, .eje path { stroke: var(--rule); }
+.tooltip { position: fixed; z-index: 20; pointer-events: none; background: var(--ink); color: var(--bg); font: 12px/1.45 var(--font-body); padding: 8px 10px; border-radius: 6px; max-width: 320px; box-shadow: 0 6px 24px rgba(0,0,0,.18); }
+.tooltip b { font-weight: 600; }
+.tooltip .mono { font-family: var(--font-mono); }
+.resumen-par { font-size: 14px; color: var(--ink); display: grid; gap: 6px; }
+.resumen-par .cifras { font: 13px/1.6 var(--font-mono); color: var(--ink-2); }
+.bayes { display: flex; height: 14px; border-radius: 3px; overflow: hidden; border: 1px solid var(--rule); }
+.bayes span { display: block; height: 100%; }
+.metodo { display: grid; gap: 10px; max-width: 80ch; color: var(--ink-2); font-size: 14px; }
+.metodo ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.aviso-fijo { border-left: 3px solid var(--accent); padding: 6px 10px; background: var(--accent-soft); color: var(--ink); font-size: 13px; border-radius: 0 4px 4px 0; }
+.cifras-clave { display: flex; flex-wrap: wrap; gap: 10px 24px; }
+.cifra { display: grid; gap: 2px; }
+.cifra .n { font: 600 26px/1 var(--font-display); }
+.cifra .t { font-size: 12.5px; color: var(--ink-3); }
+@media (prefers-reduced-motion: no-preference) { .mat-par td, .mat-lider td { transition: filter .12s; } .mat-par td:hover { filter: brightness(1.08); } }
+</style>
+
+<div class="envoltura">
+  <header class="portada">
+    <div class="sobretitulo">Corrida heroica · 100 semillas · exploratorio</div>
+    <h1>Wilcoxon en la heroica</h1>
+    <p class="bajada">Para cada dataset, cada par de clasificadores se compara sobre las mismas 100 semillas con la prueba de rangos con signo de Wilcoxon, con corrección de Holm dentro del dataset. Cada par informa la diferencia de Hodges–Lehmann con su intervalo del 95&nbsp;%; en el conjunto de la tesis, además, la prueba bayesiana de rangos con signo con un margen de equivalencia de ±0,01 en R².</p>
+    <div class="chips" id="chips"></div>
+  </header>
+
+  <nav class="controles" aria-label="Controles">
+    <div class="grupo-control"><span class="rotulo">Vista</span>
+      <div class="segmentado" id="c-vista">
+        <button type="button" data-v="resumen">Resumen</button>
+        <button type="button" data-v="dataset">Por dataset</button>
+      </div></div>
+    <div class="grupo-control"><span class="rotulo">Conjunto</span>
+      <div class="segmentado" id="c-conjunto">
+        <button type="button" data-v="tesis">Tesis</button>
+        <button type="button" data-v="ampliado">Ampliado</button>
+      </div></div>
+    <div class="grupo-control"><span class="rotulo">Métrica</span>
+      <div class="segmentado" id="c-metrica">
+        <button type="button" data-v="r2">R² crudo</button>
+        <button type="button" data-v="r2_temp">R² templado</button>
+      </div></div>
+    <div class="grupo-control" id="c-dataset-grupo"><label class="rotulo" for="c-dataset">Dataset</label>
+      <select id="c-dataset"></select></div>
+  </nav>
+
+  <main id="vista-resumen" class="pila">
+    <section class="panel">
+      <div class="cabecera-panel"><h2>Grupo líder por dataset</h2><span class="nota" id="nota-lider"></span></div>
+      <p class="nota">Cada celda es la mediana del clasificador en ese dataset. El recuadro sólido marca la mejor mediana; el sombreado claro, los clasificadores que no difieren significativamente de ella (Holm, α = 0,05). Un clic en el nombre del dataset abre su detalle. ◇ = datos fijos: cada semilla es otra partición de los mismos datos y los p-valores salen optimistas.</p>
+      <div class="desborde"><table class="mat-lider" id="mat-lider"></table></div>
+    </section>
+    <section class="panel">
+      <div class="cabecera-panel"><h2>Victorias significativas</h2><span class="nota">datasets en que la fila supera a la columna (Holm, α = 0,05)</span></div>
+      <div class="desborde"><table class="mat-vict" id="mat-vict"></table></div>
+    </section>
+  </main>
+
+  <main id="vista-dataset" class="pila" hidden>
+    <section class="panel">
+      <div class="cabecera-panel"><h2 id="d-titulo"></h2><span class="nota" id="d-friedman"></span></div>
+      <div id="d-aviso"></div>
+      <div class="cifras-clave" id="d-cifras"></div>
+    </section>
+    <div class="dos-col">
+      <section class="panel">
+        <div class="cabecera-panel"><h3>R² por semilla</h3><span class="nota">ordenado por mediana · letras: sin diferencia significativa si comparten una</span></div>
+        <div id="d-tiras"></div>
+      </section>
+      <section class="panel">
+        <div class="cabecera-panel"><h3>Comparaciones de a pares</h3><span class="nota">fila menos columna · filas y columnas por mediana</span></div>
+        <div class="desborde"><table class="mat-par" id="d-matriz"></table></div>
+        <div class="leyenda" id="d-leyenda"></div>
+      </section>
+    </div>
+    <section class="panel">
+      <div class="cabecera-panel"><h3 id="p-titulo">Par seleccionado</h3><span class="nota">diferencias por semilla · franja: ±0,01</span></div>
+      <div class="dos-col">
+        <div id="p-grafico"></div>
+        <div class="resumen-par" id="p-resumen"></div>
+      </div>
+    </section>
+  </main>
+
+  <section class="panel metodo" style="margin-top:18px">
+    <h2>Método</h2>
+    <ul>
+      <li>Unidad: la semilla. En los datasets sintéticos y en mnist cada semilla es una muestra nueva; en los de datos fijos (◇) es otra partición 50/50 de los mismos datos.</li>
+      <li>Wilcoxon de rangos con signo, bilateral, sobre las diferencias por semilla; los ceros por el método de Pratt; |Δ| &lt; 10⁻⁹ cuenta como empate, como en el prerregistro.</li>
+      <li>Holm dentro de cada dataset y conjunto: 21 pares en la tesis (siete clasificadores suaves; svc no da probabilidades) y 190 en el ampliado. El p-valor sin ajustar de un par es el mismo en ambos conjuntos.</li>
+      <li>Hodges–Lehmann: mediana de los promedios de Walsh; intervalo del 95&nbsp;% por la cota normal de Wilcoxon.</li>
+      <li>Friedman por dataset y conjunto, como prueba ómnibus.</li>
+      <li>Bayesiana de rangos con signo (Benavoli, Corani, Demšar y Zaffalon, 2017), solo en el conjunto de la tesis: pseudo-observación en 0 con peso 0,5 y 20 000 muestras; ROPE ±0,01.</li>
+      <li>R² crudo y R² templado se comparan cada uno consigo mismo, nunca entre sí. kdc es el estimador exacto; el de sklearn queda fuera.</li>
+      <li>Exploratorio: este análisis no forma parte del prerregistro de la corrida.</li>
+    </ul>
+    <p class="nota" id="pie"></p>
+  </section>
+</div>
+<div class="tooltip" id="tooltip" hidden></div>
+
+<script id="datos" type="application/json">/*__DATOS__*/null</script>
+<script>
+(function () {
+  const D = JSON.parse(document.getElementById("datos").textContent);
+  const ALFA = 0.05;
+  const C = D.clasificadores;
+  const V = D.variantes;
+  const estado = { vista: "resumen", conjunto: "tesis", metrica: "r2", variante: V.findIndex(v => v.id === "helices_0"), par: null };
+  try {
+    const guardado = JSON.parse(localStorage.getItem("wilcoxon-heroica") || "null");
+    if (guardado) Object.assign(estado, guardado, { par: null });
+  } catch (e) {}
+  const hash = (location.hash || "").slice(1);
+  if (hash) { const k = V.findIndex(v => v.id === hash); if (k >= 0) { estado.variante = k; estado.vista = "dataset"; } }
+
+  const $ = id => document.getElementById(id);
+  const fmt = (x, d = 3) => (x === null || x === undefined || Number.isNaN(x)) ? "—" : x.toFixed(d);
+  const fmtSigno = (x, d = 3) => (Math.abs(x) < 0.5 * 10 ** -d ? "" : x > 0 ? "+" : "−") + Math.abs(x).toFixed(d);
+  const SUP = { "-": "⁻", "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹" };
+  function fmtP(p) {
+    if (p === null || p === undefined) return "—";
+    if (p >= 0.001) return p.toFixed(p >= 0.1 ? 2 : 3);
+    const [m, e] = p.toExponential(1).split("e");
+    return m + "·10" + String(parseInt(e, 10)).split("").map(ch => SUP[ch]).join("");
+  }
+  const etq = i => C[i].etiqueta;
+
+  // Índices de pares por métrica y variante: clave "i-j" con i < j
+  const indicePares = {};
+  for (const m of Object.keys(D.pares)) {
+    indicePares[m] = D.pares[m].map(lista => {
+      const mapa = new Map();
+      lista.forEach(r => mapa.set(r[0] + "-" + r[1], r));
+      return mapa;
+    });
+  }
+  // Devuelve el par orientado como fila (i) menos columna (j)
+  function par(i, j) {
+    const mapa = indicePares[estado.metrica][estado.variante];
+    let r = mapa.get(i + "-" + j), girar = false;
+    if (!r) { r = mapa.get(j + "-" + i); girar = true; }
+    if (!r) return null;
+    const holm = estado.conjunto === "tesis" ? r[3] : r[4];
+    const base = { p: r[2], holm, n_a: r[8], n_b: r[9], empates: r[10] };
+    if (!girar) return Object.assign(base, { hl: r[5], lo: r[6], hi: r[7], gana: r[8], pierde: r[9], bB: r[11], bR: r[12], bA: r[13] });
+    return Object.assign(base, { hl: -r[5], lo: -r[7], hi: -r[6], gana: r[9], pierde: r[8], bB: r[13], bR: r[12], bA: r[11] });
+  }
+  const miembros = () => D.conjuntos[estado.conjunto];
+  const valores = (v, i) => D.valores[estado.metrica][v][i].filter(x => x !== null);
+  function mediana(xs) { if (!xs.length) return NaN; const s = [...xs].sort((a, b) => a - b); const k = s.length >> 1; return s.length % 2 ? s[k] : (s[k - 1] + s[k]) / 2; }
+  function cuantil(xs, q) { const s = [...xs].sort((a, b) => a - b); const pos = (s.length - 1) * q; const b = Math.floor(pos); return s[b] + (s[Math.min(b + 1, s.length - 1)] - s[b]) * (pos - b); }
+  const significativo = (i, j) => { const r = par(i, j); return r && r.holm !== null && r.holm < ALFA; };
+  function ganador(i, j) { // +1 si gana la fila, −1 si la columna, 0 si no hay diferencia significativa
+    const r = par(i, j); if (!r || r.holm === null || r.holm >= ALFA) return 0;
+    if (r.hl !== 0) return Math.sign(r.hl);
+    return Math.sign(r.gana - r.pierde);
+  }
+  function ordenar(v) {
+    const ids = miembros().filter(i => valores(v, i).length);
+    const med = new Map(ids.map(i => [i, mediana(valores(v, i))]));
+    return { orden: ids.sort((a, b) => med.get(b) - med.get(a)), med };
+  }
+  // Letras de grupos (insertar y absorber, Piepho 2004)
+  function letras(orden) {
+    const clave = g => [...g].sort((a, b) => a - b).join(",");
+    let grupos = [new Set(orden)];
+    for (let x = 0; x < orden.length; x++) for (let y = x + 1; y < orden.length; y++) {
+      const i = orden[x], j = orden[y];
+      if (!significativo(i, j)) continue;
+      const nuevos = [];
+      for (const g of grupos) {
+        if (g.has(i) && g.has(j)) { const a = new Set(g); a.delete(i); const b = new Set(g); b.delete(j); nuevos.push(a, b); }
+        else nuevos.push(g);
+      }
+      const unicos = [...new Map(nuevos.filter(g => g.size).map(g => [clave(g), g])).values()];
+      grupos = unicos.filter(g => !unicos.some(h => h !== g && h.size > g.size && [...g].every(e => h.has(e))));
+    }
+    const posicion = new Map(orden.map((i, k) => [i, k]));
+    grupos.sort((g, h) => Math.min(...[...g].map(e => posicion.get(e))) - Math.min(...[...h].map(e => posicion.get(e))));
+    const L = new Map(orden.map(i => [i, ""]));
+    grupos.forEach((g, k) => g.forEach(i => L.set(i, L.get(i) + String.fromCharCode(97 + (k % 26)))));
+    return L;
+  }
+
+  // Tooltip
+  const tip = $("tooltip");
+  function mostrarTip(html, ev) {
+    tip.innerHTML = html; tip.hidden = false;
+    const r = ev.target.getBoundingClientRect ? ev.target.getBoundingClientRect() : { left: ev.clientX, bottom: ev.clientY };
+    const x = Math.min(window.innerWidth - tip.offsetWidth - 8, Math.max(8, (ev.clientX || r.left) + 12));
+    const y = Math.min(window.innerHeight - tip.offsetHeight - 8, (ev.clientY || r.bottom) + 14);
+    tip.style.left = x + "px"; tip.style.top = y + "px";
+  }
+  const ocultarTip = () => { tip.hidden = true; };
+
+  function guardar() { try { localStorage.setItem("wilcoxon-heroica", JSON.stringify({ vista: estado.vista, conjunto: estado.conjunto, metrica: estado.metrica, variante: estado.variante })); } catch (e) {} }
+
+  // ---------- Controles ----------
+  function segmentado(id, clave) {
+    const cont = $(id);
+    cont.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { estado[clave] = b.dataset.v; if (clave !== "variante") estado.par = null; render(); }));
+  }
+  segmentado("c-vista", "vista"); segmentado("c-conjunto", "conjunto"); segmentado("c-metrica", "metrica");
+  const sel = $("c-dataset");
+  const grupos = [["Datasets de la tesis", V.filter(v => !v.nuevo)], ["Datasets nuevos", V.filter(v => v.nuevo)]];
+  for (const [nombre, lista] of grupos) {
+    const og = document.createElement("optgroup"); og.label = nombre;
+    for (const v of lista) { const o = document.createElement("option"); o.value = V.indexOf(v); o.textContent = v.id + (v.fijo ? " ◇" : ""); og.appendChild(o); }
+    sel.appendChild(og);
+  }
+  sel.addEventListener("change", () => { estado.variante = +sel.value; estado.par = null; render(); });
+
+  // ---------- Resumen ----------
+  function renderLider() {
+    const ids = miembros();
+    const cuentas = new Map(ids.map(i => [i, 0]));
+    let html = "<thead><tr><th></th>" + ids.map(i => `<th class="col${C[i].fermat ? " fermat" : ""}"><span>${etq(i)}</span></th>`).join("") + "</tr></thead><tbody>";
+    let ultimoNuevo = null;
+    V.forEach((v, k) => {
+      if (v.nuevo !== ultimoNuevo) {
+        html += `<tr class="sep"><th colspan="${ids.length + 1}">${v.nuevo ? "Datasets nuevos" : "Datasets de la tesis"}</th></tr>`;
+        ultimoNuevo = v.nuevo;
+      }
+      const vant = estado.variante; estado.variante = k;
+      const { orden, med } = ordenar(k);
+      const top = orden[0];
+      html += `<tr><th class="var fila-dataset" tabindex="0" data-k="${k}">${v.id}${v.fijo ? '<span class="marca">◇</span>' : ""}</th>`;
+      for (const i of ids) {
+        const m = med.get(i);
+        if (m === undefined) { html += "<td>·</td>"; continue; }
+        const lider = i === top || !significativo(top, i);
+        if (lider) cuentas.set(i, cuentas.get(i) + 1);
+        const cls = i === top ? "top" : lider ? "lider" : "";
+        html += `<td class="${cls}" title="${etq(i)} · ${v.id}: mediana ${fmt(m)}${lider ? " · grupo líder" : ""}">${fmt(m, 2)}</td>`;
+      }
+      html += "</tr>";
+      estado.variante = vant;
+    });
+    html += "</tbody><tfoot><tr><th>En el grupo líder</th>" + ids.map(i => `<td>${cuentas.get(i)}</td>`).join("") + "</tr></tfoot>";
+    $("mat-lider").innerHTML = html;
+    $("nota-lider").textContent = `${estado.conjunto === "tesis" ? "conjunto de la tesis" : "conjunto ampliado"} · ${D.metricas[estado.metrica]}`;
+    $("mat-lider").querySelectorAll("th.var").forEach(th => {
+      const abrir = () => { estado.variante = +th.dataset.k; estado.vista = "dataset"; estado.par = null; render(); window.scrollTo({ top: 0 }); };
+      th.addEventListener("click", abrir);
+      th.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrir(); } });
+    });
+  }
+
+  function renderVictorias() {
+    const ids = miembros();
+    const n = ids.length;
+    const gana = Array.from({ length: n }, () => Array(n).fill(0));
+    const quienes = Array.from({ length: n }, () => Array.from({ length: n }, () => []));
+    const vant = estado.variante;
+    V.forEach((v, k) => {
+      estado.variante = k;
+      for (let a = 0; a < n; a++) for (let b = 0; b < n; b++) {
+        if (a === b) continue;
+        if (ganador(ids[a], ids[b]) > 0) { gana[a][b]++; quienes[a][b].push(v.id); }
+      }
+    });
+    estado.variante = vant;
+    const total = gana.map(f => f.reduce((s, x) => s + x, 0));
+    const orden = [...Array(n).keys()].sort((a, b) => total[b] - total[a]);
+    const maximo = Math.max(1, ...gana.flat());
+    let html = "<thead><tr><th></th>" + orden.map(b => `<th class="col${C[ids[b]].fermat ? " fermat" : ""}"><span>${etq(ids[b])}</span></th>`).join("") + '<th class="col"><span>total</span></th></tr></thead><tbody>';
+    for (const a of orden) {
+      html += `<tr><th class="fila${C[ids[a]].fermat ? " fermat" : ""}">${etq(ids[a])}</th>`;
+      for (const b of orden) {
+        if (a === b) { html += '<td style="background:transparent"></td>'; continue; }
+        const x = gana[a][b];
+        const t = x / maximo;
+        const fondo = x === 0 ? "var(--ns)" : `color-mix(in srgb, var(--mejor-3) ${Math.round(18 + 82 * t)}%, var(--surface))`;
+        const tinta = t > 0.55 ? "#fff" : "var(--ink)";
+        html += `<td tabindex="0" style="background:${fondo};color:${tinta}" data-a="${a}" data-b="${b}">${x || ""}</td>`;
+      }
+      html += `<td style="color:var(--ink);font-weight:500">${total[a]}</td></tr>`;
+    }
+    $("mat-vict").innerHTML = html + "</tbody>";
+    $("mat-vict").querySelectorAll("td[data-a]").forEach(td => {
+      const a = +td.dataset.a, b = +td.dataset.b;
+      const texto = () => `<b>${etq(ids[a])}</b> supera a <b>${etq(ids[b])}</b> en ${gana[a][b]} de ${V.length} datasets` + (quienes[a][b].length ? `<br><span class="mono">${quienes[a][b].join(", ")}</span>` : "") + `<br>al revés: ${gana[b][a]}`;
+      td.addEventListener("mouseenter", e => mostrarTip(texto(), e));
+      td.addEventListener("mousemove", e => mostrarTip(texto(), e));
+      td.addEventListener("mouseleave", ocultarTip);
+      td.addEventListener("focus", e => mostrarTip(texto(), { target: td }));
+      td.addEventListener("blur", ocultarTip);
+    });
+  }
+
+  // ---------- Por dataset ----------
+  function colorPar(r) {
+    if (!r || r.holm === null || r.holm >= ALFA) return { fondo: "var(--ns)", tinta: "var(--ink-3)" };
+    const efecto = Math.abs(r.hl), signo = r.hl !== 0 ? Math.sign(r.hl) : Math.sign(r.gana - r.pierde);
+    const paso = efecto < 0.01 ? 1 : efecto < 0.05 ? 2 : 3;
+    const fondo = `var(--${signo > 0 ? "mejor" : "peor"}-${paso})`;
+    return { fondo, tinta: paso === 1 ? "var(--ink)" : "#fff" };
+  }
+  function textoPar(i, j, r) {
+    if (!r) return "";
+    let t = `<b>${etq(i)} − ${etq(j)}</b><br><span class="mono">HL ${fmtSigno(r.hl)} [${fmtSigno(r.lo)}, ${fmtSigno(r.hi)}]<br>p ${fmtP(r.p)} · Holm ${fmtP(r.holm)}<br>${r.gana} a favor · ${r.pierde} en contra · ${r.empates} empates</span>`;
+    if (r.bA !== null && r.bA !== undefined) t += `<br>Bayes: P(${etq(i)}) ${fmt(r.bA, 2)} · P(≈) ${fmt(r.bR, 2)} · P(${etq(j)}) ${fmt(r.bB, 2)}`;
+    return t;
+  }
+
+  function renderDataset() {
+    const k = estado.variante, v = V[k];
+    const { orden, med } = ordenar(k);
+    const L = letras(orden);
+    $("d-titulo").innerHTML = `<span class="mono" style="font-family:var(--font-mono)">${v.id}</span>`;
+    const f = D.friedman[estado.metrica][estado.conjunto][k];
+    $("d-friedman").textContent = `Friedman χ² = ${f[0].toFixed(1)}, p = ${fmtP(f[1])} · ${orden.length} clasificadores · ${D.metricas[estado.metrica]}`;
+    $("d-aviso").innerHTML = v.fijo ? '<div class="aviso-fijo">◇ Datos fijos: cada semilla es otra partición de los mismos datos, las semillas no son independientes y los p-valores son optimistas. Leer las diferencias como descriptivas.</div>' : "";
+    // cifras clave
+    let sig = 0, tot = 0;
+    for (let x = 0; x < orden.length; x++) for (let y = x + 1; y < orden.length; y++) { tot++; if (significativo(orden[x], orden[y])) sig++; }
+    const lideres = orden.filter(i => i === orden[0] || !significativo(orden[0], i));
+    $("d-cifras").innerHTML = [
+      [etq(orden[0]), "mejor mediana (" + fmt(med.get(orden[0])) + ")"],
+      [lideres.length, "en el grupo líder"],
+      [`${sig}/${tot}`, "pares con diferencia significativa"],
+    ].map(([n, t]) => `<div class="cifra"><span class="n">${n}</span><span class="t">${t}</span></div>`).join("");
+    renderTiras(k, orden, med, L);
+    renderMatriz(orden);
+    if (!estado.par || !orden.includes(estado.par[0]) || !orden.includes(estado.par[1])) {
+      const fk = C.findIndex(c => c.id === "fkdc"), kd = C.findIndex(c => c.id === "kdc_exacto");
+      estado.par = orden.includes(fk) && orden.includes(kd) ? [fk, kd] : [orden[0], orden[1]];
+    }
+    renderPar();
+  }
+
+  function renderTiras(k, orden, med, L) {
+    const ancho = 760, izq = 118, der = 96, altoFila = 24, arriba = 8, abajo = 30;
+    const todos = orden.flatMap(i => valores(k, i));
+    let xmin = Math.min(...todos), xmax = Math.max(...todos);
+    const piso = Math.max(xmin, (xmax - Math.max(xmin, -0.3)) > 0.05 ? -0.3 : xmin);
+    xmin = Math.floor(Math.max(piso, xmin) * 20) / 20; xmax = Math.ceil(xmax * 20) / 20;
+    if (xmax - xmin < 0.1) { xmin -= 0.05; xmax += 0.05; }
+    const alto = arriba + altoFila * orden.length + abajo;
+    const X = x => izq + (Math.max(x, xmin) - xmin) / (xmax - xmin) * (ancho - izq - der);
+    const paso = (xmax - xmin) > 0.6 ? 0.2 : (xmax - xmin) > 0.25 ? 0.1 : 0.05;
+    let s = `<svg viewBox="0 0 ${ancho} ${alto}" role="img" aria-label="R² por semilla, ordenado por mediana">`;
+    for (let t = Math.ceil(xmin / paso) * paso; t <= xmax + 1e-9; t += paso) {
+      const x = X(t);
+      s += `<line x1="${x}" x2="${x}" y1="${arriba}" y2="${alto - abajo + 4}" stroke="var(--rule)" stroke-width="1"/>`;
+      s += `<text x="${x}" y="${alto - 10}" text-anchor="middle" font-size="11">${t.toFixed(2)}</text>`;
+    }
+    orden.forEach((i, fila) => {
+      const y = arriba + fila * altoFila + altoFila / 2;
+      const xs = valores(k, i);
+      const fermat = C[i].fermat;
+      const color = fermat ? "var(--accent)" : "var(--ink-3)";
+      s += `<text x="${izq - 10}" y="${y + 4}" text-anchor="end" font-size="12" style="fill:${fermat ? "var(--accent)" : "var(--ink)"};font-weight:${fermat ? 600 : 400}">${etq(i)}</text>`;
+      xs.forEach((x, n) => {
+        const jit = (((n * 2654435761) >>> 0) % 1000) / 1000 - 0.5;
+        const recortado = x < xmin;
+        s += `<circle cx="${X(x).toFixed(1)}" cy="${(y + jit * 12).toFixed(1)}" r="${recortado ? 2.6 : 2.2}" fill="${recortado ? "var(--peor-2)" : color}" fill-opacity="${recortado ? 0.9 : 0.38}"/>`;
+      });
+      const q1 = cuantil(xs, 0.25), q3 = cuantil(xs, 0.75), m = med.get(i);
+      s += `<line x1="${X(q1)}" x2="${X(q3)}" y1="${y}" y2="${y}" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" opacity=".55"/>`;
+      s += `<line x1="${X(m)}" x2="${X(m)}" y1="${y - 8}" y2="${y + 8}" stroke="${fermat ? "var(--accent)" : "var(--ink)"}" stroke-width="2.5" stroke-linecap="round"/>`;
+      s += `<text x="${ancho - der + 10}" y="${y + 4}" font-size="12" style="fill:var(--ink)">${fmt(m)}</text>`;
+      s += `<text x="${ancho - 6}" y="${y + 4}" font-size="12" text-anchor="end" style="fill:var(--ink-2)">${L.get(i)}</text>`;
+    });
+    if (Math.min(...todos) < xmin) s += `<text x="${izq}" y="${alto - 22}" font-size="10.5" style="fill:var(--peor-3)">● puntos en rojo: por debajo de ${xmin.toFixed(2)}</text>`;
+    $("d-tiras").innerHTML = s + "</svg>";
+  }
+
+  function renderMatriz(orden) {
+    const grande = orden.length <= 8;
+    const tabla = $("d-matriz");
+    tabla.className = "mat-par" + (grande ? " grande" : "");
+    let html = "<thead><tr><th></th>" + orden.slice(1).map(j => `<th class="col${C[j].fermat ? " fermat" : ""}"><span>${etq(j)}</span></th>`).join("") + "</tr></thead><tbody>";
+    orden.slice(0, -1).forEach((i, fi) => {
+      html += `<tr><th class="fila${C[i].fermat ? " fermat" : ""}">${etq(i)}</th>`;
+      orden.slice(1).forEach((j, cj) => {
+        if (cj < fi) { html += '<td class="vacio"></td>'; return; }
+        const r = par(i, j);
+        const { fondo, tinta } = colorPar(r);
+        const seleccionado = estado.par && ((estado.par[0] === i && estado.par[1] === j) || (estado.par[0] === j && estado.par[1] === i));
+        const contenido = grande && r ? fmtSigno(r.hl, 3) : "";
+        html += `<td tabindex="0" class="${seleccionado ? "sel" : ""}" style="background:${fondo};color:${tinta}" data-i="${i}" data-j="${j}" aria-label="${etq(i)} menos ${etq(j)}">${contenido}</td>`;
+      });
+      html += "</tr>";
+    });
+    tabla.innerHTML = html + "</tbody>";
+    tabla.querySelectorAll("td[data-i]").forEach(td => {
+      const i = +td.dataset.i, j = +td.dataset.j;
+      const texto = () => textoPar(i, j, par(i, j));
+      td.addEventListener("mouseenter", e => mostrarTip(texto(), e));
+      td.addEventListener("mousemove", e => mostrarTip(texto(), e));
+      td.addEventListener("mouseleave", ocultarTip);
+      td.addEventListener("focus", () => mostrarTip(texto(), { target: td }));
+      td.addEventListener("blur", ocultarTip);
+      const elegir = () => { estado.par = [i, j]; renderMatriz(orden); renderPar(); };
+      td.addEventListener("click", elegir);
+      td.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); elegir(); } });
+    });
+    $("d-leyenda").innerHTML = [
+      ["var(--mejor-3)", "fila mejor, |HL| ≥ 0,05"], ["var(--mejor-2)", "fila mejor, 0,01–0,05"], ["var(--mejor-1)", "fila mejor, < 0,01"],
+      ["var(--ns)", "sin diferencia (Holm ≥ 0,05)"],
+      ["var(--peor-1)", "columna mejor, < 0,01"], ["var(--peor-2)", "0,01–0,05"], ["var(--peor-3)", "≥ 0,05"],
+    ].map(([c, t]) => `<span><span class="sw" style="background:${c}"></span>${t}</span>`).join("");
+  }
+
+  function renderPar() {
+    const [i, j] = estado.par;
+    const r = par(i, j);
+    const k = estado.variante;
+    const xa = D.valores[estado.metrica][k][i], xb = D.valores[estado.metrica][k][j];
+    const d = [];
+    xa.forEach((a, n) => { const b = xb[n]; if (a !== null && b !== null) { const x = a - b; d.push(Math.abs(x) < 1e-9 ? 0 : x); } });
+    $("p-titulo").innerHTML = `<span class="${C[i].fermat ? "fermat-txt" : ""}">${etq(i)}</span> − <span class="${C[j].fermat ? "fermat-txt" : ""}">${etq(j)}</span> en ${V[k].id}`;
+    // gráfico: histograma de puntos
+    const ancho = 560, alto = 220, izq = 16, der = 16, abajo = 30, arriba = 40;
+    let lo = Math.min(...d, -0.012, r ? r.lo : 0), hi = Math.max(...d, 0.012, r ? r.hi : 0);
+    const margen = (hi - lo) * 0.06; lo -= margen; hi += margen;
+    const X = x => izq + (x - lo) / (hi - lo) * (ancho - izq - der);
+    const nb = 34, bw = (hi - lo) / nb;
+    const pilas = new Map();
+    const radio = 3.2;
+    let s = `<svg viewBox="0 0 ${ancho} ${alto}" role="img" aria-label="Diferencias por semilla">`;
+    s += `<rect x="${X(-0.01)}" y="${arriba - 6}" width="${X(0.01) - X(-0.01)}" height="${alto - abajo - arriba + 6}" fill="var(--rope)"/>`;
+    s += `<line x1="${X(0)}" x2="${X(0)}" y1="${arriba - 10}" y2="${alto - abajo}" stroke="var(--ink-3)" stroke-dasharray="3 3"/>`;
+    s += `<line x1="${izq}" x2="${ancho - der}" y1="${alto - abajo}" y2="${alto - abajo}" stroke="var(--rule)"/>`;
+    const ticks = 5;
+    for (let t = 0; t <= ticks; t++) {
+      const x = lo + (hi - lo) * t / ticks;
+      s += `<text x="${X(x)}" y="${alto - 10}" text-anchor="middle" font-size="11">${fmtSigno(x, Math.abs(hi - lo) < 0.05 ? 3 : 2)}</text>`;
+    }
+    d.slice().sort((a, b) => a - b).forEach(x => {
+      const b = Math.min(nb - 1, Math.floor((x - lo) / bw));
+      const h = (pilas.get(b) || 0); pilas.set(b, h + 1);
+      const cy = alto - abajo - radio - 1 - h * (radio * 2 + 0.6);
+      const color = x > 0 ? "var(--mejor-2)" : x < 0 ? "var(--peor-2)" : "var(--ink-3)";
+      if (cy > arriba - 4) s += `<circle cx="${(lo + (b + 0.5) * bw - lo) / (hi - lo) * (ancho - izq - der) + izq}" cy="${cy}" r="${radio}" fill="${color}"/>`;
+    });
+    if (r) {
+      s += `<line x1="${X(r.lo)}" x2="${X(r.hi)}" y1="${arriba - 18}" y2="${arriba - 18}" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>`;
+      s += `<circle cx="${X(r.hl)}" cy="${arriba - 18}" r="5" fill="var(--ink)" stroke="var(--surface)" stroke-width="2"/>`;
+      s += `<text x="${X(r.hl)}" y="${arriba - 28}" text-anchor="middle" font-size="11" style="fill:var(--ink)">HL ${fmtSigno(r.hl)}</text>`;
+    }
+    $("p-grafico").innerHTML = s + "</svg>";
+    if (!r) { $("p-resumen").textContent = "Sin datos para este par."; return; }
+    const signif = r.holm !== null && r.holm < ALFA;
+    const quien = r.hl > 0 ? etq(i) : r.hl < 0 ? etq(j) : null;
+    let texto = signif && quien
+      ? `<p><b>${quien}</b> rinde mejor: la diferencia es significativa después de Holm.</p>`
+      : `<p>Sin diferencia significativa después de Holm.</p>`;
+    texto += `<div class="cifras">HL ${fmtSigno(r.hl)} · IC 95 % [${fmtSigno(r.lo)}, ${fmtSigno(r.hi)}]<br>Wilcoxon p = ${fmtP(r.p)} · Holm (${estado.conjunto}) = ${fmtP(r.holm)}<br>${r.gana} semillas a favor de ${etq(i)} · ${r.pierde} a favor de ${etq(j)} · ${r.empates} empates</div>`;
+    if (r.bA !== null && r.bA !== undefined) {
+      texto += `<div><div class="nota" style="margin-bottom:4px">Bayesiana de rangos con signo, ROPE ±0,01</div><div class="bayes" aria-hidden="true"><span style="width:${r.bA * 100}%;background:var(--mejor-2)"></span><span style="width:${r.bR * 100}%;background:var(--ink-3)"></span><span style="width:${r.bB * 100}%;background:var(--peor-2)"></span></div><div class="cifras">P(${etq(i)} mejor) ${fmt(r.bA, 2)} · P(equivalentes) ${fmt(r.bR, 2)} · P(${etq(j)} mejor) ${fmt(r.bB, 2)}</div></div>`;
+    } else if (estado.conjunto === "ampliado") {
+      texto += `<p class="nota">La prueba bayesiana se calculó solo para los pares de la tesis.</p>`;
+    }
+    $("p-resumen").innerHTML = texto;
+  }
+
+  // ---------- Render ----------
+  function marcar(id, valor) { $(id).querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === valor))); }
+  function render() {
+    marcar("c-vista", estado.vista); marcar("c-conjunto", estado.conjunto); marcar("c-metrica", estado.metrica);
+    sel.value = estado.variante;
+    $("c-dataset-grupo").hidden = estado.vista !== "dataset";
+    $("vista-resumen").hidden = estado.vista !== "resumen";
+    $("vista-dataset").hidden = estado.vista !== "dataset";
+    ocultarTip();
+    if (estado.vista === "resumen") { renderLider(); renderVictorias(); }
+    else renderDataset();
+    guardar();
+  }
+  const ms = D.meta;
+  $("chips").innerHTML = [
+    `${V.length} datasets`, `${ms.semillas} semillas apareadas`, `tesis: ${D.conjuntos.tesis.length} clasificadores`, `ampliado: ${D.conjuntos.ampliado.length}`, `α = 0,05 · Holm por dataset`,
+  ].map(t => `<span class="chip">${t}</span>`).join("") + '<span class="chip aviso">exploratorio, fuera del prerregistro</span>';
+  $("pie").textContent = `Campaña ${ms.campania}, resultados generados el ${ms.generado}. Fuente: scripts/wilcoxon.py.`;
+  window.addEventListener("scroll", ocultarTip, { passive: true });
+  render();
+})();
+</script>
