@@ -828,6 +828,9 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
+clasicos = [
+    { name = "stochtree" },
+]
 dev = [
     { name = "ipykernel" },
     { name = "matplotlib" },
@@ -862,6 +865,7 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
+clasicos = [{ name = "stochtree", specifier = ">=0.4.5" }]
 dev = [
     { name = "ipykernel", specifier = ">=6.29.3" },
     { name = "matplotlib", specifier = ">=3.10.7" },
@@ -3521,6 +3525,46 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/28/e3/55dcc2cfbc3ca9c29519eb6884dd1415ecb53b0e934862d3559ddcb7e20b/stack_data-0.6.3.tar.gz", hash = "sha256:836a778de4fec4dcd1dcd89ed8abff8a221f58308462e1c4aa2a3cf30148f0b9", size = 44707, upload-time = "2023-09-30T13:58:05.479Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f1/7b/ce1eafaf1a76852e2ec9b22edecf1daa58175c090266e9f6c64afcd81d91/stack_data-0.6.3-py3-none-any.whl", hash = "sha256:d5558e0c25a4cb0853cddad3d77da9891a08cb85dd9f9f91b9f8cd66e511e695", size = 24521, upload-time = "2023-09-30T13:58:03.53Z" },
+]
+
+[[package]]
+name = "stochtree"
+version = "0.4.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "matplotlib" },
+    { name = "numpy" },
+    { name = "pandas" },
+    { name = "scikit-learn" },
+    { name = "scipy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/59/ea/a4f459df90284fe2147d58e6dfbaffaf8e28c198b0e8e2d9f85ffb6b0d7b/stochtree-0.4.5.tar.gz", hash = "sha256:e585b1c0ef7fd3ace193987bbc73ab0cf7873a3d87da6a8eb24e3784e4e25751", size = 3433852, upload-time = "2026-06-29T20:15:53.096Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8d/27/13048d2915ad55797e3d77cf493879407355d0a8fdb59fe41ad549bd3837/stochtree-0.4.5-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:c16792b5104dd16bc149b4beabf2c40204a1c5294e244af0d41399d7e48b94d2", size = 860048, upload-time = "2026-06-29T20:15:21.757Z" },
+    { url = "https://files.pythonhosted.org/packages/a3/55/1bb7e04bd7d0d512756950c887d637a29a2d79f8493e274c0418df550400/stochtree-0.4.5-cp311-cp311-macosx_15_0_x86_64.whl", hash = "sha256:6c97c99be226270b3592a4331e63b2102208b0a86fd6a4d6fb712eb3404a1eed", size = 932768, upload-time = "2026-06-29T20:15:22.995Z" },
+    { url = "https://files.pythonhosted.org/packages/c2/cd/e87d743c4c67591be24efe79259d969f91bef52c23c24694b9f896e0d9a0/stochtree-0.4.5-cp311-cp311-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:3002db4bff70811b77dfa466a3e31eb778156910ed5f9f0269320bf525302a17", size = 1148966, upload-time = "2026-06-29T20:15:24.309Z" },
+    { url = "https://files.pythonhosted.org/packages/cd/6f/824de2ec0c3b9a8ee2fb3b2f1ab057804a56d23f301ed2770d5227457587/stochtree-0.4.5-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:dcc0c582887ff8f70e50315ae8d71bae8565bbbae0ed4dd63543ab4efdb26bff", size = 1192983, upload-time = "2026-06-29T20:15:25.531Z" },
+    { url = "https://files.pythonhosted.org/packages/19/cb/5c26b57aa90291bfa98914e5a033e6558870720d107fd78923f5d7b11f03/stochtree-0.4.5-cp311-cp311-win_amd64.whl", hash = "sha256:91ac73fc8be7a8e814f40eaeee703c665e6fa4ef525580be2826b66d8d5ce7cb", size = 571640, upload-time = "2026-06-29T20:15:26.743Z" },
+    { url = "https://files.pythonhosted.org/packages/92/b1/1198f9599ce68976eadd9040e65542724229ba13ec89e4a3387ddfd1fb6d/stochtree-0.4.5-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:34635100c1f13c0b5c515bd4b2067610038ee819c8c92c5cc2be9c704c62b7b8", size = 862462, upload-time = "2026-06-29T20:15:27.809Z" },
+    { url = "https://files.pythonhosted.org/packages/fd/51/dee4711077d362daf79e2b88fd592e8b35374914e65bb688110f2a0639b9/stochtree-0.4.5-cp312-cp312-macosx_15_0_x86_64.whl", hash = "sha256:30f2ac9a5bdeaf2d59763dbd83c97ebebdb3007d258551869397ea48c22d8372", size = 936859, upload-time = "2026-06-29T20:15:28.905Z" },
+    { url = "https://files.pythonhosted.org/packages/99/3a/e56ec58dfcb9ee8792947981360b04d8e8ce4633b02a4a551eb806b9d769/stochtree-0.4.5-cp312-cp312-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:01bc0106a67cf8751bae6777446779b4ce01bdbaef09bbb99abd698b4dfc4208", size = 1151290, upload-time = "2026-06-29T20:15:30.085Z" },
+    { url = "https://files.pythonhosted.org/packages/dd/a4/449e7bf6eefd79b97eacd5c4f3ed8d14891534971a745bd9e7147f745966/stochtree-0.4.5-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:fb20cca4d58e83984f703ef22ccd67f304e75bd6421f93903d3f88b869b4ddcb", size = 1199088, upload-time = "2026-06-29T20:15:31.185Z" },
+    { url = "https://files.pythonhosted.org/packages/b5/96/313ac883d0cd61a05597c01818ed5093e79aa791db6b1f403151cc3472c5/stochtree-0.4.5-cp312-cp312-win_amd64.whl", hash = "sha256:dbe456c545640176e7d9e162bc53a470588a8724476ef46676fd3804d13b0c33", size = 574516, upload-time = "2026-06-29T20:15:32.614Z" },
+    { url = "https://files.pythonhosted.org/packages/7d/37/1e5c38d32733be6f7c94519cc8ac4e2de0f9209c590aa90e4f9deabb80e5/stochtree-0.4.5-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:7c0c1a5385b845c950d766ab8930012d846658068c69879d0b39591a6ae9ee07", size = 862484, upload-time = "2026-06-29T20:15:33.778Z" },
+    { url = "https://files.pythonhosted.org/packages/7c/0f/713574e21efe9a60b03a70b3e271c89ff7d70b0850bb5082f421c5d1b9dd/stochtree-0.4.5-cp313-cp313-macosx_15_0_x86_64.whl", hash = "sha256:6607a1b7e5774aa2d1bd6e1910c71ca61e0ec6b3a3ac7b2d9194b6ab9c8f247c", size = 936915, upload-time = "2026-06-29T20:15:34.882Z" },
+    { url = "https://files.pythonhosted.org/packages/98/3a/d65ff1e7e11d3959a73717d2b56e64a71e9e64a4d76d053617ee1e2160ed/stochtree-0.4.5-cp313-cp313-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:1416f083d8fb9d5c94fd4475b083e1a6790cb7bbc8e7ae223b379754e37b6f24", size = 1150783, upload-time = "2026-06-29T20:15:36.526Z" },
+    { url = "https://files.pythonhosted.org/packages/07/5a/26abcc1c73e542d7f4c13a503c1f7c07a2ba5596930f0e7d79bd92423076/stochtree-0.4.5-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:6267a2776284c1331b59de639542bda765712a517e0a804f27e05649959c126b", size = 1199704, upload-time = "2026-06-29T20:15:37.65Z" },
+    { url = "https://files.pythonhosted.org/packages/99/89/7525d91e906b65c0490993a71b6c937c619d829a8eaa7d57187223e0bd05/stochtree-0.4.5-cp313-cp313-win_amd64.whl", hash = "sha256:bd27f481012fb65871e19de877bfcc86b91a01a44ebd8d417e6d6d55c83208ae", size = 574394, upload-time = "2026-06-29T20:15:38.856Z" },
+    { url = "https://files.pythonhosted.org/packages/a0/db/76b5ca63be26d6019c1e9748453691728e883bf4d02ba61e7143f445bce4/stochtree-0.4.5-cp314-cp314-macosx_14_0_arm64.whl", hash = "sha256:bf67acbff13d56ab41d7ab49397a4a0d059daf5d3bea60b5868d39b776a1db5f", size = 863037, upload-time = "2026-06-29T20:15:40.049Z" },
+    { url = "https://files.pythonhosted.org/packages/4e/e1/399f1244aa1eae2ff001e55e7213f24fc735cce0465be331c43b9fe3dd77/stochtree-0.4.5-cp314-cp314-macosx_15_0_x86_64.whl", hash = "sha256:75749fafcb311ada2dfc6590d5d33ba238926d10141f83f08c0f2300fa5b44a7", size = 937187, upload-time = "2026-06-29T20:15:41.111Z" },
+    { url = "https://files.pythonhosted.org/packages/17/90/3f454efc6e7f58226f78c565226572318cb9cec6e78bc66cc64338c5ef14/stochtree-0.4.5-cp314-cp314-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:282d6d1cc34f7c26450e079a318a8102ee018e53c298bbdf12cdea16f58dc0ab", size = 1153760, upload-time = "2026-06-29T20:15:42.261Z" },
+    { url = "https://files.pythonhosted.org/packages/5a/07/7444b7b90a786a457f09921c681e6c1886eedb80b8e5d03058fadacae151/stochtree-0.4.5-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:b193a7b454ed5987d452e6f8d5debbb2d44265e13f4ebe00c40a141a4669ed05", size = 1200610, upload-time = "2026-06-29T20:15:43.509Z" },
+    { url = "https://files.pythonhosted.org/packages/30/df/0fcfb96778b036dda5fc45bf10e39f50fc5a0a4ce437cbbce643e07f95d5/stochtree-0.4.5-cp314-cp314-win_amd64.whl", hash = "sha256:53a04df6ef5aa005c737e1c9c849b96b344b81612535b87e412580f2ece109cd", size = 588115, upload-time = "2026-06-29T20:15:44.745Z" },
+    { url = "https://files.pythonhosted.org/packages/67/d9/a932b7bc10c56dd5a0abfaff778a238810f14dd97bbb0bf0feea625c49d2/stochtree-0.4.5-cp314-cp314t-macosx_14_0_arm64.whl", hash = "sha256:bddbd7ceb04b12ab3f4fd85c5d859d71ca83a6c90e803efaa0ebcd7800f0d956", size = 878808, upload-time = "2026-06-29T20:15:45.933Z" },
+    { url = "https://files.pythonhosted.org/packages/e3/fd/26fdb1a1f95b30da0d807c7f63d35c17b2ac9c7ace4d987b64aa614c55e6/stochtree-0.4.5-cp314-cp314t-macosx_15_0_x86_64.whl", hash = "sha256:c9decc80ab502abfddc130cfb7d21dd6007f798c7c97978e4c3ce1ee274ef1b0", size = 952831, upload-time = "2026-06-29T20:15:47.485Z" },
+    { url = "https://files.pythonhosted.org/packages/b5/c4/391a01c39e35f0c22ab361f017331970c2983a524fa637171fbd7a40e09d/stochtree-0.4.5-cp314-cp314t-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:644c665f16ddbbf5d8789cc884ee5e88f735e82e4073f8aedda4bbbd535c144c", size = 1149151, upload-time = "2026-06-29T20:15:48.83Z" },
+    { url = "https://files.pythonhosted.org/packages/ab/fb/6dc73a068f283ff712e143179089d711ef5859d1fc4f7eeda23e7f0a0796/stochtree-0.4.5-cp314-cp314t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:81c69c3713d96893ad69fea4135661f29cdbe3ba3ef50b8c91a219a14783921e", size = 1196723, upload-time = "2026-06-29T20:15:50.556Z" },
+    { url = "https://files.pythonhosted.org/packages/c5/a3/de22269454d2bbb9607f1133b674142b2477c5729fb58c73aba937c40fe0/stochtree-0.4.5-cp314-cp314t-win_amd64.whl", hash = "sha256:f71e5d7076e97c7f7d9f0ae58f6c93a98ca29112b22f10a2cca82c112da89c5d", size = 598025, upload-time = "2026-06-29T20:15:51.772Z" },
 ]
 
 [[package]]

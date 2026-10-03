@@ -81,6 +81,8 @@ conjuntos = {
     ],
     # TabPFN Plus quedó fuera de toda comparación (decisión del autor)
     "api": ["tabpfn_api"],
+    # Clásicos sin redes preentrenadas que se acercan a TabPFN (`fkdc.clasicos`)
+    "clasicos": ["kdc_ard", "superlearner"],
 }
 conjuntos_por_omision = ("tesis", "compendio", "fundacionales")
 

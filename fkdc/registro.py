@@ -33,7 +33,15 @@ from sklearn.base import clone
 
 from fkdc import config
 
-grupos = ("tesis", "compendio", "profundos", "fundacionales", "oraculo", "texto")
+grupos = (
+    "tesis",
+    "compendio",
+    "profundos",
+    "fundacionales",
+    "oraculo",
+    "texto",
+    "clasicos",
+)
 carriles = ("cpu", "torch", "api")
 
 
@@ -254,6 +262,23 @@ def registro() -> dict[str, Clasificador]:
             for base in ("lr", "gnb", "kdc", "kn", "svc", "gbt")
         ),
         *_entradas_texto(),
+        *(
+            Clasificador(
+                nombre,
+                "clasicos",
+                f"fkdc.clasicos:clasificadores.{nombre}",
+                f"fkdc.clasicos:grillas.{nombre}",
+                semilla=semilla,
+                descripcion=descripcion,
+            )
+            for nombre, semilla, descripcion in (
+                ("kdc_ard", False, "KDC con un ancho por variable (VC dejando uno)"),
+                ("fkdc_ard", False, "fkdc sobre las variables divididas por kdc_ard"),
+                ("gpc_ard", True, "proceso gaussiano con RBF anisótropo"),
+                ("superlearner", True, "apilamiento convexo de clásicos rápidos"),
+                ("bart", True, "BART probit (stochtree), uno contra el resto"),
+            )
+        ),
     ]
     resultado = {}
     for entrada in entradas:
