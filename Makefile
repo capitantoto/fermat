@@ -40,7 +40,7 @@ TYPST_FIRMAS  := $(if $(filter 1,$(FIRMA)),--input firmas=true,)
 # ========================
 .PHONY: all docs data viz clean clean-docs clean-data clean-all clean-entrega \
         help lint fmt check entrega tesis-firmada preparar-campania correr-cpu \
-        correr-torch progreso-campania tablas-campania
+        correr-torch progreso-campania tablas-campania tablero-campania
 
 all: $(TARGETS)
 
@@ -162,6 +162,10 @@ correr-torch: $(LOTES_TORCH)
 ## Avance: infos por clasificador, lotes completos y lotes con fallas
 progreso-campania:
 	@.venv/bin/python -m fkdc.campanias progreso $(CAMPANIA) $(CONJUNTOS)
+
+## Tablero HTML de seguimiento (sandbox/$(CAMPANIA)/tablero/index.html)
+tablero-campania:
+	@.venv/bin/python scripts/tablero.py $(CAMPANIA)
 
 ## Tablas resumen de la campaña ({dir}/tablas)
 tablas-campania:
