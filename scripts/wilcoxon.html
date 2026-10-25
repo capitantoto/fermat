@@ -192,7 +192,7 @@ svg text { font-family: var(--font-mono); fill: var(--ink-2); }
     <ul>
       <li>Unidad: la semilla. En los datasets sintéticos y en mnist cada semilla es una muestra nueva; en los de datos fijos (◇) es otra partición 50/50 de los mismos datos.</li>
       <li>Wilcoxon de rangos con signo, bilateral, sobre las diferencias por semilla; los ceros por el método de Pratt; |Δ| &lt; 10⁻⁹ cuenta como empate, como en el prerregistro.</li>
-      <li>Holm dentro de cada dataset y conjunto: 21 pares en la tesis (siete clasificadores suaves; svc no da probabilidades) y 190 en el ampliado. El p-valor sin ajustar de un par es el mismo en ambos conjuntos.</li>
+      <li>Holm dentro de cada dataset y conjunto: 21 pares en la tesis (siete clasificadores suaves; svc no da probabilidades) y <span id="pares-ampliado"></span> en el ampliado. El p-valor sin ajustar de un par es el mismo en ambos conjuntos.</li>
       <li>Hodges–Lehmann: mediana de los promedios de Walsh; intervalo del 95&nbsp;% por la cota normal de Wilcoxon.</li>
       <li>Friedman por dataset y conjunto, como prueba ómnibus.</li>
       <li>Bayesiana de rangos con signo (Benavoli, Corani, Demšar y Zaffalon, 2017), solo en el conjunto de la tesis: pseudo-observación en 0 con peso 0,5 y 20 000 muestras; ROPE ±0,01.</li>
@@ -579,6 +579,8 @@ svg text { font-family: var(--font-mono); fill: var(--ink-2); }
   $("chips").innerHTML = [
     `${V.length} datasets`, `${ms.semillas} semillas apareadas`, `tesis: ${D.conjuntos.tesis.length} clasificadores`, `ampliado: ${D.conjuntos.ampliado.length}`, `α = 0,05 · Holm por dataset`,
   ].map(t => `<span class="chip">${t}</span>`).join("") + '<span class="chip aviso">exploratorio, fuera del prerregistro</span>';
+  const nAmpliado = D.conjuntos.ampliado.length;
+  $("pares-ampliado").textContent = String(nAmpliado * (nAmpliado - 1) / 2);
   $("pie").textContent = `Campaña ${ms.campania}, resultados generados el ${ms.generado}. Fuente: scripts/wilcoxon.py.`;
   window.addEventListener("scroll", ocultarTip, { passive: true });
   render();

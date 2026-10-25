@@ -290,7 +290,7 @@ y una cabeza de atención de un _transformer_ es $sum_i "softmax"_i (q^top k_i s
     Mediana del $R^2$ crudo sobre 100 semillas.
 
     #v(0.4em)
-    TabPFN-3.5 queda en el grupo líder del conjunto ampliado (20 clasificadores) en 19 de 33 datasets; #fkdc, en 2. TabPFN trae un prior aprendido de millones de tablas; los métodos de la tesis aprenden de 400 puntos.
+    TabPFN-3.5 queda en el grupo líder del conjunto ampliado (22 clasificadores) en 19 de 33 datasets; el superlearner, en 5; #fkdc, en 2. TabPFN trae un prior aprendido de millones de tablas; los métodos de la tesis aprenden de 400 puntos.
 
     #v(0.4em)
     Con dos métodos clásicos, sin redes preentrenadas, se recupera buena parte de la distancia, y en los datasets con ruido se la invierte.

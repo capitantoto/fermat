@@ -9,7 +9,8 @@ los clasificadores sobre las mismas semillas:
   Pratt (las semillas en que dos clasificadores empatan exactamente son frecuentes);
 - corrección de Holm dentro de cada variante, por separado para el conjunto de la
   tesis (sus siete clasificadores suaves: svc no da probabilidades ni R²) y para el
-  ampliado (más el compendio y los fundacionales locales);
+  ampliado (más el compendio, los fundacionales locales y los clásicos de
+  `fkdc.clasicos`);
 - estimador de Hodges–Lehmann de la diferencia y su intervalo del 95 % (promedios de
   Walsh, aproximación normal);
 - prueba de Friedman por variante y conjunto, como ómnibus;
@@ -54,6 +55,7 @@ semilla_bayes = 1312
 tolerancia_empate = 1e-9
 bases_fijas = {"anteojos", "iris", "vino", "pinguinos", "digitos"}
 tesis = ["fkdc", "kdc_exacto", "fkn", "kn", "gnb", "lr", "gbt"]
+conjuntos_campania = ("tesis", "compendio", "fundacionales", "clasicos")
 excluidos = {"svc", "kdc"}  # svc: sin R²; kdc de sklearn: sensibilidad, no método
 etiquetas = {"kdc_exacto": "kdc"}
 fermat = {"fkdc", "fkn"}
@@ -106,9 +108,8 @@ def comparar(a: np.ndarray, b: np.ndarray, rng, bayes: bool) -> dict:
     """Wilcoxon, Hodges–Lehmann y (si corresponde) la prueba bayesiana de a − b."""
     validos = ~(np.isnan(a) | np.isnan(b))
     d = a[validos] - b[validos]
-    d[
-        np.abs(d) < tolerancia_empate
-    ] = 0.0  # polvo numérico: empate, como en el prerregistro
+    # Polvo numérico: empate, como en el prerregistro
+    d[np.abs(d) < tolerancia_empate] = 0.0
     gana_a, gana_b = int((d > 0).sum()), int((d < 0).sum())
     fila = {
         "n": int(len(d)),
@@ -130,10 +131,16 @@ def comparar(a: np.ndarray, b: np.ndarray, rng, bayes: bool) -> dict:
     return fila
 
 
-def main(nombre: Annotated[str, typer.Argument(help="Campaña")] = "heroica"):
+def main(
+    nombre: Annotated[str, typer.Argument(help="Campaña")] = "heroica",
+    conjunto: Annotated[
+        list[str] | None,
+        typer.Option(help="Conjuntos de `fkdc.campanias.conjuntos` (repetible)"),
+    ] = None,
+):
     """Contrastes de Wilcoxon por variante, en el conjunto de la tesis y el ampliado."""
     t0 = time.time()
-    c = campanias.campania(nombre)
+    c = campanias.campania(nombre, tuple(conjunto or conjuntos_campania))
     corridas = campanias.corridas(c)
     logger.info("%d corridas leídas en %.0f s", len(corridas), time.time() - t0)
     ampliado = [clf for clf in c.clasificadores if clf not in excluidos]
