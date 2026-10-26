@@ -10,9 +10,7 @@ from sklearn.utils.multiclass import unique_labels
 
 from fkdc import dir_cache
 
-# Ignorar advertencias para np.log(0) y similares
-np.seterr(divide="ignore", invalid="ignore")
-
+# Con `dir_cache` en None (biblioteca instalada, sin `FKDC_CACHE`) no memoriza en disco
 memoria = Memory(dir_cache, verbose=0)
 
 MIN_PUNTAJE_LOG = np.log(1e-323)  # Para numpy, 1e-324 == 0 y 1e-323 != 0
@@ -142,9 +140,15 @@ class FermatKDE(BaseEstimator, DensityMixin):
 
     def fit(self, X):
         self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha)
-        if self.d == -1:
-            self.d = self.distance_.D
+        # `d` queda como lo pasó el usuario; la dimensión efectiva va en `d_`
+        self.d_ = self.distance_.D if self.d == -1 else self.d
         return self
+
+    def __setstate__(self, state):
+        # Los pickles anteriores a `d_` guardaban la dimensión efectiva en `d`
+        if "distance_" in state and "d_" not in state:
+            state["d_"] = state["d"]
+        super().__setstate__(state)
 
     def score_samples(self, X=None, log=True):
         if X is None:
@@ -153,17 +157,19 @@ class FermatKDE(BaseEstimator, DensityMixin):
             distancias = self.distance_(X)
         puntaje = np.exp(-0.5 * (distancias / self.bandwidth) ** 2).sum(1)
         if log:
-            return (
-                -np.log(self.distance_.N)
-                - self.d * np.log(self.bandwidth)
-                - self.d / 2 * np.log(2 * np.pi)
-                + np.maximum(np.log(puntaje), MIN_PUNTAJE_LOG)
-            )
+            # En la cola profunda `puntaje` es 0: log(0) = -inf, que recorta el máximo
+            with np.errstate(divide="ignore", invalid="ignore"):
+                return (
+                    -np.log(self.distance_.N)
+                    - self.d_ * np.log(self.bandwidth)
+                    - self.d_ / 2 * np.log(2 * np.pi)
+                    + np.maximum(np.log(puntaje), MIN_PUNTAJE_LOG)
+                )
         else:
             return (
                 self.distance_.N**-1
-                * (self.bandwidth**-self.d)
-                * (2 * np.pi) ** (-self.d / 2)
+                * (self.bandwidth**-self.d_)
+                * (2 * np.pi) ** (-self.d_ / 2)
                 * puntaje
             )
 
@@ -210,8 +216,7 @@ class EuclideanKDE(FermatKDE):
 
     def fit(self, X):
         self.distance_ = DistanciaEuclidea(X)
-        if self.d == -1:
-            self.d = self.distance_.D
+        self.d_ = self.distance_.D if self.d == -1 else self.d
         return self
 
 
@@ -244,14 +249,18 @@ class KDClassifier(ClassifierMixin, BaseEstimator):
         return self
 
     def predict_proba(self, X):
-        logpuntajes = np.array([modelo.score_samples(X) for modelo in self.models_]).T
-        logprobs = (logpuntajes + self.logpriors_).clip(
-            MIN_PUNTAJE_LOG, MAX_PUNTAJE_LOG
-        )
-        # Tomo factor común de la máxima logprob para evitar problemas numéricos
-        deltas = logprobs - logprobs.max(axis=1, keepdims=True)
-        resultado = np.exp(deltas)
-        return resultado / resultado.sum(axis=1, keepdims=True)
+        # Las log-densidades pueden ser -inf (cola profunda); el recorte las acota
+        with np.errstate(divide="ignore", invalid="ignore"):
+            logpuntajes = np.array(
+                [modelo.score_samples(X) for modelo in self.models_]
+            ).T
+            logprobs = (logpuntajes + self.logpriors_).clip(
+                MIN_PUNTAJE_LOG, MAX_PUNTAJE_LOG
+            )
+            # Tomo factor común de la máxima logprob para evitar problemas numéricos
+            deltas = logprobs - logprobs.max(axis=1, keepdims=True)
+            resultado = np.exp(deltas)
+            return resultado / resultado.sum(axis=1, keepdims=True)
 
     def predict(self, X):
         return self.classes_[np.argmax(self.predict_proba(X), 1)]
