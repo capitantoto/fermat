@@ -3,8 +3,7 @@ Lic. Gonzalo Barrera Borla
 
 Dir.: Dr. Pablo Groisman
 
-Tesis en progreso para la Maestría en Estadística Matemática, IC, FCEN-UBA
-2022, ningún derecho reservado
+Tesis en progreso para la Maestría en Estadística Matemática, IC, FCEN-UBA 2022, ningún derecho reservado
 
 
 ## Biblioteca
@@ -29,14 +28,16 @@ probas = clf.predict_proba(X[:5])
 Instalada así, la biblioteca no escribe caché en disco. Para memorizar las distancias entre corridas, basta definir la variable de entorno `FKDC_CACHE` con un directorio; se lee al importar `fkdc`, así que debe definirse antes del primer `import fkdc`.
 
 
-## Instalación
+## Reproducir la tesis
 
-### Requisitos previos
+### Instalación
+
+#### Requisitos previos
 - [uv](https://docs.astral.sh/uv/) (gestor de paquetes Python)
 - [Typst](https://typst.app/) (para compilar los documentos)
 - GNU Make
 
-### Instalar Typst
+#### Instalar Typst
 
 ```bash
 # macOS
@@ -48,7 +49,7 @@ cargo install typst-cli
 
 Alternativamente, instalar la extensión [Tinymist](https://marketplace.visualstudio.com/items?itemName=myriad-dreamin.tinymist) en VS Code para compilación integrada y vista previa.
 
-### Configuración del entorno
+#### Configuración del entorno
 
 ```bash
 # Clonar el repositorio
@@ -63,7 +64,7 @@ uv run pre-commit install
 uv run nbstripout --install
 ```
 
-## Compilar documentos
+### Compilar documentos
 
 ```bash
 # Compilar todos los .typ → .pdf (tesis, plan, poster)
@@ -81,13 +82,13 @@ typst watch docs/tesis.typ
 
 Ver `make help` para la lista completa de targets disponibles.
 
-## Bibliografía
+### Bibliografía
 
-### Zotero
+#### Zotero
 
 Este proyecto usa [Zotero](https://www.zotero.org/) para gestionar las referencias bibliográficas.
 
-### Better BibTeX
+#### Better BibTeX
 
 Para exportar las referencias en formato compatible con Typst, se requiere la extensión [Better BibTeX for Zotero](https://retorque.re/zotero-better-bibtex/).
 
@@ -95,7 +96,7 @@ Descarga e instalación: https://retorque.re/zotero-better-bibtex/installation/
 
 De ser necesario, una copia de la extensión está disponible en [src/zotero-better-bibtex-6.7.240.xpi](https://github.com/capitantoto/fermat/blob/main/src/zotero-better-bibtex-6.7.240.xpi).
 
-### Exportar referencias
+#### Exportar referencias
 
 Para generar o actualizar `docs/references.bib`:
 
