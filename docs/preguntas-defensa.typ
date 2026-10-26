@@ -76,6 +76,10 @@
   En la tesis no; después de la entrega, sí. TabPFN-3.5 queda en el grupo líder en 19 de 33 datasets; #raw("fkdc"), en 2 dentro de ese conjunto ampliado. TabPFN trae un prior aprendido de millones de tablas simuladas: aproxima la predictiva posterior bayesiana. Los métodos de la tesis aprenden de 400 puntos.
 ]
 
+#pregunta[¿El resultado de TabPFN es legítimo?][
+  TabPFN nunca ve la mitad de evaluación: se ajusta sobre los mismos 400 puntos de entrenamiento, con las mismas semillas y particiones que el resto, con su configuración por omisión y sin búsqueda de hiperparámetros. El modelo 3.5 se preentrenó solo con tablas sintéticas, y nuestros datasets sintéticos se generan de nuevo en cada semilla. Donde el óptimo de Bayes se puede calcular, TabPFN queda por debajo en prácticamente todas las semillas; una fuga lo empujaría por encima. Su ventaja viene de un prior aprendido que se ajusta bien a problemas suaves y de baja dimensión, y frente a otros métodos fuertes es mínima salvo en `hueveras_0`; con 12 dimensiones de ruido, los anchos por variable lo superan.
+]
+
 #pregunta[Si TabPFN gana, ¿para qué sirve la distancia de Fermat?][
   Para entender y para garantizar. #raw("fkdc") hace explícita la geometría que usa, no depende de un prior simulado ni de pesos preentrenados, y localiza por construcción. Nagler (2023) muestra que el sesgo de un PFN solo se anula si la predicción se localiza alrededor del punto de prueba, y que la arquitectura actual no lo garantiza. Además, métodos clásicos con anchos por variable o un superlearner superan a TabPFN en los datasets con ruido.
 ]
