@@ -50,8 +50,8 @@ Alternativamente, instalar la extensión [Tinymist](https://marketplace.visualst
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/gonzalobb/fkdc.git
-cd fkdc
+git clone https://github.com/capitantoto/fermat.git
+cd fermat
 
 # Crear entorno virtual e instalar dependencias
 uv sync
@@ -91,7 +91,7 @@ Para exportar las referencias en formato compatible con Typst, se requiere la ex
 
 Descarga e instalación: https://retorque.re/zotero-better-bibtex/installation/
 
-De ser necesario, una copia de la extensión está disponible en [src/zotero-better-bibtex-6.7.240.xpi](src/zotero-better-bibtex-6.7.240.xpi).
+De ser necesario, una copia de la extensión está disponible en [src/zotero-better-bibtex-6.7.240.xpi](https://github.com/capitantoto/fermat/blob/main/src/zotero-better-bibtex-6.7.240.xpi).
 
 ### Exportar referencias
 
@@ -109,4 +109,4 @@ Alternativamente, configurar una exportación automática:
 
 ## Uso de IA
 
-Este proyecto utiliza herramientas de IA (Claude, de Anthropic) para tareas de revisión y formato. El contenido intelectual es enteramente del autor. Ver [CLAUDE.md](CLAUDE.md) para más detalles sobre los principios y límites de este uso.
+Este proyecto utiliza herramientas de IA (Claude, de Anthropic) para tareas de revisión y formato. El contenido intelectual es enteramente del autor. Ver [CLAUDE.md](https://github.com/capitantoto/fermat/blob/main/CLAUDE.md) para más detalles sobre los principios y límites de este uso.
