@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 dir_raiz = Path(__file__).parent.parent.absolute()
 # Sobreescribible por entorno (lo heredan también los workers de loky): campañas o
@@ -28,9 +29,23 @@ __all__ = [
 ]
 
 
+if TYPE_CHECKING:  # para los verificadores de tipos; en ejecución, `__getattr__`
+    from fkdc.fermat import (
+        EuclideanKDE,
+        FermatKDE,
+        FermatKNeighborsClassifier,
+        KDClassifier,
+        SampleFermatDistance,
+    )
+
+
 def __getattr__(nombre):
     if nombre in __all__:
         from fkdc import fermat
 
         return getattr(fermat, nombre)
     raise AttributeError(f"module {__name__!r} has no attribute {nombre!r}")
+
+
+def __dir__():
+    return sorted(set(globals()) | set(__all__))
