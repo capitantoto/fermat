@@ -140,9 +140,15 @@ class FermatKDE(BaseEstimator, DensityMixin):
 
     def fit(self, X):
         self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha)
-        if self.d == -1:
-            self.d = self.distance_.D
+        # `d` queda como lo pasó el usuario; la dimensión efectiva va en `d_`
+        self.d_ = self.distance_.D if self.d == -1 else self.d
         return self
+
+    def __setstate__(self, state):
+        # Los pickles anteriores a `d_` guardaban la dimensión efectiva en `d`
+        if "distance_" in state and "d_" not in state:
+            state["d_"] = state["d"]
+        super().__setstate__(state)
 
     def score_samples(self, X=None, log=True):
         if X is None:
@@ -155,15 +161,15 @@ class FermatKDE(BaseEstimator, DensityMixin):
             with np.errstate(divide="ignore", invalid="ignore"):
                 return (
                     -np.log(self.distance_.N)
-                    - self.d * np.log(self.bandwidth)
-                    - self.d / 2 * np.log(2 * np.pi)
+                    - self.d_ * np.log(self.bandwidth)
+                    - self.d_ / 2 * np.log(2 * np.pi)
                     + np.maximum(np.log(puntaje), MIN_PUNTAJE_LOG)
                 )
         else:
             return (
                 self.distance_.N**-1
-                * (self.bandwidth**-self.d)
-                * (2 * np.pi) ** (-self.d / 2)
+                * (self.bandwidth**-self.d_)
+                * (2 * np.pi) ** (-self.d_ / 2)
                 * puntaje
             )
 
@@ -210,8 +216,7 @@ class EuclideanKDE(FermatKDE):
 
     def fit(self, X):
         self.distance_ = DistanciaEuclidea(X)
-        if self.d == -1:
-            self.d = self.distance_.D
+        self.d_ = self.distance_.D if self.d == -1 else self.d
         return self
 
 
