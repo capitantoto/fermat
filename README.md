@@ -7,6 +7,26 @@ Tesis en progreso para la Maestría en Estadística Matemática, IC, FCEN-UBA
 2022, ningún derecho reservado
 
 
+## Biblioteca
+
+El núcleo de la tesis, `fkdc.fermat`, se publica como biblioteca compatible con scikit-learn: la distancia de Fermat muestral (`SampleFermatDistance`), el estimador de densidad por núcleos con esa distancia (`FermatKDE`), su par euclídeo exacto (`EuclideanKDE`) y los clasificadores `KDClassifier` y `FermatKNeighborsClassifier`.
+
+```bash
+pip install fkdc
+```
+
+```python
+from sklearn.datasets import make_moons
+from fkdc import KDClassifier
+
+X, y = make_moons(n_samples=200, noise=0.2, random_state=0)
+clf = KDClassifier(metric="fermat", alpha=2.0, bandwidth=0.3).fit(X, y)
+probas = clf.predict_proba(X[:5])
+```
+
+`metric` acepta `"fermat"` (con su `alpha`), `"euclidea_exacta"` o cualquier métrica de `sklearn.neighbors.KernelDensity`. Instalada así, la biblioteca no escribe caché en disco; para memorizar las distancias entre corridas, basta definir la variable de entorno `FKDC_CACHE` con un directorio.
+
+
 ## Instalación
 
 ### Requisitos previos
