@@ -24,7 +24,9 @@ clf = KDClassifier(metric="fermat", alpha=2.0, bandwidth=0.3).fit(X, y)
 probas = clf.predict_proba(X[:5])
 ```
 
-`metric` acepta `"fermat"` (con su `alpha`), `"euclidea_exacta"` o cualquier métrica de `sklearn.neighbors.KernelDensity`. Instalada así, la biblioteca no escribe caché en disco; para memorizar las distancias entre corridas, basta definir la variable de entorno `FKDC_CACHE` con un directorio.
+`metric` acepta `"fermat"` (con su `alpha`), `"euclidea_exacta"` y las métricas de `sklearn.neighbors.KernelDensity` que no requieren parámetros propios, ya que `metric_params` no se transmite. Para densidades euclídeas exactas conviene `metric="euclidea_exacta"`: el valor por defecto, `"euclidean"`, pasa por `KernelDensity`, cuyo recorrido del árbol devuelve log-densidades erróneas en la cola profunda.
+
+Instalada así, la biblioteca no escribe caché en disco. Para memorizar las distancias entre corridas, basta definir la variable de entorno `FKDC_CACHE` con un directorio; se lee al importar `fkdc`, así que debe definirse antes del primer `import fkdc`.
 
 
 ## Instalación
