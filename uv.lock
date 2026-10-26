@@ -816,15 +816,10 @@ name = "fkdc"
 version = "0.0.1"
 source = { editable = "." }
 dependencies = [
-    { name = "click" },
+    { name = "joblib" },
     { name = "numpy" },
-    { name = "pandas" },
     { name = "scikit-learn" },
     { name = "scipy" },
-    { name = "seaborn" },
-    { name = "tabulate" },
-    { name = "typer" },
-    { name = "ucimlrepo" },
 ]
 
 [package.dev-dependencies]
@@ -845,6 +840,14 @@ fundacionales = [
     { name = "tabpfn" },
     { name = "tabpfn-client" },
 ]
+investigacion = [
+    { name = "click" },
+    { name = "pandas" },
+    { name = "seaborn" },
+    { name = "tabulate" },
+    { name = "typer" },
+    { name = "ucimlrepo" },
+]
 profundos = [
     { name = "pytabkit" },
     { name = "tabdpt" },
@@ -853,15 +856,10 @@ profundos = [
 
 [package.metadata]
 requires-dist = [
-    { name = "click", specifier = ">=8.1.7" },
+    { name = "joblib", specifier = ">=1.2.0" },
     { name = "numpy", specifier = ">=1.26.4" },
-    { name = "pandas", specifier = ">=2.2.1" },
     { name = "scikit-learn", specifier = ">=1.4.1.post1" },
     { name = "scipy", specifier = ">=1.12.0" },
-    { name = "seaborn", specifier = ">=0.13.2" },
-    { name = "tabulate", specifier = ">=0.9.0" },
-    { name = "typer", specifier = ">=0.12.5" },
-    { name = "ucimlrepo", specifier = ">=0.0.7" },
 ]
 
 [package.metadata.requires-dev]
@@ -879,6 +877,14 @@ fundacionales = [
     { name = "peft", specifier = ">=0.21.2" },
     { name = "tabpfn", specifier = ">=9.0.0" },
     { name = "tabpfn-client", specifier = ">=0.6.1" },
+]
+investigacion = [
+    { name = "click", specifier = ">=8.1.7" },
+    { name = "pandas", specifier = ">=2.2.1" },
+    { name = "seaborn", specifier = ">=0.13.2" },
+    { name = "tabulate", specifier = ">=0.9.0" },
+    { name = "typer", specifier = ">=0.12.5" },
+    { name = "ucimlrepo", specifier = ">=0.0.7" },
 ]
 profundos = [
     { name = "pytabkit", specifier = ">=1.7.3" },
