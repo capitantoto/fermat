@@ -10,9 +10,6 @@ from sklearn.utils.multiclass import unique_labels
 
 from fkdc import dir_cache
 
-# Ignorar advertencias para np.log(0) y similares
-np.seterr(divide="ignore", invalid="ignore")
-
 # Con `dir_cache` en None (biblioteca instalada, sin `FKDC_CACHE`) no memoriza en disco
 memoria = Memory(dir_cache, verbose=0)
 
@@ -154,12 +151,14 @@ class FermatKDE(BaseEstimator, DensityMixin):
             distancias = self.distance_(X)
         puntaje = np.exp(-0.5 * (distancias / self.bandwidth) ** 2).sum(1)
         if log:
-            return (
-                -np.log(self.distance_.N)
-                - self.d * np.log(self.bandwidth)
-                - self.d / 2 * np.log(2 * np.pi)
-                + np.maximum(np.log(puntaje), MIN_PUNTAJE_LOG)
-            )
+            # En la cola profunda `puntaje` es 0: log(0) = -inf, que recorta el máximo
+            with np.errstate(divide="ignore", invalid="ignore"):
+                return (
+                    -np.log(self.distance_.N)
+                    - self.d * np.log(self.bandwidth)
+                    - self.d / 2 * np.log(2 * np.pi)
+                    + np.maximum(np.log(puntaje), MIN_PUNTAJE_LOG)
+                )
         else:
             return (
                 self.distance_.N**-1
@@ -245,14 +244,18 @@ class KDClassifier(ClassifierMixin, BaseEstimator):
         return self
 
     def predict_proba(self, X):
-        logpuntajes = np.array([modelo.score_samples(X) for modelo in self.models_]).T
-        logprobs = (logpuntajes + self.logpriors_).clip(
-            MIN_PUNTAJE_LOG, MAX_PUNTAJE_LOG
-        )
-        # Tomo factor común de la máxima logprob para evitar problemas numéricos
-        deltas = logprobs - logprobs.max(axis=1, keepdims=True)
-        resultado = np.exp(deltas)
-        return resultado / resultado.sum(axis=1, keepdims=True)
+        # Las log-densidades pueden ser -inf (cola profunda); el recorte las acota
+        with np.errstate(divide="ignore", invalid="ignore"):
+            logpuntajes = np.array(
+                [modelo.score_samples(X) for modelo in self.models_]
+            ).T
+            logprobs = (logpuntajes + self.logpriors_).clip(
+                MIN_PUNTAJE_LOG, MAX_PUNTAJE_LOG
+            )
+            # Tomo factor común de la máxima logprob para evitar problemas numéricos
+            deltas = logprobs - logprobs.max(axis=1, keepdims=True)
+            resultado = np.exp(deltas)
+            return resultado / resultado.sum(axis=1, keepdims=True)
 
     def predict(self, X):
         return self.classes_[np.argmax(self.predict_proba(X), 1)]
