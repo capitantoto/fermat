@@ -53,6 +53,14 @@ default-groups = ["dev", "investigacion"]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+# La biblioteca publicada es solo el núcleo (`fkdc.fermat`); el resto del paquete es
+# código de la tesis y se usa desde el repositorio (instalación editable de `uv sync`)
+[tool.hatch.build.targets.wheel]
+only-include = ["fkdc/__init__.py", "fkdc/fermat.py"]
+
+[tool.hatch.build.targets.sdist]
+only-include = ["fkdc/__init__.py", "fkdc/fermat.py", "README.md", "pyproject.toml"]
+
 [tool.ruff]
 target-version = "py311"
 extend-include = ["*.ipynb"]
