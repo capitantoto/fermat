@@ -1,0 +1,155 @@
+"""
+Ilustraciones de la primera parte de la defensa, sobre `espirales_lo`.
+
+- `anim/vecindario-espirales-NN.svg`: cuadros de una animación que `docs/defensa.typ`
+  recorre uno por clic. Los k vecinos más cercanos de un mismo punto, según la
+  distancia euclídea y según la de Fermat muestral, para k creciente. La euclídea
+  cruza a la otra espiral; la de Fermat sigue el brazo.
+- `densidades-espirales.svg`: la densidad estimada de cada clase y su solapamiento
+  sobre una muestra nueva, con la distancia euclídea y con la de Fermat, cada una
+  con su ancho de banda elegido por validación cruzada.
+
+Todo se escribe en `docs/img/defensa/`. Uso, desde la raíz del repositorio:
+    uv run python scripts/ilustraciones_defensa.py
+"""
+
+import logging
+
+import matplotlib
+
+matplotlib.use("svg")
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
+from scipy.sparse.csgraph import shortest_path  # noqa: E402
+from sklearn.model_selection import GridSearchCV  # noqa: E402
+
+from fkdc import config, dir_raiz  # noqa: E402
+from fkdc.datasets import hacer_espirales  # noqa: E402
+from fkdc.fermat import KDClassifier, euclidean  # noqa: E402
+
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO
+)
+logger = logging.getLogger("ilustraciones_defensa")
+
+dir_img = dir_raiz / "docs/img/defensa"
+dir_anim = dir_img / "anim"
+semilla = 1312
+alfa_fermat = 3
+vecinos = [1, 2, 3, 5, 8, 12, 18, 25, 35, 50, 70, 100]
+tinta, regla = "#1b1f23", "#d9dcdf"
+colores_clase = ["#2c7bb6", "#d7191c"]
+
+
+def caminos_fermat(X, origen, alfa):
+    """Distancias de Fermat muestrales desde `origen` y sus predecesores."""
+    adyacencias = euclidean(X) ** alfa
+    return shortest_path(
+        adyacencias, directed=False, indices=origen, return_predecessors=True
+    )
+
+
+def panel(ax, X, y, origen, orden, k, titulo, predecesores=None):
+    """Dibuja los k vecinos de `origen`; con predecesores, también sus caminos."""
+    cercanos = orden[1 : k + 1]
+    ax.scatter(*X.T, c=[colores_clase[c] for c in y], s=10, alpha=0.18, lw=0)
+    if predecesores is not None:
+        for j in cercanos:
+            while predecesores[j] >= 0:
+                i = predecesores[j]
+                ax.plot(*X[[i, j]].T, color=tinta, lw=0.8, alpha=0.5, zorder=2)
+                j = i
+    ax.scatter(
+        *X[cercanos].T,
+        c=[colores_clase[c] for c in y[cercanos]],
+        s=28,
+        edgecolors=tinta,
+        linewidths=0.6,
+        zorder=3,
+    )
+    ax.scatter(*X[origen], marker="*", s=260, c="gold", edgecolors=tinta, zorder=4)
+    intrusos = int((y[cercanos] != y[origen]).sum())
+    ax.set_title(f"{titulo}: {k} vecinos, {intrusos} de la otra espiral", fontsize=12)
+    ax.set_aspect("equal")
+    ax.set_xticks([])
+    ax.set_yticks([])
+    for borde in ax.spines.values():
+        borde.set_color(regla)
+
+
+def vecindario_espirales():
+    # Los parámetros de `espirales_lo` en la tesis
+    X, y = hacer_espirales(n_samples=config.n_muestras, noise=0.1, random_state=semilla)
+    radios = np.linalg.norm(X, axis=1)
+    # Un punto a media altura del brazo, donde las espirales están más cerca
+    candidatos = np.flatnonzero(y == 0)
+    origen = candidatos[np.argmin(np.abs(radios[candidatos] - np.median(radios)))]
+    orden_euclideo = np.argsort(euclidean(X)[origen])
+    distancias, predecesores = caminos_fermat(X, origen, alfa_fermat)
+    orden_fermat = np.argsort(distancias)
+    dir_anim.mkdir(parents=True, exist_ok=True)
+    for cuadro, k in enumerate(vecinos):
+        fig, (izq, der) = plt.subplots(1, 2, figsize=(11, 5.4))
+        panel(izq, X, y, origen, orden_euclideo, k, "Euclídea")
+        panel(der, X, y, origen, orden_fermat, k, "Fermat", predecesores)
+        fig.tight_layout()
+        ruta = dir_anim / f"vecindario-espirales-{cuadro:02d}.svg"
+        fig.savefig(ruta, bbox_inches="tight")
+        plt.close(fig)
+        logger.info("Escrito %s", ruta.relative_to(dir_raiz))
+
+
+def densidades_espirales():
+    """Densidad de cada clase y su solapamiento, euclídea contra Fermat.
+
+    Las densidades se evalúan sobre una muestra nueva, es decir, sobre la variedad.
+    La validación cruzada de Fermat tiene dos modos: uno de casi un vecino (h ~ 1e-3),
+    que en el plano es un manto de agujas, y uno suave (h ~ 1e-1); la grilla se limita
+    al suave, que es el que ilustra la idea.
+    """
+    # Entrenamiento y evaluación de `espirales_lo`: 400 puntos cada una
+    X, y = hacer_espirales(n_samples=400, noise=0.1, random_state=semilla)
+    X_eval, _ = hacer_espirales(n_samples=400, noise=0.1, random_state=semilla + 1)
+    candidatos = {
+        "Euclídea": (KDClassifier(metric="euclidea_exacta"), np.logspace(-2, 0, 17)),
+        "Fermat": (KDClassifier(metric="fermat", alpha=2), np.logspace(-1.5, -0.5, 9)),
+    }
+    fig, ejes = plt.subplots(2, 3, figsize=(13, 8.4))
+    for fila, (nombre, (clf, anchos)) in enumerate(candidatos.items()):
+        busqueda = GridSearchCV(
+            clf, {"bandwidth": anchos}, scoring="neg_log_loss", cv=5
+        ).fit(X, y)
+        logger.info("%s: %s", nombre, busqueda.best_params_)
+        logdens = [m.score_samples(X_eval) for m in busqueda.best_estimator_.models_]
+        # Escala logarítmica relativa al máximo, con piso en e^-10
+        relativas = [np.maximum(ld - ld.max(), -10) for ld in logdens]
+        # Solapamiento: cociente entre la menor y la mayor densidad, en [0, 1]
+        solapamiento = np.exp(-np.abs(logdens[0] - logdens[1]))
+        paneles = [
+            (relativas[0], "Blues", "densidad de la clase 0"),
+            (relativas[1], "Reds", "densidad de la clase 1"),
+            (solapamiento, "Purples", f"solapamiento medio {solapamiento.mean():.2f}"),
+        ]
+        for ax, (z, cmap, titulo) in zip(ejes[fila], paneles, strict=True):
+            orden = np.argsort(z)  # los valores altos, encima
+            ax.scatter(*X_eval[orden].T, c=z[orden], cmap=cmap, s=16, lw=0)
+            ax.set_title(f"{nombre}: {titulo}", fontsize=13, color=tinta)
+            ax.set_aspect("equal")
+            ax.set_xticks([])
+            ax.set_yticks([])
+            for borde in ax.spines.values():
+                borde.set_color(regla)
+    fig.tight_layout()
+    ruta = dir_img / "densidades-espirales.svg"
+    fig.savefig(ruta, bbox_inches="tight")
+    plt.close(fig)
+    logger.info("Escrito %s", ruta.relative_to(dir_raiz))
+
+
+def main():
+    vecindario_espirales()
+    densidades_espirales()
+
+
+if __name__ == "__main__":
+    main()
