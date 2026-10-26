@@ -7,15 +7,10 @@ license = {text = "MIT License"}
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "joblib>=1.2.0",
     "numpy>=1.26.4",
     "scipy>=1.12.0",
-    "pandas>=2.2.1",
     "scikit-learn>=1.4.1.post1",
-    "seaborn>=0.13.2",
-    "ucimlrepo>=0.0.7",
-    "tabulate>=0.9.0",
-    "click>=8.1.7",
-    "typer>=0.12.5",
 ]
 
 [dependency-groups]
@@ -36,11 +31,23 @@ fundacionales = [
     "tabpfn>=9.0.0",
     "tabpfn-client>=0.6.1",
 ]
+investigacion = [
+    "pandas>=2.2.1",
+    "seaborn>=0.13.2",
+    "ucimlrepo>=0.0.7",
+    "tabulate>=0.9.0",
+    "click>=8.1.7",
+    "typer>=0.12.5",
+]
 profundos = [
     "pytabkit>=1.7.3",
     "tabdpt>=1.3.1",
     "tabicl>=2.2.0",
 ]
+
+[tool.uv]
+# `uv sync` instala también lo que usa la investigación (campañas, figuras, scripts)
+default-groups = ["dev", "investigacion"]
 
 [build-system]
 requires = ["hatchling"]
