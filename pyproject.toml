@@ -3,7 +3,8 @@ name = "fkdc"
 version = "0.0.1"
 description = "Distancia de Fermat en Clasificadores de Densidad Nuclear"
 authors = [{name = "Gonzalo Barrera Borla", email = "gonzalobb@gmail.com"}]
-license = {text = "MIT License"}
+license = "MIT"
+license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -50,7 +51,7 @@ profundos = [
 default-groups = ["dev", "investigacion"]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 # La biblioteca publicada es solo el núcleo (`fkdc.fermat`); el resto del paquete es
@@ -59,7 +60,13 @@ build-backend = "hatchling.build"
 only-include = ["fkdc/__init__.py", "fkdc/fermat.py"]
 
 [tool.hatch.build.targets.sdist]
-only-include = ["fkdc/__init__.py", "fkdc/fermat.py", "README.md", "pyproject.toml"]
+only-include = [
+    "fkdc/__init__.py",
+    "fkdc/fermat.py",
+    "LICENSE",
+    "README.md",
+    "pyproject.toml",
+]
 
 [tool.ruff]
 target-version = "py311"
