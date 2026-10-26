@@ -13,6 +13,7 @@ from fkdc import dir_cache
 # Ignorar advertencias para np.log(0) y similares
 np.seterr(divide="ignore", invalid="ignore")
 
+# Con `dir_cache` en None (biblioteca instalada, sin `FKDC_CACHE`) no memoriza en disco
 memoria = Memory(dir_cache, verbose=0)
 
 MIN_PUNTAJE_LOG = np.log(1e-323)  # Para numpy, 1e-324 == 0 y 1e-323 != 0
