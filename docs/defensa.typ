@@ -605,7 +605,7 @@ con $cal(l)$ la log-verosimilitud promedio y $hat(G)_0$ el clasificador que asig
     Una red preentrenada con millones de tablas simuladas: queda entre los mejores en 19 de 33 datasets.
 
     #v(0.5em)
-    Los métodos de la tesis aprenden de 400 puntos.
+    Los métodos de la tesis aprenden solo de la muestra: unos cientos de puntos.
   ],
 )
 // Sin fuga ni contaminación: ver «¿El resultado de TabPFN es legítimo?» en preguntas-defensa.typ
