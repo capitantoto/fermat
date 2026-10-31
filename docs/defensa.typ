@@ -16,6 +16,10 @@
 #let kdc = `KDC`
 #let fkn = `fkNN`
 #let kn = `kNN`
+#let gnb = `GNB`
+#let logr = `LR`
+#let gbt = `GBT`
+#let svc = `SVC`
 #let chico(cuerpo) = text(size: 16pt, cuerpo)
 #let fuente(cuerpo) = text(size: 13pt, fill: gray.darken(30%), cuerpo)
 
@@ -305,68 +309,131 @@
 
 = El plan
 
-== Del estimador al clasificador
-
-//TODO: Mismo estilo de linea temporal arriba, una diapo por parte abajo
-#grid(columns: 4, column-gutter: 0.8em,
-  [*2005* \ #chico[Pelletier: densidad por núcleos en variedades]],
-  [*2008* \ #chico[Loubes y Pelletier: clasificador binario]],
-  [*2009* \ #chico[Henry y Rodríguez: mejores cotas, y la esfera]],
-  [*Esta tesis* \ #chico[multiclase, sobre una variedad *desconocida*]],
+#let hitos-plan = (
+  ([2005], [Pelletier: KDE]),
+  ([2008], [Loubes y Pelletier: KDC]),
+  ([2009], [Henry y Rodríguez]),
+  ([2026], [Esta tesis]),
 )
 
-== Una diapo para el clasificador ciompleto fKDC
+== Del estimador al clasificador
 
-//TODO: en formato de formula, el clasxificador implementadoi como FermatKDClassifier. Zócalo un poco más pequeño par FermatKneigh
-
-
-- La distancia de Fermat _muestral_ reemplaza a la de la variedad, que no conocemos.
-- #fkdc: clasificador de densidad por núcleos con esa distancia. #fkn: $k$ vecinos más cercanos con la misma.
-- Con $alpha = 1$, son los euclídeos de siempre.
-
-#silbato[
-  $hat(Pr)(G = g_i | X = x) prop hat(pi)_i hat(f)_i (x)$, con $hat(f)_i$ evaluada sobre $D_(Q_i, alpha)(x, dot)$ y $Q_i = {x} union {x_j : g_j = g_i}$
+#cronologia(hitos-plan, 0)
+#align(center + horizon)[
+  Densidad por núcleos en variedades de Riemann compactas sin frontera, con $h < "iny" cal(M)$:
+  $ EE norm(hat(f)_n - f)_(L^2(cal(M)))^2 = O(n^(-4 slash (d + 4))) $
 ]
+
+#intuicion[La receta de siempre, midiendo sobre la variedad: converge, y a la velocidad que dicta la dimensión _intrínseca_ $d$, no la del espacio ambiente.]
+
+== Del estimador al clasificador
+
+#cronologia(hitos-plan, 1)
+#align(center + horizon)[
+  Clasificador binario por la regla de Bayes:
+  $ hat(G)(p) = arg max_(k) sum_(i=1)^N bb(1)(G_i = k) K_h (p, X_i) $
+  Fuertemente consistente para $K = 2$.
+]
+
+#intuicion[Cada clase vota con la suma de sus campanas en el punto $p$, y gana la que más pesa.]
+
+== Del estimador al clasificador
+
+#cronologia(hitos-plan, 2)
+#align(center + horizon)[
+  Consistencia fuerte uniforme:
+  $ sup_(p in cal(M)) abs(hat(f)_n (p) - f(p)) -> 0 "c.s." $
+  Y en $S^2$, la densidad de volumen $theta_p (q)$ explícita.
+]
+
+#intuicion[El estimador no solo se acerca a la densidad verdadera en promedio: se acerca en todos los puntos a la vez.]
+
+== Del estimador al clasificador
+
+#cronologia(hitos-plan, 3)
+#align(center + horizon)[
+  Clasificador _multiclase_ sobre una variedad _desconocida_:
+
+  #v(0.5em)
+  la distancia de Fermat _muestral_ reemplaza a la geodésica, y $theta equiv 1$.
+]
+
+#intuicion[No conocemos la variedad, así que no podemos medir sobre ella: medimos con la distancia que aprendemos de los datos.]
+
+== El clasificador #fkdc
+
+Para cada clase $i$, con $Q_i = {x} union {x_j : g_j = i}$ y $N_i = abs(Q_i) - 1$:
+$ hat(f)_i (x) = 1 / N_i sum_(j : g_j = i) 1 / h^D K((D_(Q_i, alpha)(x, x_j)) / h), quad K(u) = (2 pi)^(-D slash 2) e^(-u^2 slash 2) $
+$ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k (x)) $
+
+#chico[$(h, alpha)$ por validación cruzada con la regla de un desvío. Con $alpha = 1$, es el #kdc euclídeo de siempre.]
+
+#v(0.3em)
+#text(size: 15pt)[*#fkn*: los $k$ más cercanos según la misma $D_(Q_i, alpha)$ votan por su clase.]
+
+#intuicion[Para clasificar un punto nuevo, lo sumamos a cada clase y medimos con Fermat cuánto lo «abriga» cada una. Gana la que más lo abriga.]
 
 == El código
 
-¿Qué se implementó?
-- `SampleFermatDistance(X, alpha)`computa distancias entre dos (conjuntos de) puntos "a través" del grafo completo de X mínimamente eficiente, con distancia para puntos out-of-sample
-  - FermatKNeighbors reutilizando scikit_learn::KNeighbors con distnace="precomnputed"
-- KernelDensityClassifier con distancia configurable
-  - FermatKDC como KernelDensityClassifier(dist="fermat")
-// todo: signatures correctas
-- Un marco de evaluación utilizando sickit-learn::Pipelines para comparar sistematicamente nuestros clasificadores, en repetidas Tareas sobre Datasets prerregistrados.
-
-== libreria?
-
-//todo: si llegamos con la l;ibreria, aca el link a pypi
-
-== 8 estimadores
-//todo: lsitarlos rapidito
-== 20 datasets
-// todo: algunos ejemplos visuales, 2 x 4 = 8 slots, algunos 2d, alguno 3d, los digitos de mnist no como scatter sino mosaico de imagenes chiquitas.
-== 25 repeticiones
-// todo: una mencion a la aleatporiedad, buscamos resultados repetibles asi que repetimos c/ tarea 25 veces y comapramos comportamiento _mediano_.
-#silbato[(mediano)]
-
-// Estas diapos rememplaan "el banco de pruebas"
-// == El banco de pruebas
-
-// #grid(columns: 4, column-gutter: 0.5em,
-//   image("img/lunas_lo-scatter.svg"),
-//   image("img/espirales_lo-scatter.svg"),
-//   image("img/helices_0-scatter.svg"),
-//   image("img/hueveras_0-scatter.svg"),
-// )
-
-#align(center)[
-  #grid(columns: 3, column-gutter: 3em,
-    cifra("20", "datasets: sintéticos y reales chicos"),
-    cifra("8", "clasificadores"),
-    cifra("25", "repeticiones cada uno"),
-  )
+#text(size: 19pt)[
+- `SampleFermatDistance(Q, alpha=1, grupos=None)`: distancias de Fermat muestrales a través del grafo completo de `Q`, con un algoritmo incremental para puntos fuera de la muestra.
+  - `FermatKNeighborsClassifier(n_neighbors=5, alpha=1)` reutiliza `KNeighborsClassifier(metric="precomputed")` de `scikit-learn`.
+- `KDClassifier(bandwidth=1.0, metric="euclidean", alpha=1.0)`: densidad por núcleos con distancia configurable.
+  - #fkdc es `KDClassifier(metric="fermat")`.
+- Un marco de evaluación con `Pipeline` y `GridSearchCV` de `scikit-learn`, que compara sistemáticamente los clasificadores en repetidas `Tarea`s sobre datasets definidos de antemano.
 ]
+
+#intuicion[Todo se enchufa a `scikit-learn`, la caja de herramientas estándar de aprendizaje automático en Python: los clasificadores nuevos y los de siempre se evalúan exactamente con el mismo procedimiento.]
+
+== ¿Una biblioteca?
+
+#pendiente(alto: 70%)[publicar en PyPI y poner el enlace acá]
+
+== 8 clasificadores
+
+#grid(columns: (1fr, 1fr), column-gutter: 2em,
+  [
+    *La familia de los núcleos*
+    - #fkdc y #kdc: densidad por núcleos
+    - #fkn y #kn: $k$ vecinos más cercanos
+  ],
+  [
+    *De referencia*
+    - #gnb: Naive Bayes gaussiano
+    - #logr: regresión logística
+    - #gbt: _gradient boosting_
+    - #svc: soporte vectorial, solo exactitud
+  ],
+)
+
+#intuicion[Cuatro métodos que deciden por cercanía, con y sin Fermat, contra cuatro que no: del más simple al más cercano al estado del arte.]
+
+== 20 datasets
+
+#let muestra(ruta) = align(center + horizon, image(ruta, height: 30%))
+#grid(columns: 4, column-gutter: 0.5em, row-gutter: 0.4em,
+  muestra("img/lunas_lo-scatter.svg"),
+  muestra("img/circulos_lo-scatter.svg"),
+  muestra("img/espirales_lo-scatter.svg"),
+  muestra("img/anteojos-scatter.svg"),
+  muestra("img/helices-scatter-3d.svg"),
+  muestra("img/hueveras-scatter-3d.svg"),
+  muestra("img/pinguinos-scatter.svg"),
+  muestra("img/digitos-mnist-ejemplos.png"),
+)
+
+#chico[Sintéticos en $D = 2$, con poco y mucho ruido (`_lo`, `_hi`), y en $D = 3$, con y sin 12 dimensiones de ruido (`_0`, `_12`). Reales y chicos: `iris`, `vino`, `pinguinos`, `digitos` y `mnist`.]
+
+== 25 repeticiones
+
+Cada tarea se repite con 25 semillas: en los sintéticos, 25 muestras nuevas; en los reales, 25 particiones de entrenamiento y evaluación.
+
+#v(0.5em)
+Comparamos la _mediana_ del $R^2$ de McFadden sobre las repeticiones:
+$ R^2 = 1 - (cal(l)(hat(G))) / (cal(l)(hat(G)_0)), $
+con $cal(l)$ la log-verosimilitud promedio y $hat(G)_0$ el clasificador que asigna las frecuencias de clase.
+
+#intuicion[Buscamos resultados repetibles, así que cada experimento se corre 25 veces y miramos el resultado _del medio_, al que no lo mueve una semilla con suerte. $R^2 = 0$: no mejor que adivinar con las proporciones de cada clase; $R^2 = 1$: acierta siempre, y sin dudar.]
 
 = Resultados
 
