@@ -45,6 +45,20 @@
   }),
 )
 
+// Línea de tiempo al tope de la diapo: los hitos en una recta, el actual resaltado
+#let cronologia(hitos, actual) = block(width: 100%, below: 1em, {
+  let n = hitos.len()
+  place(top + left, dx: 50% / n, dy: 4.25pt, line(length: 100% - 100% / n, stroke: 1.5pt + luma(200)))
+  grid(columns: (1fr,) * n, ..hitos.enumerate().map(((i, (fecha, nombre))) => {
+    let color = if i == actual { rgb("#eb811b") } else { luma(160) }
+    align(center, stack(spacing: 5pt,
+      circle(radius: 5pt, fill: color, stroke: none),
+      text(size: 15pt, fill: color, weight: if i == actual { "bold" } else { "light" }, fecha),
+      text(size: 13pt, fill: color, nombre),
+    ))
+  }))
+})
+
 #let cifra(numero, rotulo) = align(center)[
   #text(size: 44pt, weight: "bold", numero) \
   #text(size: 16pt, rotulo)
@@ -125,58 +139,129 @@
 
 #intuicion[Una _variedad_ es un espacio potencialmente de lo más rebuscado, pero que localmente se comporta como uno euclídeo: de cerca, la bandera es una hoja plana.]
 
-== Y hay teoría
-
-Cronología rápida,  con una línea temporal arriba, y abajo una frase y la imagen que rescatamos del paper.
-
-- los pesos atomicos en sˆ1
-silbato: qué es Sˆ1
-- los volcanes en sˆ2 de fisher (la img de henry y rodriguez)
-- ëstadistica direccional"de mardia y jupp en Sˆn
-- pelletier 2005 en variedades compactas riemanianas sin frontera
-
-== Una diapo para pelletier
-
-//todo: presentar el KDE de pelletier, al lado del d-dinehjsional en RRˆd; mención al pasar a la densidad de volumen como elemento nuevo.
-
-#silbato[
-  $f_(N, K)(p) = 1 / N sum_(i=1)^N 1 / h^d 1 / (theta_(X_i)(p)) K((d_g (p, X_i)) / h)$ #h(1em) #fuente[Pelletier (2005)]
-]
-
-== Variedades desconocidas (diapo de highlight/pregunta)
-
-¿Y si no conocemos la variedad?
-
-¡Hay que aprenderla!
-
-Misma cronologia izq-der arriba, PCA, IsoMap, Fermat
-#grid(columns: 3, column-gutter: 1em, row-gutter: 0.6em,
-  align(center, image("img/pca.png", height: 52%)),
-  align(center, image("img/isomap-2.png", height: 52%)),
-  align(center, image("img/distancia-basada-en-densidad.svg", height: 52%)),
-  align(center)[*PCA* \ #chico[variedades lineales]],
-  align(center)[*Isomap* \ #chico[el grafo de vecinos aproxima la variedad]],
-  align(center)[*Fermat* \ #chico[caminos que prefieren la densidad]],
+#let hitos-teoria = (
+  ([1918], [von Mises: $S^1$]),
+  ([1953], [Fisher: $S^2$]),
+  ([1975], [Mardia: $S^n$]),
+  ([2005], [Pelletier: $(cal(M), g)$]),
 )
 
-#chico[El aprendizaje de variedades es un caso del _aprendizaje de representaciones_, que es lo que hacen las arquitecturas profundas de hoy.]
+== Y hay teoría
 
-== La distancia de Fermat
-
-#grid(columns: (45%, 55%), column-gutter: 1em,
-  image("img/distancia-cuadrada.svg"),
+#cronologia(hitos-teoria, 0)
+#grid(columns: (40%, 60%), column-gutter: 1em,
+  align(center, image("img/von-mises-s1.png", height: 55%)),
   align(horizon)[
-    Elevar las distancias a $alpha > 1$ abarata los saltos cortos: el camino más barato pasa por donde hay datos.
+    Von Mises se pregunta si los pesos atómicos son enteros con error de medición.
 
     #v(0.5em)
-    Y $alpha$ se puede elegir por validación cruzada, sin conocer la dimensión de la variedad.
+    Mira la parte fraccionaria: un dato en el círculo $S^1$, donde el error gaussiano no sirve.
   ],
 )
 
-#silbato[
-  $D_(bu(X), alpha)(x, y) = inf sum_j norm(q_(j+1) - q_j)^alpha$ #h(0.5em) y #h(0.5em) $n^beta D_(bu(X)_n, alpha) -> mu integral_gamma f^(-beta)$, con $beta = (alpha - 1) slash d$
-  #h(1em) #fuente[Groisman, Jonckheere y Sapienza (2022); Bijral et al. (2011)]
+#intuicion[$S^1$ es el círculo: un ángulo, una hora del reloj, la dirección del viento. Ahí, $0.99$ y $0.01$ están cerca.]
+
+== Y hay teoría
+
+#cronologia(hitos-teoria, 1)
+#grid(columns: (45%, 55%), column-gutter: 1em,
+  align(center)[
+    #image("img/henry-rodriguez-bolas.png", height: 50%)
+    #fuente[Sitios volcánicos en la Tierra; Henry y Rodríguez (2009)]
+  ],
+  align(horizon)[
+    Fisher desarrolla una teoría para posiciones en la esfera $S^2$, con su test de significancia.
+
+    #v(0.5em)
+    Los datos: la dirección de magnetización de coladas de lava en Islandia.
+  ],
+)
+
+#intuicion[$S^2$ es la superficie de una pelota, o de la Tierra: una posición se da con dos ángulos, latitud y longitud.]
+
+== Y hay teoría
+
+#cronologia(hitos-teoria, 2)
+#align(center + horizon)[
+  Los casos de von Mises y Fisher se integran en la esfera $S^n$: la _estadística direccional_.
+
+  #v(0.5em)
+  Teoría de la distribución von Mises--Fisher, familias exponenciales, teorema central del límite.
+  #fuente[Mardia (1975); Jupp y Mardia (1989)]
 ]
+
+#intuicion[$S^n$ contiene todas las _direcciones_ posibles de un vector en $RR^(n+1)$.]
+
+== Pelletier: densidad por núcleos en variedades
+
+#cronologia(hitos-teoria, 3)
+#grid(columns: (1fr, 1fr), column-gutter: 1.5em,
+  [
+    *En $RR^d$*
+    $ hat(f)(x) = 1 / N sum_(i=1)^N 1 / h^d K((norm(x - X_i)) / h) $
+  ],
+  [
+    *En $(cal(M), g)$, compacta y sin frontera*
+    $ hat(f)(p) = 1 / N sum_(i=1)^N 1 / h^d 1 / (theta_(X_i)(p)) K((d_g (p, X_i)) / h) $
+  ],
+)
+
+#align(center)[La norma pasa a ser la distancia geodésica $d_g$. Lo nuevo es la _densidad de volumen_ $theta$.]
+
+#intuicion[La misma receta: una campana sobre cada dato, y se suman. Cambia la regla con que medimos, que ahora sigue la variedad, y una corrección por cuánto se estira el espacio.]
+
+#focus-slide[¿Y si no conocemos la variedad? \ ¡Hay que aprenderla!]
+
+#let hitos-aprendizaje = (
+  ([1901], [PCA]),
+  ([2000], [Isomap]),
+  ([2011--2022], [Fermat]),
+)
+
+== Aprender la variedad
+
+#cronologia(hitos-aprendizaje, 0)
+#grid(columns: (45%, 55%), column-gutter: 1em,
+  align(center, image("img/pca.png", height: 55%)),
+  align(horizon)[
+    Las direcciones de mayor variabilidad, $bu(U)_m$, y la proyección $hat(XX) = XX bu(U)_m$.
+
+    #v(0.5em)
+    Aprende variedades _lineales_. #fuente[Pearson (1901)]
+  ],
+)
+
+#intuicion[La mejor sombra plana de la nube de puntos.]
+
+== Aprender la variedad
+
+#cronologia(hitos-aprendizaje, 1)
+#grid(columns: (45%, 55%), column-gutter: 1em,
+  align(center, image("img/isomap-2.png", height: 55%)),
+  align(horizon)[
+    El grafo de $k$ vecinos aproxima la variedad; la distancia geodésica, por caminos mínimos en el grafo.
+
+    #v(0.5em)
+    #fuente[Tenenbaum, de Silva y Langford (2000)]
+  ],
+)
+
+#intuicion[Para ir de un punto a otro, solo se salta entre vecinos cercanos: el camino sigue la forma de los datos.]
+
+== Aprender la variedad: la distancia de Fermat
+
+#cronologia(hitos-aprendizaje, 2)
+#grid(columns: (40%, 60%), column-gutter: 1em,
+  align(center, image("img/distancia-cuadrada.svg", height: 50%)),
+  align(horizon)[
+    $ D_(Q, alpha)(x, y) = inf sum_j norm(q_(j+1) - q_j)^alpha, quad q_j in Q $
+
+    Con $alpha > 1$, $alpha$ se elige por validación cruzada, sin conocer $d$.
+    #fuente[Bijral, Ratliff y Srebro (2011); Groisman, Jonckheere y Sapienza (2022)]
+  ],
+)
+
+#intuicion[Elevar las distancias a una potencia abarata los saltos cortos: el camino más barato pasa por donde hay muchos datos.]
 
 == Intuición: paseos al azar
 
@@ -184,13 +269,29 @@ Misma cronologia izq-der arriba, PCA, IsoMap, Fermat
 // TODO 2: por separado, una applert en html que haga algo parecido con parametros para jguar
 
 
+== Fermat macroscópica y microscópica
+
+#grid(columns: (1fr, 1fr), column-gutter: 1.5em,
+  [
+    *Macroscópica*, sobre curvas rectificables $gamma$ de $x$ a $y$:
+    $ cal(D)_(f, beta)(x, y) = inf_gamma integral_gamma f^(-beta) dif s $
+  ],
+  [
+    *Microscópica*, sobre caminos en la muestra $Q$:
+    $ D_(Q, alpha)(x, y) = inf sum_j norm(q_(j+1) - q_j)^alpha $
+  ],
+)
+
+#align(center)[
+  Si $cal(M)$ es una variedad isométrica embebida y $Q_n tilde.op^"iid" f$,
+  $ n^beta D_(Q_n, alpha)(x, y) -> mu thin cal(D)_(f, beta)(x, y) "c.s.", quad beta = (alpha - 1) / d. $
+  #fuente[Groisman, Jonckheere y Sapienza (2022), Teorema 2.7]
+]
+
+#intuicion[Hay una idea más general y poderosa detrás, pero esta heurística de sumar las distancias infladas a lo largo del grafo alcanza para aproximarla.]
+
 #focus-slide[¿Servirá para clasificar?]
 
-== Una slide aburrida: micro y macro fermat
-
-// TODO: aqui presentar las dos versiones, la que efectivamente considera como distancia una integral de camino sobre una curva rectivicable ne la variuedad, y su aproximancion por la distancia de fermat muestral calculada en los datos observados.
-
-#silbato[Hay una idea más general y poderosa detras, pero esta heurística de contar distancias en el grafo con distancias infladas alcanza par aproximarla]
 = El plan
 
 == Del estimador al clasificador
