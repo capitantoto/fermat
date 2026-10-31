@@ -91,7 +91,7 @@
     - $0.9^130 approx 10^(-6)$
 
     #v(0.5em)
-    Las distancias se _concentran_: en `mnist`, la mediana al vecino más cercano es $1300$, y entre dos puntos cualesquiera, $2500$.
+    Las distancias se _concentran_: en `mnist`, la distancia mediana al vecino más cercano ronda $1300$, y entre dos puntos cualesquiera, $2500$.
   ],
 )
 // TODO(autor): «lo mismo le pasa a otras distancias (p. ej., coseno)» no está en la tesis; agregar solo si se puede defender
