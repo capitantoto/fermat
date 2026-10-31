@@ -519,7 +519,7 @@ con $cal(l)$ la log-verosimilitud promedio y $hat(G)_0$ el clasificador que asig
     suma _todas_ las coordenadas: con 12 dimensiones de ruido, el ruido domina las aristas del grafo, y Fermat lo hereda.
 
     #v(0.4em)
-    En `eslabones_12`, #fkdc cae a $R^2 approx 0.24$; #gbt, que mira cada coordenada por separado, queda en $0.93$.
+    En `eslabones_12`, #fkdc cae a $R^2 approx 0.24$; #gbt, que mira cada coordenada por separado, queda en $0.92$.
   ],
   align(center + horizon, image("img/eslabones_12-r2-boxplot.svg", height: 62%)),
 )
@@ -533,7 +533,7 @@ con $cal(l)$ la log-verosimilitud promedio y $hat(G)_0$ el clasificador que asig
     En `mnist`, PCA primero: de $784$ a $96$ dimensiones, con el 90 % de la variación.
 
     #v(0.5em)
-    Después, #fkdc llega a $R^2 approx 0.74$, a la par de #logr ($0.76$) y #kdc ($0.77$), y por encima de #gbt ($0.67$).
+    Después, #fkdc llega a $R^2 approx 0.74$: a la par de #logr ($0.76$), por debajo de #kdc ($0.77$) y por encima de #gbt ($0.67$).
   ],
   align(center + horizon, image("img/mnist-r2-boxplot.svg", height: 62%)),
 )
