@@ -316,9 +316,9 @@
 
 #cronologia(hitos-plan, 1)
 #align(center + horizon)[
-  Clasificador binario por la regla de Bayes:
+  Clasificador por la regla de Bayes:
   $ hat(G)(p) = arg max_(k) sum_(i=1)^N bb(1)(G_i = k) K_h (p, X_i) $
-  Fuertemente consistente para $K = 2$.
+  Fuertemente consistente con dos clases.
 ]
 
 #intuicion[Cada clase vota con la suma de sus campanas en el punto $p$, y gana la que más pesa.]
@@ -617,7 +617,7 @@ con $cal(l)$ la log-verosimilitud promedio y $hat(G)_0$ el clasificador que asig
 #align(center + horizon)[
   $ hat(Pr)(dot | x) = sum_i "softmax"_i (- norm(x - x_i)^2 / (2 h^2)) e_(g_i) $
   frente a
-  $ sum_i "softmax"_i (q^top k_i slash sqrt(d)) v_i $
+  $ sum_i "softmax"_i (q^top k_i slash sqrt(d_k)) v_i $
 
   Con claves de igual norma, son la misma cuenta. #fkdc fija el núcleo con una regla; TabPFN lo _aprende_.
 ]
