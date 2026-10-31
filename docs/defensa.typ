@@ -19,11 +19,13 @@
 #let chico(cuerpo) = text(size: 16pt, cuerpo)
 #let fuente(cuerpo) = text(size: 13pt, fill: gray.darken(30%), cuerpo)
 
-// La matemática va al pie, chica y al grano: el jurado la reconoce, el resto sigue de largo
-#let silbato(cuerpo) = {
+// Doble público: el cuerpo de la diapo es técnico sin abrumar; el recuadro al pie da
+// la intuición para quien no lee matemática
+#let intuicion(cuerpo) = {
   v(1fr)
-  block(width: 100%, fill: luma(245), inset: 10pt, radius: 4pt, text(size: 15pt, cuerpo))
+  block(width: 100%, fill: luma(245), inset: 10pt, radius: 4pt, text(size: 16pt, cuerpo))
 }
+#let silbato = intuicion
 
 // Lugar reservado para una figura que todavía no existe
 #let pendiente(alto: 60%, cuerpo) = block(
@@ -57,71 +59,72 @@
 
 = Enunciación
 
-
-asddasd
-
 == En alta dimensión, todo queda lejos
 
-tres imágenes:
-1. (d=1) un segmento de largo 1, con el segmento de largo $h$ resaltado y la leyenda 100 * h % del largo
-2. (d=2) un cuadrado de lado 1, con el cuadrado de lado $h$ resaltado y la leyenda 100 * hˆ2 % del área
-3. (d=3) un cubo (trasluciddo?) de lado 1, con el cubo de lado $h$ resaltado dentro y la leyenda 100 * hˆ3 % del área
+#let cajita(d, fraccion, rotulo) = align(center)[
+  #image("img/defensa/cajita-d" + str(d) + ".svg", height: 45%)
+  $d = #d$ \
+  #chico[#fraccion del #rotulo]
+]
+#grid(columns: (1fr, 1fr, 1fr), column-gutter: 1em,
+  cajita(1, $h$, "largo"),
+  cajita(2, $h^2$, "área"),
+  cajita(3, $h^3$, "volumen"),
+)
 
+#align(center)[Con $X tilde.op "Unif"([-1, 1]^d)$, la fracción esperada dentro de $[-h, h]^d$ es $h^d$.]
 
+#intuicion[Con $h = 1 slash 2$: la mitad del largo, un cuarto del área, un octavo del volumen. Cada dimensión nueva vuelve a partir la cajita.]
 
 == En alta dimensión, todo queda lejos
-
-El volumen de lado $h$ en $d$ dimensiones crece según $h^d$. 
-- d dimensioens
-
 
 #grid(columns: (60%, 40%), column-gutter: 1em,
   image("img/curse-dim.svg"),
   align(horizon)[
-    Una cajita de lado $0.9$, , en 15 dimensiones, guarda un quinto (20%) del volumen de una cajita de lado 1.
-    En 130 dimensiones, guarda una _millonésima_ (0.0001%) del volumen de la cajida de lado 1.
+    $h^d -> 0$ cuando $d -> oo$, aun con $h$ cerca de $1$:
+
+    - $0.9^15 approx 0.2$
+    - $0.9^130 approx 10^(-6)$
 
     #v(0.5em)
-    Los vecinos dejan de ser vecinos: la _maldición de la dimensionalidad_.
+    Las distancias se _concentran_: en `mnist`, la mediana al vecino más cercano es $1300$, y entre dos puntos cualesquiera, $2500$.
   ],
 )
+// TODO(autor): «lo mismo le pasa a otras distancias (p. ej., coseno)» no está en la tesis; agregar solo si se puede defender
 
-#silbato[
-  $X tilde.op "Unif"([-1, 1]^d)$: la fracción esperada dentro de $[-h, h]^d$ es $h^d$.
-  
-  (todo: revisar) La medida de distnacia se _concentra_ y deja de distinguir confiablemente entre elementos.
-  Lo mismo le pasa a otras distancias (e.g. distancia coseno)
-]
+#intuicion[Una cajita del 90 % del ancho guarda, en 15 dimensiones, un quinto del volumen; en 130, una millonésima. Los vecinos dejan de ser vecinos: es la _maldición de la dimensionalidad_.]
 
 == Y sin embargo, funciona
 
 #grid(columns: (50%, 50%), column-gutter: 1em,
   image("img/digitos-mnist-ejemplos.png"),
   align(horizon)[
+    - `digitos`: $8 times 8 = 64$ dimensiones, en el borde de lo legible.
+    - `mnist`: $28 times 28 = 784$, ¡para un solo dígito!
+    - Un segundo de audio a $44.1$ kHz: $44 thin 100$.
+    - Una foto de un teléfono, $12$ megapíxeles en color: $36$ millones.
 
-    los digitos de arriba están compuestos por $9x9 = 81$ dimensiones, en el borde de lo legible. Los de abajo, en 27 x 27 = 729 dimensiones ¡para un sólo dígito!
     #v(0.5em)
-    [ el ejemplo de un segundo de audio; una imagen de 1 "mega pixel"como una observacion en 4M de dimensiones -- más rango iphone moderno.
-    ]
     *¿Cómo?*
   ],
 )
 
+#intuicion[Clasificamos imágenes, audio, video... y ahora también texto. Si en alta dimensión todo queda lejos, algo tiene que estar a nuestro favor.]
+
 == La hipótesis de la variedad
 
 #grid(columns: (45%, 55%), column-gutter: 1em,
-  image("img/hormiga-petalo.jpg"),  // aca la de la bandera
+  box(radius: 0.5em, clip: true, image("img/bandera-argentina.png")),
   align(horizon)[
-    Los datos se registran en $RR^D$, pero viven cerca de una _variedad_ de dimensión mucho menor. Una bandera ondeando al viento es una variedad de dimensión intrínseca $d=2$ en el espacio físico con $D=3$. Potencialmente, $d << D$.
-    #v(0.5em)
+    Los datos se registran en $RR^D$, pero viven cerca de una _variedad_ de dimensión mucho menor:
+    $ X : (Omega, cal(A), P) -> cal(M) subset RR^D, quad dim cal(M) = d << D. $
+
+    Una bandera al viento es una variedad de dimensión intrínseca $d = 2$ en el espacio físico, con $D = 3$.
   ],
 )
 
-#silbato[
-  Una _variedad_ es un espacio potencialmente de lo más rebuscado, pero que localmente se comporta como un espacio euclídeo. 
-  ]
+#intuicion[Una _variedad_ es un espacio potencialmente de lo más rebuscado, pero que localmente se comporta como uno euclídeo: de cerca, la bandera es una hoja plana.]
 
-== ¿
 == Y hay teoría
 
 Cronología rápida,  con una línea temporal arriba, y abajo una frase y la imagen que rescatamos del paper.
@@ -233,7 +236,7 @@ Misma cronologia izq-der arriba, PCA, IsoMap, Fermat
 // todo: algunos ejemplos visuales, 2 x 4 = 8 slots, algunos 2d, alguno 3d, los digitos de mnist no como scatter sino mosaico de imagenes chiquitas.
 == 25 repeticiones
 // todo: una mencion a la aleatporiedad, buscamos resultados repetibles asi que repetimos c/ tarea 25 veces y comapramos comportamiento _mediano_.
-#silbato[*(mediano)]
+#silbato[(mediano)]
 
 // Estas diapos rememplaan "el banco de pruebas"
 // == El banco de pruebas
@@ -318,9 +321,6 @@ Fermat agranda el vecindario sin cruzar
 - nota sobre cómo al calcular dist. euclidea en el grrafo completo se "come'
  el ruido de dimensiones que no difernecian en nada, GNB o GBT pueden ïgnorar"las dimensioens no-informativas, fermat KDC (o KDC a secas) no"
 - primero reducir linealmente con PCA y lueg oprobar fermat funciona (caso MNIST -- boxplot o numero ehadline mencionado acá)
-
-
-)
 
 
 = El futuro

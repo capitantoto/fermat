@@ -1,6 +1,8 @@
 """
-Ilustraciones de la primera parte de la defensa, sobre `espirales_lo`.
+Ilustraciones de la primera parte de la defensa.
 
+- `cajita-d{1,2,3}.svg`: un segmento, un cuadrado y un cubo de lado 1 con la cajita
+  centrada de lado h resaltada, para la maldición de la dimensionalidad.
 - `anim/vecindario-espirales-NN.svg`: cuadros de una animación que `docs/defensa.typ`
   recorre uno por clic. Los k vecinos más cercanos de un mismo punto, según la
   distancia euclídea y según la de Fermat muestral, para k creciente. La euclídea
@@ -14,6 +16,7 @@ Todo se escribe en `docs/img/defensa/`. Uso, desde la raíz del repositorio:
 """
 
 import logging
+import sys
 
 import matplotlib
 
@@ -146,9 +149,79 @@ def densidades_espirales():
     logger.info("Escrito %s", ruta.relative_to(dir_raiz))
 
 
+def guardar(fig, nombre):
+    ruta = dir_img / nombre
+    fig.savefig(ruta, bbox_inches="tight", transparent=True)
+    plt.close(fig)
+    logger.info("Escrito %s", ruta.relative_to(dir_raiz))
+
+
+def cajitas(h=0.5):
+    """La cajita de lado h dentro de la de lado 1, en una, dos y tres dimensiones."""
+    resalte, contorno = "#e66101", tinta
+    fig, ax = plt.subplots(figsize=(4, 4))
+    ax.plot([0, 1], [0, 0], color=contorno, lw=3, solid_capstyle="butt")
+    ax.plot(
+        [(1 - h) / 2, (1 + h) / 2], [0, 0], color=resalte, lw=9, solid_capstyle="butt"
+    )
+    ax.set_xlim(-0.05, 1.05)
+    ax.set_ylim(-0.5, 0.5)
+    ax.set_axis_off()
+    guardar(fig, "cajita-d1.svg")
+
+    fig, ax = plt.subplots(figsize=(4, 4))
+    ax.add_patch(plt.Rectangle((0, 0), 1, 1, fill=False, ec=contorno, lw=2))
+    ax.add_patch(plt.Rectangle(((1 - h) / 2,) * 2, h, h, fc=resalte, ec=resalte))
+    ax.set_xlim(-0.05, 1.05)
+    ax.set_ylim(-0.05, 1.05)
+    ax.set_aspect("equal")
+    ax.set_axis_off()
+    guardar(fig, "cajita-d2.svg")
+
+    from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
+    def caras(lo, hi):
+        v = np.array([[x, y, z] for x in (lo, hi) for y in (lo, hi) for z in (lo, hi)])
+        indices = [
+            [0, 1, 3, 2],
+            [4, 5, 7, 6],
+            [0, 1, 5, 4],
+            [2, 3, 7, 6],
+            [0, 2, 6, 4],
+            [1, 3, 7, 5],
+        ]
+        return [v[i] for i in indices]
+
+    fig = plt.figure(figsize=(4, 4))
+    ax = fig.add_subplot(projection="3d")
+    ax.add_collection3d(
+        Poly3DCollection(
+            caras((1 - h) / 2, (1 + h) / 2), fc=resalte, ec=tinta, lw=0.5, alpha=0.95
+        )
+    )
+    ax.add_collection3d(
+        Poly3DCollection(caras(0, 1), fc=(0.6, 0.6, 0.6, 0.08), ec=contorno, lw=1.2)
+    )
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_zlim(0, 1)
+    ax.set_box_aspect((1, 1, 1))
+    ax.view_init(elev=22, azim=-58)
+    ax.set_axis_off()
+    guardar(fig, "cajita-d3.svg")
+
+
+ilustraciones = {
+    "vecindario": lambda: vecindario_espirales(),
+    "densidades": lambda: densidades_espirales(),
+    "cajitas": lambda: cajitas(),
+}
+
+
 def main():
-    vecindario_espirales()
-    densidades_espirales()
+    """Sin argumentos, todas; si no, solo las nombradas."""
+    for nombre in sys.argv[1:] or ilustraciones:
+        ilustraciones[nombre]()
 
 
 if __name__ == "__main__":
