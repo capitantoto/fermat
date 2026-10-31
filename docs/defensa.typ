@@ -263,10 +263,21 @@
 
 #intuicion[Elevar las distancias a una potencia abarata los saltos cortos: el camino más barato pasa por donde hay muchos datos.]
 
-== Intuición: paseos al azar
+== Paseos al azar
 
-// TODO: producir 100 paeos al azar con las observaciones transladandose sobre el grafo completo con proabilidad inversamente proporcional a si distancia (izq: euclidea, der: de fermat) sobre las espirales. Mismo punto de origen. Disbuljarlos todos juntos, con alpha bajo: en euclidea debería cruzar muy seguido a los otros brazos, en fermat casi nunca. Sin animación.
-// TODO 2: por separado, una applert en html que haga algo parecido con parametros para jguar
+#grid(columns: (1fr, 1fr, 1fr), column-gutter: 1em,
+  align(center)[#image("img/defensa/paseos-espirales-euclidea.svg", height: 62%) Euclídea],
+  align(center)[#image("img/defensa/paseos-espirales-fermat.svg", height: 62%) Fermat, $alpha = 4$],
+  align(horizon)[
+    100 paseos de 15 saltos desde #text(fill: rgb("#d4a017"))[★], sobre el grafo completo:
+    $ Pr(x_i -> x_j) prop 1 / d(x_i, x_j) $
+
+    Cambios de brazo por paseo: $6.3$ contra $1.1$.
+  ],
+)
+// Applet para jugar con los parámetros: docs/paseos-fermat.html
+
+#intuicion[Con la distancia de siempre, el paseante salta de una espiral a la otra a cada rato; con la de Fermat, sigue el brazo en el que está.]
 
 
 == Fermat macroscópica y microscópica

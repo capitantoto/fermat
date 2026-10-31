@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paseos de Fermat</title>
+<style>
+  :root {
+    --fondo: #fafafa; --tinta: #1b1f23; --regla: #d9dcdf; --suave: #55595f;
+    --clase0: #2c7bb6; --clase1: #d7191c; --acento: #eb811b; --panel: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fondo: #16181b; --tinta: #e8eaed; --regla: #3a3e44; --suave: #a0a4aa;
+      --clase0: #5aa6e0; --clase1: #ef5a5c; --panel: #1f2226;
+    }
+  }
+  :root[data-theme="dark"] {
+    --fondo: #16181b; --tinta: #e8eaed; --regla: #3a3e44; --suave: #a0a4aa;
+    --clase0: #5aa6e0; --clase1: #ef5a5c; --panel: #1f2226;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; background: var(--fondo); color: var(--tinta);
+         font: 15px/1.4 "Fira Sans", system-ui, sans-serif; }
+  h1 { font-size: 1.3rem; font-weight: 500; margin: 0 0 4px; }
+  p { margin: 0 0 12px; color: var(--suave); max-width: 70ch; }
+  .controles { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-bottom: 12px; }
+  label { display: flex; flex-direction: column; font-size: 13px; color: var(--suave); }
+  label span b { color: var(--tinta); font-weight: 500; }
+  input[type=range] { width: 150px; accent-color: var(--acento); }
+  button { font: inherit; padding: 6px 14px; border: 1px solid var(--regla); border-radius: 4px;
+           background: var(--panel); color: var(--tinta); cursor: pointer; align-self: end; }
+  .paneles { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  figure { margin: 0; background: var(--panel); border: 1px solid var(--regla); border-radius: 6px; padding: 8px; }
+  canvas { width: 100%; aspect-ratio: 1; display: block; cursor: crosshair; }
+  figcaption { font-size: 14px; display: flex; justify-content: space-between; padding: 4px 2px 0; }
+  figcaption b { font-weight: 500; }
+</style>
+</head>
+<body>
+<h1>Paseos al azar: euclídea contra Fermat</h1>
+<p>Dos espirales entrelazadas. Cada paseo parte de la estrella y salta a cualquier observación con probabilidad inversamente proporcional a su distancia. Los saltos de Fermat se dibujan por su camino mínimo en el grafo. Un clic en un panel mueve la estrella.</p>
+
+<div class="controles">
+  <label><span>puntos por espiral: <b id="v-n">300</b></span><input id="n" type="range" min="100" max="400" step="50" value="300"></label>
+  <label><span>ruido: <b id="v-ruido">0.10</b></span><input id="ruido" type="range" min="0" max="0.4" step="0.02" value="0.1"></label>
+  <label><span>α (Fermat): <b id="v-alfa">4.0</b></span><input id="alfa" type="range" min="1" max="6" step="0.5" value="4"></label>
+  <label><span>potencia de 1/d: <b id="v-pot">1.0</b></span><input id="pot" type="range" min="0.5" max="4" step="0.5" value="1"></label>
+  <label><span>paseos: <b id="v-paseos">100</b></span><input id="paseos" type="range" min="10" max="300" step="10" value="100"></label>
+  <label><span>saltos por paseo: <b id="v-pasos">15</b></span><input id="pasos" type="range" min="1" max="50" step="1" value="15"></label>
+  <button id="otra">Otra muestra</button>
+</div>
+
+<div class="paneles">
+  <figure><canvas id="c-euclidea" width="600" height="600"></canvas>
+    <figcaption><b>Euclídea</b><span id="r-euclidea"></span></figcaption></figure>
+  <figure><canvas id="c-fermat" width="600" height="600"></canvas>
+    <figcaption><b>Fermat</b><span id="r-fermat"></span></figcaption></figure>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const parametros = ["n", "ruido", "alfa", "pot", "paseos", "pasos"];
+let semilla = 1312, X = [], y = [], origen = 0, euclidea = null, fermat = null, predecesor = null;
+
+// Generador reproducible (mulberry32) y normales por Box-Muller
+function generador(s) {
+  return () => { s |= 0; s = (s + 0x6d2b79f5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+const normal = (azar) => Math.sqrt(-2 * Math.log(1 - azar())) * Math.cos(2 * Math.PI * azar());
+
+// Las espirales de fkdc.datasets.hacer_espirales: r = sqrt(phi), dos vueltas, la clase 1 reflejada
+function espirales(n, ruido) {
+  const azar = generador(semilla);
+  X = []; y = [];
+  for (let clase = 0; clase < 2; clase++) for (let i = 0; i < n; i++) {
+    const phi = azar() * 4 * Math.PI, signo = clase ? -1 : 1;
+    X.push([signo * Math.sqrt(phi) * Math.cos(phi) + ruido * normal(azar),
+            signo * Math.sqrt(phi) * Math.sin(phi) + ruido * normal(azar)]);
+    y.push(clase);
+  }
+}
+
+// Distancias euclídeas, y de Fermat por Dijkstra denso desde cada nodo del grafo completo
+function distancias(alfa) {
+  const N = X.length;
+  euclidea = new Float64Array(N * N);
+  for (let i = 0; i < N; i++) for (let j = 0; j < N; j++)
+    euclidea[i * N + j] = Math.hypot(X[i][0] - X[j][0], X[i][1] - X[j][1]);
+  fermat = new Float64Array(N * N).fill(Infinity);
+  predecesor = new Int32Array(N * N).fill(-1);
+  const hecho = new Uint8Array(N);
+  for (let s = 0; s < N; s++) {
+    const fila = s * N; hecho.fill(0); fermat[fila + s] = 0;
+    for (let k = 0; k < N; k++) {
+      let u = -1, mejor = Infinity;
+      for (let v = 0; v < N; v++) if (!hecho[v] && fermat[fila + v] < mejor) { mejor = fermat[fila + v]; u = v; }
+      if (u < 0) break;
+      hecho[u] = 1;
+      for (let v = 0; v < N; v++) {
+        if (hecho[v]) continue;
+        const via = mejor + Math.pow(euclidea[u * N + v], alfa);
+        if (via < fermat[fila + v]) { fermat[fila + v] = via; predecesor[fila + v] = u; }
+      }
+    }
+  }
+}
+
+function elegirOrigen() {
+  const radios = X.map(([a, b]) => Math.hypot(a, b));
+  const de0 = radios.map((r, i) => [r, i]).filter(([, i]) => y[i] === 0).sort((a, b) => a[0] - b[0]);
+  origen = de0[Math.floor(de0.length / 2)][1];
+}
+
+function color(nombre) { return getComputedStyle(document.documentElement).getPropertyValue(nombre).trim(); }
+
+function dibujar(nombre, matriz) {
+  const lienzo = $("c-" + nombre), ctx = lienzo.getContext("2d"), N = X.length, L = lienzo.width;
+  const escala = L / 2 / 4.2, px = ([a, b]) => [L / 2 + a * escala, L / 2 - b * escala];
+  ctx.clearRect(0, 0, L, L);
+  ctx.globalAlpha = 0.45;
+  X.forEach((p, i) => { const [u, v] = px(p); ctx.fillStyle = color(y[i] ? "--clase1" : "--clase0");
+    ctx.beginPath(); ctx.arc(u, v, 2.6, 0, 2 * Math.PI); ctx.fill(); });
+  const pot = +$("pot").value, azar = generador(semilla + 7);
+  const acumuladas = new Map();
+  const transicion = (i) => {
+    if (!acumuladas.has(i)) {
+      const c = new Float64Array(N); let total = 0;
+      for (let j = 0; j < N; j++) { const d = matriz[i * N + j]; total += d > 0 ? Math.pow(d, -pot) : 0; c[j] = total; }
+      acumuladas.set(i, c.map((v) => v / total));
+    }
+    return acumuladas.get(i);
+  };
+  ctx.strokeStyle = color("--tinta"); ctx.lineWidth = 1;
+  ctx.globalAlpha = Math.min(0.5, 6 / +$("paseos").value);
+  let cambios = 0;
+  for (let w = 0; w < +$("paseos").value; w++) {
+    let i = origen;
+    for (let t = 0; t < +$("pasos").value; t++) {
+      const c = transicion(i), u = azar();
+      let j = c.findIndex((v) => v >= u); if (j < 0) j = N - 1;
+      if (y[j] !== y[i]) cambios++;
+      ctx.beginPath();
+      if (nombre === "fermat") {
+        let k = j; ctx.moveTo(...px(X[k]));
+        while (k !== i && k >= 0) { k = predecesor[i * N + k]; if (k >= 0) ctx.lineTo(...px(X[k])); }
+      } else { ctx.moveTo(...px(X[i])); ctx.lineTo(...px(X[j])); }
+      ctx.stroke();
+      i = j;
+    }
+  }
+  ctx.globalAlpha = 1;
+  const [u, v] = px(X[origen]);
+  ctx.fillStyle = "gold"; ctx.strokeStyle = color("--tinta");
+  ctx.beginPath();
+  for (let k = 0; k < 10; k++) { const r = k % 2 ? 6 : 14, a = -Math.PI / 2 + k * Math.PI / 5;
+    ctx.lineTo(u + r * Math.cos(a), v + r * Math.sin(a)); }
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  $("r-" + nombre).textContent = (cambios / +$("paseos").value).toFixed(1) + " cambios de brazo por paseo";
+}
+
+function etiquetas() {
+  parametros.forEach((p) => { const v = +$(p).value;
+    $("v-" + p).textContent = ["ruido"].includes(p) ? v.toFixed(2) : ["alfa", "pot"].includes(p) ? v.toFixed(1) : v; });
+}
+function redibujar() { etiquetas(); dibujar("euclidea", euclidea); dibujar("fermat", fermat); }
+function rehacer(nuevaMuestra) {
+  if (nuevaMuestra) { espirales(+$("n").value, +$("ruido").value); elegirOrigen(); }
+  distancias(+$("alfa").value); redibujar();
+}
+
+["n", "ruido"].forEach((p) => $(p).addEventListener("change", () => rehacer(true)));
+$("alfa").addEventListener("change", () => rehacer(false));
+["pot", "paseos", "pasos"].forEach((p) => $(p).addEventListener("input", redibujar));
+parametros.forEach((p) => $(p).addEventListener("input", etiquetas));
+$("otra").addEventListener("click", () => { semilla++; rehacer(true); });
+["euclidea", "fermat"].forEach((nombre) => $("c-" + nombre).addEventListener("click", (e) => {
+  const lienzo = e.currentTarget, caja = lienzo.getBoundingClientRect(), L = lienzo.width, escala = L / 2 / 4.2;
+  const a = ((e.clientX - caja.left) * L / caja.width - L / 2) / escala, b = -((e.clientY - caja.top) * L / caja.height - L / 2) / escala;
+  let mejor = Infinity; X.forEach(([p, q], i) => { const d = Math.hypot(p - a, q - b); if (d < mejor) { mejor = d; origen = i; } });
+  redibujar();
+}));
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redibujar);
+rehacer(true);
+</script>
+</body>
+</html>
