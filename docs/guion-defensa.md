@@ -34,6 +34,7 @@ Make this as visually appleaing as possible, and brief
 - and AI? can we use riemannian geometry top better understanmd the representations of domains that are achievable by the multi-layer NN architectures empirically so impressive today?
 
 ## TONE & STYLE
+Revised: the light version came out too watered down, so the double audience is inverted. Each slide's body is technical without overwhelming (a couple of slides per idea, 30 minutes total); the box at the foot, `#intuicion`, gives the intuition for whoever doesn't read math. What follows is the earlier brief.
 Potentially super layman audience as guests mixed in with jury and peers. Keep light, visual heavy, never a dense slide, even if that mean move faster b/w ém. When math is relevant, cover quickly and to the chase, as adog whistle. The jury will understand, the rest don't get mired in a diatribe.
 Let's recover the nicest cahrt from the thesis as loss contours, decision frontiers, and even come up with better visuals for givbing a feeling of the distance, even animated.
 I don;'t know if slides are really the way to go, but we do have only 3 weeks on maybe 4hs/week, so let's not throw the house off the window. Typst is for sure a stay I think, maybe we can do a fancy html website? Or am i trying to fit a square peg in a round hole?

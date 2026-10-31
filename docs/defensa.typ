@@ -29,7 +29,6 @@
   v(1fr)
   block(width: 100%, fill: luma(245), inset: 10pt, radius: 4pt, text(size: 16pt, cuerpo))
 }
-#let silbato = intuicion
 
 // Lugar reservado para una figura que todavía no existe
 #let pendiente(alto: 60%, cuerpo) = block(
@@ -39,14 +38,6 @@
   radius: 4pt,
   inset: 12pt,
   align(center + horizon, text(size: 16pt, fill: gray.darken(20%))[*Pendiente:* #cuerpo]),
-)
-
-// Animación cuadro a cuadro: cada clic avanza un SVG de scripts/animaciones_defensa.py
-#let animacion(prefijo, cuadros, alto: 85%) = alternatives(
-  ..range(cuadros).map(i => {
-    let n = if i < 10 { "0" + str(i) } else { str(i) }
-    align(center, image(prefijo + "-" + n + ".svg", height: alto))
-  }),
 )
 
 // Línea de tiempo al tope de la diapo: los hitos en una recta, el actual resaltado
@@ -62,11 +53,6 @@
     ))
   }))
 })
-
-#let cifra(numero, rotulo) = align(center)[
-  #text(size: 44pt, weight: "bold", numero) \
-  #text(size: 16pt, rotulo)
-]
 
 #title-slide(
   author: [Lic. Gonzalo Barrera Borla · Director: Dr. Pablo Groisman],
