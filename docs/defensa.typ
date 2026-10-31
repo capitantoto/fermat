@@ -289,7 +289,7 @@
   #fuente[Groisman, Jonckheere y Sapienza (2022), Teorema 2.7]
 ]
 
-#intuicion[Hay una idea más general y poderosa detrás, pero esta heurística de sumar las distancias infladas a lo largo del grafo alcanza para aproximarla.]
+#intuicion[Hay una idea más general y poderosa detrás: un camino cuesta más donde hay pocos datos. Sumar las distancias infladas a lo largo del grafo alcanza para aproximarla, y con más datos, la aproximación mejora.]
 
 #focus-slide[¿Servirá para clasificar?]
 
