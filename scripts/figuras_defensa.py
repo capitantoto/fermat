@@ -6,11 +6,12 @@ Wilcoxon e infos) y los barridos de 25 semillas (`sandbox/fundacionales`), y esc
 SVG en `docs/img/defensa/` y CSV en `docs/data/defensa/`, que `docs/defensa.typ` usa.
 
 Uso, desde la raíz del repositorio, después de `scripts/wilcoxon.py`:
-    .venv/bin/python scripts/figuras_defensa.py
+    .venv/bin/python scripts/figuras_defensa.py [replica] [mapa] [oraculo] [nuevos]
 """
 
 import json
 import logging
+import sys
 
 import matplotlib
 
@@ -193,7 +194,7 @@ def grupo_lider(pares):
     return tabla
 
 
-def mapa_tabpfn():
+def mapa_tabpfn(techo=0.99995):
     """Mediana de R² crudo por dataset: fkdc, dos clásicos y TabPFN (100 semillas)."""
     c = campanias.campania(
         "heroica", ("tesis", "compendio", "fundacionales", "clasicos")
@@ -230,10 +231,26 @@ def mapa_tabpfn():
             label=etiquetas[clf],
         )
     ax.set_yticks(ys, crudas_tesis, fontfamily="monospace", fontsize=10)
-    ax.set_xlabel("R² crudo, mediana sobre 100 semillas")
-    ax.set_xlim(-0.06, 1.02)
+    # Escala en -log10(1 - R²): separa el pelotón cerca de 1 sin aplastar los ceros
+    ax.set_xscale(
+        "function",
+        functions=(
+            lambda r: -np.log10(1 - np.minimum(r, techo)),
+            lambda u: 1 - 10.0**-u,
+        ),
+    )
+    marcas = [0, 0.5, 0.9, 0.99, 0.999, 0.9999]
+    ax.set_xticks(marcas, [f"{m:g}" for m in marcas])
+    ax.set_xlabel("R² crudo, mediana sobre 100 semillas, en escala de −log(1 − R²)")
+    ax.set_xlim(-0.06, techo)
     ax.grid(axis="x", color=regla, lw=0.6)
-    ax.legend(frameon=False, loc="lower left", fontsize=9.5)
+    ax.legend(
+        frameon=False,
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.1),
+        ncol=2,
+        fontsize=9.5,
+    )
     fig.tight_layout()
     fig.savefig(dir_img / "mapa-tabpfn.svg")
     plt.close(fig)
@@ -282,16 +299,43 @@ def anchos_ard():
     return tabla
 
 
+def datasets_nuevos(semilla=1312):
+    """Dispersión en las tres primeras coordenadas de cuatro variedades nuevas."""
+    from fkdc.variedades import variedades
+
+    for nombre in ["nudos_800", "paralelas_4", "esfera_2", "lissajous"]:
+        variedad = variedades[nombre]
+        X, y = variedad.fabrica(random_state=semilla, **variedad.params)
+        fig = plt.figure(figsize=(4, 4))
+        ax = fig.add_subplot(projection="3d")
+        ax.scatter(
+            *X[:, :3].T, c=np.where(y == y.min(), "#2c7bb6", "#d7191c"), s=4, lw=0
+        )
+        ax.set_box_aspect((1, 1, 1))
+        ax.set_axis_off()
+        fig.savefig(
+            dir_img / f"nuevo-{nombre}.svg", bbox_inches="tight", transparent=True
+        )
+        plt.close(fig)
+
+
 def main():
+    """Sin argumentos, todas las figuras; si no, solo las nombradas."""
     dir_img.mkdir(parents=True, exist_ok=True)
     dir_data.mkdir(parents=True, exist_ok=True)
-    logger.info("Veredictos:\n%s", veredictos().to_string(index=False))
-    pares = pares_wilcoxon()
-    fkdc_kdc_crudo_templado(pares)
-    logger.info("Grupo líder:\n%s", grupo_lider(pares).to_string(index=False))
-    logger.info("Mapa TabPFN:\n%s", mapa_tabpfn().round(3).to_string())
-    logger.info("Oráculo:\n%s", oraculo().to_string(index=False))
-    logger.info("Anchos kdc_ard: %s", anchos_ard().columns.tolist())
+    pedidas = set(sys.argv[1:])
+    if not pedidas or "replica" in pedidas:
+        logger.info("Veredictos:\n%s", veredictos().to_string(index=False))
+        pares = pares_wilcoxon()
+        fkdc_kdc_crudo_templado(pares)
+        logger.info("Grupo líder:\n%s", grupo_lider(pares).to_string(index=False))
+    if not pedidas or "mapa" in pedidas:
+        logger.info("Mapa TabPFN:\n%s", mapa_tabpfn().round(3).to_string())
+    if not pedidas or "oraculo" in pedidas:
+        logger.info("Oráculo:\n%s", oraculo().to_string(index=False))
+        logger.info("Anchos kdc_ard: %s", anchos_ard().columns.tolist())
+    if not pedidas or "nuevos" in pedidas:
+        datasets_nuevos()
 
 
 if __name__ == "__main__":

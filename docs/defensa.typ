@@ -558,40 +558,61 @@ con $cal(l)$ la log-verosimilitud promedio y $hat(G)_0$ el clasificador que asig
 
 == Después de la entrega
 
-// todo: Armar esto como un äntes y despues, 25 v 100, 8 vs 22, 25 vs 33, total tareas vs total tareas
-// mencionar en una diapo sgte algunos de los clfs neuvos relevantes, y en otra algunos de los datasets nuevos mas interesantes
-// mencion a la inclkusion de clf LLMs y NNs para datos tabulares
-#grid(columns: 4, column-gutter: 1em,
-  cifra("100", "semillas, prerregistradas"),
-  cifra("72 600", "tareas, 0 fallas"),
-  cifra("22", "clasificadores"),
-  cifra("33", "datasets"),
+#let antes-despues(antes, despues, rotulo) = align(center)[
+  #text(size: 22pt, fill: luma(140), antes) #h(0.2em) #text(size: 22pt, fill: luma(140))[→] \
+  #text(size: 40pt, weight: "bold", despues) \
+  #text(size: 16pt, rotulo)
+]
+#v(1fr)
+#grid(columns: (1fr,) * 4, column-gutter: 1em,
+  antes-despues("25", "100", "semillas, prerregistradas"),
+  antes-despues("8", "22", "clasificadores"),
+  antes-despues("24", "33", "datasets"),
+  antes-despues("4800", "72 600", "tareas, 0 fallas"),
+)
+#v(1fr)
+#align(center)[Una réplica más grande, y la comparación con el estado del arte.]
+#chico[Los datasets cuentan las variantes estandarizadas.]
+
+== Clasificadores nuevos
+
+- *Clásicos*: QDA, LDA, mezclas gaussianas, procesos gaussianos, _extra trees_, #kdc de Abramson, Isomap y NCA con #kn, _label spreading_.
+- *Redes para datos tabulares*: TabPFN-3.5 y v2, TabICL y TabM.
+- *Modelos de lenguaje* que leen cada fila como texto: Laya, GLiNER2.5-Decide y una réplica abierta de Jev. Quedaron al nivel del azar.
+
+#intuicion[Los modelos de lenguaje deciden en una sola pasada: saber de qué círculo viene $(x_1, x_2)$ exige calcular $sqrt(x_1^2 + x_2^2)$, y eso no lo hacen «de un vistazo».]
+
+== Datasets nuevos
+
+#let nuevo(nombre, rotulo) = align(center)[
+  #image("img/defensa/nuevo-" + nombre + ".svg", height: 42%)
+  #raw(nombre) \
+  #chico[#rotulo]
+]
+#grid(columns: 4, column-gutter: 0.8em,
+  nuevo("nudos_800", [dos nudos tóricos enlazados]),
+  nuevo("paralelas_4", [dos círculos paralelos]),
+  nuevo("esfera_2", [dos casquetes en $S^2$]),
+  nuevo("lissajous", [dos curvas en $RR^5$]),
 )
 
-#v(1em)
-#align(center)[Una réplica más grande, y la comparación con el estado del arte.]
-
-// TODO(autor): elegir entre una y tres observaciones; candidatas: calibración, TabPFN, atención
+#intuicion[Variedades conocidas, con su geometría en la mano: sabemos de antemano dónde viven los datos, y podemos medir cuánto de eso aprende cada clasificador.]
 
 == Parte de la ventaja era calibración
 
 #grid(columns: (58%, 42%), column-gutter: 1em,
-  image("img/defensa/fkdc-kdc-crudo-templado.svg"),
+  align(center, image("img/defensa/fkdc-kdc-crudo-templado.svg", height: 68%)),
   align(horizon)[
-    #kdc es poco confiado; $alpha$ agudiza las probabilidades.
-
-    #v(0.5em)
-    Recalibrando a ambos, la ventaja sobrevive en `lunas_lo` y `espirales_lo`, no en el resto.
+    Con el $R^2$ _templado_, que recalibra a cada clasificador por temperatura, la ventaja de #fkdc sobre #kdc sobrevive en `lunas_lo` y `espirales_lo`, no en el resto.
   ],
 )
 
+#intuicion[#kdc acierta, pero duda; $alpha$ lo vuelve más seguro. Parte de la ventaja era esa: confianza, no puntería.]
+
 == TabPFN: el estado del arte
-// todo: pregunta: el "siuperlearner clasico"que es? incluye tambien a fkdcv? sobre quienes esta componiendose? otros de esta misma tabla?
-// todo: mismo grafico pero con r^2 en symlog scale apra que se distinga el peloton de frente cerca de uno y los rˆ2 de cero no rompan tampoco.
-// dejar nota para el autor sobre como en digitos, mnist fkdc es superior tambien a kdc con un ancho por variable
-// 
+
 #grid(columns: (58%, 42%), column-gutter: 1em,
-  image("img/defensa/mapa-tabpfn.svg"),
+  align(center, image("img/defensa/mapa-tabpfn.svg", height: 68%)),
   align(horizon)[
     Una red preentrenada con millones de tablas simuladas: queda entre los mejores en 19 de 33 datasets.
 
@@ -599,65 +620,32 @@ con $cal(l)$ la log-verosimilitud promedio y $hat(G)_0$ el clasificador que asig
     Los métodos de la tesis aprenden de 400 puntos.
   ],
 )
-
 // Sin fuga ni contaminación: ver «¿El resultado de TabPFN es legítimo?» en preguntas-defensa.typ
-// TODO: estas dos diapos que sigue, ver si se les puede dar un minimo significado intuitivo sin agobiar a la audiencia, es solo apra decir "algo con ia". Si no, menci´øn al aprendizaje de\ variedades como aprendizaje de representaciones de Bengio y de ahí a transformers (encoder decoder) como componente fundamental de LLMs 
+// Para el autor: el superlearner clásico apila con pesos convexos, sobre probabilidades fuera del pliego, 14 clasificadores rápidos (fkdc.clasicos.biblioteca): LR, LDA, QDA, GNB, kNN con k = 5, 15 y 45, tres KDC (isótropo estandarizado, isótropo crudo como el de la tesis, y ARD), GPC, GBT y extra trees. No incluye a fkdc ni a TabPFN.
+// Para el autor: en digitos y mnist, fkdc también supera al KDC con un ancho por variable (0.977 contra 0.896, y 0.748 contra 0.664; medianas de R² crudo con 100 semillas, data/defensa/mapa-tabpfn.csv).
+
+#intuicion[Una red entrenada de antemano con millones de problemas inventados resuelve uno nuevo de un vistazo, sin ajustar nada. La escala estira la zona cercana a $R^2 = 1$, donde se pelea el podio.]
+
 == El #kdc es una cabeza de atención
 
 #align(center + horizon)[
-  Una cabeza de atención de un _transformer_ hace, cuenta por cuenta, lo mismo que un #kdc gaussiano.
+  $ hat(Pr)(dot | x) = sum_i "softmax"_i (- norm(x - x_i)^2 / (2 h^2)) e_(g_i) $
+  frente a
+  $ sum_i "softmax"_i (q^top k_i slash sqrt(d)) v_i $
 
-  #v(0.5em)
-  #fkdc fija el núcleo con una regla; TabPFN lo _aprende_.
+  Con claves de igual norma, son la misma cuenta. #fkdc fija el núcleo con una regla; TabPFN lo _aprende_.
 ]
 
-#silbato[
-  $hat(Pr)(dot | x) = sum_i "softmax"_i (- norm(x - x_i)^2 / (2 h^2)) e_(g_i)$ #h(0.5em) frente a #h(0.5em) $sum_i "softmax"_i (q^top k_i slash sqrt(d)) v_i$
-]
+#intuicion[Una cabeza de atención pondera cada ejemplo por su parecido con el punto a clasificar y promedia sus etiquetas: lo mismo que un #kdc, pero aprendiendo cómo medir el parecido.]
 
 == ¿Y la IA?
 
 #align(center + horizon)[
-  Las redes profundas aprenden representaciones de dominios enormes.
+  El aprendizaje de variedades es un caso del _aprendizaje de representaciones_, y los _transformers_ detrás de los modelos de lenguaje aprenden representaciones de dominios enormes.
+  #fuente[Bengio, Courville y Vincent (2013)]
 
   #v(0.8em)
   *¿Puede la geometría de Riemann ayudarnos a entenderlas mejor?*
 ]
 
 #focus-slide[¡Gracias!]
-
-// todo: nada de respaldo
-= Respaldo
-
-== Lo que da conocer la variedad
-
-#let filas-oraculo = csv("data/defensa/oraculo.csv")
-#align(center)[
-  #set text(size: 16pt)
-  #table(
-    columns: filas-oraculo.first().len(),
-    align: (left, right, right, right, right),
-    stroke: (x, y) => if y == 0 { (bottom: 0.7pt) } else { (bottom: 0.3pt + gray.lighten(40%)) },
-    table.header(..filas-oraculo.first().map(c => strong(c))),
-    ..filas-oraculo.slice(1).flatten(),
-  )
-]
-
-#chico[El oráculo invierte el proceso generador de cada dataset sintético y ajusta una regresión logística sobre las coordenadas intrínsecas. Mediana de $R^2$, 25 semillas.]
-
-== Modelos de texto: al azar
-
-#chico[
-- Laya, GLiNER2.5-Decide y una réplica abierta de Jev reciben cada fila como texto.
-- En todos los regímenes y datasets quedaron en el nivel del azar.
-- Son modelos de un solo paso: decidir de qué círculo viene $(x_1, x_2)$ exige calcular $sqrt(x_1^2 + x_2^2)$ en una pasada.
-]
-
-== Fronteras de decisión en `espirales_lo`
-
-#grid(columns: 4, column-gutter: 0.5em,
-  image("img/espirales_lo-kn-decision_boundary.svg"),
-  image("img/espirales_lo-fkn-decision_boundary.svg"),
-  image("img/espirales_lo-kdc-decision_boundary.svg"),
-  image("img/espirales_lo-fkdc-decision_boundary.svg"),
-)
