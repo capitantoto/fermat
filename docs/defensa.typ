@@ -329,7 +329,7 @@
 #align(center + horizon)[
   Consistencia fuerte uniforme:
   $ sup_(p in cal(M)) abs(hat(f)_n (p) - f(p)) -> 0 "c.s." $
-  Y en $S^2$, la densidad de volumen $theta_p (q)$ explícita.
+  Y en $S^2$, calculan explícitamente la densidad de volumen $theta_p (q)$.
 ]
 
 #intuicion[El estimador no solo se acerca a la densidad verdadera en promedio: se acerca en todos los puntos a la vez.]
