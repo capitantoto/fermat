@@ -497,7 +497,7 @@ con $cal(l)$ la log-verosimilitud promedio y $hat(G)_0$ el clasificador que asig
 
 #intuicion[Un problema fácil, en el que los métodos por cercanía fracasan.]
 
-== Lo feo: sin escalar, nada anda
+== Lo feo: sin escalar, la cercanía no anda
 
 #grid(columns: (55%, 45%), column-gutter: 1em,
   image("img/pinguinos-crudo-vs-std-r2.svg"),
