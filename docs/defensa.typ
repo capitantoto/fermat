@@ -437,70 +437,122 @@ con $cal(l)$ la log-verosimilitud promedio y $hat(G)_0$ el clasificador que asig
 
 = Resultados
 
-// todo: estilo lo bueno, lo malo y lo feo
-// no quiero mencionar nada o casi nada de lo post-tesis hasta la seccion "el futuro"
+#let leyenda-resumen = chico[#text(fill: rgb("#1a9641"))[▲ mejor] #h(0.6em) #text(fill: rgb("#9a9ea4"))[● igual] #h(0.6em) #text(fill: rgb("#d7191c"))[▼ peor] #h(1em) A es peor que B si la mediana de su $R^2$ queda bajo el primer cuartil de B, como en las tablas resumen de la tesis.]
 
-== Overall
-// todo dos diapos, primero para fkdc y luego para fkn
-// tres filas:
-// 1. nombres de datasets (a 45 grados tal vez
-// 2. fkdc mejor/igual/peor que kdc
-// 3. fkdc mejor/igual/peor que best clf@dataset en Rˆ2
-// 
-// segunda diapo: igual para fkn versus kn y best-in-class
-// 
-== Lo bueno
-=== fkdc en espirales
-primera diapo: izq spuerficie de decision, derecha boxplot R^2
-pocos puntos, mucha curva
-segunbda diapo: decision boudnaries para todos los clfs
-  #image("img/espirales_lo-fkdc-decision_boundary.svg")
-=== fkn en helices_0
-Fermat agranda el vecindario sin cruzar
+== En resumen: #fkdc
+
+#align(center, image("img/defensa/resumen-fkdc.svg", width: 100%))
+#leyenda-resumen
+
+#intuicion[Contra su versión euclídea, #fkdc gana en 6 datasets y pierde en 2. Contra el mejor de los demás, gana en 3 y pierde en 7.]
+
+== En resumen: #fkn
+
+#align(center, image("img/defensa/resumen-fkn.svg", width: 100%))
+#leyenda-resumen
+
+#intuicion[Contra su versión euclídea, #fkn gana en 4 datasets y no pierde en ninguno. Contra el mejor de los demás, nunca gana.]
+
+== Lo bueno: #fkdc en `espirales_lo`
+
+#grid(columns: (1fr, 1fr), column-gutter: 1em,
+  align(center, image("img/espirales_lo-fkdc-decision_boundary.svg", height: 55%)),
+  align(center, image("img/espirales_lo-r2-boxplot.svg", height: 55%)),
+)
+
+#align(center)[Pocos puntos, mucha curva: la mediana de $R^2$ pasa de $0.83$ con #kdc a $0.87$ con #fkdc.]
+
+#intuicion[Cuando las clases se enroscan una en la otra y hay pocos datos, medir a lo largo de la espiral ayuda.]
+
+== Lo bueno: todas las fronteras en `espirales_lo`
+
+#grid(columns: 4, column-gutter: 0.4em, row-gutter: 0.3em,
+  ..("kn", "fkn", "kdc", "fkdc", "gnb", "lr", "svc", "gbt").map(c => image("img/espirales_lo-" + c + "-decision_boundary.svg")),
+)
+
+== Lo bueno: #fkn en `helices_0`
+
+#grid(columns: (1fr, 1fr), column-gutter: 1em,
+  align(center + horizon, image("img/r2-fkn-kn-helices_0.svg", height: 48%)),
+  align(center + horizon, image("img/helices_0-fkn_kn-mean_test_score.svg", width: 100%)),
+)
+
+#chico[Izq.: $R^2$ por semilla; #fkn supera a #kn en 19 de las 25. Der.: mejor log-verosimilitud en validación cruzada para cada $k$; la de #fkn casi no cae, la de #kn se desploma.]
+
+#intuicion[Como en los paseos: el vecindario de Fermat sigue la hélice, y agrandarlo no trae vecinos de la otra clase.]
+
+== Lo malo: bien muestreado, $alpha$ y $h$ se confunden
 
 #grid(columns: (55%, 45%), column-gutter: 1em,
-  image("img/r2-fkn-kn-helices_0.svg"),
+  image("img/circulos_lo-8527-fkdc-bandwidth-alpha-loss_contour.svg"),
   align(horizon)[
-    En `helices_0`, con el mismo $k$, #fkn le gana a #kn en la gran mayoría de las semillas.
-
-    // todo: imagen de jeor r^2 como funcion de k en fkn y kn con r^2 de fkn estable y el de kn cayendo
-    #silbato[Es lo que mostraba la animación: el vecindario sigue la hélice.]
-  ],
-)
-
-== lo malo
-
-=== bien muestreado, $alpha$ y $h$ se confunden
-
-#grid(columns: (50%, 50%), column-gutter: 1em,
-  image("img/espirales_lo-1434-fkdc-bandwidth-alpha-loss_contour.svg"),
-  align(horizon)[
-    De cerca, la distancia de Fermat es la euclídea con otra escala.
+    Superficie de pérdida de #fkdc en `circulos_lo`: un «risco» de parametrizaciones equivalentes, $log h prop alpha$.
 
     #v(0.5em)
-    Aparece un «risco» de combinaciones equivalentes, y la regla de parsimonia elige $alpha = 1$.
+    La regla de parsimonia elige $alpha = 1$, y #fkdc se reduce a #kdc.
   ],
 )
 
-== lo feo
-=== Sin escalar, nada anda
-// todo: dos diapos, la primera describiendo el datset de pinguinos y a la derecha el boxplot original; la segunda es esta que esta aca abajo, con el gráfico explicado
+#intuicion[Donde los datos son densos, el camino más barato entre vecinos es el salto directo: Fermat no logra nada que no se logre ajustando el ancho de la campana.]
+
+== Lo feo: `pinguinos`
+
+#grid(columns: (45%, 55%), column-gutter: 1em,
+  align(horizon)[
+    Pingüinos de Palmer: $K = 3$ especies, $D = 4$ atributos.
+    - largo y ancho del pico, largo de la aleta, en mm: de 13 a 230;
+    - masa corporal, en g: de 2700 a 6300.
+
+    #v(0.5em)
+    Casi linealmente separable: #logr llega a $R^2 approx 0.96$; la familia de los núcleos, a $0.40$--$0.50$.
+  ],
+  image("img/pinguinos-r2-boxplot.svg"),
+)
+
+#intuicion[Un problema fácil, en el que los métodos por cercanía fracasan.]
+
+== Lo feo: sin escalar, nada anda
+
 #grid(columns: (55%, 45%), column-gutter: 1em,
   image("img/pinguinos-crudo-vs-std-r2.svg"),
   align(horizon)[
-    En `pinguinos`, un atributo en gramos tapa a los demás, en milímetros.
+    Mediana de $R^2$ por clasificador: punto lleno, atributos crudos; vacío, estandarizados.
 
     #v(0.5em)
-    Fermat es tan sensible a la escala como la euclídea. Estandarizar lo resuelve.
+    La distancia euclídea es, en la práctica, la diferencia de masa, y Fermat la hereda. Estandarizando, #fkdc pasa de $0.42$ a $0.96$.
   ],
 )
 
-=== sensibilidad al ruido en altas dimensiones
+#intuicion[Comparar pingüinos sumando milímetros y gramos es como comparar personas por su altura en kilómetros y su peso en gramos: solo cuenta el peso.]
 
-- nota sobre cómo al calcular dist. euclidea en el grrafo completo se "come'
- el ruido de dimensiones que no difernecian en nada, GNB o GBT pueden ïgnorar"las dimensioens no-informativas, fermat KDC (o KDC a secas) no"
-- primero reducir linealmente con PCA y lueg oprobar fermat funciona (caso MNIST -- boxplot o numero ehadline mencionado acá)
+== Lo feo: ruido en alta dimensión
 
+#grid(columns: (55%, 45%), column-gutter: 1em,
+  align(horizon)[
+    $ norm(x - y)^2 = sum_(k=1)^D (x_k - y_k)^2 $
+    suma _todas_ las coordenadas: con 12 dimensiones de ruido, el ruido domina las aristas del grafo, y Fermat lo hereda.
+
+    #v(0.4em)
+    En `eslabones_12`, #fkdc cae a $R^2 approx 0.24$; #gbt, que mira cada coordenada por separado, queda en $0.93$.
+  ],
+  align(center + horizon, image("img/eslabones_12-r2-boxplot.svg", height: 62%)),
+)
+
+#intuicion[Si casi todas las coordenadas son ruido, toda distancia, euclídea o de Fermat, mide sobre todo ruido. #gnb y #gbt pueden ignorar las coordenadas que no informan; #kdc y #fkdc, no.]
+
+== Lo feo: reducir antes
+
+#grid(columns: (50%, 50%), column-gutter: 1em,
+  align(horizon)[
+    En `mnist`, PCA primero: de $784$ a $96$ dimensiones, con el 90 % de la variación.
+
+    #v(0.5em)
+    Después, #fkdc llega a $R^2 approx 0.74$, a la par de #logr ($0.76$) y #kdc ($0.77$), y por encima de #gbt ($0.67$).
+  ],
+  align(center + horizon, image("img/mnist-r2-boxplot.svg", height: 62%)),
+)
+
+#intuicion[Hay que limpiar antes: quedarse con las direcciones en que los datos más varían, y recién ahí medir.]
 
 = El futuro
 

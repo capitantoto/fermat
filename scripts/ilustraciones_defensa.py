@@ -7,6 +7,10 @@ Ilustraciones de la primera parte de la defensa.
   de `espirales_lo`, desde un mismo punto, saltando a cada observación con probabilidad
   inversamente proporcional a su distancia. Cada salto de Fermat se dibuja por su
   camino mínimo. El euclídeo cambia de brazo seguido; el de Fermat, casi nunca.
+- `resumen-{fkdc,fkn}.svg`: en los 20 datasets de la tesis, si el clasificador es
+  mejor, igual o peor que su versión euclídea y que el mejor de los demás. Como en las
+  tablas resumen de la tesis, A es peor que B si la mediana de A queda por debajo del
+  primer cuartil de B; diferencias de medianas menores a `tolerancia` son empates.
 - `anim/vecindario-espirales-NN.svg`: cuadros de una animación que `docs/defensa.typ`
   recorre uno por clic. Los k vecinos más cercanos de un mismo punto, según la
   distancia euclídea y según la de Fermat muestral, para k creciente. La euclídea
@@ -27,6 +31,7 @@ import matplotlib
 matplotlib.use("svg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
 from scipy.sparse.csgraph import shortest_path  # noqa: E402
 from sklearn.model_selection import GridSearchCV  # noqa: E402
 
@@ -254,11 +259,85 @@ def paseos_espirales(paseos=100, pasos=15, alfa=4):
         guardar(fig, f"paseos-espirales-{nombre}.svg")
 
 
+crudas_tesis = [
+    "lunas_lo", "circulos_lo", "espirales_lo", "lunas_hi", "circulos_hi",
+    "espirales_hi", "eslabones_0", "helices_0", "hueveras_0", "pionono_0",
+    "eslabones_12", "helices_12", "hueveras_12", "pionono_12", "anteojos",
+    "iris", "pinguinos", "vino", "digitos", "mnist",
+]  # fmt: skip
+
+
+# Los rótulos de `docs/defensa.typ`
+rotulos = {
+    "fkdc": "fKDC", "kdc": "KDC", "fkn": "fkNN", "kn": "kNN",
+    "gnb": "GNB", "lr": "LR", "gbt": "GBT", "svc": "SVC",
+}  # fmt: skip
+
+
+def veredicto(a, b, tolerancia=0.005):
+    """Mejor, igual o peor, para los R² de A contra los de B."""
+    if abs(np.median(a) - np.median(b)) < tolerancia:
+        return "igual"
+    if np.median(b) < np.percentile(a, 25):
+        return "mejor"
+    if np.median(a) < np.percentile(b, 25):
+        return "peor"
+    return "igual"
+
+
+def resumen(clf, par):
+    """Fila de veredictos de `clf` contra `par` y contra el mejor de los demás."""
+    corridas = pd.read_csv(dir_raiz / "sandbox/heroica/corridas-v5.csv")
+    marcas = {
+        "mejor": ("^", "#1a9641"),
+        "igual": ("o", "#9a9ea4"),
+        "peor": ("v", "#d7191c"),
+    }
+    fig, ax = plt.subplots(figsize=(13, 3.4))
+    for x, dataset in enumerate(crudas_tesis):
+        r2 = {
+            k: g.r2.dropna().to_numpy()
+            for k, g in corridas[corridas.dataset.eq(dataset)].groupby("clf")
+        }
+        medianas = {k: np.median(v) for k, v in r2.items() if len(v) and k != clf}
+        mejor_otro = max(medianas, key=medianas.get)
+        for fila, rival in [(1, par), (0, mejor_otro)]:
+            marcador, color = marcas[veredicto(r2[clf], r2[rival])]
+            ax.scatter(x, fila, marker=marcador, s=260, color=color, lw=0)
+        ax.text(
+            x,
+            -0.42,
+            rotulos[mejor_otro],
+            ha="center",
+            va="top",
+            fontsize=10,
+            color=tinta,
+            family="monospace",
+        )
+    for corte in [2.5, 5.5, 9.5, 13.5]:
+        ax.axvline(corte, color=regla, lw=1)
+    ax.set_xticks(range(len(crudas_tesis)))
+    ax.set_xticklabels(
+        crudas_tesis, rotation=45, ha="left", family="monospace", fontsize=11
+    )
+    ax.xaxis.tick_top()
+    ax.set_yticks(
+        [1, 0], [f"vs. {rotulos[par]}", "vs. el mejor\nde los demás"], fontsize=12
+    )
+    ax.set_ylim(-0.75, 1.5)
+    ax.set_xlim(-0.6, len(crudas_tesis) - 0.4)
+    ax.tick_params(length=0)
+    for borde in ax.spines.values():
+        borde.set_visible(False)
+    guardar(fig, f"resumen-{clf}.svg")
+
+
 ilustraciones = {
     "vecindario": lambda: vecindario_espirales(),
     "densidades": lambda: densidades_espirales(),
     "cajitas": lambda: cajitas(),
     "paseos": lambda: paseos_espirales(),
+    "resumen": lambda: (resumen("fkdc", "kdc"), resumen("fkn", "kn")),
 }
 
 
