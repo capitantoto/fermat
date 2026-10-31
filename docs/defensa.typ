@@ -408,7 +408,7 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
   muestra("img/digitos-mnist-ejemplos.png"),
 )
 
-#chico[Sintéticos en $D = 2$, con poco y mucho ruido (`_lo`, `_hi`), y en $D = 3$, con y sin 12 dimensiones de ruido (`_0`, `_12`). Reales y chicos: `iris`, `vino`, `pinguinos`, `digitos` y `mnist`.]
+#chico[Sintéticos en $D = 2$, con poco y mucho ruido (`_lo`, `_hi`), más `anteojos`, con tres clases; y en $D = 3$, con y sin 12 dimensiones de ruido (`_0`, `_12`). Reales y chicos: `iris`, `vino`, `pinguinos`, `digitos` y `mnist`.]
 
 == 25 repeticiones
 
