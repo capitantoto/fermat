@@ -67,7 +67,7 @@
 
 #let cajita(d, fraccion, rotulo) = align(center)[
   #image("img/defensa/cajita-d" + str(d) + ".svg", height: 45%)
-  $d = #d$ \
+  $D = #d$ \
   #chico[#fraccion del #rotulo]
 ]
 #grid(columns: (1fr, 1fr, 1fr), column-gutter: 1em,
@@ -76,7 +76,7 @@
   cajita(3, $h^3$, "volumen"),
 )
 
-#align(center)[Con $X tilde.op "Unif"([-1, 1]^d)$, la fracción esperada dentro de $[-h, h]^d$ es $h^d$.]
+#align(center)[Con $X tilde.op "Unif"([-1, 1]^D)$, la fracción esperada dentro de $[-h, h]^D$ es $h^D$.]
 
 #intuicion[Con $h = 1 slash 2$: la mitad del largo, un cuarto del área, un octavo del volumen. Cada dimensión nueva vuelve a partir la cajita.]
 
@@ -85,13 +85,13 @@
 #grid(columns: (60%, 40%), column-gutter: 1em,
   image("img/curse-dim.svg"),
   align(horizon)[
-    $h^d -> 0$ cuando $d -> oo$, aun con $h$ cerca de $1$:
+    $h^D -> 0$ cuando $D -> oo$, aun con $h$ cerca de $1$:
 
     - $0.9^15 approx 0.2$
     - $0.9^130 approx 10^(-6)$
 
     #v(0.5em)
-    Las distancias se _concentran_: en `mnist`, la distancia mediana al vecino más cercano ronda $1300$, y entre dos puntos cualesquiera, $2500$.
+    Las distancias se _concentran_: en `mnist`, ya reducido a 96 dimensiones, la distancia mediana al vecino más cercano ronda $1300$, y entre dos puntos cualesquiera, $2500$.
   ],
 )
 // TODO(autor): «lo mismo le pasa a otras distancias (p. ej., coseno)» no está en la tesis; agregar solo si se puede defender
@@ -105,7 +105,7 @@
   align(horizon)[
     - `digitos`: $8 times 8 = 64$ dimensiones, en el borde de lo legible.
     - `mnist`: $28 times 28 = 784$, ¡para un solo dígito!
-    - Un segundo de audio a $44.1$ kHz: $44 thin 100$.
+    - Un segundo de voz telefónica, a $8$ kHz: $8000$.
     - Una foto de un teléfono, $12$ megapíxeles en color: $36$ millones.
 
     #v(0.5em)
@@ -246,7 +246,7 @@
   align(horizon)[
     $ D_(Q, alpha)(x, y) = inf sum_j norm(q_(j+1) - q_j)^alpha, quad q_j in Q $
 
-    Con $alpha > 1$, $alpha$ se elige por validación cruzada, sin conocer $d$.
+    $alpha >= 1$ se elige por validación cruzada, sin conocer $d$.
     #fuente[Bijral, Ratliff y Srebro (2011); Groisman, Jonckheere y Sapienza (2022)]
   ],
 )
@@ -260,7 +260,7 @@
   align(center)[#image("img/defensa/paseos-espirales-fermat.svg", height: 62%) Fermat, $alpha = 4$],
   align(horizon)[
     100 paseos de 15 saltos desde #text(fill: rgb("#d4a017"))[★], sobre el grafo completo:
-    $ Pr(x_i -> x_j) prop 1 / d(x_i, x_j) $
+    $ Pr(x_i -> x_j) prop 1 / "dist"(x_i, x_j) $
 
     Cambios de brazo por paseo: $6.3$ contra $1.1$.
   ],
@@ -448,7 +448,8 @@ con $cal(l)$ la log-verosimilitud promedio y $hat(G)_0$ el clasificador que asig
 
 #align(center)[Pocos puntos, mucha curva: la mediana de $R^2$ pasa de $0.83$ con #kdc a $0.87$ con #fkdc.]
 
-#intuicion[Cuando las clases se enroscan una en la otra y hay pocos datos, medir a lo largo de la espiral ayuda.]
+// TODO(autor): fkdc elige alpha = 1 en 24 de las 25 semillas de espirales_lo, y la tesis atribuye la ventaja sobre kdc a la grilla de h, no a alpha; helices_0 (alpha > 1 en 13 de 25) sería un ejemplo más defendible
+#intuicion[Pocos puntos y clases que se enroscan una en la otra: el terreno donde esperábamos que Fermat ayudara. Ojo: casi siempre elige $alpha = 1$, así que la ventaja viene del ancho de banda.]
 
 == Lo bueno: todas las fronteras en `espirales_lo`
 
@@ -456,7 +457,7 @@ con $cal(l)$ la log-verosimilitud promedio y $hat(G)_0$ el clasificador que asig
   ..("kn", "fkn", "kdc", "fkdc", "gnb", "lr", "svc", "gbt").map(c => image("img/espirales_lo-" + c + "-decision_boundary.svg")),
 )
 
-#intuicion[Arriba, #kn, #fkn, #kdc y #fkdc siguen la espiral. Abajo, #gnb y #logr no pueden, #svc la separa con una línea dura y #gbt la aproxima con rectángulos.]
+#intuicion[Arriba, #kn, #fkn, #kdc y #fkdc siguen la espiral. Abajo, #gnb y #logr no pueden, #svc la sigue con una frontera dura, sin probabilidades, y #gbt la aproxima con rectángulos.]
 
 == Lo bueno: #fkn en `helices_0`
 
@@ -568,7 +569,7 @@ con $cal(l)$ la log-verosimilitud promedio y $hat(G)_0$ el clasificador que asig
 - *Redes para datos tabulares*: TabPFN-3.5 y v2, TabICL y TabM.
 - *Modelos de lenguaje* que leen cada fila como texto: Laya, GLiNER2.5-Decide y una réplica abierta de Jev. Quedaron al nivel del azar.
 
-#intuicion[Los modelos de lenguaje deciden en una sola pasada: saber de qué círculo viene $(x_1, x_2)$ exige calcular $sqrt(x_1^2 + x_2^2)$, y eso no lo hacen «de un vistazo».]
+#intuicion[Conjeturo que fallan porque deciden en una sola pasada: saber de qué círculo viene $(x_1, x_2)$ exige calcular $sqrt(x_1^2 + x_2^2)$, y eso no se hace «de un vistazo».]
 
 == Datasets nuevos
 
@@ -602,7 +603,7 @@ con $cal(l)$ la log-verosimilitud promedio y $hat(G)_0$ el clasificador que asig
 #grid(columns: (58%, 42%), column-gutter: 1em,
   align(center, image("img/defensa/mapa-tabpfn.svg", height: 68%)),
   align(horizon)[
-    Una red preentrenada con millones de tablas simuladas: queda entre los mejores en 19 de 33 datasets.
+    Una red preentrenada con millones de tablas simuladas: queda entre los mejores en 19 de 33 datasets (en la figura, los 20 de la tesis).
 
     #v(0.5em)
     Los métodos de la tesis aprenden solo de la muestra: unos cientos de puntos.
