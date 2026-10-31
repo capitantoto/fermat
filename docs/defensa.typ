@@ -55,30 +55,54 @@
   institution: [Departamento de Matemática, FCEN, UBA],
 )
 
-= Los personajes
+= Enunciación
+
+
+asddasd
 
 == En alta dimensión, todo queda lejos
+
+tres imágenes:
+1. (d=1) un segmento de largo 1, con el segmento de largo $h$ resaltado y la leyenda 100 * h % del largo
+2. (d=2) un cuadrado de lado 1, con el cuadrado de lado $h$ resaltado y la leyenda 100 * hˆ2 % del área
+3. (d=3) un cubo (trasluciddo?) de lado 1, con el cubo de lado $h$ resaltado dentro y la leyenda 100 * hˆ3 % del área
+
+
+
+== En alta dimensión, todo queda lejos
+
+El volumen de lado $h$ en $d$ dimensiones crece según $h^d$. 
+- d dimensioens
+
 
 #grid(columns: (60%, 40%), column-gutter: 1em,
   image("img/curse-dim.svg"),
   align(horizon)[
-    Una cajita de la mitad de ancho, en 20 dimensiones, guarda menos de una millonésima del volumen.
+    Una cajita de lado $0.9$, , en 15 dimensiones, guarda un quinto (20%) del volumen de una cajita de lado 1.
+    En 130 dimensiones, guarda una _millonésima_ (0.0001%) del volumen de la cajida de lado 1.
 
     #v(0.5em)
     Los vecinos dejan de ser vecinos: la _maldición de la dimensionalidad_.
   ],
 )
 
-#silbato[$X tilde.op "Unif"([-1, 1]^d)$: la fracción esperada dentro de $[-h, h]^d$ es $h^d$.]
+#silbato[
+  $X tilde.op "Unif"([-1, 1]^d)$: la fracción esperada dentro de $[-h, h]^d$ es $h^d$.
+  
+  (todo: revisar) La medida de distnacia se _concentra_ y deja de distinguir confiablemente entre elementos.
+  Lo mismo le pasa a otras distancias (e.g. distancia coseno)
+]
 
 == Y sin embargo, funciona
 
 #grid(columns: (50%, 50%), column-gutter: 1em,
   image("img/digitos-mnist-ejemplos.png"),
   align(horizon)[
-    Clasificamos imágenes, audio, video... y ahora también texto.
 
+    los digitos de arriba están compuestos por $9x9 = 81$ dimensiones, en el borde de lo legible. Los de abajo, en 27 x 27 = 729 dimensiones ¡para un sólo dígito!
     #v(0.5em)
+    [ el ejemplo de un segundo de audio; una imagen de 1 "mega pixel"como una observacion en 4M de dimensiones -- más rango iphone moderno.
+    ]
     *¿Cómo?*
   ],
 )
@@ -86,32 +110,43 @@
 == La hipótesis de la variedad
 
 #grid(columns: (45%, 55%), column-gutter: 1em,
-  image("img/hormiga-petalo.jpg"),
+  image("img/hormiga-petalo.jpg"),  // aca la de la bandera
   align(horizon)[
-    Los datos se registran en $RR^D$, pero viven cerca de una superficie de dimensión mucho menor.
-
+    Los datos se registran en $RR^D$, pero viven cerca de una _variedad_ de dimensión mucho menor. Una bandera ondeando al viento es una variedad de dimensión intrínseca $d=2$ en el espacio físico con $D=3$. Potencialmente, $d << D$.
     #v(0.5em)
-    La hormiga camina en dos dimensiones, aunque el pétalo esté en tres.
   ],
 )
 
-#silbato[Es una afirmación sobre el espacio de probabilidad: $X : (Omega, cal(A), P) -> cal(M) subset RR^D$, con $dim cal(M) = d << D$.]
+#silbato[
+  Una _variedad_ es un espacio potencialmente de lo más rebuscado, pero que localmente se comporta como un espacio euclídeo. 
+  ]
 
+== ¿
 == Y hay teoría
 
-#grid(columns: (40%, 60%), column-gutter: 1em,
-  image("img/von-mises-s1.png"),
-  align(horizon)[
-    Se puede hacer estadística en variedades de Riemann compactas y sin frontera, adaptando los métodos euclídeos.
-  ],
-)
+Cronología rápida,  con una línea temporal arriba, y abajo una frase y la imagen que rescatamos del paper.
+
+- los pesos atomicos en sˆ1
+silbato: qué es Sˆ1
+- los volcanes en sˆ2 de fisher (la img de henry y rodriguez)
+- ëstadistica direccional"de mardia y jupp en Sˆn
+- pelletier 2005 en variedades compactas riemanianas sin frontera
+
+== Una diapo para pelletier
+
+//todo: presentar el KDE de pelletier, al lado del d-dinehjsional en RRˆd; mención al pasar a la densidad de volumen como elemento nuevo.
 
 #silbato[
   $f_(N, K)(p) = 1 / N sum_(i=1)^N 1 / h^d 1 / (theta_(X_i)(p)) K((d_g (p, X_i)) / h)$ #h(1em) #fuente[Pelletier (2005)]
 ]
 
-== Pero hay que conocer la variedad, o aprenderla
+== Variedades desconocidas (diapo de highlight/pregunta)
 
+¿Y si no conocemos la variedad?
+
+¡Hay que aprenderla!
+
+Misma cronologia izq-der arriba, PCA, IsoMap, Fermat
 #grid(columns: 3, column-gutter: 1em, row-gutter: 0.6em,
   align(center, image("img/pca.png", height: 52%)),
   align(center, image("img/isomap-2.png", height: 52%)),
@@ -140,22 +175,24 @@
   #h(1em) #fuente[Groisman, Jonckheere y Sapienza (2022); Bijral et al. (2011)]
 ]
 
-== Fermat en imágenes: densidades
+== Intuición: paseos al azar
 
-// TODO(autor): con espirales_lo bien muestreado, Fermat no reduce el solapamiento (0.19 contra 0.08); ¿mover a «Dónde no» o quitar?
-#align(center, image("img/defensa/densidades-espirales.svg", height: 80%))
-#chico[Densidad de cada clase sobre una muestra nueva de `espirales_lo`, con el ancho de banda elegido por validación cruzada.]
+// TODO: producir 100 paeos al azar con las observaciones transladandose sobre el grafo completo con proabilidad inversamente proporcional a si distancia (izq: euclidea, der: de fermat) sobre las espirales. Mismo punto de origen. Disbuljarlos todos juntos, con alpha bajo: en euclidea debería cruzar muy seguido a los otros brazos, en fermat casi nunca. Sin animación.
+// TODO 2: por separado, una applert en html que haga algo parecido con parametros para jguar
 
-== Fermat en imágenes: vecindarios
-
-#animacion("img/defensa/anim/vecindario-espirales", 12)
 
 #focus-slide[¿Servirá para clasificar?]
 
+== Una slide aburrida: micro y macro fermat
+
+// TODO: aqui presentar las dos versiones, la que efectivamente considera como distancia una integral de camino sobre una curva rectivicable ne la variuedad, y su aproximancion por la distancia de fermat muestral calculada en los datos observados.
+
+#silbato[Hay una idea más general y poderosa detras, pero esta heurística de contar distancias en el grafo con distancias infladas alcanza par aproximarla]
 = El plan
 
 == Del estimador al clasificador
 
+//TODO: Mismo estilo de linea temporal arriba, una diapo por parte abajo
 #grid(columns: 4, column-gutter: 0.8em,
   [*2005* \ #chico[Pelletier: densidad por núcleos en variedades]],
   [*2008* \ #chico[Loubes y Pelletier: clasificador binario]],
@@ -163,10 +200,10 @@
   [*Esta tesis* \ #chico[multiclase, sobre una variedad *desconocida*]],
 )
 
-#v(1em)
-#align(center, image("img/henry-rodriguez-bolas.png", height: 45%))
+== Una diapo para el clasificador ciompleto fKDC
 
-== La propuesta: #fkdc y #fkn
+//TODO: en formato de formula, el clasxificador implementadoi como FermatKDClassifier. Zócalo un poco más pequeño par FermatKneigh
+
 
 - La distancia de Fermat _muestral_ reemplaza a la de la variedad, que no conocemos.
 - #fkdc: clasificador de densidad por núcleos con esa distancia. #fkn: $k$ vecinos más cercanos con la misma.
@@ -178,23 +215,35 @@
 
 == El código
 
-#grid(columns: (50%, 50%), column-gutter: 1em,
-  [
-    - Estimadores compatibles con `scikit-learn`: `KDClassifier`, `FermatKNeighborsClassifier`.
-    - Cada experimento es una _tarea_: dataset, clasificador, semilla, grilla.
-    - Todo reproducible desde un `Makefile`.
-  ],
-  pendiente(alto: 70%)[publicar como biblioteca en PyPI, después de pulirla],
-)
+¿Qué se implementó?
+- `SampleFermatDistance(X, alpha)`computa distancias entre dos (conjuntos de) puntos "a través" del grafo completo de X mínimamente eficiente, con distancia para puntos out-of-sample
+  - FermatKNeighbors reutilizando scikit_learn::KNeighbors con distnace="precomnputed"
+- KernelDensityClassifier con distancia configurable
+  - FermatKDC como KernelDensityClassifier(dist="fermat")
+// todo: signatures correctas
+- Un marco de evaluación utilizando sickit-learn::Pipelines para comparar sistematicamente nuestros clasificadores, en repetidas Tareas sobre Datasets prerregistrados.
 
-== El banco de pruebas
+== libreria?
 
-#grid(columns: 4, column-gutter: 0.5em,
-  image("img/lunas_lo-scatter.svg"),
-  image("img/espirales_lo-scatter.svg"),
-  image("img/helices_0-scatter.svg"),
-  image("img/hueveras_0-scatter.svg"),
-)
+//todo: si llegamos con la l;ibreria, aca el link a pypi
+
+== 8 estimadores
+//todo: lsitarlos rapidito
+== 20 datasets
+// todo: algunos ejemplos visuales, 2 x 4 = 8 slots, algunos 2d, alguno 3d, los digitos de mnist no como scatter sino mosaico de imagenes chiquitas.
+== 25 repeticiones
+// todo: una mencion a la aleatporiedad, buscamos resultados repetibles asi que repetimos c/ tarea 25 veces y comapramos comportamiento _mediano_.
+#silbato[*(mediano)]
+
+// Estas diapos rememplaan "el banco de pruebas"
+// == El banco de pruebas
+
+// #grid(columns: 4, column-gutter: 0.5em,
+//   image("img/lunas_lo-scatter.svg"),
+//   image("img/espirales_lo-scatter.svg"),
+//   image("img/helices_0-scatter.svg"),
+//   image("img/hueveras_0-scatter.svg"),
+// )
 
 #align(center)[
   #grid(columns: 3, column-gutter: 3em,
@@ -206,48 +255,40 @@
 
 = Resultados
 
-== Sin escalar, nada anda
+// todo: estilo lo bueno, lo malo y lo feo
+// no quiero mencionar nada o casi nada de lo post-tesis hasta la seccion "el futuro"
 
-#grid(columns: (55%, 45%), column-gutter: 1em,
-  image("img/pinguinos-crudo-vs-std-r2.svg"),
-  align(horizon)[
-    En `pinguinos`, un atributo en gramos tapa a los demás, en milímetros.
-
-    #v(0.5em)
-    Fermat es tan sensible a la escala como la euclídea. Estandarizar lo resuelve.
-  ],
-)
-
-== Fermat agranda el vecindario sin cruzar
+== Overall
+// todo dos diapos, primero para fkdc y luego para fkn
+// tres filas:
+// 1. nombres de datasets (a 45 grados tal vez
+// 2. fkdc mejor/igual/peor que kdc
+// 3. fkdc mejor/igual/peor que best clf@dataset en Rˆ2
+// 
+// segunda diapo: igual para fkn versus kn y best-in-class
+// 
+== Lo bueno
+=== fkdc en espirales
+primera diapo: izq spuerficie de decision, derecha boxplot R^2
+pocos puntos, mucha curva
+segunbda diapo: decision boudnaries para todos los clfs
+  #image("img/espirales_lo-fkdc-decision_boundary.svg")
+=== fkn en helices_0
+Fermat agranda el vecindario sin cruzar
 
 #grid(columns: (55%, 45%), column-gutter: 1em,
   image("img/r2-fkn-kn-helices_0.svg"),
   align(horizon)[
     En `helices_0`, con el mismo $k$, #fkn le gana a #kn en la gran mayoría de las semillas.
 
-    #v(0.5em)
-    Es lo que mostraba la animación: el vecindario sigue la hélice.
+    // todo: imagen de jeor r^2 como funcion de k en fkn y kn con r^2 de fkn estable y el de kn cayendo
+    #silbato[Es lo que mostraba la animación: el vecindario sigue la hélice.]
   ],
 )
 
-== Dónde gana: pocos puntos, mucha curva
+== lo malo
 
-#grid(columns: (45%, 55%), column-gutter: 1em,
-  image("img/espirales_lo-fkdc-decision_boundary.svg"),
-  align(horizon)[
-    Con 100 semillas, la ventaja se sostiene:
-
-    #chico[
-    - #fkdc sobre #kdc: `lunas_lo` (73 a 0) y `espirales_lo` (53 a 11).
-    - #fkn sobre #kn: `helices_0` (83 a 8) y `hueveras_0` (61 a 15).
-    ]
-
-    #v(0.4em)
-    Ganancias marginales, pero reales.
-  ],
-)
-
-== Dónde no: bien muestreado, $alpha$ y $h$ se confunden
+=== bien muestreado, $alpha$ y $h$ se confunden
 
 #grid(columns: (50%, 50%), column-gutter: 1em,
   image("img/espirales_lo-1434-fkdc-bandwidth-alpha-loss_contour.svg"),
@@ -259,10 +300,36 @@
   ],
 )
 
+== lo feo
+=== Sin escalar, nada anda
+// todo: dos diapos, la primera describiendo el datset de pinguinos y a la derecha el boxplot original; la segunda es esta que esta aca abajo, con el gráfico explicado
+#grid(columns: (55%, 45%), column-gutter: 1em,
+  image("img/pinguinos-crudo-vs-std-r2.svg"),
+  align(horizon)[
+    En `pinguinos`, un atributo en gramos tapa a los demás, en milímetros.
+
+    #v(0.5em)
+    Fermat es tan sensible a la escala como la euclídea. Estandarizar lo resuelve.
+  ],
+)
+
+=== sensibilidad al ruido en altas dimensiones
+
+- nota sobre cómo al calcular dist. euclidea en el grrafo completo se "come'
+ el ruido de dimensiones que no difernecian en nada, GNB o GBT pueden ïgnorar"las dimensioens no-informativas, fermat KDC (o KDC a secas) no"
+- primero reducir linealmente con PCA y lueg oprobar fermat funciona (caso MNIST -- boxplot o numero ehadline mencionado acá)
+
+
+)
+
+
 = El futuro
 
 == Después de la entrega
 
+// todo: Armar esto como un äntes y despues, 25 v 100, 8 vs 22, 25 vs 33, total tareas vs total tareas
+// mencionar en una diapo sgte algunos de los clfs neuvos relevantes, y en otra algunos de los datasets nuevos mas interesantes
+// mencion a la inclkusion de clf LLMs y NNs para datos tabulares
 #grid(columns: 4, column-gutter: 1em,
   cifra("100", "semillas, prerregistradas"),
   cifra("72 600", "tareas, 0 fallas"),
@@ -288,7 +355,10 @@
 )
 
 == TabPFN: el estado del arte
-
+// todo: pregunta: el "siuperlearner clasico"que es? incluye tambien a fkdcv? sobre quienes esta componiendose? otros de esta misma tabla?
+// todo: mismo grafico pero con r^2 en symlog scale apra que se distinga el peloton de frente cerca de uno y los rˆ2 de cero no rompan tampoco.
+// dejar nota para el autor sobre como en digitos, mnist fkdc es superior tambien a kdc con un ancho por variable
+// 
 #grid(columns: (58%, 42%), column-gutter: 1em,
   image("img/defensa/mapa-tabpfn.svg"),
   align(horizon)[
@@ -300,7 +370,7 @@
 )
 
 // Sin fuga ni contaminación: ver «¿El resultado de TabPFN es legítimo?» en preguntas-defensa.typ
-
+// TODO: estas dos diapos que sigue, ver si se les puede dar un minimo significado intuitivo sin agobiar a la audiencia, es solo apra decir "algo con ia". Si no, menci´øn al aprendizaje de\ variedades como aprendizaje de representaciones de Bengio y de ahí a transformers (encoder decoder) como componente fundamental de LLMs 
 == El #kdc es una cabeza de atención
 
 #align(center + horizon)[
@@ -325,6 +395,7 @@
 
 #focus-slide[¡Gracias!]
 
+// todo: nada de respaldo
 = Respaldo
 
 == Lo que da conocer la variedad
