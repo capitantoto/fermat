@@ -456,6 +456,8 @@ con $cal(l)$ la log-verosimilitud promedio y $hat(G)_0$ el clasificador que asig
   ..("kn", "fkn", "kdc", "fkdc", "gnb", "lr", "svc", "gbt").map(c => image("img/espirales_lo-" + c + "-decision_boundary.svg")),
 )
 
+#intuicion[Arriba, #kn, #fkn, #kdc y #fkdc siguen la espiral. Abajo, #gnb y #logr no pueden, #svc la separa con una línea dura y #gbt la aproxima con rectángulos.]
+
 == Lo bueno: #fkn en `helices_0`
 
 #grid(columns: (1fr, 1fr), column-gutter: 1em,
