@@ -589,11 +589,11 @@ con $cal(l)$ la log-verosimilitud promedio y $hat(G)_0$ el clasificador que asig
 #grid(columns: (58%, 42%), column-gutter: 1em,
   align(center, image("img/defensa/fkdc-kdc-crudo-templado.svg", height: 68%)),
   align(horizon)[
-    Con el $R^2$ _templado_, que recalibra a cada clasificador por temperatura, la ventaja de #fkdc sobre #kdc sobrevive en `lunas_lo` y `espirales_lo`, no en el resto.
+    Con el $R^2$ _templado_, que recalibra a cada clasificador por temperatura, de las ventajas de #fkdc sobre #kdc que reporta la tesis sobreviven las de `lunas_lo` y `espirales_lo`; las de `anteojos` y `helices_0`, no.
   ],
 )
 
-#intuicion[#kdc acierta, pero duda; $alpha$ lo vuelve más seguro. Parte de la ventaja era esa: confianza, no puntería.]
+#intuicion[#kdc acierta, pero duda; #fkdc se juega más. Parte de la ventaja era esa: confianza, no puntería.]
 
 == TabPFN: el estado del arte
 
