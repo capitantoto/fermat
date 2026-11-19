@@ -3,8 +3,9 @@
 # Requiere uv, typst (con Comic Sans MS instalada), ImageMagick y curl.
 # Uso: docs/invitacion/hacer.sh
 set -e
-cd "${0:A:h}"
-repo_dir=${0:A:h:h:h}
+script_dir=${0:A:h}
+repo_dir=${script_dir:h:h}
+cd "$script_dir"
 mkdir -p salida
 
 # Plantilla del meme (600 × 429), ampliada 3× para que el texto no se pixele
