@@ -1,7 +1,7 @@
 [project]
 name = "fkdc"
 version = "0.1.1"
-description = "Distancia de Fermat en Clasificadores de Densidad Nuclear"
+description = "Distancia de Fermat en Clasificadores de Densidad por Núcleos"
 authors = [{name = "Gonzalo Barrera Borla", email = "gonzalobb@gmail.com"}]
 license = "MIT"
 license-files = ["LICENSE"]
