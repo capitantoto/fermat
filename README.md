@@ -8,7 +8,7 @@ Tesis en progreso para la Maestría en Estadística Matemática, IC, FCEN-UBA 20
 
 ## Biblioteca
 
-El núcleo de la tesis, `fkdc.fermat`, se publica como biblioteca compatible con scikit-learn: la distancia de Fermat muestral (`SampleFermatDistance`), el estimador de densidad por núcleos con esa distancia (`FermatKDE`), su par euclídeo exacto (`EuclideanKDE`) y los clasificadores `KDClassifier` y `FermatKNeighborsClassifier`.
+El núcleo de la tesis, `fkdc.fermat`, se publica como biblioteca compatible con scikit-learn: la distancia de Fermat muestral (`SampleFermatDistance`), el estimador de densidad por núcleos con esa distancia (`FermatKDE`), su par euclídeo exacto (`EuclideanKDE`) y los clasificadores `KDClassifier` y `FermatKNeighborsClassifier`. La teoría y los experimentos están en [la tesis](https://github.com/capitantoto/fermat/blob/main/docs/tesis.pdf).
 
 ```bash
 pip install fkdc
