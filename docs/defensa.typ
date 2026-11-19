@@ -445,6 +445,20 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
 
 #intuicion[Hay que limpiar antes: quedarse con las direcciones en que los datos más varían, y recién ahí medir.]
 
+== En síntesis
+
+#text(size: 20pt)[
+- *Funciona* cuando la curvatura de la variedad es comparable a la separación entre observaciones (`helices_0`, `hueveras_0`), y sobre todo en #fkn: permite agrandar el vecindario sin cruzar a otra variedad.
+#pause
+- *No aporta* donde los datos son densos: $alpha$ y $h$ se confunden, y #fkdc se reduce a #kdc. Sus ventajas en `lunas_lo` y `espirales_lo` vienen de la regla de parsimonia.
+#pause
+- *Hereda* los problemas de la distancia euclídea: exige atributos en escala común y pocas dimensiones de ruido puro.
+#pause
+- *Ningún clasificador domina*: la familia de los núcleos tiene al mejor $R^2$ en 14 de 20 datasets, pero la mejor exactitud en 9.
+]
+
+#intuicion[La distancia de Fermat no es una varita mágica: es una buena regla para medir cuando los datos siguen formas curvas y bien muestreadas, y una regla más cuando no.]
+
 = El futuro
 
 == Después de la entrega
