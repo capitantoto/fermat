@@ -1,9 +1,9 @@
-# `fkdc`: Distancia de Fermat en Clasificadores de Densidad Nuclear
+# `fkdc`: Distancia de Fermat en Clasificadores de Densidad por Núcleos
 Lic. Gonzalo Barrera Borla
 
 Dir.: Dr. Pablo Groisman
 
-Tesis en progreso para la Maestría en Estadística Matemática, IC, FCEN-UBA 2022, ningún derecho reservado
+Tesis de Maestría en Estadística Matemática, FCEN-UBA, 2026. El código se distribuye bajo licencia MIT.
 
 
 ## Biblioteca
