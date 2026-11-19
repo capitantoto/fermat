@@ -1,6 +1,6 @@
 {
     "dataset": "eslabones_0",
-    "summary": "clf,accuracy,r2\nfkn,1.0,0.9954\nkn,1.0,0.9954\nkdc,0.9975,0.9924\nfkdc,1.0,0.9916\ngbt,0.99,0.9358\ngnb,0.8925,0.7477\nlr,0.6675,0.216\nsvc,1.0,\n",
+    "summary": "clf,accuracy,r2\nfkn,1.0,0.9943\nkn,1.0,0.9941\nfkdc,1.0,0.9919\nkdc,1.0,0.9875\ngbt,0.99,0.925\ngnb,0.895,0.7563\nlr,0.6675,0.224\nsvc,1.0,\n",
     "best": "fkn",
     "bad": [
         "gbt",

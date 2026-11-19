@@ -1,6 +1,6 @@
 {
     "dataset": "espirales_hi",
-    "summary": "clf,accuracy,r2\nkdc,0.8325,0.4446\nfkdc,0.8325,0.4339\nfkn,0.825,0.4214\nkn,0.82,0.4102\ngbt,0.715,0.1572\ngnb,0.525,0.0024\nlr,0.4975,0.0001\nsvc,0.8575,\n",
+    "summary": "clf,accuracy,r2\nkdc,0.8338,0.4398\nfkdc,0.8325,0.4356\nfkn,0.83,0.4193\nkn,0.8225,0.4044\ngbt,0.71,0.1416\ngnb,0.53,0.0023\nlr,0.4975,0.0001\nsvc,0.8575,\n",
     "best": "kdc",
     "bad": [
         "gbt",

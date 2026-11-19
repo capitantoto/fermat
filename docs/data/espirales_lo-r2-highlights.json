@@ -1,6 +1,6 @@
 {
     "dataset": "espirales_lo",
-    "summary": "clf,accuracy,r2\nfkdc,0.9775,0.874\nkdc,0.975,0.8303\nfkn,0.97,0.7787\nkn,0.9625,0.7501\ngbt,0.7875,0.2997\ngnb,0.5225,0.0024\nlr,0.4975,0.0001\nsvc,0.975,\n",
+    "summary": "clf,accuracy,r2\nfkdc,0.9775,0.8748\nkdc,0.975,0.8258\nfkn,0.97,0.7894\nkn,0.9625,0.7543\ngbt,0.7938,0.2739\ngnb,0.5275,0.0023\nlr,0.4975,0.0001\nsvc,0.975,\n",
     "best": "fkdc",
     "bad": [
         "kdc",
@@ -11,7 +11,6 @@
         "lr"
     ],
     "excluded": [
-        "gbt",
         "gnb",
         "lr"
     ]

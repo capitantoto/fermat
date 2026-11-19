@@ -1,6 +1,6 @@
 {
     "dataset": "circulos_hi",
-    "summary": "clf,accuracy,r2\ngbt,0.655,0.0894\nfkdc,0.63,0.0711\nkdc,0.6175,0.0521\nkn,0.6125,0.0515\nfkn,0.6125,0.0515\ngnb,0.61,0.0344\nlr,0.4875,-0.0\nsvc,0.655,\n",
+    "summary": "clf,accuracy,r2\ngbt,0.6587,0.0885\nfkdc,0.6325,0.0691\nkdc,0.625,0.0597\nkn,0.6162,0.0489\nfkn,0.6138,0.0483\ngnb,0.6088,0.0345\nlr,0.49,-0.0\nsvc,0.655,\n",
     "best": "gbt",
     "bad": [
         "fkdc",
@@ -11,7 +11,6 @@
         "lr"
     ],
     "excluded": [
-        "gnb",
         "lr"
     ]
 }

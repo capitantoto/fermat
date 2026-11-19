@@ -1,7 +1,7 @@
 {
     "dataset": "circulos_lo",
-    "summary": "clf,accuracy,r2\nfkdc,0.865,0.4863\nkdc,0.8675,0.4799\nfkn,0.86,0.4675\nkn,0.8625,0.4675\ngbt,0.84,0.4333\ngnb,0.7025,0.0522\nlr,0.4875,-0.0\nsvc,0.8875,\n",
-    "best": "fkdc",
+    "summary": "clf,accuracy,r2\nkdc,0.8675,0.4828\nfkdc,0.865,0.4812\nkn,0.8625,0.4678\nfkn,0.8625,0.4655\ngbt,0.8425,0.4369\ngnb,0.7012,0.0522\nlr,0.49,-0.0\nsvc,0.8838,\n",
+    "best": "kdc",
     "bad": [
         "gbt",
         "gnb",

@@ -1,19 +1,18 @@
 {
     "dataset": "vino",
-    "summary": "clf,accuracy,r2\ngbt,0.9663,0.903\ngnb,0.9551,0.8846\nlr,0.9101,0.6885\nfkn,0.7079,0.4568\nkn,0.7079,0.4568\nfkdc,0.6854,0.4286\nkdc,0.6517,0.4001\nsvc,0.8989,\n",
+    "summary": "clf,accuracy,r2\ngbt,0.9663,0.9013\ngnb,0.9551,0.8912\nlr,0.9213,0.7638\nkn,0.7079,0.4613\nfkn,0.7135,0.4613\nfkdc,0.6854,0.4314\nkdc,0.6742,0.4068\nsvc,0.8876,\n",
     "best": "gbt",
     "bad": [
-        "gnb",
         "lr",
-        "fkn",
         "kn",
+        "fkn",
         "fkdc",
         "kdc"
     ],
     "excluded": [
         "lr",
-        "fkn",
         "kn",
+        "fkn",
         "fkdc",
         "kdc"
     ]

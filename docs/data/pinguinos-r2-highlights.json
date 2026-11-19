@@ -1,6 +1,6 @@
 {
     "dataset": "pinguinos",
-    "summary": "clf,accuracy,r2\nlr,0.9825,0.9634\ngbt,0.9766,0.9164\ngnb,0.9532,0.8583\nfkn,0.7602,0.4977\nkn,0.7602,0.4971\nfkdc,0.731,0.4227\nkdc,0.731,0.4025\nsvc,0.9591,\n",
+    "summary": "clf,accuracy,r2\nlr,0.9825,0.9615\ngbt,0.9708,0.9146\ngnb,0.9474,0.8442\nfkn,0.7661,0.4957\nkn,0.7661,0.4945\nfkdc,0.7251,0.4238\nkdc,0.731,0.4082\nsvc,0.9591,\n",
     "best": "lr",
     "bad": [
         "gbt",

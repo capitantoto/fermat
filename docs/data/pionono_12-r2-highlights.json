@@ -1,6 +1,6 @@
 {
     "dataset": "pionono_12",
-    "summary": "clf,accuracy,r2\ngbt,0.9175,0.7925\ngnb,0.7,0.5419\nlr,0.635,0.4264\nfkn,0.4675,0.1111\nkn,0.47,0.1076\nfkdc,0.4425,0.1061\nkdc,0.49,0.0983\nsvc,0.615,\n",
+    "summary": "clf,accuracy,r2\ngbt,0.9162,0.7904\ngnb,0.7062,0.544\nlr,0.6312,0.4213\nfkn,0.4775,0.1127\nkn,0.4825,0.1085\nfkdc,0.4488,0.1059\nkdc,0.495,0.1009\nsvc,0.6275,\n",
     "best": "gbt",
     "bad": [
         "gnb",

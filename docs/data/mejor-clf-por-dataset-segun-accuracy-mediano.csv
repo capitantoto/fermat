@@ -1,8 +1,8 @@
 clf,cant,datasets
-svc,7,"circulos_hi, circulos_lo, eslabones_0, espirales_hi, hueveras_0, mnist, pionono_0"
 gbt,6,"circulos_hi, eslabones_12, helices_12, hueveras_12, pionono_12, vino"
-fkn,5,"eslabones_0, helices_12, iris, lunas_hi, lunas_lo"
-kn,5,"eslabones_0, helices_12, iris, lunas_hi, lunas_lo"
-fkdc,3,"eslabones_0, espirales_lo, iris"
-kdc,3,"anteojos, digitos, helices_0"
+svc,6,"circulos_lo, eslabones_0, espirales_hi, hueveras_0, mnist, pionono_0"
+fkdc,4,"digitos, eslabones_0, espirales_lo, iris"
+kdc,4,"anteojos, digitos, eslabones_0, helices_0"
+kn,4,"eslabones_0, iris, lunas_hi, lunas_lo"
+fkn,3,"eslabones_0, iris, lunas_lo"
 lr,2,"iris, pinguinos"

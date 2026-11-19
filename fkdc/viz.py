@@ -15,7 +15,7 @@ from matplotlib.axes import Axes
 from matplotlib.colors import Colormap
 from matplotlib.figure import Figure
 from matplotlib.patches import PathPatch
-from sklearn.base import BaseEstimator
+from sklearn.base import BaseEstimator, clone
 from sklearn.datasets import make_circles
 from sklearn.decomposition import PCA
 from sklearn.exceptions import InconsistentVersionWarning
@@ -35,8 +35,14 @@ from fkdc.tarea import Tarea
 warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
 
 logger = logging.getLogger(__name__)
-dir_ejecucion = config.dir_ejecucion
-dir_datasets = dir_ejecucion / "../datasets"
+# Resultados de la tesis: la réplica de 100 semillas (campaña `heroica` de
+# `fkdc.campanias`), restringida a los ocho clasificadores y las 24 variantes de la
+# tesis. Su KDC es el exacto (`kdc_exacto`, que aquí se llama `kdc`); el `kdc` de
+# `sklearn.neighbors.KernelDensity` de esa campaña queda fuera de las figuras.
+dir_campania = dir_raiz / "sandbox/heroica"
+dir_ejecucion = dir_campania / "infos"
+dir_datasets = dir_campania / "datasets"
+alias_clfs = {"kdc_exacto": "kdc"}  # nombre en los archivos → nombre en la tesis
 dir_imagenes = dir_raiz / "docs" / "img"
 dir_datos = dir_raiz / "docs" / "data"
 
@@ -74,12 +80,77 @@ def guardar_fig(fig: Figure, ruta: str | Path, **kw_guardar):
     plt.close(fig)
 
 
-def rutas_infos(directorio: Path) -> list[Path]:
-    """Infos de los clasificadores de la tesis (`clfs`) en `directorio`.
+def _nombre_clf(clf_archivo: str) -> str:
+    """Nombre en la tesis del clasificador de un archivo de info."""
+    return alias_clfs.get(clf_archivo, clf_archivo)
 
-    Infos de otros clasificadores en el mismo directorio no entran en las figuras.
+
+def _clf_archivo(clf: str) -> str:
+    """Nombre en los archivos de info del clasificador `clf` de la tesis."""
+    return {v: k for k, v in alias_clfs.items()}.get(clf, clf)
+
+
+def rutas_infos(directorio: Path) -> list[Path]:
+    """Infos de los clasificadores (`clfs`) y datasets (`datasets`) de la tesis.
+
+    Infos de otros clasificadores o datasets en el mismo directorio no entran en las
+    figuras; un clasificador con alias (p. ej. `kdc_exacto`) reemplaza al homónimo.
     """
-    return [p for p in directorio.glob("*.pkl") if p.stem.split("-")[2] in clfs]
+    rutas = []
+    for p in directorio.glob("*.pkl"):
+        dataset, _, clf, *_ = p.stem.split("-")
+        if dataset not in datasets or clf not in clfs + list(alias_clfs):
+            continue
+        if clf in alias_clfs.values() and _clf_archivo(clf) != clf:
+            continue  # reemplazado por su alias
+        rutas.append(p)
+    return rutas
+
+
+def _leer_info(ruta: Path) -> tuple[tuple, dict]:
+    """(clave, info) de un archivo de info, con el clasificador ya renombrado."""
+    dataset, semilla_ds, clf, *resto = ruta.stem.split("-")
+    with open(ruta, "rb") as fp:
+        info = pickle.load(fp)
+    nombre = _nombre_clf(clf)
+    if nombre != clf:
+        info[nombre] = info.pop(clf)
+    return (dataset, semilla_ds, nombre, *resto), info
+
+
+def ruta_info(clave: tuple) -> Path:
+    """Ruta del archivo de info de una clave (dataset, semilla_ds, clf, ...)."""
+    dataset, semilla_ds, clf, *resto = map(str, clave)
+    partes = [dataset, semilla_ds, _clf_archivo(clf), *resto]
+    return dir_ejecucion / f"{'-'.join(partes)}.pkl"
+
+
+def parametros_elegidos(info: dict, clf: str) -> dict:
+    """Hiperparámetros elegidos en la búsqueda, sin el prefijo de un `Pipeline`."""
+    return {
+        nombre.split("__")[-1]: valor
+        for nombre, valor in info[clf]["busqueda"].best_params_.items()
+    }
+
+
+def estimador_elegido(info: dict, clf: str, tarea: Tarea) -> BaseEstimator:
+    """El estimador elegido por la búsqueda, ajustado al pliego de entrenamiento.
+
+    Las infos de la réplica no guardan `best_estimator_`: se lo reajusta con los
+    hiperparámetros elegidos, como hace `GridSearchCV` al final de la búsqueda.
+    """
+    busqueda = info[clf]["busqueda"]
+    if hasattr(busqueda, "best_estimator_"):
+        return busqueda.best_estimator_
+    if clf == "kdc":
+        from fkdc.fermat import KDClassifier
+
+        base = KDClassifier(metric="euclidea_exacta")
+    else:
+        base = config.clasificadores[clf]
+    return (
+        clone(base).set_params(**busqueda.best_params_).fit(tarea.X_entr, tarea.y_entr)
+    )
 
 
 def cargar_infos(dir_o_rutas: list[Path] | Path):
@@ -94,7 +165,7 @@ def cargar_infos(dir_o_rutas: list[Path] | Path):
             "`dir_o_rutas` debe ser un directorio con pickles de info "
             "o una lista de rutas a pickles de info"
         )
-    return {tuple(fn.stem.split("-")): pickle.load(open(fn, "rb")) for fn in rutas}
+    return dict(_leer_info(fn) for fn in rutas)
 
 
 def procesar_info_basica(
@@ -134,7 +205,7 @@ def _resolver_info_basica(info: pd.DataFrame | None):
         global infos, info_basica
         if infos is None:
             logger.warning("Infos no parseados aún; parseando...")
-            infos = cargar_infos(config.dir_ejecucion)
+            infos = cargar_infos(dir_ejecucion)
         if info_basica is None:
             logger.warning("info_basica no extraída aún, extrayendo...")
             info_basica = procesar_info_basica(infos, config.semilla_principal)
@@ -313,11 +384,8 @@ def frontera_decision(
     y = tarea.y_eval
     k = ds.k
     X0, X1 = X[:, 0], X[:, 1]
-    with open(
-        config.dir_ejecucion / f"{'-'.join(map(str, clave_grafico))}.pkl", "rb"
-    ) as fpath:
-        info: dict = pickle.load(fpath)
-        mejor_est: BaseEstimator = info[clf]["busqueda"].best_estimator_
+    _, info = _leer_info(ruta_info(clave_grafico))
+    mejor_est = estimador_elegido(info, clf, tarea)
     DecisionBoundaryDisplay.from_estimator(
         mejor_est,
         X,
@@ -366,9 +434,7 @@ def contorno_perdida(
         clave_grafico = (dataset, str(None), clf, str(semilla), puntuacion)
     else:
         raise ValueError(f"Dataset desconocido: {dataset}, {semilla}")
-    ruta = config.dir_ejecucion / f"{'-'.join(map(str, clave_grafico))}.pkl"
-    with open(ruta, "rb") as fp:
-        info: dict = pickle.load(fp)
+    _, info = _leer_info(ruta_info(clave_grafico))
     resultados_cv = pd.DataFrame(info[clf]["busqueda"].cv_results_)
 
     datos = resultados_cv.copy()
@@ -402,7 +468,7 @@ def parametros_comparados(
     bi: pd.DataFrame | None = None,
 ):
     """Construye y guarda CSV de parámetros comparados para un dataset."""
-    infos = infos or globals().get("infos") or cargar_infos(config.dir_ejecucion)
+    infos = infos or globals().get("infos") or cargar_infos(dir_ejecucion)
     bi = _resolver_info_basica(bi)
     param_base = "bandwidth" if clf_base == "kdc" else "n_neighbors"
 
@@ -418,7 +484,7 @@ def parametros_comparados(
     )
 
     mejores_estimadores = {
-        k: v[k[2]]["busqueda"].best_estimator_
+        k: parametros_elegidos(v, k[2])
         for k, v in infos.items()
         if k[0] == dataset and k[2].endswith(clf_base)
     }
@@ -426,8 +492,8 @@ def parametros_comparados(
         {
             "clf": k[2],
             "semilla": int(k[1 if dataset in datasets_sinteticos else 3]),
-            "alpha": v.get_params().get("alpha", 1),
-            param_base: v.get_params()[param_base],
+            "alpha": v.get("alpha", 1),
+            param_base: v[param_base],
         }
         for k, v in mejores_estimadores.items()
     ]
@@ -524,7 +590,7 @@ def dumbbell_r2(
 
 def graficar_fkn_kn_score_vs_n_vecinos(dataset, semilla, ax, infos=None):
     """Grafica mean_test_score vs n_neighbors para fkn y kn."""
-    infos = infos or globals().get("infos") or cargar_infos(config.dir_ejecucion)
+    infos = infos or globals().get("infos") or cargar_infos(dir_ejecucion)
     puntuacion = "neg_log_loss"
     info_fkn = infos[
         (dataset, str(semilla), "fkn", str(config.semilla_principal), puntuacion)
@@ -759,7 +825,7 @@ if __name__ == "__main__":
             if ds_ != dataset or clf not in ("fkdc", "kdc", "fkn", "kn"):
                 continue
             busqueda = info[clf]["busqueda"]
-            params = busqueda.best_estimator_.get_params()
+            params = parametros_elegidos(info, clf)
             cv_res = pd.DataFrame(busqueda.cv_results_)
             mejor_cv = cv_res.loc[cv_res.mean_test_score.idxmax()]
             filas.append(
@@ -1013,7 +1079,7 @@ if __name__ == "__main__":
     dataset = "lunas_lo"
     clf_base_lu, param_base_lu = "kdc", "bandwidth"
     mejores_estimadores_lu = {
-        k: v[k[2]]["busqueda"].best_estimator_
+        k: parametros_elegidos(v, k[2])
         for k, v in infos.items()
         if k[0] == dataset and k[2].endswith(clf_base_lu)
     }
@@ -1022,8 +1088,8 @@ if __name__ == "__main__":
             {
                 "clf": k[2],
                 "semilla": int(k[1 if dataset in datasets_sinteticos else 3]),
-                "alpha": v.get_params().get("alpha", 1),
-                param_base_lu: v.get_params()[param_base_lu],
+                "alpha": v.get("alpha", 1),
+                param_base_lu: v[param_base_lu],
             }
             for k, v in mejores_estimadores_lu.items()
         ]
@@ -1145,7 +1211,7 @@ if __name__ == "__main__":
     dataset_esl = "eslabones_0"
     semilla_esl = 2411
     mejores_estimadores_esl = {
-        k: v[k[2]]["busqueda"].best_estimator_
+        k: parametros_elegidos(v, k[2])
         for k, v in infos.items()
         if k[0] == dataset_esl and k[2].endswith("kdc")
     }
@@ -1154,8 +1220,8 @@ if __name__ == "__main__":
             {
                 "clf": k[2],
                 "semilla": int(k[1 if dataset_esl in datasets_sinteticos else 3]),
-                "alpha": v.get_params().get("alpha", 1),
-                "bandwidth": v.get_params()["bandwidth"],
+                "alpha": v.get("alpha", 1),
+                "bandwidth": v["bandwidth"],
             }
             for k, v in mejores_estimadores_esl.items()
         ]
@@ -1173,7 +1239,11 @@ if __name__ == "__main__":
     # =====================================================================
     # CSVs de parámetros comparados
     # =====================================================================
-    parametros_comparados("helices_0", "kdc", infos=infos, bi=bi)
+    hel_kdc = parametros_comparados("helices_0", "kdc", infos=infos, bi=bi)
+    # Versión para el cuerpo: las cinco semillas con mayor y menor ΔR²
+    ruta = dir_datos / "helices_0-parametros_comparados-kdc-extremos.csv"
+    pd.concat([hel_kdc.iloc[:5], hel_kdc.iloc[-5:]]).round(3).to_csv(ruta)
+    logger.info(f"Escribió {ruta}")
     parametros_comparados("pionono_0", "kdc", infos=infos, bi=bi)
     hue_kdc = parametros_comparados("hueveras_0", "kdc", infos=infos, bi=bi)
     hue_kn = parametros_comparados("hueveras_0", "kn", infos=infos, bi=bi)

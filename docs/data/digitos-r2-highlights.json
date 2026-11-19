@@ -1,6 +1,6 @@
 {
     "dataset": "digitos",
-    "summary": "clf,accuracy,r2\nfkdc,0.9844,0.9787\nkdc,0.9855,0.9738\ngbt,0.96,0.9428\nlr,0.9611,0.9333\nfkn,0.9655,0.9281\nkn,0.9533,0.9066\ngnb,0.8999,0.8632\nsvc,0.9822,\n",
+    "summary": "clf,accuracy,r2\nfkdc,0.9844,0.9772\nkdc,0.9844,0.9694\ngbt,0.9588,0.9414\nlr,0.9633,0.9354\nfkn,0.9666,0.9252\nkn,0.9572,0.9085\ngnb,0.9043,0.8603\nsvc,0.9839,\n",
     "best": "fkdc",
     "bad": [
         "kdc",

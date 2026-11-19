@@ -1,15 +1,14 @@
 {
     "dataset": "iris_std",
-    "summary": "clf,accuracy,r2\nlr,0.9467,0.8883\ngbt,0.9467,0.8701\nfkn,0.9467,0.8423\nkn,0.9467,0.8381\nfkdc,0.9333,0.8098\nkdc,0.92,0.7821\ngnb,0.88,0.7508\nsvc,0.9467,\n",
+    "summary": "clf,accuracy,r2\nlr,0.96,0.8866\ngbt,0.9467,0.8612\nfkn,0.9467,0.8578\nkn,0.9467,0.8541\nfkdc,0.9333,0.815\nkdc,0.9333,0.7985\ngnb,0.8933,0.7722\nsvc,0.9467,\n",
     "best": "lr",
     "bad": [
+        "gbt",
         "fkn",
         "kn",
         "fkdc",
         "kdc",
         "gnb"
     ],
-    "excluded": [
-        "gnb"
-    ]
+    "excluded": []
 }

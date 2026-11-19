@@ -1,11 +1,11 @@
 {
     "dataset": "anteojos",
-    "summary": "clf,accuracy,r2\nfkdc,0.975,0.9326\nkdc,0.9775,0.922\nkn,0.975,0.9174\nfkn,0.975,0.914\ngbt,0.9625,0.856\ngnb,0.9725,0.8515\nlr,0.4275,0.2818\nsvc,0.9725,\n",
+    "summary": "clf,accuracy,r2\nfkdc,0.9775,0.9306\nkdc,0.98,0.9182\nfkn,0.975,0.9179\nkn,0.9762,0.9169\ngbt,0.965,0.8586\ngnb,0.97,0.8522\nlr,0.455,0.2762\nsvc,0.975,\n",
     "best": "fkdc",
     "bad": [
         "kdc",
-        "kn",
         "fkn",
+        "kn",
         "gbt",
         "gnb",
         "lr"
