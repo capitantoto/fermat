@@ -7,6 +7,7 @@ from scipy.spatial.distance import cdist, pdist, squareform
 from sklearn.base import BaseEstimator, ClassifierMixin, DensityMixin
 from sklearn.neighbors import KernelDensity, KNeighborsClassifier
 from sklearn.utils.multiclass import unique_labels
+from sklearn.utils.validation import check_array, check_is_fitted, check_X_y
 
 from fkdc import dir_cache
 
@@ -15,6 +16,18 @@ memoria = Memory(dir_cache, verbose=0)
 
 MIN_PUNTAJE_LOG = np.log(1e-323)  # Para numpy, 1e-324 == 0 y 1e-323 != 0
 MAX_PUNTAJE_LOG = np.log(np.finfo("float64").max)
+
+
+def _validar_prediccion(estimador, X):
+    """Valida X contra un estimador ajustado, con los mensajes de scikit-learn."""
+    check_is_fitted(estimador)
+    X = check_array(X)
+    if X.shape[1] != estimador.n_features_in_:
+        raise ValueError(
+            f"X has {X.shape[1]} features, but {type(estimador).__name__} "
+            f"is expecting {estimador.n_features_in_} features as input"
+        )
+    return X
 
 
 @memoria.cache
@@ -38,7 +51,24 @@ def fermat_muestral(Q, alpha=1, valor_relleno=np.inf):
 
 
 class SampleFermatDistance:
-    """Distancia de Fermat muestral con soporte para grupos."""
+    """Distancia de Fermat muestral con soporte para grupos.
+
+    Al construirse, calcula la distancia de Fermat muestral entre las observaciones
+    de Q (dentro de cada grupo, si los hay). Invocada como `distancia(X)`, devuelve
+    la distancia de cada fila de X a cada observación de Q, de forma
+    `(len(X), len(Q))`; como `distancia(X, Y)`, la distancia entre cada fila de X y
+    cada fila de Y.
+
+    Parámetros
+    ----------
+    Q : ndarray de forma (N, D)
+        Muestra que define la distancia.
+    alpha : float, por defecto 1
+        Exponente aplicado a las distancias euclídeas entre observaciones.
+    grupos : array de largo N o None, por defecto None
+        Etiqueta de grupo de cada observación; las trayectorias no cruzan de un
+        grupo a otro. Con None, un solo grupo.
+    """
 
     def __init__(self, Q, alpha: float = 1, grupos=None):
         self.Q = Q
@@ -103,7 +133,35 @@ class SampleFermatDistance:
 
 
 class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
-    """Clasificador K-vecinos con distancia de Fermat."""
+    """Clasificador de k vecinos más cercanos con distancia de Fermat muestral.
+
+    Las distancias se calculan con `SampleFermatDistance` sobre la muestra de
+    entrenamiento de cada clase por separado y se pasan precalculadas a
+    `sklearn.neighbors.KNeighborsClassifier`.
+
+    Parámetros
+    ----------
+    n_neighbors : int, por defecto 5
+        Cantidad de vecinos.
+    alpha : float, por defecto 1
+        Exponente de la distancia de Fermat muestral; con `alpha=1` coincide con la
+        euclídea.
+    weights : {"uniform", "distance"} o invocable, por defecto "uniform"
+        Pesos de los vecinos, como en `KNeighborsClassifier`.
+    n_jobs : int, por defecto -1
+        Procesos para la búsqueda de vecinos, como en `KNeighborsClassifier`.
+
+    Atributos
+    ---------
+    classes_ : ndarray
+        Etiquetas de clase.
+    n_features_in_ : int
+        Cantidad de variables vistas en `fit`.
+    distance_ : SampleFermatDistance
+        Distancia ajustada a la muestra de entrenamiento.
+    classifier_ : KNeighborsClassifier
+        Clasificador subyacente, ajustado sobre las distancias precalculadas.
+    """
 
     def __init__(self, n_neighbors=5, alpha=1, weights="uniform", n_jobs=-1):
         self.n_neighbors = n_neighbors
@@ -112,7 +170,9 @@ class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
         self.n_jobs = n_jobs
 
     def fit(self, X, y):
+        X, y = check_X_y(X, y)
         self.classes_ = unique_labels(y)
+        self.n_features_in_ = X.shape[1]
         self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha, grupos=y)
         self.classifier_ = KNeighborsClassifier(
             n_neighbors=self.n_neighbors,
@@ -124,21 +184,48 @@ class FermatKNeighborsClassifier(ClassifierMixin, BaseEstimator):
         return self
 
     def predict(self, X):
+        X = _validar_prediccion(self, X)
         return self.classifier_.predict(self.distance_(X))
 
     def predict_proba(self, X):
+        X = _validar_prediccion(self, X)
         return self.classifier_.predict_proba(self.distance_(X))
 
 
-class FermatKDE(BaseEstimator, DensityMixin):
-    """Estimador de densidad kernel con distancia de Fermat."""
+class FermatKDE(DensityMixin, BaseEstimator):
+    """Estimador de densidad por núcleos con distancia de Fermat muestral.
+
+    Núcleo gaussiano evaluado sobre la distancia de Fermat muestral a cada
+    observación de entrenamiento, con la normalización de la KDE euclídea en
+    dimensión `d`.
+
+    Parámetros
+    ----------
+    alpha : float, por defecto 1
+        Exponente de la distancia de Fermat muestral.
+    bandwidth : float, por defecto 1
+        Ancho de banda del núcleo.
+    d : int, por defecto -1
+        Dimensión usada en la normalización; con -1, la cantidad de variables de X.
+
+    Atributos
+    ---------
+    n_features_in_ : int
+        Cantidad de variables vistas en `fit`.
+    d_ : int
+        Dimensión efectiva de la normalización.
+    distance_ : SampleFermatDistance
+        Distancia ajustada a la muestra de entrenamiento.
+    """
 
     def __init__(self, alpha: float = 1, bandwidth: float = 1, d: int = -1):
         self.bandwidth = bandwidth
         self.alpha = alpha
         self.d = d  # TODO: ¿Evitar completamente? Quitando el h^-d del score?
 
-    def fit(self, X):
+    def fit(self, X, y=None):
+        X = check_array(X)
+        self.n_features_in_ = X.shape[1]
         self.distance_ = SampleFermatDistance(Q=X, alpha=self.alpha)
         # `d` queda como lo pasó el usuario; la dimensión efectiva va en `d_`
         self.d_ = self.distance_.D if self.d == -1 else self.d
@@ -151,10 +238,15 @@ class FermatKDE(BaseEstimator, DensityMixin):
         super().__setstate__(state)
 
     def score_samples(self, X=None, log=True):
+        """Log-densidad (o densidad, con `log=False`) en cada fila de X.
+
+        Sin X, evalúa en la propia muestra de entrenamiento.
+        """
         if X is None:
+            check_is_fitted(self)
             distancias = self.distance_.A[0]
         else:
-            distancias = self.distance_(X)
+            distancias = self.distance_(_validar_prediccion(self, X))
         puntaje = np.exp(-0.5 * (distancias / self.bandwidth) ** 2).sum(1)
         if log:
             # En la cola profunda `puntaje` es 0: log(0) = -inf, que recorta el máximo
@@ -174,6 +266,7 @@ class FermatKDE(BaseEstimator, DensityMixin):
             )
 
     def score(self, X=None, y=None):
+        """Log-verosimilitud total de X (o de la muestra de entrenamiento)."""
         return self.score_samples(X).sum()
 
 
@@ -209,19 +302,56 @@ class EuclideanKDE(FermatKDE):
     distancias, con la misma normalización y el mismo recorte), de modo que
     `KDClassifier(metric="euclidea_exacta")` coincide bit a bit con
     `KDClassifier(metric="fermat", alpha=1)`.
+
+    Parámetros
+    ----------
+    bandwidth : float, por defecto 1
+        Ancho de banda del núcleo.
+    d : int, por defecto -1
+        Dimensión usada en la normalización; con -1, la cantidad de variables de X.
     """
 
     def __init__(self, bandwidth: float = 1, d: int = -1):
-        super().__init__(alpha=1, bandwidth=bandwidth, d=d)
+        # Sin `alpha`: no es parámetro de este estimador
+        self.bandwidth = bandwidth
+        self.d = d
 
-    def fit(self, X):
+    def fit(self, X, y=None):
+        X = check_array(X)
+        self.n_features_in_ = X.shape[1]
         self.distance_ = DistanciaEuclidea(X)
         self.d_ = self.distance_.D if self.d == -1 else self.d
         return self
 
 
 class KDClassifier(ClassifierMixin, BaseEstimator):
-    """Clasificador por densidad kernel (Bayes ingenuo con KDE)."""
+    """Clasificador por densidad de núcleos: regla de Bayes con una KDE por clase.
+
+    Estima la densidad de cada clase con una KDE y asigna la clase de máxima
+    probabilidad a posteriori, con las proporciones de entrenamiento como previas.
+
+    Parámetros
+    ----------
+    bandwidth : float, por defecto 1.0
+        Ancho de banda común a todas las clases.
+    metric : str, por defecto "euclidean"
+        `"fermat"` usa `FermatKDE` con `alpha`; `"euclidea_exacta"` usa
+        `EuclideanKDE`; cualquier otro valor se pasa a
+        `sklearn.neighbors.KernelDensity`, sin `metric_params`.
+    alpha : float, por defecto 1.0
+        Exponente de la distancia de Fermat; solo se usa con `metric="fermat"`.
+
+    Atributos
+    ---------
+    classes_ : ndarray
+        Etiquetas de clase.
+    n_features_in_ : int
+        Cantidad de variables vistas en `fit`.
+    models_ : list
+        Una KDE ajustada por clase, en el orden de `classes_`.
+    logpriors_ : list of float
+        Logaritmo de la proporción de cada clase en el entrenamiento.
+    """
 
     def __init__(self, bandwidth=1.0, metric="euclidean", alpha=1.0):
         self.bandwidth = bandwidth
@@ -229,7 +359,9 @@ class KDClassifier(ClassifierMixin, BaseEstimator):
         self.alpha = alpha
 
     def fit(self, X, y):
+        X, y = check_X_y(X, y)
         self.classes_ = unique_labels(y)
+        self.n_features_in_ = X.shape[1]
         conjuntos_entrenamiento = [X[y == yi] for yi in self.classes_]
         if self.metric == "fermat":
             fabrica_densidad = partial(FermatKDE, alpha=self.alpha)
@@ -249,6 +381,7 @@ class KDClassifier(ClassifierMixin, BaseEstimator):
         return self
 
     def predict_proba(self, X):
+        X = _validar_prediccion(self, X)
         # Las log-densidades pueden ser -inf (cola profunda); el recorte las acota
         with np.errstate(divide="ignore", invalid="ignore"):
             logpuntajes = np.array(
@@ -263,4 +396,5 @@ class KDClassifier(ClassifierMixin, BaseEstimator):
             return resultado / resultado.sum(axis=1, keepdims=True)
 
     def predict(self, X):
-        return self.classes_[np.argmax(self.predict_proba(X), 1)]
+        probas = self.predict_proba(X)  # antes que `classes_`: valida que esté ajustado
+        return self.classes_[np.argmax(probas, 1)]
