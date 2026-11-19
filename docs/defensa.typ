@@ -73,6 +73,7 @@
   align(horizon)[
     Con $X tilde.op "Unif"([-1, 1]^D)$, la fracción dentro de $[-h, h]^D$ es $h^D -> 0$: $0.9^15 approx 0.2$, $0.9^130 approx 10^(-6)$.
 
+    #pause
     #v(0.3em)
     #chico[Las distancias se _concentran_: en `mnist`, ya reducido a 96 dimensiones, la distancia mediana al vecino más cercano ronda $1300$, y entre dos puntos cualesquiera, $2500$.]
   ],
@@ -87,6 +88,7 @@
   align(horizon)[
     Un dígito de `mnist` tiene $784$ dimensiones; una foto de teléfono, $36$ millones. Y se clasifican.
 
+    #pause
     #v(0.4em)
     Los datos se registran en $RR^D$, pero viven cerca de una _variedad_ de dimensión mucho menor:
     $ X : (Omega, cal(A), P) -> cal(M) subset RR^D, quad dim cal(M) = d << D. $
@@ -104,23 +106,41 @@
   ([2009], [Henry, Rodríguez]),
 )
 
-== Y hay teoría
+== Y hay teoría: densidad
 
-#cronologia(hitos-teoria, (3, 4))
+#cronologia(hitos-teoria, 3)
 #grid(columns: (1fr, 1fr), column-gutter: 1.5em,
   [
-    *Densidad* en $(cal(M), g)$, compacta y sin frontera:
-    $ hat(f)(p) = 1 / N sum_(i=1)^N 1 / h^d 1 / (theta_(X_i)(p)) K((d_g (p, X_i)) / h) $
-    #chico[$EE norm(hat(f)_n - f)_(L^2(cal(M)))^2 = O(n^(-4 slash (d + 4)))$, con la dimensión _intrínseca_ $d$.]
+    *En $RR^d$*
+    $ hat(f)(x) = 1 / N sum_(i=1)^N 1 / h^d K((norm(x - X_i)) / h) $
   ],
   [
-    *Clasificación* por la regla de Bayes:
-    $ hat(G)(p) = arg max_(k) sum_(i=1)^N bb(1)(G_i = k) K_h (p, X_i) $
-    #chico[Fuertemente consistente con dos clases.]
+    #pause
+    *En $(cal(M), g)$, compacta y sin frontera*
+    $ hat(f)(p) = 1 / N sum_(i=1)^N 1 / h^d 1 / (theta_(X_i)(p)) K((d_g (p, X_i)) / h) $
   ],
 )
 
-#intuicion[La receta de siempre, una campana sobre cada dato, pero midiendo con la distancia geodésica $d_g$ y corrigiendo por cuánto se estira el espacio, $theta$. Para clasificar, cada clase vota con la suma de sus campanas.]
+#pause
+#align(center)[La norma pasa a ser la distancia geodésica $d_g$; lo nuevo es la _densidad de volumen_ $theta$. Y converge a la velocidad de la dimensión _intrínseca_: $O(n^(-4 slash (d + 4)))$.]
+
+#intuicion[La misma receta: una campana sobre cada dato, y se suman. Cambia la regla con que medimos, que ahora sigue la variedad, y una corrección por cuánto se estira el espacio.]
+
+== Y hay teoría: clasificación
+
+#cronologia(hitos-teoria, (4, 5))
+#align(center + horizon)[
+  Clasificador por la regla de Bayes:
+  $ hat(G)(p) = arg max_(k) sum_(i=1)^N bb(1)(G_i = k) K_h (p, X_i) $
+  #chico[Fuertemente consistente con dos clases (Loubes y Pelletier, 2008).]
+
+  #pause
+  #v(0.4em)
+  Consistencia fuerte uniforme, $sup_(p in cal(M)) abs(hat(f)_n (p) - f(p)) -> 0$ c.s., y la densidad de volumen explícita en $S^2$.
+  #chico[Henry y Rodríguez (2009)]
+]
+
+#intuicion[Cada clase vota con la suma de sus campanas en el punto $p$, y gana la que más pesa.]
 
 #focus-slide[¿Y si no conocemos la variedad? \ ¡Hay que aprenderla!]
 
@@ -132,24 +152,24 @@
 
 == Aprender la variedad
 
-#cronologia(hitos-aprendizaje, (0, 1, 2))
+#only(1, cronologia(hitos-aprendizaje, 0))#only(2, cronologia(hitos-aprendizaje, 1))#only(3, cronologia(hitos-aprendizaje, 2))
 #grid(columns: (1fr, 1fr, 1fr), column-gutter: 1em,
   align(center)[
     #image("img/pca.png", height: 30%)
     #chico[Variedades _lineales_: las direcciones de mayor variabilidad.]
   ],
-  align(center)[
+  uncover("2-", align(center)[
     #image("img/isomap-2.png", height: 30%)
     #chico[Geodésicas por caminos mínimos en el grafo de $k$ vecinos.]
-  ],
-  align(center)[
+  ]),
+  uncover("3-", align(center)[
     #image("img/distancia-cuadrada.svg", height: 30%)
     #chico[Caminos en el grafo completo, con aristas elevadas a $alpha >= 1$.]
-  ],
+  ]),
 )
 #fuente[Pearson (1901); Tenenbaum, de Silva y Langford (2000); Bijral, Ratliff y Srebro (2011); Groisman, Jonckheere y Sapienza (2022)]
 
-#intuicion[Elevar las distancias a una potencia abarata los saltos cortos: el camino más barato pasa por donde hay muchos datos.]
+#uncover("3-", intuicion[Elevar las distancias a una potencia abarata los saltos cortos: el camino más barato pasa por donde hay muchos datos.])
 
 == Paseos al azar
 
@@ -157,6 +177,7 @@
   align(center)[#image("img/defensa/paseos-espirales-euclidea.svg", height: 62%) Euclídea],
   align(center)[#image("img/defensa/paseos-espirales-fermat.svg", height: 62%) Fermat, $alpha = 4$],
   align(horizon)[
+    #pause
     100 paseos de 15 saltos desde #text(fill: rgb("#d4a017"))[★], sobre el grafo completo:
     $ Pr(x_i -> x_j) prop 1 / "dist"(x_i, x_j) $
 
@@ -180,6 +201,7 @@
   ],
 )
 
+#pause
 #align(center)[
   Si $cal(M)$ es isométrica embebida y $Q_n tilde.op^"iid" f$, con $beta = (alpha - 1) slash d$:
   $ n^beta D_(Q_n, alpha) -> mu thin cal(D)_(f, beta) "c.s." $
@@ -187,6 +209,7 @@
 ]
 
 // Observación 2 del jurado (Jonckheere): el desbalance de clases con distancias por clase
+#pause
 #chico[*Ojo con la escala:* $D_(Q_n, alpha) approx n^(-beta)$. Si cada clase aprende su propia distancia y $alpha > 1$, la clase mayor queda «más cerca» de todo. En `pinguinos` y `vino`, desbalanceados, la validación cruzada eligió $alpha = 1$.]
 
 #intuicion[Un camino cuesta más donde hay pocos datos. Sumar las distancias infladas a lo largo del grafo alcanza para aproximar ese costo, y con más datos, la aproximación mejora.]
@@ -197,13 +220,13 @@
 
 == El clasificador #fkdc
 
-#chico[El clasificador de Loubes y Pelletier, _multiclase_ y sobre una variedad _desconocida_: la distancia de Fermat muestral reemplaza a la geodésica, y $theta equiv 1$.]
-
-Para cada clase $i$, con $Q_i = {x} union {x_j : g_j = i}$ y $N_i = abs(Q_i) - 1$:
+El de Loubes y Pelletier, _multiclase_ y sobre una variedad _desconocida_. Para cada clase $i$, con $Q_i = {x} union {x_j : g_j = i}$ y $N_i = abs(Q_i) - 1$:
 $ hat(f)_i (x) = 1 / N_i sum_(j : g_j = i) 1 / h^D K((D_(Q_i, alpha)(x, x_j)) / h), quad K(u) = (2 pi)^(-D slash 2) e^(-u^2 slash 2) $
+#pause
 $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k (x)) $
 
-#chico[$(h, alpha)$ por validación cruzada con la regla de un desvío. Con $alpha = 1$, es el #kdc euclídeo de siempre. *#fkn*: los $k$ más cercanos según la misma $D_(Q_i, alpha)$ votan por su clase.]
+#pause
+#chico[La distancia de Fermat muestral reemplaza a la geodésica, y $theta equiv 1$. $(h, alpha)$ por validación cruzada con la regla de un desvío; con $alpha = 1$, es el #kdc euclídeo de siempre. *#fkn*: los $k$ más cercanos según la misma $D_(Q_i, alpha)$ votan por su clase.]
 
 #intuicion[Para clasificar un punto nuevo, lo sumamos a cada clase y medimos con Fermat cuánto lo «abriga» cada una. Gana la que más lo abriga.]
 
@@ -233,6 +256,7 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
     *De referencia*
     - #gnb, #logr, #gbt
     - #svc, solo exactitud
+    #pause
   ],
   [
     25 semillas por tarea; comparamos la _mediana_ del $R^2$ de McFadden:
@@ -291,10 +315,10 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
 #grid(columns: (auto, 1fr, 1fr, 1fr), column-gutter: 0.4em, row-gutter: 0.2em, align: center + horizon,
   [], raw("lunas_lo"), raw("circulos_lo"), raw("espirales_lo"),
   [#kdc \ vs. \ #fkdc], ..("lunas", "circulos", "espirales").map(c => ablacion("kdc-fkdc", c)),
-  [#kn \ vs. \ #fkn], ..("lunas", "circulos", "espirales").map(c => ablacion("kn-fkn", c)),
+  uncover("2-")[#kn \ vs. \ #fkn], ..("lunas", "circulos", "espirales").map(c => uncover("2-", ablacion("kn-fkn", c))),
 )
 
-#chico[$R^2$ por semilla, sin Fermat ($x$) y con Fermat ($y$). #fkdc parece ganar en `lunas_lo` y `espirales_lo`. #fkn y #kn casi coinciden, salvo en `espirales_lo`: #fkn gana en algunas semillas, pero en dos cae a $R^2 approx 0$.]
+#chico[$R^2$ por semilla, sin Fermat ($x$) y con Fermat ($y$). #fkdc parece ganar en `lunas_lo` y `espirales_lo`. #uncover("2-")[#fkn y #kn casi coinciden, salvo en `espirales_lo`: #fkn gana en algunas semillas, pero en dos cae a $R^2 approx 0$.]]
 
 #intuicion[¿Qué se pierde al _quitar_ la distancia de Fermat? Cada punto es una repetición: por encima de la diagonal, Fermat ayudó.]
 
@@ -305,6 +329,7 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
   align(horizon)[
     Superficie de pérdida de #fkdc en `circulos_lo`: un «risco» de parametrizaciones equivalentes, $log h prop alpha$.
 
+    #pause
     #v(0.5em)
     Localmente, $D_(Q, alpha) approx c norm(dot)$, y lo que $alpha$ cambia en la distancia lo compensa $h$. La regla de parsimonia elige $alpha = 1$, y #fkdc se reduce a #kdc.
   ],
@@ -319,9 +344,11 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
   align(horizon)[
     #fkdc elige $alpha = 1$ en _todas_ las semillas de `lunas_lo` (y en 24 de 25 en `espirales_lo`).
 
+    #pause
     #v(0.4em)
     Su $h$ es apenas menor que el de #kdc, y cuanto mayor la diferencia de $h$, mayor la de $R^2$.
 
+    #pause
     #v(0.4em)
     La ventaja no viene de $alpha$, sino de la regla de parsimonia sobre una grilla ampliada.
   ],
@@ -333,10 +360,10 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
 
 #grid(columns: (1fr, 1fr), column-gutter: 1em,
   align(center + horizon, image("img/helices_0-kdc-fkdc-r2-scatter.svg", height: 52%)),
-  align(center + horizon, image("img/helices_0-1188-fkdc-bandwidth-alpha-loss_contour.svg", height: 52%)),
+  uncover("2-", align(center + horizon, image("img/helices_0-1188-fkdc-bandwidth-alpha-loss_contour.svg", height: 52%))),
 )
 
-#chico[#fkdc elige $alpha > 1$ en 13 de las 25 semillas y supera a #kdc en 19. Der.: con $s = 1188$, una «isla» en $alpha approx 3$, $h approx 10^(-3)$; todo lo que está a menos de un desvío tiene $alpha >= 2.5$, y le saca $0.23$ de $R^2$ a #kdc.]
+#chico[#fkdc elige $alpha > 1$ en 13 de las 25 semillas y supera a #kdc en 19. #uncover("2-")[Der.: con $s = 1188$, una «isla» en $alpha approx 3$, $h approx 10^(-3)$; todo lo que está a menos de un desvío tiene $alpha >= 2.5$, y le saca $0.23$ de $R^2$ a #kdc.]]
 
 // TODO(autor): con un KDC exacto (el KernelDensity de scikit-learn falla en las colas), la ventaja de 5 pp deja de ser significativa; ver preguntas-defensa.typ. Las comparaciones de fkn contra kn no cambian.
 #intuicion[Cuando la curva de la variedad es comparable a la distancia entre observaciones, aparece un $alpha$ que ningún ancho de campana sustituye.]
@@ -345,10 +372,10 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
 
 #grid(columns: (1fr, 1fr), column-gutter: 1em,
   align(center + horizon, image("img/r2-fkn-kn-helices_0.svg", height: 48%)),
-  align(center + horizon, image("img/helices_0-fkn_kn-mean_test_score.svg", width: 100%)),
+  uncover("2-", align(center + horizon, image("img/helices_0-fkn_kn-mean_test_score.svg", width: 100%))),
 )
 
-#chico[Izq.: $R^2$ por semilla; #fkn supera a #kn en 19 de las 25. Der.: mejor log-verosimilitud en validación cruzada para cada $k$; la de #fkn casi no cae, la de #kn se desploma.]
+#chico[Izq.: $R^2$ por semilla; #fkn supera a #kn en 19 de las 25. #uncover("2-")[Der.: mejor log-verosimilitud en validación cruzada para cada $k$; la de #fkn casi no cae, la de #kn se desploma.]]
 
 #intuicion[Como en los paseos: el vecindario de Fermat sigue la hélice, y agrandarlo no trae vecinos de la otra clase. Con $k = 1$ coinciden; Fermat aporta cuando el vecindario crece.]
 
@@ -359,9 +386,11 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
   align(horizon)[
     $z = plus.minus sin(x) sin(y)$: dos maples de huevos encastrados. Solo la familia de los núcleos logra $R^2 > 0$ ($0.25$--$0.30$).
 
+    #pause
     #v(0.4em)
     En las 12 repeticiones en que #fkn y #kn eligen el _mismo_ $k$:
     - con $alpha = 1$, empatan en las 4;
+    #pause
     - con $alpha > 1$, #fkn gana en 7 de 8, hasta por $0.096$.
   ],
 )
@@ -375,6 +404,7 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
   align(horizon)[
     `pinguinos`: picos y aletas en mm, de 13 a 230; masa en g, de 2700 a 6300. Casi linealmente separable: #logr llega a $R^2 approx 0.96$; la familia de los núcleos, a $0.40$--$0.50$.
 
+    #pause
     #v(0.5em)
     La distancia euclídea es, en la práctica, la diferencia de masa, y Fermat la hereda. Estandarizando, #fkdc pasa de $0.42$ a $0.96$.
   ],
@@ -392,6 +422,7 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
     $ norm(x - y)^2 = sum_(k=1)^D (x_k - y_k)^2 $
     suma _todas_ las coordenadas: con 12 dimensiones de ruido, el ruido domina las aristas del grafo, y Fermat lo hereda.
 
+    #pause
     #v(0.4em)
     #chico[Lleno, en 3D; vacío, en 15D. En `eslabones_12`, #fkdc cae a $R^2 approx 0.24$; #gbt queda en $0.92$.]
   ],
@@ -405,6 +436,7 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
   align(horizon)[
     En `mnist`, PCA primero: de $784$ a $96$ dimensiones, con el 90 % de la variación.
 
+    #pause
     #v(0.5em)
     Después, #fkdc llega a $R^2 approx 0.74$: a la par de #logr ($0.76$), por debajo de #kdc ($0.77$) y por encima de #gbt ($0.67$).
   ],
@@ -466,10 +498,12 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
 #align(center + horizon)[
   Lenguaje, imágenes, audio, video: datos de dimensión altísima que, según la hipótesis de la variedad, viven cerca de variedades que no conocemos.
 
+  #pause
   #v(0.5em)
   Las redes profundas aprenden _representaciones_ de esos dominios, y el aprendizaje de variedades es un caso del aprendizaje de representaciones.
   #fuente[Bengio, Courville y Vincent (2013)]
 
+  #pause
   #v(0.8em)
   *¿Pueden herramientas como estas, distancias aprendidas de la muestra y geometría de Riemann, ayudar a entenderlas?*
 ]
