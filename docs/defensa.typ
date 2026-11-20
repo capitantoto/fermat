@@ -329,9 +329,8 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
 // guion
 #speaker-note[
   #set text(size: 17pt)
-  No pudimos usar el paquete `fermat` de Facundo Sapienza, porque está pensado para _clustering_ y solo mide distancias dentro de la muestra. Implementamos la distancia muestral, con un algoritmo para puntos nuevos, y los dos clasificadores, compatibles con `scikit-learn`: se evalúan exactamente con el mismo procedimiento que los de siempre, con búsqueda de hiperparámetros por validación cruzada, sin tocar números a mano para ver con qué semilla anda. Y está publicado: `pip install fkdc`.
+  No pudimos usar el paquete `fermat` de Facundo Sapienza, porque está pensado para _clustering_ y solo mide distancias dentro de la muestra. Implementamos la distancia muestral, con un algoritmo para puntos nuevos, y los dos clasificadores, compatibles con `scikit-learn`: se evalúan exactamente con el mismo procedimiento que los de siempre, con búsqueda de hiperparámetros por validación cruzada, sin tocar números a mano para ver con qué semilla anda. Y está publicado en PyPI, el repositorio estándar de paquetes de Python: `pip install fkdc`.
 
-  [Decir «en PyPI» solo si ya está publicado; si no, «en TestPyPI».]
 ]
 
 
@@ -343,8 +342,7 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
 - Un marco de evaluación con `Pipeline` y `GridSearchCV` de `scikit-learn`, que compara sistemáticamente los clasificadores en repetidas `Tarea`s sobre datasets definidos de antemano.
 ]
 
-// TODO(autor): reemplazar por el comando y el enlace reales cuando la biblioteca esté en PyPI
-#align(center, text(size: 17pt, fill: gray.darken(20%))[*Pendiente:* `pip install fkdc` y enlace a PyPI])
+#align(center, text(size: 20pt)[`pip install fkdc` #h(1em) · #h(1em) #link("https://pypi.org/project/fkdc/")[pypi.org/project/fkdc]])
 
 #intuicion[Todo se enchufa a `scikit-learn`, la caja de herramientas estándar de aprendizaje automático en Python: los clasificadores nuevos y los de siempre se evalúan exactamente con el mismo procedimiento.]
 
