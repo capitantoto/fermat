@@ -3,10 +3,11 @@ Ilustraciones de la primera parte de la defensa.
 
 - `cajita-d{1,2,3}.svg`: un segmento, un cuadrado y un cubo de lado 1 con la cajita
   centrada de lado h resaltada, para la maldición de la dimensionalidad.
-- `paseos-espirales-{euclidea,fermat}.svg`: cien paseos al azar sobre el grafo completo
-  de `espirales_lo`, desde un mismo punto, saltando a cada observación con probabilidad
-  inversamente proporcional a su distancia. Cada salto de Fermat se dibuja por su
-  camino mínimo. El euclídeo cambia de brazo seguido; el de Fermat, casi nunca.
+- `paseos-espirales-{euclidea,fermat}-NNN.png`: cien paseos al azar sobre el grafo
+  completo de `espirales_lo`, desde un mismo punto, saltando a cada observación con
+  probabilidad inversamente proporcional a su distancia. Cada salto de Fermat se dibuja
+  por su camino mínimo, con un cuadro por cantidad de pasos (0, 10, 30 y 100). El
+  euclídeo cambia de brazo seguido; el de Fermat, casi nunca.
 - `resumen-{fkdc,fkn}.svg`: en los 20 datasets de la tesis, si el clasificador es
   mejor, igual o peor que su versión euclídea y que el mejor de los demás. Como en las
   tablas resumen de la tesis, A es peor que B si la mediana de A queda por debajo del
@@ -220,8 +221,12 @@ def cajitas(h=0.5):
     guardar(fig, "cajita-d3.svg")
 
 
-def paseos_espirales(paseos=100, pasos=15, alfa=4):
-    """Paseos al azar con saltos de probabilidad proporcional a 1 / distancia."""
+def paseos_espirales(paseos=100, cuadros=(0, 10, 30, 100), alfa=4):
+    """Paseos al azar con saltos de probabilidad proporcional a 1 / distancia.
+
+    Un cuadro por cantidad de pasos en `cuadros`, para recorrerlos uno por clic: el
+    primero, sin paseos, muestra solo las espirales.
+    """
     X, y = hacer_espirales(n_samples=config.n_muestras, noise=0.1, random_state=semilla)
     radios = np.linalg.norm(X, axis=1)
     candidatos = np.flatnonzero(y == 0)
@@ -230,33 +235,45 @@ def paseos_espirales(paseos=100, pasos=15, alfa=4):
     fermat, predecesores = shortest_path(
         euclidea**alfa, directed=False, return_predecessors=True
     )
+    pasos = max(cuadros)
     for nombre, distancias in [("euclidea", euclidea), ("fermat", fermat)]:
         pesos = np.divide(
             1, distancias, out=np.zeros_like(distancias), where=distancias > 0
         )
         transicion = pesos / pesos.sum(1, keepdims=True)
         rng = np.random.default_rng(semilla)
-        fig, ax = plt.subplots(figsize=(6, 6))
-        ax.scatter(*X.T, c=[colores_clase[c] for c in y], s=10, alpha=0.35, lw=0)
-        cambios = 0
-        for _ in range(paseos):
-            i = origen
-            for _ in range(pasos):
-                j = rng.choice(len(X), p=transicion[i])
-                cambios += y[j] != y[i]
-                tramo = [j]
-                if nombre == "fermat":
-                    while tramo[-1] != i:
-                        tramo.append(predecesores[i, tramo[-1]])
-                else:
-                    tramo.append(i)
-                ax.plot(*X[tramo].T, color=tinta, lw=0.6, alpha=0.06, zorder=2)
-                i = j
-        ax.scatter(*X[origen], marker="*", s=320, c="gold", edgecolors=tinta, zorder=4)
-        logger.info("%s: %.1f cambios de brazo por paseo", nombre, cambios / paseos)
-        ax.set_aspect("equal")
-        ax.set_axis_off()
-        guardar(fig, f"paseos-espirales-{nombre}.svg")
+        trayectorias = np.empty((paseos, pasos + 1), dtype=int)
+        trayectorias[:, 0] = origen
+        for paseo in range(paseos):
+            for paso in range(pasos):
+                i = trayectorias[paseo, paso]
+                trayectorias[paseo, paso + 1] = rng.choice(len(X), p=transicion[i])
+        for cuadro in cuadros:
+            fig, ax = plt.subplots(figsize=(6, 6))
+            ax.scatter(*X.T, c=[colores_clase[c] for c in y], s=10, alpha=0.35, lw=0)
+            for paseo in trayectorias[:, : cuadro + 1]:
+                for i, j in zip(paseo[:-1], paseo[1:], strict=True):
+                    tramo = [j]
+                    if nombre == "fermat":
+                        while tramo[-1] != i:
+                            tramo.append(predecesores[i, tramo[-1]])
+                    else:
+                        tramo.append(i)
+                    ax.plot(*X[tramo].T, color=tinta, lw=0.6, alpha=0.06, zorder=2)
+            ax.scatter(
+                *X[origen], marker="*", s=320, c="gold", edgecolors=tinta, zorder=4
+            )
+            recorridas = trayectorias[:, : cuadro + 1]
+            cambios = (y[recorridas[:, 1:]] != y[recorridas[:, :-1]]).sum() / paseos
+            logger.info(
+                "%s, %d pasos: %.1f cambios de brazo por paseo", nombre, cuadro, cambios
+            )
+            ax.set_aspect("equal")
+            ax.set_axis_off()
+            ruta = dir_img / f"paseos-espirales-{nombre}-{cuadro:03d}.png"
+            fig.savefig(ruta, bbox_inches="tight", transparent=True, dpi=150)
+            plt.close(fig)
+            logger.info("Escrito %s", ruta.relative_to(dir_raiz))
 
 
 crudas_tesis = [

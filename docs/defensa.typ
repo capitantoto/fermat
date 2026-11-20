@@ -65,8 +65,23 @@
   title: "Distancia de Fermat en Clasificadores de Densidad por Núcleos",
   subtitle: "Defensa de tesis de Maestría en Estadística Matemática",
   institution: [Departamento de Matemática, FCEN, UBA],
-  extra: text(size: 15pt, fill: rgb("#eb811b"))[*395* días sin aplicarse la Ley de Financiamiento Universitario (Ley 27.795)],
 )
+
+// Los días se cuentan desde la publicación de la Ley 27.795 en el Boletín Oficial (21/10/2025) hasta la defensa
+#focus-slide[
+  // guion
+  #speaker-note[
+    #set text(size: 17pt)
+    [En la portada:] Bienvenidos a esta defensa de tesis.
+
+    [Clic a este número.] Antes de empezar: ¿alguien sabe qué es este número?
+
+    ▸ Son los días que lleva sin aplicarse la Ley de Financiamiento Universitario. Que se cumpla.
+  ]
+  #text(size: 120pt, weight: "bold")[395]
+  #pause
+  #place(bottom + center, dy: -0.5em, text(size: 24pt)[días sin aplicarse la Ley de Financiamiento Universitario \ #text(size: 18pt)[Ley 27.795]])
+]
 
 = Enunciación
 
@@ -75,9 +90,7 @@
 // guion
 #speaker-note[
   #set text(size: 17pt)
-  [En la portada:] Bienvenidos a esta defensa de tesis. Antes de empezar: este número es la cantidad de días que lleva sin aplicarse la Ley de Financiamiento Universitario. Que se cumpla. Pasado ese parroquial, ahora sí, arranquemos.
-
-  [Clic a esta diapo.] Hay un problema en la clasificación en general: en alta dimensión, y casi todos los objetos de interés están en alta dimensión, todo queda muy lejos.
+  Ahora sí, arranquemos. Hay un problema en la clasificación en general: en alta dimensión, y casi todos los objetos de interés están en alta dimensión, todo queda muy lejos.
 
   Imagínense que de un segmento tomo una fracción $h$ del largo: me quedo con $h$. De un cuadrado, con $h^2$ del área; de un cubo, con $h^3$ del volumen. Con una cajita del 90 % del ancho, en 15 dimensiones me quedo con un quinto del volumen; en 130, con una millonésima.
 
@@ -141,7 +154,7 @@
   #set text(size: 17pt)
   ¿Se puede hacer estadística en variedades? Sí, y con bastante rigor. La línea de tiempo arranca en 1918: von Mises se pregunta si los pesos atómicos son enteros con error de medición, y mira la parte fraccionaria, un dato en el círculo. Sigue Fisher en la esfera, y la estadística direccional de Mardia. Pero son variedades muy rígidas.
 
-  ▸ En 2005, Bruno Pelletier da el estimador de densidad por núcleos en variedades de Riemann compactas y sin frontera. A la izquierda, el de siempre; a la derecha, el de Pelletier. El mismo promedio de campanas, el mismo $1/h^d$. Cambian dos cosas: la norma pasa a ser la distancia geodésica, y aparece la densidad de volumen $theta$, bastante compleja de calcular; por ahora le ponemos un pin.
+  ▸ En 2005, Bruno Pelletier da el estimador de densidad por núcleos en variedades de Riemann compactas y sin frontera. A la izquierda, el de siempre; a la derecha, el de Pelletier. El mismo promedio de campanas, el mismo $1/h^d$. Cambian dos cosas: la norma pasa a ser la distancia geodésica, y aparece la densidad de volumen $theta$: cuánto se infla o se encoge el espacio de la variedad alrededor de un punto, comparado con el plano tangente. Vale 1 en el punto mismo, y fuera de las variedades planas o de curvatura constante es muy difícil de calcular; por ahora le ponemos un pin.
 
   ▸ Y converge a la velocidad que dicta la dimensión intrínseca $d$, no la del espacio ambiente.
 ]
@@ -237,23 +250,30 @@
 // guion
 #speaker-note[
   #set text(size: 17pt)
-  Para verlo: desde la estrellita, 100 paseos al azar en los que se puede saltar a cualquier punto, con probabilidad inversamente proporcional a la distancia.
+  Para verlo, dos espirales, y una estrellita. Desde ahí largamos 100 paseos al azar en los que se puede saltar a cualquier punto, con probabilidad inversamente proporcional a la distancia: a la izquierda con la euclídea, a la derecha con Fermat y $alpha = 4$.
 
-  ▸ Con la euclídea, a la izquierda, van de todas partes a todas partes y cruzan de un brazo al otro todo el tiempo: 6,3 cambios de brazo por paseo. Con Fermat y $alpha = 4$, a la derecha, siguen el brazo en el que están: 1,1 cambios por paseo. Los colores no significan nada; fíjense que los saltos largos se cuentan con los dedos de una mano.
+  ▸ A los 10 pasos, la euclídea ya cruzó de un brazo al otro casi 5 veces por paseo; Fermat, menos de una.
+
+  ▸ A los 30, la euclídea va de todas partes a todas partes; Fermat sigue el brazo.
+
+  ▸ A los 100, la euclídea tapó el plano: 43 cambios de brazo por paseo. Fermat, menos de 3: los saltos entre brazos se cuentan con los dedos de una mano.
 ]
 
 
-#grid(columns: (1fr, 1fr, 1fr), column-gutter: 1em,
-  align(center)[#image("img/defensa/paseos-espirales-euclidea.svg", height: 62%) Euclídea],
-  align(center)[#image("img/defensa/paseos-espirales-fermat.svg", height: 62%) Fermat, $alpha = 4$],
+// Un cuadro por clic: `scripts/ilustraciones_defensa.py paseos` los dibuja y da los cambios de brazo
+#let cuadro-paseos(pasos, texto) = grid(columns: (1fr, 1fr, 1fr), column-gutter: 1em,
+  align(center)[#image("img/defensa/paseos-espirales-euclidea-" + pasos + ".png", height: 62%) Euclídea],
+  align(center)[#image("img/defensa/paseos-espirales-fermat-" + pasos + ".png", height: 62%) Fermat, $alpha = 4$],
   align(horizon)[
-    #pause
-    100 paseos de 15 saltos desde #text(fill: rgb("#d4a017"))[★], sobre el grafo completo:
+    100 paseos desde #text(fill: rgb("#d4a017"))[★], sobre el grafo completo:
     $ Pr(x_i -> x_j) prop 1 / "dist"(x_i, x_j) $
-
-    Cambios de brazo por paseo: $6.3$ contra $1.1$.
+    #texto
   ],
 )
+#only(1, cuadro-paseos("000", []))
+#only(2, cuadro-paseos("010")[*10 pasos.* Cambios de brazo por paseo: $4.7$ contra $0.8$.])
+#only(3, cuadro-paseos("030")[*30 pasos.* Cambios de brazo por paseo: $13.5$ contra $1.5$.])
+#only(4, cuadro-paseos("100")[*100 pasos.* Cambios de brazo por paseo: $43.4$ contra $2.8$.])
 // Applet para jugar con los parámetros: docs/paseos-fermat.html
 
 #intuicion[Con la distancia de siempre, el paseante salta de una espiral a la otra a cada rato; con la de Fermat, sigue el brazo en el que está.]
@@ -354,6 +374,8 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
   No alcanzaba con ponerle y sacarle Fermat a nuestros dos clasificadores: queríamos saber si son competitivos. Agregamos cuatro de referencia: Naive Bayes gaussiano, pariente cercano del `KDC`; la regresión logística, que no podía faltar; _gradient boosting_, que requiere muy poca preparación de los datos; y soporte vectorial, que solo da etiquetas, así que lo medimos solo en exactitud.
 
   ▸ Cada tarea se repite con 25 semillas, con una partición 50–50 de entrenamiento y evaluación, y comparamos la mediana del $R^2$ de McFadden, una transformación de la log-verosimilitud. $R^2 = 0$ es no ser mejor que adivinar con las proporciones de cada clase; $R^2 = 1$, acertar siempre, y sin dudar. Castiga a quien se equivoca con confianza.
+
+  Los hiperparámetros se eligen por validación cruzada con una regla de parsimonia: de entre los que rinden a menos de un desvío del mejor, el más sencillo. En `fKDC`, eso quiere decir el menor $alpha$: solo nos alejamos de la euclídea si Fermat rinde claramente mejor. Esto va a importar.
 ]
 
 
@@ -372,6 +394,8 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
     25 semillas por tarea; comparamos la _mediana_ del $R^2$ de McFadden:
     $ R^2 = 1 - (cal(l)(hat(G))) / (cal(l)(hat(G)_0)) $
     #chico[$cal(l)$: log-verosimilitud promedio; $hat(G)_0$ asigna las frecuencias de clase. En los sintéticos, muestras nuevas; en los reales, particiones nuevas.]
+
+    #chico[*Regla de parsimonia:* de entre los hiperparámetros a menos de un desvío del mejor en validación cruzada, el más sencillo. En #fkdc, el menor $alpha$.]
   ],
 )
 
@@ -448,7 +472,10 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
 
 
 #grid(columns: 4, column-gutter: 0.4em, row-gutter: 0.3em,
-  ..("kn", "fkn", "kdc", "fkdc", "gnb", "lr", "svc", "gbt").map(c => image("img/espirales_lo-" + c + "-decision_boundary.svg")),
+  ..("kn", "fkn", "kdc", "fkdc", "gnb", "lr", "svc", "gbt").map(c => stack(spacing: 0.2em,
+    image("img/espirales_lo-" + c + "-decision_boundary.svg"),
+    align(center, text(size: 18pt, weight: "bold", raw(("kn": "kNN", "fkn": "fkNN", "kdc": "KDC", "fkdc": "fKDC", "gnb": "GNB", "lr": "LR", "svc": "SVC", "gbt": "GBT").at(c)))),
+  )),
 )
 
 #intuicion[Arriba, #kn, #fkn, #kdc y #fkdc siguen la espiral. Abajo, #gnb y #logr no pueden, #svc la sigue con una frontera dura, sin probabilidades, y #gbt la aproxima con rectángulos.]
@@ -466,16 +493,15 @@ $ hat(Pr)(G = i | X = x) = (hat(pi)_i hat(f)_i (x)) / (sum_k hat(pi)_k hat(f)_k 
 ]
 
 
-#let ablacion(par, c) = image("img/" + c + "_lo-" + par + "-r2-scatter.svg", height: 30%)
+#let ablacion(par, c) = image("img/" + c + "_lo-" + par + "-r2-scatter.svg", height: 36%)
 #grid(columns: (auto, 1fr, 1fr, 1fr), column-gutter: 0.4em, row-gutter: 0.2em, align: center + horizon,
   [], raw("lunas_lo"), raw("circulos_lo"), raw("espirales_lo"),
   [#kdc \ vs. \ #fkdc], ..("lunas", "circulos", "espirales").map(c => ablacion("kdc-fkdc", c)),
   uncover("2-")[#kn \ vs. \ #fkn], ..("lunas", "circulos", "espirales").map(c => uncover("2-", ablacion("kn-fkn", c))),
 )
 
-#chico[$R^2$ por semilla, sin Fermat ($x$) y con Fermat ($y$). #fkdc parece ganar en `lunas_lo` y `espirales_lo`. #uncover("2-")[#fkn y #kn casi coinciden, salvo en `espirales_lo`: #fkn gana en algunas semillas, pero en dos cae a $R^2 approx 0$.]]
+#text(size: 14pt)[$R^2$ por semilla, sin Fermat ($x$) y con Fermat ($y$): por encima de la diagonal, Fermat ayudó. #fkdc parece ganar en `lunas_lo` y `espirales_lo`. #uncover("2-")[#fkn y #kn casi coinciden, salvo en `espirales_lo`: #fkn gana en algunas semillas, pero en dos cae a $R^2 approx 0$.]]
 
-#intuicion[¿Qué se pierde al _quitar_ la distancia de Fermat? Cada punto es una repetición: por encima de la diagonal, Fermat ayudó.]
 
 == Bien muestreado, $alpha$ y $h$ se confunden
 
