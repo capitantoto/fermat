@@ -1,22 +1,45 @@
 [project]
 name = "fkdc"
-version = "0.0.1"
+version = "0.1.0"
 description = "Distancia de Fermat en Clasificadores de Densidad Nuclear"
 authors = [{name = "Gonzalo Barrera Borla", email = "gonzalobb@gmail.com"}]
-license = {text = "MIT License"}
+license = "MIT"
+license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.11"
+keywords = [
+    "fermat distance",
+    "kernel density estimation",
+    "kernel density classifier",
+    "k-nearest neighbors",
+    "manifold learning",
+    "scikit-learn",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: Spanish",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 dependencies = [
+    "joblib>=1.2.0",
     "numpy>=1.26.4",
     "scipy>=1.12.0",
-    "pandas>=2.2.1",
     "scikit-learn>=1.4.1.post1",
-    "seaborn>=0.13.2",
-    "ucimlrepo>=0.0.7",
-    "tabulate>=0.9.0",
-    "click>=8.1.7",
-    "typer>=0.12.5",
 ]
+
+[project.urls]
+Homepage = "https://github.com/capitantoto/fermat"
+Repository = "https://github.com/capitantoto/fermat"
+Issues = "https://github.com/capitantoto/fermat/issues"
 
 [dependency-groups]
 clasicos = [
@@ -36,15 +59,41 @@ fundacionales = [
     "tabpfn>=9.0.0",
     "tabpfn-client>=0.6.1",
 ]
+investigacion = [
+    "pandas>=2.2.1",
+    "seaborn>=0.13.2",
+    "ucimlrepo>=0.0.7",
+    "tabulate>=0.9.0",
+    "click>=8.1.7",
+    "typer>=0.12.5",
+]
 profundos = [
     "pytabkit>=1.7.3",
     "tabdpt>=1.3.1",
     "tabicl>=2.2.0",
 ]
 
+[tool.uv]
+# `uv sync` instala también lo que usa la investigación (campañas, figuras, scripts)
+default-groups = ["dev", "investigacion"]
+
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
+
+# La biblioteca publicada es solo el núcleo (`fkdc.fermat`); el resto del paquete es
+# código de la tesis y se usa desde el repositorio (instalación editable de `uv sync`)
+[tool.hatch.build.targets.wheel]
+only-include = ["fkdc/__init__.py", "fkdc/fermat.py"]
+
+[tool.hatch.build.targets.sdist]
+only-include = [
+    "fkdc/__init__.py",
+    "fkdc/fermat.py",
+    "LICENSE",
+    "README.md",
+    "pyproject.toml",
+]
 
 [tool.ruff]
 target-version = "py311"
